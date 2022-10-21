@@ -1,0 +1,16 @@
+TODO's
+-------
+- [ ] Add common nox tasks
+- [ ] Add common pre_commit_hooks
+  - [ ] Add https://github.com/exasol/serial-version-uid-change-pre-commit-hook
+- [ ] Add multiversion sphinx plugin
+  - [ ] Add support for gh-pages release (sphinx-gh-pages)
+    - [ ] files, nojekly etc.
+    - [ ] commit generated docu to gh-pages branch
+  - [ ] Add support for api documentation
+- [ ] Add generators for repetitive tasks
+    - [ ] Add .pre-commit-config.yaml generator
+    - [ ] Add workflow generator
+    - [ ] Add issue template generator
+    - [ ] Add pr template generator
+    - [ ] Add changelog.d template generator
