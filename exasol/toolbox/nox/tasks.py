@@ -88,31 +88,27 @@ def _sources(project_root: Path) -> Iterable[Path]:
     return sources
 
 
-def _unit_tests(session: Session, project_root: Path) -> None:
-    command = [
+def _test_command(project_root: Path, path: Path) -> Iterable[str]:
+    return [
         "poetry",
         "run",
         "coverage",
         "run",
+        "-a",
         *[f"--source={src}" for src in _sources(project_root)],
         "-m",
         "pytest",
-        f'{project_root / "test" / "unit"}',
+        f"{path}",
     ]
+
+
+def _unit_tests(session: Session, project_root: Path) -> None:
+    command = _test_command(project_root, project_root / "test" / "unit")
     session.run(*command)
 
 
 def _integration_tests(session: Session, project_root: Path) -> None:
-    command = [
-        "poetry",
-        "run",
-        "coverage",
-        "run",
-        *[f"--source={src}" for src in _sources(project_root)],
-        "-m",
-        "pytest",
-        f'{project_root / "test" / "integration"}',
-    ]
+    command = _test_command(project_root, project_root / "test" / "integration")
     session.run(*command)
 
 
