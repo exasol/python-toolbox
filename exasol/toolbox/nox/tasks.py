@@ -22,7 +22,6 @@ from noxconfig import (
 class Mode(Enum):
     Fix = auto()
     Check = auto()
-    Report = auto()
 
 
 def find_session_runner(session: Session, name: str) -> SessionRunner:
@@ -80,14 +79,6 @@ def _type_check(session: Session, files: Iterable[str]) -> None:
     )
 
 
-def _sources(project_root: Path) -> Iterable[Path]:
-    exasol_ns = project_root / "exasol"
-    sources = [project_root]
-    if exasol_ns.exists():
-        sources.append(exasol_ns)
-    return sources
-
-
 def _test_command(project_root: Path, path: Path) -> Iterable[str]:
     return [
         "poetry",
@@ -95,7 +86,7 @@ def _test_command(project_root: Path, path: Path) -> Iterable[str]:
         "coverage",
         "run",
         "-a",
-        *[f"--source={src}" for src in _sources(project_root)],
+        f"--rcfile={PROJECT_ROOT / 'pyproject.toml'}",
         "-m",
         "pytest",
         "-v",
@@ -130,7 +121,7 @@ def check(session: Session) -> None:
     _code_format(session, Mode.Check, py_files)
     _pylint(session, py_files)
     _type_check(session, py_files)
-    _coverage(session, PROJECT_ROOT, Mode.Check)
+    _coverage(session, PROJECT_ROOT)
 
 
 @nox.session(python=False)
@@ -150,26 +141,18 @@ def unit_tests(session: Session) -> None:
     _unit_tests(session, PROJECT_ROOT)
 
 
-def _coverage(session: Session, project_root: Path, mode: Mode) -> None:
+def _coverage(session: Session, project_root: Path) -> None:
     command = ["poetry", "run", "coverage", "report", "-m"]
     coverage_file = project_root / ".coverage"
     coverage_file.unlink(missing_ok=True)
     _unit_tests(session, PROJECT_ROOT)
     _integration_tests(session, PROJECT_ROOT)
-
-    if mode == Mode.Check:
-        command += [f"--fail-under={MIN_CODE_COVERAGE}"]
-    elif mode == Mode.Report:
-        pass  # default settings are just fine for report mode
-    else:
-        session.error(f"The mode [{mode}] is not supported by the coverage command")
-
     session.run(*command)
 
 
 @nox.session(name="coverage", python=False)
 def coverage(session: Session) -> None:
-    _coverage(session, PROJECT_ROOT, Mode.Report)
+    _coverage(session, PROJECT_ROOT)
 
 
 # TODO: build docs [--check]
