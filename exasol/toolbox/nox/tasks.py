@@ -98,6 +98,7 @@ def _test_command(project_root: Path, path: Path) -> Iterable[str]:
         *[f"--source={src}" for src in _sources(project_root)],
         "-m",
         "pytest",
+        "-v",
         f"{path}",
     ]
 
