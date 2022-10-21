@@ -60,5 +60,6 @@ max-module-lines = 800
 module = [
     "exasol.toolbox.sphinx.multiversion.*",
     "test.unit.*",
+    "test.integration.*",
 ]
 ignore_errors = true
