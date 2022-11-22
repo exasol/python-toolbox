@@ -12,11 +12,7 @@ from nox import Session
 from nox.sessions import SessionRunner
 
 from exasol.toolbox.project import python_files
-from noxconfig import (
-    MIN_CODE_COVERAGE,
-    PROJECT_ROOT,
-    VERSION_FILE,
-)
+from noxconfig import Settings
 
 
 class Mode(Enum):
@@ -86,7 +82,7 @@ def _test_command(project_root: Path, path: Path) -> Iterable[str]:
         "coverage",
         "run",
         "-a",
-        f"--rcfile={PROJECT_ROOT / 'pyproject.toml'}",
+        f"--rcfile={Settings.root / 'pyproject.toml'}",
         "-m",
         "pytest",
         "-v",
@@ -107,52 +103,52 @@ def _integration_tests(session: Session, project_root: Path) -> None:
 @nox.session(python=False)
 def fix(session: Session) -> None:
     """Runs all automated fixes on the code base"""
-    py_files = [f"{file}" for file in python_files(PROJECT_ROOT)]
-    _version(session, Mode.Fix, VERSION_FILE)
+    py_files = [f"{file}" for file in python_files(Settings.root)]
+    _version(session, Mode.Fix, Settings.version_file)
     _pyupgrade(session, py_files)
     _code_format(session, Mode.Fix, py_files)
 
 
 @nox.session(name="check", python=False)
 def check(session: Session) -> None:
-    py_files = [f"{file}" for file in python_files(PROJECT_ROOT)]
-    _version(session, Mode.Check, VERSION_FILE)
+    py_files = [f"{file}" for file in python_files(Settings.root)]
+    _version(session, Mode.Check, Settings.version_file)
     _pyupgrade(session, py_files)
     _code_format(session, Mode.Check, py_files)
     _pylint(session, py_files)
     _type_check(session, py_files)
-    _coverage(session, PROJECT_ROOT)
+    _coverage(session, Settings.root)
 
 
 @nox.session(python=False)
 def lint(session: Session) -> None:
-    py_files = [f"{file}" for file in python_files(PROJECT_ROOT)]
+    py_files = [f"{file}" for file in python_files(Settings.root)]
     _pylint(session, py_files)
 
 
 @nox.session(name="type-check", python=False)
 def type_check(session: Session) -> None:
-    py_files = [f"{file}" for file in python_files(PROJECT_ROOT)]
+    py_files = [f"{file}" for file in python_files(Settings.root)]
     _type_check(session, py_files)
 
 
 @nox.session(name="unit-tests", python=False)
 def unit_tests(session: Session) -> None:
-    _unit_tests(session, PROJECT_ROOT)
+    _unit_tests(session, Settings.root)
 
 
 def _coverage(session: Session, project_root: Path) -> None:
     command = ["poetry", "run", "coverage", "report", "-m"]
     coverage_file = project_root / ".coverage"
     coverage_file.unlink(missing_ok=True)
-    _unit_tests(session, PROJECT_ROOT)
-    _integration_tests(session, PROJECT_ROOT)
+    _unit_tests(session, Settings.root)
+    _integration_tests(session, Settings.root)
     session.run(*command)
 
 
 @nox.session(name="coverage", python=False)
 def coverage(session: Session) -> None:
-    _coverage(session, PROJECT_ROOT)
+    _coverage(session, Settings.root)
 
 
 # TODO: build docs [--check]
