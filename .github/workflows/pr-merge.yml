@@ -13,4 +13,4 @@ jobs:
 
   publish-docs:
     name: Publish Documentation
-    uses: nicoretti/python-toolbox/.github/workflows/docs.yml@main
+    uses: nicoretti/python-toolbox/.github/workflows/gh-pages.yml@main

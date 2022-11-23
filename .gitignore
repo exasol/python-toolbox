@@ -1,5 +1,7 @@
 odbcconfig/odbcinst.ini
 
+.html-documentation
+
 .coverage
 
 _build/

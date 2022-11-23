@@ -57,7 +57,7 @@ Exasol Python-Toolbox
 
 .. code-block:: shell
 
-    pip install exasol-python-toolbox
+    pip install exasol-toolbox
 
 📚 Documentation
 ----------------

@@ -1,5 +1,21 @@
 from __future__ import annotations
 
+__all__ = [
+    "find_session_runner",
+    "Mode",
+    "fix",
+    "check",
+    "lint",
+    "type_check",
+    "unit_tests",
+    "coverage",
+    "build_docs",
+    "open_docs",
+    "clean_docs",
+]
+
+import shutil
+import webbrowser
 from enum import (
     Enum,
     auto,
@@ -151,7 +167,42 @@ def coverage(session: Session) -> None:
     _coverage(session, Settings.root)
 
 
-# TODO: build docs [--check]
-# TODO: build multi version docs [--check]
-# TODO: open docs
-# TODO: deploy docs to doc(s) branch
+_DOCS_OUTPUT_DIR = ".html-documentation"
+
+
+def _build_docs(session: nox.Session):
+    session.run(
+        "poetry",
+        "run",
+        "sphinx-build",
+        "-b",
+        "html",
+        f"{Settings.doc}",
+        _DOCS_OUTPUT_DIR,
+    )
+
+
+def _build_docs_multi(session: nox.Session):
+    pass
+    # session.run("poetry", "run", "sphinx-build", "-b", "html", ".", ".html-documentation")
+
+
+@nox.session(name="build-docs", python=False)
+def build_docs(session: Session) -> None:
+    _build_docs(session)
+
+
+@nox.session(name="open-docs", python=False)
+def open_docs(session: Session) -> None:
+    docs_folder = Settings.root / _DOCS_OUTPUT_DIR
+    if not docs_folder.exists():
+        session.error(f"No documentation could be found. {docs_folder} is missing")
+    index = docs_folder / "index.html"
+    webbrowser.open_new_tab(index.as_uri())
+
+
+@nox.session(name="clean-docs", python=False)
+def clean_docs(_: Session) -> None:
+    docs_folder = Settings.root / _DOCS_OUTPUT_DIR
+    if docs_folder.exists():
+        shutil.rmtree(docs_folder)

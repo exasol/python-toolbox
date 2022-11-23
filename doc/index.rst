@@ -1,4 +1,10 @@
-TODO:
+.. include:: ../README.rst
 
-* Setup documentation
-* Document setup, pre-commit and co
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   user_guide/user_guide
+   api
+   developer_guide/developer_guide
+   changelog
