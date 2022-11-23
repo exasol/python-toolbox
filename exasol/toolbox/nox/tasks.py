@@ -170,7 +170,7 @@ def coverage(session: Session) -> None:
 _DOCS_OUTPUT_DIR = ".html-documentation"
 
 
-def _build_docs(session: nox.Session):
+def _build_docs(session: nox.Session) -> None:
     session.run(
         "poetry",
         "run",
@@ -180,11 +180,6 @@ def _build_docs(session: nox.Session):
         f"{Settings.doc}",
         _DOCS_OUTPUT_DIR,
     )
-
-
-def _build_docs_multi(session: nox.Session):
-    pass
-    # session.run("poetry", "run", "sphinx-build", "-b", "html", ".", ".html-documentation")
 
 
 @nox.session(name="build-docs", python=False)
