@@ -21,7 +21,7 @@ Exasol Python-Toolbox
     :target: https://github.com/PyCQA/pylint
     :alt: Pylint
 
-.. image:: https://img.shields.io/badge/pylint-7.6-green
+.. image:: https://img.shields.io/badge/pylint-7.8-green
     :target: https://github.com/PyCQA/pylint
     :alt: Pylint
 
