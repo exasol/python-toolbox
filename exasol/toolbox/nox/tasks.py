@@ -121,9 +121,9 @@ def _unit_tests(
     session.run(*command)
 
 
-def _pass(session: Session, config: Config, context: MutableMapping[str, Any]) -> None:
+def _pass(session: Session, config: Config, context: MutableMapping[str, Any]) -> bool:
     """No operation"""
-    print(f"pre and post context: {context}")
+    return True
 
 
 def _integration_tests(
@@ -132,10 +132,16 @@ def _integration_tests(
     _pre_integration_tests_hook = getattr(config, "pre_integration_tests_hook", _pass)
     _post_integration_tests_hook = getattr(config, "post_integration_tests_hook", _pass)
 
-    _pre_integration_tests_hook(session, config, context)
+    success = _pre_integration_tests_hook(session, config, context)
+    if not success:
+        session.error("Failure during pre_integration_test_hook")
+
     command = _test_command(config.root / "test" / "integration", config, context)
     session.run(*command)
-    _post_integration_tests_hook(session, config, context)
+
+    success = _post_integration_tests_hook(session, config, context)
+    if not success:
+        session.error("Failure during post_integration_test_hook")
 
 
 @nox.session(python=False)
@@ -188,8 +194,8 @@ def integration_tests(session: Session) -> None:
 
     If a project needs to execute code pre-/post the test execution,
     it should provide appropriate hooks on their config object.
-        * pre_integration_tests_hook(session: Session, config: Config, context: MutableMapping[str, Any]) -> None:
-        * post_integration_tests_hook(session: Session, config: Config, context: MutableMapping[str, Any]) -> None:
+        * pre_integration_tests_hook(session: Session, config: Config, context: MutableMapping[str, Any]) -> bool:
+        * post_integration_tests_hook(session: Session, config: Config, context: MutableMapping[str, Any]) -> bool:
     """
     context = _context(session, coverage=False)
     _integration_tests(session, PROJECT_CONFIG, context)
