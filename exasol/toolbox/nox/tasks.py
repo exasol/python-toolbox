@@ -14,6 +14,7 @@ __all__ = [
     "clean_docs",
 ]
 
+
 import argparse
 import shutil
 import webbrowser
@@ -38,10 +39,30 @@ from noxconfig import (
     Config,
 )
 
+_DOCS_OUTPUT_DIR = ".html-documentation"
+
 
 class Mode(Enum):
     Fix = auto()
     Check = auto()
+
+
+def _context(session: Session, **kwargs: Any) -> MutableMapping[str, Any]:
+    parser = _context_parser()
+    namespace, _ = parser.parse_known_args(session.posargs)
+    cli_context: MutableMapping[str, Any] = vars(namespace)
+    default_context = {"db_version": "7.1.9", "coverage": False}
+    # Note: ChainMap scans last to first
+    return ChainMap(kwargs, cli_context, default_context)
+
+
+def _context_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument("--db-version")
+    parser.add_argument("--coverage", action="store_true")
+    return parser
 
 
 def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
@@ -111,13 +132,6 @@ def _unit_tests(
     session.run(*command)
 
 
-def _pass(
-    _session: Session, _config: Config, _context: MutableMapping[str, Any]
-) -> bool:
-    """No operation"""
-    return True
-
-
 def _integration_tests(
     session: Session, config: Config, context: MutableMapping[str, Any]
 ) -> None:
@@ -134,6 +148,13 @@ def _integration_tests(
     success = _post_integration_tests_hook(session, config, context)
     if not success:
         session.error("Failure during post_integration_test_hook")
+
+
+def _pass(
+    _session: Session, _config: Config, _context: MutableMapping[str, Any]
+) -> bool:
+    """No operation"""
+    return True
 
 
 @nox.session(python=False)
@@ -193,6 +214,13 @@ def integration_tests(session: Session) -> None:
     _integration_tests(session, PROJECT_CONFIG, context)
 
 
+@nox.session(name="coverage", python=False)
+def coverage(session: Session) -> None:
+    """Runs all tests (unit + integration) and reports the code coverage"""
+    context = _context(session, coverage=True)
+    _coverage(session, PROJECT_CONFIG, context)
+
+
 def _coverage(
     session: Session, config: Config, context: MutableMapping[str, Any]
 ) -> None:
@@ -204,32 +232,10 @@ def _coverage(
     session.run(*command)
 
 
-def _context_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument("--db-version")
-    parser.add_argument("--coverage", action="store_true")
-    return parser
-
-
-def _context(session: Session, **kwargs: Any) -> MutableMapping[str, Any]:
-    parser = _context_parser()
-    namespace, _ = parser.parse_known_args(session.posargs)
-    cli_context: MutableMapping[str, Any] = vars(namespace)
-    default_context = {"db_version": "7.1.9", "coverage": False}
-    # Note: ChainMap scans last to first
-    return ChainMap(kwargs, cli_context, default_context)
-
-
-@nox.session(name="coverage", python=False)
-def coverage(session: Session) -> None:
-    """Runs all tests (unit + integration) and reports the code coverage"""
-    context = _context(session, coverage=True)
-    _coverage(session, PROJECT_CONFIG, context)
-
-
-_DOCS_OUTPUT_DIR = ".html-documentation"
+@nox.session(name="build-docs", python=False)
+def build_docs(session: Session) -> None:
+    """Builds the project documentation"""
+    _build_docs(session, PROJECT_CONFIG)
 
 
 def _build_docs(session: nox.Session, config: Config) -> None:
@@ -242,12 +248,6 @@ def _build_docs(session: nox.Session, config: Config) -> None:
         f"{config.doc}",
         _DOCS_OUTPUT_DIR,
     )
-
-
-@nox.session(name="build-docs", python=False)
-def build_docs(session: Session) -> None:
-    """Builds the project documentation"""
-    _build_docs(session, PROJECT_CONFIG)
 
 
 @nox.session(name="open-docs", python=False)
