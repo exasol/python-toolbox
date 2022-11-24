@@ -79,13 +79,14 @@ jobs:
         run: poetry run nox -s type-check
 
   tests-job:
-    name: Tests (Python-${{ matrix.python-version }})
+    name: Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
     needs: [build-documentation-job, lint-job, type-check-job]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
+        exasol-version: ["7.1.9"]
 
     steps:
       - name: SCM Checkout
@@ -97,4 +98,4 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run Tests
-        run: poetry run nox -s coverage
+        run: poetry run nox -s coverage -- --db-version ${{ matrix.exasol-version }}
