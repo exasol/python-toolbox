@@ -8,27 +8,37 @@ __all__ = [
     "lint",
     "type_check",
     "unit_tests",
+    "integration_tests",
     "coverage",
     "build_docs",
     "open_docs",
     "clean_docs",
 ]
 
+import argparse
 import shutil
 import webbrowser
+from collections import ChainMap
 from enum import (
     Enum,
     auto,
 )
 from pathlib import Path
-from typing import Iterable
+from typing import (
+    Any,
+    Iterable,
+    MutableMapping,
+)
 
 import nox
 from nox import Session
 from nox.sessions import SessionRunner
 
 from exasol.toolbox.project import python_files
-from noxconfig import Settings
+from noxconfig import (
+    PROJECT_CONFIG,
+    Config,
+)
 
 
 class Mode(Enum):
@@ -91,105 +101,161 @@ def _type_check(session: Session, files: Iterable[str]) -> None:
     )
 
 
-def _test_command(project_root: Path, path: Path) -> Iterable[str]:
-    return [
-        "poetry",
-        "run",
-        "coverage",
-        "run",
-        "-a",
-        f"--rcfile={Settings.root / 'pyproject.toml'}",
-        "-m",
-        "pytest",
-        "-v",
-        f"{path}",
-    ]
+def _test_command(
+    path: Path, config: Config, context: MutableMapping[str, Any]
+) -> Iterable[str]:
+    base_command = ["poetry", "run"]
+    coverage_command = (
+        ["coverage", "run", "-a", f"--rcfile={config.root / 'pyproject.toml'}", "-m"]
+        if context["coverage"]
+        else []
+    )
+    pytest_command = ["pytest", "-v", f"{path}"]
+    return base_command + coverage_command + pytest_command
 
 
-def _unit_tests(session: Session, project_root: Path) -> None:
-    command = _test_command(project_root, project_root / "test" / "unit")
+def _unit_tests(
+    session: Session, config: Config, context: MutableMapping[str, Any]
+) -> None:
+    command = _test_command(config.root / "test" / "unit", config, context)
     session.run(*command)
 
 
-def _integration_tests(session: Session, project_root: Path) -> None:
-    command = _test_command(project_root, project_root / "test" / "integration")
+def _pass(session: Session, config: Config, context: MutableMapping[str, Any]) -> None:
+    """No operation"""
+    print(f"pre and post context: {context}")
+
+
+def _integration_tests(
+    session: Session, config: Config, context: MutableMapping[str, Any]
+) -> None:
+    _pre_integration_tests_hook = getattr(config, "pre_integration_tests_hook", _pass)
+    _post_integration_tests_hook = getattr(config, "post_integration_tests_hook", _pass)
+
+    _pre_integration_tests_hook(session, config, context)
+    command = _test_command(config.root / "test" / "integration", config, context)
     session.run(*command)
+    _post_integration_tests_hook(session, config, context)
 
 
 @nox.session(python=False)
 def fix(session: Session) -> None:
     """Runs all automated fixes on the code base"""
-    py_files = [f"{file}" for file in python_files(Settings.root)]
-    _version(session, Mode.Fix, Settings.version_file)
+    py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
+    _version(session, Mode.Fix, PROJECT_CONFIG.version_file)
     _pyupgrade(session, py_files)
     _code_format(session, Mode.Fix, py_files)
 
 
 @nox.session(name="check", python=False)
 def check(session: Session) -> None:
-    py_files = [f"{file}" for file in python_files(Settings.root)]
-    _version(session, Mode.Check, Settings.version_file)
+    """Runs all available checks on the project"""
+    context = _context(session, coverage=True)
+    py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
+    _version(session, Mode.Check, PROJECT_CONFIG.version_file)
     _pyupgrade(session, py_files)
     _code_format(session, Mode.Check, py_files)
     _pylint(session, py_files)
     _type_check(session, py_files)
-    _coverage(session, Settings.root)
+    _coverage(session, PROJECT_CONFIG, context)
 
 
 @nox.session(python=False)
 def lint(session: Session) -> None:
-    py_files = [f"{file}" for file in python_files(Settings.root)]
+    """Runs the linter on the project"""
+    py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
     _pylint(session, py_files)
 
 
 @nox.session(name="type-check", python=False)
 def type_check(session: Session) -> None:
-    py_files = [f"{file}" for file in python_files(Settings.root)]
+    """Runs the type checker on the project"""
+    py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
     _type_check(session, py_files)
 
 
 @nox.session(name="unit-tests", python=False)
 def unit_tests(session: Session) -> None:
-    _unit_tests(session, Settings.root)
+    """Runs all unit tests"""
+    context = _context(session, coverage=False)
+    _unit_tests(session, PROJECT_CONFIG, context)
 
 
-def _coverage(session: Session, project_root: Path) -> None:
+@nox.session(name="integration-tests", python=False)
+def integration_tests(session: Session) -> None:
+    """
+    Runs the all integration tests
+
+    If a project needs to execute code pre-/post the test execution,
+    it should provide appropriate hooks on their config object.
+        * pre_integration_tests_hook(session: Session, config: Config, context: MutableMapping[str, Any]) -> None:
+        * post_integration_tests_hook(session: Session, config: Config, context: MutableMapping[str, Any]) -> None:
+    """
+    context = _context(session, coverage=False)
+    _integration_tests(session, PROJECT_CONFIG, context)
+
+
+def _coverage(
+    session: Session, config: Config, context: MutableMapping[str, Any]
+) -> None:
     command = ["poetry", "run", "coverage", "report", "-m"]
-    coverage_file = project_root / ".coverage"
+    coverage_file = config.root / ".coverage"
     coverage_file.unlink(missing_ok=True)
-    _unit_tests(session, Settings.root)
-    _integration_tests(session, Settings.root)
+    _unit_tests(session, config, context)
+    _integration_tests(session, config, context)
     session.run(*command)
+
+
+def _context_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument("--db-version")
+    parser.add_argument("--coverage", action="store_true")
+    return parser
+
+
+def _context(session: Session, **kwargs: Any) -> MutableMapping[str, Any]:
+    parser = _context_parser()
+    namespace, _ = parser.parse_known_args(session.posargs)
+    cli_context: MutableMapping[str, Any] = vars(namespace)
+    default_context = {"db_version": "7.1.9", "coverage": False}
+    # Note: ChainMap scans last to first
+    return ChainMap(kwargs, cli_context, default_context)
 
 
 @nox.session(name="coverage", python=False)
 def coverage(session: Session) -> None:
-    _coverage(session, Settings.root)
+    """Runs all tests (unit + integration) and reports the code coverage"""
+    context = _context(session, coverage=True)
+    _coverage(session, PROJECT_CONFIG, context)
 
 
 _DOCS_OUTPUT_DIR = ".html-documentation"
 
 
-def _build_docs(session: nox.Session) -> None:
+def _build_docs(session: nox.Session, config: Config) -> None:
     session.run(
         "poetry",
         "run",
         "sphinx-build",
         "-b",
         "html",
-        f"{Settings.doc}",
+        f"{config.doc}",
         _DOCS_OUTPUT_DIR,
     )
 
 
 @nox.session(name="build-docs", python=False)
 def build_docs(session: Session) -> None:
-    _build_docs(session)
+    """Builds the project documentation"""
+    _build_docs(session, PROJECT_CONFIG)
 
 
 @nox.session(name="open-docs", python=False)
 def open_docs(session: Session) -> None:
-    docs_folder = Settings.root / _DOCS_OUTPUT_DIR
+    """Opens the built project documentation"""
+    docs_folder = PROJECT_CONFIG.root / _DOCS_OUTPUT_DIR
     if not docs_folder.exists():
         session.error(f"No documentation could be found. {docs_folder} is missing")
     index = docs_folder / "index.html"
@@ -198,6 +264,7 @@ def open_docs(session: Session) -> None:
 
 @nox.session(name="clean-docs", python=False)
 def clean_docs(_: Session) -> None:
-    docs_folder = Settings.root / _DOCS_OUTPUT_DIR
+    """Removes the documentations build folder"""
+    docs_folder = PROJECT_CONFIG.root / _DOCS_OUTPUT_DIR
     if docs_folder.exists():
         shutil.rmtree(docs_folder)
