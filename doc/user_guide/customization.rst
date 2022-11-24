@@ -1,7 +1,8 @@
-📝 Changelog
-=============
+🔧 Customization
+================
 
-.. figure:: _static/nothing-to-see-here.png
+
+.. figure:: ../_static/nothing-to-see-here.png
     :alt: nothing to see here
     :target: https://imgflip.com/i/2a7gqa
 

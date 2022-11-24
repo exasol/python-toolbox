@@ -1,4 +1,4 @@
-Exasol Python-Toolbox
+Exasol Toolbox
 #####################
 
 .. image:: https://img.shields.io/pypi/v/exasol-python-toolbox
@@ -37,15 +37,23 @@ Exasol Python-Toolbox
 🚀 Features
 ------------
 
-* Common nox task(s) definitions & implementations
-* Multi version documentation generation
-* Exasol specific Pre-Commit hooks
-* Generators
-    * Project Config
-    * Issue Templates
-    * Pull Request Template
-    * Workflows
-* Helper Scripts
+* Centrally managed standard tasks
+    - code formatting & upgrading
+    - linting
+    - type-checking
+    - unit-tests
+    - integration-tests
+    - coverage
+    - documentation
+
+* Centrally manged core workflows
+    - workspace/project verification
+    - build and publish releases
+    - build and publish documentation
+
+* Configurable & Extensible
+    - Project configuration
+    - Event hooks
 
 🔌️ Prerequisites
 -----------------

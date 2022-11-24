@@ -37,7 +37,7 @@ build-backend = "poetry.core.masonry.api"
 "sphinx-multiversion" = "exasol.toolbox.sphinx.multiversion.main:main"
 "version-check" = "exasol.toolbox.pre_commit_hooks.package_version:main"
 
-
+# Tooling
 [tool.coverage.run]
 source = [
     "exasol",

@@ -1,90 +1,94 @@
-Getting Started
-===============
+🚦 Getting Started
+==================
 
-How to use the python toolbox
-------------------------------
-
-#. Add the toolbox as dependency
-
-    .. code-block:: shell
-
-        poetry add --dev exasol-toolbox
-
-#. Add a noxconfig.py file containing a settings object which provides the following attributes
-
-    .. literalinclude:: ../../noxconfig.py
-       :language: python3
-
-
-#. Make sure you configured the required tool(s)
-
-    * coverage (files custom)
-    * pylint (files custom)
-    * black (provided)
-    * isort (provided)
-    * mypy (files & suppression custom)
-
-
-
-    Example configuration
-
-    .. code-block:: toml
-
-        [tool.coverage.run]
-        source = [
-            "exasol",
-        ]
-
-        [tool.coverage.report]
-        fail_under = 20
-
-
-        [tool.black]
-        line-length = 88
-        verbose = false
-        include = "\\.pyi?$"
-
-
-        [tool.isort]
-        profile = "black"
-        force_grid_wrap = 2
-
-
-        [tool.pylint.master]
-        fail-under = 7.4
-
-        [tool.pylint.format]
-        max-line-length = 88
-        max-module-lines = 800
-
-
-        [[tool.mypy.overrides]]
-        module = [
-            "exasol.toolbox.sphinx.multiversion.*",
-            "test.unit.*",
-            "test.integration.*",
-        ]
-        ignore_errors = true
-
-
-#. Import the toolbox tasks in your noxfile
-
-    .. literalinclude:: ../../noxfile.py
-       :language: python3
-
-
-Run/Use Tasks locally
+Preparing the Project
 ---------------------
 
+1. Add the toolbox as dependency
+++++++++++++++++++++++++++++++++
 
-Generate CI & CI/CD workflows
------------------------------
+.. code-block:: shell
 
-* ci.yml
-* ci-cd.yml (Github secret for pypi required!)
-* pr-merge.yml
+    poetry add --group dev exasol-toolbox
+
+2. Fine tune the .gitignore file
++++++++++++++++++++++++++++++++++
+Add the standard documentation output folder (*.html-documentation*) to the *.gitignore*.
+
+.. code-block:: shell
+
+    echo ".html-documentation" >> .gitignore && git add .gitignore && git commit -m "Add documentation build folder to .gitignore"
+
+3. Provide a project configuration
+++++++++++++++++++++++++++++++++++
+Make sure you provide the required configuration. Configuration for the exasol-toolbox gets provided by creating
+a *noxconfig.py* file in the workspace root. This file should contain at least
+a single module constant with the name **PROJECT_CONFIG** pointing to an object,
+which is required to to provide the following attributes:
+
+* .. py:attribute:: root
+    :type: Path
+
+* .. py:attribute:: doc
+    :type: Path
+
+* .. py:attribute:: version_file
+    :type: Path
+
+Alternatively you can use the *noxconfig.py* file bellow and adjust the value of the attributes if needed:
+
+.. literalinclude:: ../../noxconfig.py
+   :language: python3
+
+4. Configure the tooling
+++++++++++++++++++++++++
+In order to make all standard task work properly you need add the configuration settings bellow to your *pyproject.toml*,
+and adjust the following settings to your project needs:
+
+* coverage
+    - source
+    - fail_under
+* pylint
+    - fail-under
+* mypy (overrides)
+    - module
+
+.. literalinclude:: ../../pyproject.toml
+    :language: toml
+    :start-after: # Tooling
+
+5. Make the toolbox task available
+++++++++++++++++++++++++++++++++++
+In order to use the standard toolbox task via nox, just import them in your *noxfile.py*.
+If you only need the standard tasks provided by the toolbox your *noxfile.py* is straight
+forward and you just can use the example *noxfile.py* bellow.
+
+.. literalinclude:: ../../noxfile.py
+   :language: python3
 
 
+6. Go 🥜
++++++++++++++
+You are ready to use the toolbox. With *nox -l* you can list all available tasks.
+
+.. code-block:: console
+
+    $ nox -l
+    Sessions defined in <PATH_TO_YOUR_PROJECT>/noxfile.py:
+
+    * fix -> Runs all automated fixes on the code base
+    - check -> Runs all available checks on the project
+    - lint -> Runs the linter on the project
+    - type-check -> Runs the type checker on the project
+    - unit-tests -> Runs all unit tests
+    - integration-tests -> Runs the all integration tests
+    - coverage -> Runs all tests (unit + integration) and reports the code coverage
+    - build-docs -> Builds the project documentation
+    - open-docs -> Opens the built project documentation
+    - clean-docs -> Removes the documentations build folder
+
+    sessions marked with * are selected, sessions marked with - are skipped.
 
 
-* add .html-documenation to .gitignore
+Enjoy!
+

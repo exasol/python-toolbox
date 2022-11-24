@@ -1,15 +1,12 @@
-Todo's
--------
+📋 Todo's
+---------
 .. todolist::
 
-- Add common nox tasks
-    - Document Tasks
-    - Document Customization
-    - Document workflow(s)
-
+- Add commit hooks (version check etc.) for the toolbox itself
 - Doc(s) tasks
-    - build singleversion + multiversion
-    - Cleanup Multiversion Documentation
+    - Add documentation on how to setup the development environment
+    - Add/Finish multiversion  documentation support
+    - Cleanup multiversion documentation
 
 - Add pre commit hook config
     - document how to install commit hooks
@@ -26,4 +23,6 @@ Todo's
     - Add changelog.d template generator
 
 - Toolbox helper
-    - update generated config, workflows etc
+    - update and/or generated config, workflows, etc.
+
+- Convert Todo's list into issue(s)
