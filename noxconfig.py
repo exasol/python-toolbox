@@ -14,7 +14,6 @@ from nox import Session
 class Config:
     root: Path = Path(__file__).parent
     doc: Path = Path(__file__).parent / "doc"
-    build: Path = Path(__file__).parent / "build"
     version_file: Path = Path(__file__).parent / "exasol" / "toolbox" / "version.py"
 
     @staticmethod
