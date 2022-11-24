@@ -123,7 +123,6 @@ def _unit_tests(
 
 def _pass(session: Session, config: Config, context: MutableMapping[str, Any]) -> None:
     """No operation"""
-    print(f"pre and post context: {context}")
 
 
 def _integration_tests(
