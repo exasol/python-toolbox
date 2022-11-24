@@ -243,6 +243,7 @@ def _build_docs(session: nox.Session, config: Config) -> None:
         "poetry",
         "run",
         "sphinx-build",
+        "-W",
         "-b",
         "html",
         f"{config.doc}",
