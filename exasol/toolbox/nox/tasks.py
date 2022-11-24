@@ -261,7 +261,7 @@ def open_docs(session: Session) -> None:
 
 
 @nox.session(name="clean-docs", python=False)
-def clean_docs(_: Session) -> None:
+def clean_docs(_session: Session) -> None:
     """Removes the documentations build folder"""
     docs_folder = PROJECT_CONFIG.root / _DOCS_OUTPUT_DIR
     if docs_folder.exists():
