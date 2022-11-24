@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 __all__ = [
-    "find_session_runner",
     "Mode",
     "fix",
     "check",
@@ -32,7 +31,6 @@ from typing import (
 
 import nox
 from nox import Session
-from nox.sessions import SessionRunner
 
 from exasol.toolbox.project import python_files
 from noxconfig import (
@@ -44,14 +42,6 @@ from noxconfig import (
 class Mode(Enum):
     Fix = auto()
     Check = auto()
-
-
-def find_session_runner(session: Session, name: str) -> SessionRunner:
-    """Helper function to find parameterized action by name"""
-    for s, _ in session._runner.manifest.list_all_sessions():
-        if name in s.signatures:
-            return s
-    session.error(f"Could not find a nox session by the name {name!r}")
 
 
 def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
