@@ -121,7 +121,9 @@ def _unit_tests(
     session.run(*command)
 
 
-def _pass(session: Session, config: Config, context: MutableMapping[str, Any]) -> bool:
+def _pass(
+    _session: Session, _config: Config, _context: MutableMapping[str, Any]
+) -> bool:
     """No operation"""
     return True
 

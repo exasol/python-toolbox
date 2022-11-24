@@ -18,14 +18,14 @@ class Config:
 
     @staticmethod
     def pre_integration_tests_hook(
-        session: Session, config: Config, context: MutableMapping[str, Any]
+        _session: Session, _config: Config, _context: MutableMapping[str, Any]
     ) -> bool:
         """Implement if project specific behaviour is required"""
         return True
 
     @staticmethod
     def post_integration_tests_hook(
-        session: Session, config: Config, context: MutableMapping[str, Any]
+        _session: Session, _config: Config, _context: MutableMapping[str, Any]
     ) -> bool:
         """Implement if project specific behaviour is required"""
         return True
