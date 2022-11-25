@@ -51,6 +51,9 @@ It should be available to the repository either as Organization-, Repository- or
 CI Workflow
 ___________
 
+.. figure:: ../_static/ci-workflow.png
+    :alt: ci-workflow
+
 To enable this workflow, add a file with the name *ci.yml* in your *.github/workflows* folder
 and add the following content:
 
@@ -63,6 +66,9 @@ ______________
 .. attention::
 
     Requires PYPI token to be available
+
+.. figure:: ../_static/ci-cd-workflow.png
+    :alt: ci-cd-workflow
 
 To enable this workflow, add a file with the name *ci-cd.yml* in your *.github/workflows* folder
 and add the following content:
