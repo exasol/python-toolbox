@@ -146,7 +146,7 @@ Detailed Design
 
 Tasks
 ~~~~~
-**TBD:** Add diagram configuration and tasks (noxfile.py + noxconfig.py + exasol.toolbox)
+.. todo:: Add diagram configuration and tasks (noxfile.py + noxconfig.py + exasol.toolbox)
 
 .. list-table::
     :header-rows: 1
@@ -177,7 +177,7 @@ Tasks
 
 Workflows
 ~~~~~~~~~
-**TBD:** Add diagram of github workflows and interaction
+.. todo:: Add diagram of github workflows and interaction
 
 
 Available Workflows
