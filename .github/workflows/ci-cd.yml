@@ -20,3 +20,6 @@ jobs:
     name: Continues Delivery
     needs: [ ci-job ]
     uses: nicoretti/python-toolbox/.github/workflows/build-and-publish.yml@main
+    secrets:
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+

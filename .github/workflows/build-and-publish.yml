@@ -1,6 +1,10 @@
 name: Build & Publish
 
-on: workflow_call
+on:
+  workflow_call:
+    secrets:
+      PYPI_TOKEN:
+          required: true
 
 jobs:
 

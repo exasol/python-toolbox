@@ -1,12 +1,12 @@
 Exasol Toolbox
 #####################
 
-.. image:: https://img.shields.io/pypi/v/exasol-python-toolbox
-     :target: https://pypi.org/project/exasol-python-toolbox/
+.. image:: https://img.shields.io/pypi/v/exasol-toolbox
+     :target: https://pypi.org/project/exasol-toolbox/
      :alt: PyPI Version
 
-.. image:: https://img.shields.io/pypi/pyversions/exasol-python-toolbox
-    :target: https://pypi.org/project/exasol-python-toolbox
+.. image:: https://img.shields.io/pypi/pyversions/exasol-toolbox
+    :target: https://pypi.org/project/exasol-toolbox
     :alt: PyPI - Python Version
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
@@ -29,8 +29,8 @@ Exasol Toolbox
      :target: https://opensource.org/licenses/MIT
      :alt: License
 
-.. image:: https://img.shields.io/github/last-commit/exasol/bucketfs-python
-     :target: https://pypi.org/project/exasol-bucketfs/
+.. image:: https://img.shields.io/github/last-commit/nicoretti/python-toolbox
+     :target: https://pypi.org/project/exasol-toolbox/
      :alt: Last Commit
 
 
@@ -70,4 +70,4 @@ Exasol Toolbox
 📚 Documentation
 ----------------
 
-The latest documentation can be found `here <TBD>`_.
+The latest documentation can be found `here <https://nicoretti.github.io/python-toolbox/index.html>`_.
