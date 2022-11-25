@@ -1,3 +1,0 @@
-this should help us in the near future next couple of month to get rid of at least
-2 of your other repositories + it will simplify and harmonize our github workflows
-and tooling maintainance in our projects.
