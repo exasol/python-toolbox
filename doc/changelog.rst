@@ -1,8 +1,12 @@
 📝 Changelog
-=============
++++++++++++++
 
-.. figure:: _static/nothing-to-see-here.png
-    :alt: nothing to see here
-    :target: https://imgflip.com/i/2a7gqa
+..
+    scriv-insert-here
 
-    source: `imgflip.com <https://imgflip.com/>`_
+.. _changelog-0.1.0:
+
+0.1.0 — 2022-11-25
+==================
+
+✨ Initial release
