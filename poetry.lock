@@ -596,7 +596,7 @@ jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 
 [[package]]
 name = "scriv"
-version = "0.17.0"
+version = "1.0.0"
 description = "Scriv changelog management tool"
 category = "main"
 optional = false
@@ -611,6 +611,7 @@ requests = "*"
 
 [package.extras]
 toml = ["tomli"]
+yaml = ["pyyaml"]
 
 [[package]]
 name = "setuptools"
@@ -866,7 +867,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "a4ddb701d9a517444c2152cc9f095fbaeb485e5bc4170b3b5e7d48a506d0b33d"
+content-hash = "c49e4bf5d7c19d849ebbeb0c07bfd663add01af83b1ca0657c9181048938f526"
 
 [metadata.files]
 alabaster = [
@@ -1251,8 +1252,8 @@ rich = [
     {file = "rich-12.6.0.tar.gz", hash = "sha256:ba3a3775974105c221d31141f2c116f4fd65c5ceb0698657a11e9f295ec93fd0"},
 ]
 scriv = [
-    {file = "scriv-0.17.0-py2.py3-none-any.whl", hash = "sha256:97fdaf0e987d9e3dcc4466e9999d51e414ddec44b6bd04d6241a09fb1c7968f3"},
-    {file = "scriv-0.17.0.tar.gz", hash = "sha256:8f23883ef83dfc50f09f76aef08ff3073f2752c7255db15d24cd8bfecc32379c"},
+    {file = "scriv-1.0.0-py2.py3-none-any.whl", hash = "sha256:a7b8769cf99fce19263445fa48caba30f2ade0f059decc7a8e94462620550f9c"},
+    {file = "scriv-1.0.0.tar.gz", hash = "sha256:ddbe78e7903b80d6fbc8080b2c916aca7f1fd077be124972374d0e2e2045f921"},
 ]
 setuptools = [
     {file = "setuptools-65.6.0-py3-none-any.whl", hash = "sha256:6211d2f5eddad8757bd0484923ca7c0a6302ebc4ab32ea5e94357176e0ca0840"},
