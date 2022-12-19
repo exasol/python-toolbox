@@ -24,7 +24,7 @@ pyupgrade = ">=2.38.2,<4.0.0"
 black = "^22.8.0"
 isort = "^5.10.1"
 pre-commit = "^2.20.0"
-coverage = "^6.4.4"
+coverage = ">=6.4.4,<8.0.0"
 pylint = "^2.15.4"
 
 
