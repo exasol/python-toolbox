@@ -6,6 +6,7 @@ repos:
       - id: code-format
         name: code-format
         types: [ python ]
+        files: "pyproject.toml"
         pass_filenames: false
         language: system
         entry: poetry run nox -s fix
