@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches-ignore:
+      - "github-pages/*"
+      - "gh-pages/*"
+      - "main"
+      - "master"
+  pull_request:
+    types: [opened, reopened]
+  schedule:
+    # “At 00:00 on every 7th day-of-month from 1 through 31.” (https://crontab.guru)
+    - cron: "0 0 1/7 * *"
+
+jobs:
+
+  ci-job:
+    name: Checks
+    uses: exasol/python-toolbox/.github/workflows/checks.yml@main

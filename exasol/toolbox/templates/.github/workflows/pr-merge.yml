@@ -1,0 +1,17 @@
+name: PR-Merge
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'master'
+
+jobs:
+
+  ci-job:
+    name: Checks
+    uses: exasol/python-toolbox/.github/workflows/checks.yml@main
+
+  publish-docs:
+    name: Publish Documentation
+    uses: exasol/python-toolbox/.github/workflows/gh-pages.yml@main

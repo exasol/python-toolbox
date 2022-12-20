@@ -1,0 +1,24 @@
+name: CI/CD
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+
+  check-tag-version-job:
+    name: Check Release Tag
+    uses: exasol/python-toolbox/.github/workflows/check-release-tag.yml@main
+
+  ci-job:
+    name: Checks
+    needs: [ check-tag-version-job ]
+    uses: exasol/python-toolbox/.github/workflows/checks.yml@main
+
+  cd-job:
+    name: Continues Delivery
+    needs: [ ci-job ]
+    uses: exasol/python-toolbox/.github/workflows/build-and-publish.yml@main
+    secrets:
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}

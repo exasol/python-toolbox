@@ -1,0 +1,101 @@
+name: Checks
+
+on: workflow_call
+
+jobs:
+
+  version-check-job:
+    name: Version Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@main
+
+      - name: Check Version(s)
+        run: poetry run version-check exasol/toolbox/version.py
+
+  build-documentation-job:
+    name: Build Documentation
+    needs: [version-check-job]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: SCM Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Python & Poetry Environment
+      uses: exasol/python-toolbox/.github/actions/python-environment@main
+
+    - name: Build Documentation
+      run: |
+        poetry run python -m nox -s build-docs
+
+  lint-job:
+    name: Linting (Python-${{ matrix.python-version }})
+    needs: [version-check-job]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@main
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run Tests
+        run: poetry run nox -s lint
+
+  type-check-job:
+    name: Type Checking (Python-${{ matrix.python-version }})
+    needs: [version-check-job]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@main
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run Tests
+        run: poetry run nox -s type-check
+
+  tests-job:
+    name: Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
+    needs: [build-documentation-job, lint-job, type-check-job]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        exasol-version: ["7.1.9"]
+
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@main
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run Tests
+        run: poetry run nox -s coverage -- -- --db-version ${{ matrix.exasol-version }}
