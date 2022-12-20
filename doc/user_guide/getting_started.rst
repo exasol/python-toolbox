@@ -66,8 +66,21 @@ forward and you just can use the example *noxfile.py* bellow.
 .. literalinclude:: ../../noxfile.py
    :language: python3
 
+6. Setup the pre-commit hooks
++++++++++++++++++++++++++++++
 
-6. Go 🥜
+#. Add the following .pre-commit-config.yaml to your project root
+
+    .. literalinclude:: ../../.pre-commit-config.yaml
+       :language: yaml
+
+#. Enable pre commit hooks for your workspace
+
+    .. code-block:: shell
+
+        poetry run pre-commit install
+
+7. Go 🥜
 +++++++++++++
 You are ready to use the toolbox. With *nox -l* you can list all available tasks.
 
@@ -91,4 +104,3 @@ You are ready to use the toolbox. With *nox -l* you can list all available tasks
 
 
 Enjoy!
-
