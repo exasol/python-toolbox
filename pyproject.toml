@@ -8,7 +8,29 @@ description = ""
 authors = [
     "Nicola Coretti <nicola.coretti@exasol.com>"
 ]
+license = "MIT"
 readme = "README.rst"
+include = [
+    "README.rst",
+    "doc/changelog.rst",
+    "LICENSE",
+]
+
+keywords = [
+    "nox",
+    "tooling",
+    "ci",
+    "cd",
+    "exasol",
+    "infrastructure",
+]
+
+[tool.poetry.urls]
+"Homepage" = "https://www.exasol.com/"
+"Documentation" = "https://exasol.github.io/python-toolbox/"
+"Source" = "https://github.com/exasol/python-toolbox"
+"Issues" = "https://github.com/exasol/python-toolbox/issues"
+"Changelog" = "https://exasol.github.io/python-toolbox/changelog.html"
 
 [tool.poetry.dependencies]
 python = "^3.8"
