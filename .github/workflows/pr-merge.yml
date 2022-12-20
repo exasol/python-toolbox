@@ -10,8 +10,8 @@ jobs:
 
   ci-job:
     name: Checks
-    uses: nicoretti/python-toolbox/.github/workflows/checks.yml@main
+    uses: exasol/python-toolbox/.github/workflows/checks.yml@main
 
   publish-docs:
     name: Publish Documentation
-    uses: nicoretti/python-toolbox/.github/workflows/gh-pages.yml@main
+    uses: exasol/python-toolbox/.github/workflows/gh-pages.yml@main
