@@ -70,4 +70,4 @@ Exasol Toolbox
 📚 Documentation
 ----------------
 
-The latest documentation can be found `here <https://nicoretti.github.io/python-toolbox/index.html>`_.
+The latest documentation can be found `here <https://exasol.github.io/python-toolbox/>`_
