@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import (
     Any,
+    Iterable,
     MutableMapping,
 )
 
@@ -15,6 +16,7 @@ class Config:
     root: Path = Path(__file__).parent
     doc: Path = Path(__file__).parent / "doc"
     version_file: Path = Path(__file__).parent / "exasol" / "toolbox" / "version.py"
+    path_filters: Iterable[str] = ("dist", ".eggs", "venv")
 
     @staticmethod
     def pre_integration_tests_hook(

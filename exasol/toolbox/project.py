@@ -3,7 +3,7 @@ from typing import Iterable
 
 
 def python_files(
-    project_root: Path, path_filters: Iterable[str] = ["dist", ".eggs", "venv"]
+    project_root: Path, path_filters: Iterable[str] = ("dist", ".eggs", "venv")
 ) -> Iterable[Path]:
     """Returns all relevant"""
     return _deny_filter(project_root.glob("**/*.py"), deny_list=path_filters)

@@ -23,6 +23,7 @@ from enum import (
     Enum,
     auto,
 )
+from functools import partial
 from pathlib import Path
 from typing import (
     Any,
@@ -33,13 +34,16 @@ from typing import (
 import nox
 from nox import Session
 
-from exasol.toolbox.project import python_files
+from exasol.toolbox.project import python_files as _python_files
 from noxconfig import (
     PROJECT_CONFIG,
     Config,
 )
 
 _DOCS_OUTPUT_DIR = ".html-documentation"
+_PATH_FILTER = tuple(["dist", ".eggs", "venv"] + list(Config.path_filters))
+
+python_files = partial(_python_files, path_filters=_PATH_FILTER)
 
 
 class Mode(Enum):
