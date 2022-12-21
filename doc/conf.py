@@ -35,12 +35,14 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosummary",
+    "sphinx.ext.autosectionlabel",
     "sphinx_copybutton",
 ]
 
 intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 
 # Make sure the target is unique
+autosectionlabel_maxdepth = 1
 autosectionlabel_prefix_document = True
 source_suffix = {
     ".rst": "restructuredtext",
