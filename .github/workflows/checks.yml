@@ -18,7 +18,7 @@ jobs:
         uses: exasol/python-toolbox/.github/actions/python-environment@main
 
       - name: Check Version(s)
-        run: poetry run version-check exasol/toolbox/version.py
+        run: poetry run version-check `python -c "from noxconfig import PROJECT_CONFIG; print(PROJECT_CONFIG.version_file)"`
 
   build-documentation-job:
     name: Build Documentation
