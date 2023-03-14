@@ -19,6 +19,10 @@ Unreleased
 
 * Added support for custom path filters to config object
 
+🔧 Changed
+----------
+* Updated dependencies
+
 .. _changelog-0.2.0:
 
 0.2.0 — 2022-12-20
