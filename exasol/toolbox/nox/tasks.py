@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Any
 
 __all__ = [
     "Mode",
@@ -14,8 +15,8 @@ __all__ = [
     "clean_docs",
 ]
 
-
 import argparse
+import json
 import shutil
 import webbrowser
 from collections import ChainMap
@@ -271,3 +272,94 @@ def clean_docs(_session: Session) -> None:
     docs_folder = PROJECT_CONFIG.root / _DOCS_OUTPUT_DIR
     if docs_folder.exists():
         shutil.rmtree(docs_folder)
+
+
+@nox.session(name="report", python=False)
+def report(session: Session) -> None:
+    coverage_file = Path(".coverage")
+    lint_file = Path(".lint.txt")
+    required_files = {coverage_file, lint_file}
+    missing_files = {f"{f}" for f in required_files if not f.exists()}
+    if missing_files:
+        session.error(
+            f"The following files are missing: {', '.join(missing_files)}, "
+            "make sure you run the lint and coverage target first"
+        )
+    cov = _extract_coverage(coverage_file)
+    static = _extract_static_analysis_score(lint_file)
+
+    report = {
+        "coverage": cov,
+        "static_code_analysis": static,
+        "maintainability": "n/a",
+        "reliability": "n/a",
+        "security": "n/a",
+        "technical_debt": "n/a",
+    }
+    print(json.dumps(report))
+
+    # CLI, Markdown, Json output (create cli and invoke here with input files)
+
+
+def _extract_coverage(file: Path) -> Any:
+    import json
+    from subprocess import run
+    from tempfile import TemporaryDirectory
+
+    with TemporaryDirectory() as dir:
+        tmp_dir = Path(dir)
+        report = tmp_dir / "coverage.json"
+        run(
+            ["coverage", "json", f"--data-file={file}", "-o", f"{report}"],
+            capture_output=True,
+        )
+        with open(report, 'r') as r:
+            coverage = json.load(r)
+            return coverage["totals"]["percent_covered"]
+
+
+class Interval:
+    def __init__(self, start: Any, end: Any):
+        self.start = start
+        self.end = end
+
+    def __contains__(self, item: Any) -> Any:
+        return self.start <= item < self.end
+
+
+def _score_to_rating(score: Any) -> Any:
+    mapping = {
+        Interval(8, 11): "A",
+        Interval(6, 8): "B",
+        Interval(4, 6): "C",
+        Interval(3, 4): "D",
+        Interval(1, 3): "E",
+        Interval(0, 1): "F",
+    }
+    for interval, rating in mapping.items():
+        if score in interval:
+            return rating
+
+    raise Exception("Uncategorized score")
+
+
+def _extract_static_analysis_score(file: Path) -> Any:
+    import re
+
+    expr = re.compile(r"^Your code has been rated at (\d+.\d+)/.*", re.MULTILINE)
+    with open(file) as results:
+        data = results.read()
+
+    matches = expr.search(data)
+    if matches:
+        groups = matches.groups()
+    score: Any = None
+    try:
+        group = groups[0]
+        score = float(group)
+        score = f'{_score_to_rating(score)}'
+    except Exception as ex:
+        # log error reason
+        score = "n/a"
+
+    return score
