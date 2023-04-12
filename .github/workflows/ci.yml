@@ -14,7 +14,5 @@ on:
     - cron: "0 0 1/7 * *"
 
 jobs:
-
   ci-job:
-    name: Checks
     uses: ./.github/workflows/checks.yml
