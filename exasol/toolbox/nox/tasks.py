@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any
+from typing import Any, Callable, Dict
 
 __all__ = [
     "Mode",
@@ -118,7 +118,7 @@ def _type_check(session: Session, files: Iterable[str]) -> None:
 
 
 def _test_command(
-    path: Path, config: Config, context: MutableMapping[str, Any]
+        path: Path, config: Config, context: MutableMapping[str, Any]
 ) -> Iterable[str]:
     base_command = ["poetry", "run"]
     coverage_command = (
@@ -131,14 +131,14 @@ def _test_command(
 
 
 def _unit_tests(
-    session: Session, config: Config, context: MutableMapping[str, Any]
+        session: Session, config: Config, context: MutableMapping[str, Any]
 ) -> None:
     command = _test_command(config.root / "test" / "unit", config, context)
     session.run(*command)
 
 
 def _integration_tests(
-    session: Session, config: Config, context: MutableMapping[str, Any]
+        session: Session, config: Config, context: MutableMapping[str, Any]
 ) -> None:
     _pre_integration_tests_hook = getattr(config, "pre_integration_tests_hook", _pass)
     _post_integration_tests_hook = getattr(config, "post_integration_tests_hook", _pass)
@@ -156,7 +156,7 @@ def _integration_tests(
 
 
 def _pass(
-    _session: Session, _config: Config, _context: MutableMapping[str, Any]
+        _session: Session, _config: Config, _context: MutableMapping[str, Any]
 ) -> bool:
     """No operation"""
     return True
@@ -227,7 +227,7 @@ def coverage(session: Session) -> None:
 
 
 def _coverage(
-    session: Session, config: Config, context: MutableMapping[str, Any]
+        session: Session, config: Config, context: MutableMapping[str, Any]
 ) -> None:
     command = ["poetry", "run", "coverage", "report", "-m"]
     coverage_file = config.root / ".coverage"
@@ -276,19 +276,54 @@ def clean_docs(_session: Session) -> None:
 
 @nox.session(name="report", python=False)
 def report(session: Session) -> None:
+    formats = ('text', 'json', 'markdown')
+    usage = "nox -s report -- [options]"
+    parser = argparse.ArgumentParser(description="Generates status report for the project", usage=usage)
+    parser.add_argument(
+        "-f", "--format",
+        type=str,
+        default=formats[0],
+        help="Output format to produce.",
+        choices=formats,
+    )
+
+    def _markdown(data: Any) -> str:
+        from inspect import cleandoc
+        return cleandoc("""
+        # Status Report
+
+        | Category | Status                                                          |
+        | --- |-----------------------------------------------------------------|
+        | Coverage | ![Coverage](https://img.shields.io/badge/-{coverage:.2f}%25-orange)         |
+        | Static Code Analysis | ![Static Code Analysis](https://img.shields.io/badge/-{static_code_analysis}-green) |
+        | Maintainability | ![Maintainability](https://img.shields.io/badge/-{maintainability}-black)      |
+        | Reliability | ![Reliability](https://img.shields.io/badge/-{reliability}-black)          |
+        | Security | ![Security](https://img.shields.io/badge/-{security}-black)             |
+        | Technical Debt | ![Technical Debt](https://img.shields.io/badge/-{technical_debt}-black)       |
+        """).format(**data)
+
+    args: argparse.Namespace = parser.parse_args(args=session.posargs)
+    formatter: Dict[str, Callable[..., Any]] = {'text': lambda data: data, 'json': lambda data: json.dumps(data),
+                                                'markdown': _markdown}
+    data = _report()
+    print(formatter[args.format](data))
+
+
+def _report() -> Any:
     coverage_file = Path(".coverage")
     lint_file = Path(".lint.txt")
     required_files = {coverage_file, lint_file}
     missing_files = {f"{f}" for f in required_files if not f.exists()}
     if missing_files:
-        session.error(
+        raise Exception(
             f"The following files are missing: {', '.join(missing_files)}, "
             "make sure you run the lint and coverage target first"
         )
     cov = _extract_coverage(coverage_file)
     static = _extract_static_analysis_score(lint_file)
 
-    report = {
+    # TODO: Add sha1 and branch to report, maybe date
+    return {
         "coverage": cov,
         "static_code_analysis": static,
         "maintainability": "n/a",
@@ -296,9 +331,6 @@ def report(session: Session) -> None:
         "security": "n/a",
         "technical_debt": "n/a",
     }
-    print(json.dumps(report))
-
-    # CLI, Markdown, Json output (create cli and invoke here with input files)
 
 
 def _extract_coverage(file: Path) -> Any:
@@ -309,9 +341,9 @@ def _extract_coverage(file: Path) -> Any:
     with TemporaryDirectory() as dir:
         tmp_dir = Path(dir)
         report = tmp_dir / "coverage.json"
-        run(
+        d = run(
             ["coverage", "json", f"--data-file={file}", "-o", f"{report}"],
-            capture_output=True,
+            capture_output=True, check=True
         )
         with open(report, 'r') as r:
             coverage = json.load(r)

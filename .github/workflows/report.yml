@@ -1,0 +1,53 @@
+name: Report
+
+on:
+  workflow_call:
+    secrets:
+      ALTERNATIVE_GITHUB_TOKEN:
+        required: false
+
+jobs:
+
+  report:
+    name: Generate Project Report
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.ALTERNATIVE_GITHUB_TOKEN ||  secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@main
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: ./artifacts
+
+      - name: Display structure of downloaded files1
+        run: ls -Rhal
+
+      - name: Copy Artifacts into Root Folder
+        working-directory: ./artifacts
+        run: |
+          cp .coverage/.coverage ../
+          cp .lint.txt/.lint.txt ../
+
+      - name: Display structure of downloaded files2
+        run: ls -Rhal
+
+      - name: Generate Report
+        run: poetry run nox -s report -- -- --format json | tee kpis.json
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: kpis.json
+          path: kpis.json
+
+      - name: Generate GitHub Summary
+        run: poetry run nox -s report -- -- --format markdown >> $GITHUB_STEP_SUMMARY
