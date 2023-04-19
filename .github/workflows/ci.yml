@@ -17,6 +17,6 @@ jobs:
   ci-job:
     uses: ./.github/workflows/checks.yml
 
-  report-kpis:
+  metrics:
     needs: [ ci-job ]
     uses: ./.github/workflows/report.yml

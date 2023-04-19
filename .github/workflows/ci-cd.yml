@@ -9,17 +9,20 @@ jobs:
 
   check-tag-version-job:
     name: Check Release Tag
-    uses: exasol/python-toolbox/.github/workflows/check-release-tag.yml@main
+    uses: ./.github/workflows/check-release-tag.yml
 
   ci-job:
     name: Checks
     needs: [ check-tag-version-job ]
-    uses: exasol/python-toolbox/.github/workflows/checks.yml@main
+    uses: ./.github/workflows/checks.yml
 
   cd-job:
     name: Continues Delivery
     needs: [ ci-job ]
-    uses: exasol/python-toolbox/.github/workflows/build-and-publish.yml@main
+    uses: ./.github/workflows/build-and-publish.yml
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
 
+  metrics:
+    needs: [ ci-job ]
+    uses: ./.github/workflows/report.yml
