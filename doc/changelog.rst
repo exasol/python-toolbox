@@ -6,6 +6,11 @@
 Unreleased
 ==========
 
+.. _changelog-0.4.0:
+
+0.3.0 - 2023-04-19
+==================
+
 ✨ Added
 --------
 * Added support for metrics
