@@ -280,7 +280,7 @@ def clean_docs(_session: Session) -> None:
 @nox.session(name="report", python=False)
 def report(session: Session) -> None:
     """
-    Collects and generates a metrics summary for the workspace
+    Collects and generates metrics summary for the workspace
 
     Attention:
 
