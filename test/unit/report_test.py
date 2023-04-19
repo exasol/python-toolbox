@@ -2,7 +2,7 @@ from inspect import cleandoc
 
 import pytest
 
-from exasol.toolbox.report import (
+from exasol.toolbox.metrics import (
     Rating,
     _static_code_analysis,
 )

@@ -20,6 +20,9 @@ Unreleased
 ----------
 * Updated dependencies
 
+🗑 Removed
+----------
+* Removed :code:`scriv` support
 
 .. _changelog-0.3.0:
 
@@ -33,10 +36,6 @@ Unreleased
 🔧 Changed
 ----------
 * Updated dependencies
-
-🗑 Removed
-----------
-* Removed :code:`scriv` support
 
 .. _changelog-0.2.0:
 

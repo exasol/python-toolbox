@@ -34,7 +34,7 @@ import nox
 from nox import Session
 
 from exasol.toolbox.project import python_files as _python_files
-from exasol.toolbox.report import (
+from exasol.toolbox.metrics import (
     Format,
     create_report,
     format_report,
@@ -312,7 +312,7 @@ def report(session: Session) -> None:
         PROJECT_CONFIG.root / ".coverage",
         PROJECT_CONFIG.root / ".lint.txt",
     )
-    if not all((file.exists() for file in required_files)):
+    if not all(file.exists() for file in required_files):
         session.error(
             "Please make sure you run the `coverage` and the `lint` target first"
         )

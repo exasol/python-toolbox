@@ -181,19 +181,19 @@ def _rating_color(value: Rating) -> str:
 @color.register(int)
 def _coverage_color(value: Union[float, int]) -> str:
     if 0 <= value < 20:
-        return "red"
+        return _rating_color(Rating.F)
     elif 20 <= value < 50:
-        return "orange"
+        return _rating_color(Rating.E)
     elif 50 <= value < 70:
-        return "yellow"
+        return _rating_color(Rating.D)
     elif 70 <= value < 80:
-        return "yellowgreen"
+        return _rating_color(Rating.C)
     elif 80 <= value < 90:
-        return "green"
+        return _rating_color(Rating.B)
     elif 90 <= value <= 100:
-        return "brightgreen"
+        return _rating_color(Rating.A)
     else:
-        return "black"
+        return _rating_color(Rating.NotAvailable)
 
 
 def _json(report: Report) -> str:
