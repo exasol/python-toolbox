@@ -28,7 +28,6 @@ Unreleased
 
 ✨ Added
 --------
-
 * Added support for custom path filters to config object
 
 🔧 Changed
