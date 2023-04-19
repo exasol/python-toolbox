@@ -1,13 +1,11 @@
 📝 Changelog
 +++++++++++++
 
-..
-    scriv-insert-here
-
 .. _unreleased:
 
 Unreleased
 ==========
+
 
 .. _changelog-0.3.0:
 

@@ -49,25 +49,6 @@ wrapt = [
 ]
 
 [[package]]
-name = "attrs"
-version = "23.1.0"
-description = "Classes Without Boilerplate"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "attrs-23.1.0-py3-none-any.whl", hash = "sha256:1f28b4522cdc2fb4256ac1a020c78acf9cba2c6b461ccd2c126f3aa8e8335d04"},
-    {file = "attrs-23.1.0.tar.gz", hash = "sha256:6279836d581513a26f1bf235f9acd333bc9115683f14f7e8fae46c98fc50e015"},
-]
-
-[package.extras]
-cov = ["attrs[tests]", "coverage[toml] (>=5.3)"]
-dev = ["attrs[docs,tests]", "pre-commit"]
-docs = ["furo", "myst-parser", "sphinx", "sphinx-notfound-page", "sphinxcontrib-towncrier", "towncrier", "zope-interface"]
-tests = ["attrs[tests-no-zope]", "zope-interface"]
-tests-no-zope = ["cloudpickle", "hypothesis", "mypy (>=1.1.1)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "pytest-xdist[psutil]"]
-
-[[package]]
 name = "babel"
 version = "2.12.1"
 description = "Internationalization utilities"
@@ -274,21 +255,6 @@ files = [
 
 [package.dependencies]
 colorama = {version = "*", markers = "platform_system == \"Windows\""}
-
-[[package]]
-name = "click-log"
-version = "0.4.0"
-description = "Logging integration for Click"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "click-log-0.4.0.tar.gz", hash = "sha256:3970f8570ac54491237bcdb3d8ab5e3eef6c057df29f8c3d1151a51a9c23b975"},
-    {file = "click_log-0.4.0-py2.py3-none-any.whl", hash = "sha256:a43e394b528d52112af599f2fc9e4b7cf3c15f94e53581f74fa6867e68c91756"},
-]
-
-[package.dependencies]
-click = "*"
 
 [[package]]
 name = "colorama"
@@ -1096,29 +1062,6 @@ typing-extensions = {version = ">=4.0.0,<5.0", markers = "python_version < \"3.9
 jupyter = ["ipywidgets (>=7.5.1,<9)"]
 
 [[package]]
-name = "scriv"
-version = "1.1.0"
-description = "Scriv changelog management tool"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "scriv-1.1.0-py2.py3-none-any.whl", hash = "sha256:1064101623e318d906d91f7e1405c97af414c67f0c7da8ee4d08eaa523b735eb"},
-    {file = "scriv-1.1.0.tar.gz", hash = "sha256:f2670624b2c44cdf34224c8b032b71a00a41b78e9f587140da6dd0b010e66b75"},
-]
-
-[package.dependencies]
-attrs = "*"
-click = "*"
-click-log = "*"
-jinja2 = "*"
-requests = "*"
-
-[package.extras]
-toml = ["python-version (<3.11)", "tomli"]
-yaml = ["pyyaml"]
-
-[[package]]
 name = "setuptools"
 version = "67.6.1"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
@@ -1517,4 +1460,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "59dbda0e5ae67868be10aeceb5f7e71a8eea36670a8c34edac956f37814bb64a"
+content-hash = "611e07983da92dae21db1e3b2d96648036da8cee195937ab1c55bbc9a8ed8e98"
