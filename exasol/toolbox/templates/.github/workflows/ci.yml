@@ -17,4 +17,8 @@ jobs:
 
   ci-job:
     name: Checks
-    uses: exasol/python-toolbox/.github/workflows/checks.yml@main
+    uses: exasol/python-toolbox/.github/workflows/checks.yml@0.3.0
+
+  metrics:
+    needs: [ ci-job ]
+    uses: exasol/python-toolbox/.github/workflows/report.yml@0.3.0
