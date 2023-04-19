@@ -33,12 +33,12 @@ from typing import (
 import nox
 from nox import Session
 
-from exasol.toolbox.project import python_files as _python_files
 from exasol.toolbox.metrics import (
     Format,
     create_report,
     format_report,
 )
+from exasol.toolbox.project import python_files as _python_files
 from noxconfig import (
     PROJECT_CONFIG,
     Config,
