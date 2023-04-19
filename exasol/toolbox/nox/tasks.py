@@ -312,8 +312,10 @@ def report(session: Session) -> None:
         PROJECT_CONFIG.root / ".coverage",
         PROJECT_CONFIG.root / ".lint.txt",
     )
-    # 1. check if all required files are vailable
-    # 2. info make sure is generated and up to date
+    if not all((file.exists() for file in required_files)):
+        session.error(
+            "Please make sure you run the `coverage` and the `lint` target first"
+        )
     sha1 = str(
         session.run("git", "rev-parse", "HEAD", external=True, silent=True)
     ).strip()
