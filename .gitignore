@@ -1,3 +1,6 @@
+.lint.json
+.lint.txt
+
 odbcconfig/odbcinst.ini
 
 .html-documentation

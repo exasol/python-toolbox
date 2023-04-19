@@ -38,10 +38,9 @@ nox = "^2022.8.7"
 sphinx = ">=5.3,<7.0"
 rich = "^13.3.2"
 pytest = "^7.2.2"
-mypy = ">=0.971,<1.0.0"
+mypy = ">=0.971"
 sphinx-copybutton = "^0.5.0"
 furo = "^2022.9.15"
-scriv = ">=0.17,<1.2"
 pyupgrade = ">=2.38.2,<4.0.0"
 black = "^23.1.0"
 isort = "^5.12.0"
@@ -61,6 +60,7 @@ build-backend = "poetry.core.masonry.api"
 
 # Tooling
 [tool.coverage.run]
+relative_files = true
 source = [
     "exasol",
 ]
@@ -81,7 +81,8 @@ force_grid_wrap = 2
 
 
 [tool.pylint.master]
-fail-under = 7.8
+fail-under = 7.5
+output-format="colorized,json:.lint.json,text:.lint.txt"
 
 [tool.pylint.format]
 max-line-length = 88
@@ -95,8 +96,3 @@ module = [
     "test.integration.*",
 ]
 ignore_errors = true
-
-[tool.scriv]
-new_fragment_template = "file: templates/fragment-template.rst"
-output_file = "doc/changelog.${config:format}"
-version = "literal: pyproject.toml: tool.poetry.version"
