@@ -45,9 +45,9 @@ jobs:
 
       - name: Generate GitHub Summary
         run: |
-          echo "# Summary\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "# Summary\n" >> $GITHUB_STEP_SUMMARY
           poetry run nox -s report -- -- --format markdown >> $GITHUB_STEP_SUMMARY
-          echo "\n\n# Coverage\n" >> $GITHUB_STEP_SUMMARY
+          echo -e "\n\n# Coverage\n" >> $GITHUB_STEP_SUMMARY
           poetry run coverage report -- --format markdown >> $GITHUB_STEP_SUMMARY
-          echo "\n\n# Static Code Analysis\n" >> $GITHUB_STEP_SUMMARY
+          echo  -e "\n\n# Static Code Analysis\n" >> $GITHUB_STEP_SUMMARY
           cat .lint.txt >> $GITHUB_STEP_SUMMARY
