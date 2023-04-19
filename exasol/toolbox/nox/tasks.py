@@ -280,8 +280,20 @@ def clean_docs(_session: Session) -> None:
 @nox.session(name="report", python=False)
 def report(session: Session) -> None:
     """
+    Collects and generates a metrics summary for the workspace
+
     Attention:
-     Requeists ...!
+
+        Pre-requisites:
+
+        * Make sure you remove old and outdated artifacts
+            - e.g. by running one of the following commands
+                * :code:`git clean -xdf`
+                * :code:`rm .coverage .lint.txt`
+
+        * Run the following targets:
+            - :code:`nox -s coverage`
+            - :code:`nox -s lint`
     """
     formats = tuple(fmt.name.lower() for fmt in Format)
     usage = "nox -s report -- [options]"
