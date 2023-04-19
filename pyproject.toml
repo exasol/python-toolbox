@@ -96,8 +96,3 @@ module = [
     "test.integration.*",
 ]
 ignore_errors = true
-
-[tool.scriv]
-new_fragment_template = "file: templates/fragment-template.rst"
-output_file = "doc/changelog.${config:format}"
-version = "literal: pyproject.toml: tool.poetry.version"
