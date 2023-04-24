@@ -14,6 +14,7 @@ include = [
     "README.rst",
     "doc/changelog.rst",
     "LICENSE",
+    "exasol/toolbox/templates/**/*"
 ]
 
 keywords = [

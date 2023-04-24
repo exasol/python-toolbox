@@ -57,7 +57,7 @@ ___________
 To enable this workflow, add a file with the name *ci.yml* in your *.github/workflows* folder
 and add the following content:
 
-.. literalinclude:: ../../exasol/toolbox/templates/.github/workflows/ci.yml
+.. literalinclude:: ../../exasol/toolbox/templates/github/workflows/ci.yml
     :language: yaml
 
 CI/CD Workflow
@@ -73,7 +73,7 @@ ______________
 To enable this workflow, add a file with the name *ci-cd.yml* in your *.github/workflows* folder
 and add the following content:
 
-.. literalinclude:: ../../exasol/toolbox/templates/.github/workflows/ci-cd.yml
+.. literalinclude:: ../../exasol/toolbox/templates/github/workflows/ci-cd.yml
     :language: yaml
 
 PR-Merge Workflow
@@ -85,5 +85,5 @@ _________________
 To enable this workflow, add a file with the name *pr-merge.yml* in your *.github/workflows* folder
 and add the following content:
 
-.. literalinclude:: ../../exasol/toolbox/templates/.github/workflows/pr-merge.yml
+.. literalinclude:: ../../exasol/toolbox/templates/github/workflows/pr-merge.yml
     :language: yaml
