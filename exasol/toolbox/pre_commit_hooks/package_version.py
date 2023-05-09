@@ -66,7 +66,7 @@ def version_from_poetry() -> Version:
     if not poetry:
         raise CommitHookError("Couldn't find poetry executable")
 
-    result = subprocess.run([poetry, "version"], capture_output=True)
+    result = subprocess.run([poetry, "version", "--no-ansi"], capture_output=True)
     version = result.stdout.decode().split()[1]
     return version_from_string(version)
 

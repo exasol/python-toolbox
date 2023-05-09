@@ -94,7 +94,7 @@ def _pyupgrade(session: Session, files: Iterable[str]) -> None:
 
 
 def _version(session: Session, mode: Mode, version_file: Path) -> None:
-    command = ["poetry", "run", "version-check", "--fix"]
+    command = ["poetry", "run", "version-check"]
     command = command if mode == Mode.Check else command + ["--fix"]
     session.run(*command, f"{version_file}")
 
