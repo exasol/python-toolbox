@@ -37,7 +37,6 @@ keywords = [
 python = "^3.8"
 nox = "^2022.8.7"
 sphinx = ">=5.3,<7.0"
-rich = "^13.3.2"
 pytest = "^7.2.2"
 mypy = ">=0.971"
 sphinx-copybutton = "^0.5.0"
@@ -48,6 +47,7 @@ isort = "^5.12.0"
 pre-commit = "^3.1.1"
 coverage = ">=6.4.4,<8.0.0"
 pylint = "^2.15.4"
+typer = {extras = ["all"], version = ">=0.7.0"}
 
 
 [build-system]
@@ -83,7 +83,7 @@ force_grid_wrap = 2
 
 [tool.pylint.master]
 fail-under = 7.5
-output-format="colorized,json:.lint.json,text:.lint.txt"
+output-format = "colorized,json:.lint.json,text:.lint.txt"
 
 [tool.pylint.format]
 max-line-length = 88
@@ -97,3 +97,6 @@ module = [
     "test.integration.*",
 ]
 ignore_errors = true
+
+[tool.poetry.scripts]
+tbox = 'exasol.toolbox.tools.tbox:CLI'
