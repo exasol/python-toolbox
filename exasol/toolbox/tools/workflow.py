@@ -15,7 +15,6 @@ from rich.console import Console
 from rich.syntax import Syntax
 
 stdout = Console()
-# TODO: Use logger with default handler to write to stderr
 stderr = Console(stderr=True)
 
 CLI = typer.Typer()
