@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import (
     Mapping,
     Union,
+    Any,
 )
 
 import typer
@@ -17,13 +18,13 @@ stdout = Console()
 # TODO: Use logger with default handler to write to stderr
 stderr = Console(stderr=True)
 
-CLI = typer.Typer(rich_markup_mode="markdown", rich_help_panel=False)
+CLI = typer.Typer()
 
 
-def _workflows() -> Mapping[str, str]:
+def _workflows() -> Mapping[str, Any]:
     pkg = "exasol.toolbox.templates.github.workflows"
 
-    def _normalize(name):
+    def _normalize(name: str) -> str:
         name, ext = name.split(".")
         return name
 
@@ -35,11 +36,11 @@ def list_workflows(
         columns: bool = typer.Option(
             False, "--columns", "-c", help="use column style presentation like `ls`"
         )
-):
+) -> None:
     """List all available workflows."""
 
     class List:
-        def __init__(self, items):
+        def __init__(self, items: Any):
             self.items = items
 
         def __rich__(self) -> str:
@@ -50,7 +51,7 @@ def list_workflows(
 
 
 @CLI.command(name="show")
-def show_workflow(workflow: str = typer.Argument(..., help="Workflow which shall be shown."), ):
+def show_workflow(workflow: str = typer.Argument(..., help="Workflow which shall be shown."), ) -> None:
     """Shows a specific workflow."""
     workflows = _workflows()
     if workflow not in workflows:
@@ -58,7 +59,7 @@ def show_workflow(workflow: str = typer.Argument(..., help="Workflow which shall
         raise typer.Exit(code=1)
 
     workflow = workflows[workflow]
-    stdout.print(Syntax(workflow.read_text(), "yaml"))
+    stdout.print(Syntax(workflow.read_text(), "yaml"))  # type: ignore
 
 
 @CLI.command(name="diff")
@@ -68,15 +69,16 @@ def diff_workflow(
             Path("./.github/workflows"),
             help="target directory to diff the workflow against.",
         ),
-):
+) -> None:
     """Diff a specific workflow against the installed one."""
     workflows = _workflows()
     if workflow not in workflows:
         stdout.print(f"Unknown workflow <{workflow}>.", style="red")
         raise typer.Exit(code=1)
 
-    old = dest / f"{workflow}.yml"
-    new = Path(_workflows()[workflow])
+    # Use Any type to enable reuse of the variable/binding name
+    old: Any = dest / f"{workflow}.yml"
+    new: Any = Path(_workflows()[workflow])
     with ExitStack() as stack:
         old = stack.enter_context(open(old) if old.exists() else io.StringIO(""))
         new = stack.enter_context(open(new))
@@ -89,7 +91,7 @@ def diff_workflow(
 
 def _install_workflow(
         src: Union[str, Path], dest: Union[str, Path], exists_ok: bool = False
-):
+) -> None:
     src, dest = Path(src), Path(dest)
 
     if dest.exists() and not exists_ok:
@@ -101,7 +103,7 @@ def _install_workflow(
         output_file.write(input_file.read())
 
 
-def _select_workflows(workflow: str) -> Mapping[str, str]:
+def _select_workflows(workflow: str) -> Mapping[str, Any]:
     workflows = _workflows()
     if workflow != "all" and workflow not in workflows:
         raise Exception(f"Workflow <{workflow}> is unknown")
@@ -119,7 +121,7 @@ def install_workflow(
         dest: Path = typer.Argument(
             Path("./.github/workflows"), help="target directory to install the workflow to."
         ),
-):
+) -> None:
     """
     Installs the requested workflow into the target directory.
 
@@ -149,7 +151,7 @@ def update_workflow(
         confirm: bool = typer.Option(
             False, help="Automatically confirm overwritting exsisting workflow(s)"
         ),
-):
+) -> None:
     """Similar to install but checks for existing workflows and shows diff"""
     if not dest.exists():
         dest.mkdir()
