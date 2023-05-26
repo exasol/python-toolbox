@@ -42,11 +42,14 @@ It should be available to the repository either as Organization-, Repository- or
 2. Add the standard workflows to your project
 +++++++++++++++++++++++++++++++++++++++++++++
 
+.. code-block:: shell
+
+    tbox workflow install all
+
 .. warning::
 
-    When you use the configurations bellow you should replace *@main* *ref* with a *ref* which is pointing
-    to the toolbox version you are using. E.g. if you are using toolbox version *0.1.0* replace
-    all references to *@main* with references to *@0.1.0*.
+    If you already have already various workflows you may want to run the
+    :code:`update` instead of the :code:`install` command.
 
 CI Workflow
 ___________

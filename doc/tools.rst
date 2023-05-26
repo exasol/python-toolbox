@@ -3,6 +3,7 @@
 
 tbox
 ----
+The :code:`tbox` is the main entry point for all of the toolbox specific tooling.
 
 .. code-block:: shell
 
@@ -22,6 +23,7 @@ tbox
 
 workflow
 ++++++++
+The workflow command helps to install and maintain GitHub workflows provided by the toolbox.
 
 .. code-block:: shell
 
@@ -40,8 +42,6 @@ workflow
     │ update    Similar to install but checks for existing workflows and shows diff       │
     ╰─────────────────────────────────────────────────────────────────────────────────────╯
 
-Examples
-~~~~~~~~
 
 
 
