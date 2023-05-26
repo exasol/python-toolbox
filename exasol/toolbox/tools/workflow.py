@@ -27,7 +27,7 @@ def _workflows() -> Mapping[str, Any]:
         name, ext = name.split(".")
         return name
 
-    return {_normalize(w.name): w for w in resources.files(pkg).iterdir()}
+    return {_normalize(w.name): w for w in resources.files(pkg).iterdir()}  # type: ignore
 
 
 @CLI.command(name="list")
