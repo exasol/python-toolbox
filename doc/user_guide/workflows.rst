@@ -42,11 +42,14 @@ It should be available to the repository either as Organization-, Repository- or
 2. Add the standard workflows to your project
 +++++++++++++++++++++++++++++++++++++++++++++
 
+.. code-block:: shell
+
+    tbox workflow install all
+
 .. warning::
 
-    When you use the configurations bellow you should replace *@main* *ref* with a *ref* which is pointing
-    to the toolbox version you are using. E.g. if you are using toolbox version *0.1.0* replace
-    all references to *@main* with references to *@0.1.0*.
+    If you already have various workflows you may want to run the
+    :code:`update` instead of the :code:`install` command.
 
 CI Workflow
 ___________
@@ -57,7 +60,7 @@ ___________
 To enable this workflow, add a file with the name *ci.yml* in your *.github/workflows* folder
 and add the following content:
 
-.. literalinclude:: ../../exasol/toolbox/templates/.github/workflows/ci.yml
+.. literalinclude:: ../../exasol/toolbox/templates/github/workflows/ci.yml
     :language: yaml
 
 CI/CD Workflow
@@ -73,7 +76,7 @@ ______________
 To enable this workflow, add a file with the name *ci-cd.yml* in your *.github/workflows* folder
 and add the following content:
 
-.. literalinclude:: ../../exasol/toolbox/templates/.github/workflows/ci-cd.yml
+.. literalinclude:: ../../exasol/toolbox/templates/github/workflows/ci-cd.yml
     :language: yaml
 
 PR-Merge Workflow
@@ -85,5 +88,5 @@ _________________
 To enable this workflow, add a file with the name *pr-merge.yml* in your *.github/workflows* folder
 and add the following content:
 
-.. literalinclude:: ../../exasol/toolbox/templates/.github/workflows/pr-merge.yml
+.. literalinclude:: ../../exasol/toolbox/templates/github/workflows/pr-merge.yml
     :language: yaml

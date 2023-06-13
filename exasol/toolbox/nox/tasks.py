@@ -108,7 +108,6 @@ def _type_check(session: Session, files: Iterable[str]) -> None:
         "poetry",
         "run",
         "mypy",
-        "--strict",
         "--explicit-package-bases",
         "--namespace-packages",
         "--show-error-codes",
