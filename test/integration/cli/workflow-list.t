@@ -1,6 +1,6 @@
 List all available workflows
 
-  $ tbox workflow list | sort
+  $ tbx workflow list | sort
   build-and-publish
   check-release-tag
   checks

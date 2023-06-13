@@ -101,4 +101,4 @@ module = [
 ignore_errors = true
 
 [tool.poetry.scripts]
-tbox = 'exasol.toolbox.tools.tbox:CLI'
+tbx = 'exasol.toolbox.tools.tbx:CLI'

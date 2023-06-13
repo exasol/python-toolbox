@@ -1,6 +1,6 @@
 Install all workflows
 
-  $ tbox workflow install all workflows 2>/dev/null
+  $ tbx workflow install all workflows 2>/dev/null
 
 Check if all workflows have been installed
 
