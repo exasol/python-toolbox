@@ -1,15 +1,15 @@
 💻 Tools
 ========
 
-tbox
-----
-The :code:`tbox` is the main entry point for all of the toolbox specific tooling.
+tbx
+---
+The :code:`tbx` is the main entry point for all of the toolbox specific tooling.
 
 .. code-block:: shell
 
-     $ tbox --help
+     $ tbx --help
 
-     Usage: tbox [OPTIONS] COMMAND [ARGS]...
+     Usage: tbx [OPTIONS] COMMAND [ARGS]...
 
     ╭─ Options ───────────────────────────────────────────────────────────────────────────╮
     │ --install-completion          Install completion for the current shell.             │
@@ -27,9 +27,9 @@ The workflow command helps to install and maintain GitHub workflows provided by 
 
 .. code-block:: shell
 
-     $ tbox workflow --help
+     $ tbx workflow --help
 
-     Usage: tbox workflow [OPTIONS] COMMAND [ARGS]...
+     Usage: tbx workflow [OPTIONS] COMMAND [ARGS]...
 
     ╭─ Options ───────────────────────────────────────────────────────────────────────────╮
     │ --help          Show this message and exit.                                         │
