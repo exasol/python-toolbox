@@ -48,7 +48,7 @@ It should be available to the repository either as Organization-, Repository- or
 
 .. warning::
 
-    If you already have already various workflows you may want to run the
+    If you already have various workflows you may want to run the
     :code:`update` instead of the :code:`install` command.
 
 CI Workflow
