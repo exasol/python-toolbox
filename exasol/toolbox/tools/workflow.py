@@ -1,14 +1,14 @@
 import difflib
 import io
 from contextlib import ExitStack
-from importlib import resources
 from pathlib import Path
 from typing import (
+    Any,
     Mapping,
     Union,
-    Any,
 )
 
+import importlib_resources as resources
 import typer
 from rich.columns import Columns
 from rich.console import Console
@@ -32,9 +32,9 @@ def _workflows() -> Mapping[str, Any]:
 
 @CLI.command(name="list")
 def list_workflows(
-        columns: bool = typer.Option(
-            False, "--columns", "-c", help="use column style presentation like `ls`"
-        )
+    columns: bool = typer.Option(
+        False, "--columns", "-c", help="use column style presentation like `ls`"
+    )
 ) -> None:
     """List all available workflows."""
 
@@ -50,7 +50,9 @@ def list_workflows(
 
 
 @CLI.command(name="show")
-def show_workflow(workflow: str = typer.Argument(..., help="Workflow which shall be shown."), ) -> None:
+def show_workflow(
+    workflow: str = typer.Argument(..., help="Workflow which shall be shown."),
+) -> None:
     """Shows a specific workflow."""
     workflows = _workflows()
     if workflow not in workflows:
@@ -63,11 +65,11 @@ def show_workflow(workflow: str = typer.Argument(..., help="Workflow which shall
 
 @CLI.command(name="diff")
 def diff_workflow(
-        workflow: str = typer.Argument(..., help="Workflow which shall be diffed."),
-        dest: Path = typer.Argument(
-            Path("./.github/workflows"),
-            help="target directory to diff the workflow against.",
-        ),
+    workflow: str = typer.Argument(..., help="Workflow which shall be diffed."),
+    dest: Path = typer.Argument(
+        Path("./.github/workflows"),
+        help="target directory to diff the workflow against.",
+    ),
 ) -> None:
     """Diff a specific workflow against the installed one."""
     workflows = _workflows()
@@ -89,7 +91,7 @@ def diff_workflow(
 
 
 def _install_workflow(
-        src: Union[str, Path], dest: Union[str, Path], exists_ok: bool = False
+    src: Union[str, Path], dest: Union[str, Path], exists_ok: bool = False
 ) -> None:
     src, dest = Path(src), Path(dest)
 
@@ -116,10 +118,10 @@ def _select_workflows(workflow: str) -> Mapping[str, Any]:
 
 @CLI.command(name="install")
 def install_workflow(
-        workflow: str = typer.Argument("all", help="name of the workflow to install."),
-        dest: Path = typer.Argument(
-            Path("./.github/workflows"), help="target directory to install the workflow to."
-        ),
+    workflow: str = typer.Argument("all", help="name of the workflow to install."),
+    dest: Path = typer.Argument(
+        Path("./.github/workflows"), help="target directory to install the workflow to."
+    ),
 ) -> None:
     """
     Installs the requested workflow into the target directory.
@@ -143,13 +145,13 @@ def install_workflow(
 
 @CLI.command(name="update")
 def update_workflow(
-        workflow: str = typer.Argument("all", help="name of the workflow to install."),
-        dest: Path = typer.Argument(
-            Path("./.github/workflows"), help="target directory to install the workflow to."
-        ),
-        confirm: bool = typer.Option(
-            False, help="Automatically confirm overwritting exsisting workflow(s)"
-        ),
+    workflow: str = typer.Argument("all", help="name of the workflow to install."),
+    dest: Path = typer.Argument(
+        Path("./.github/workflows"), help="target directory to install the workflow to."
+    ),
+    confirm: bool = typer.Option(
+        False, help="Automatically confirm overwritting exsisting workflow(s)"
+    ),
 ) -> None:
     """Similar to install but checks for existing workflows and shows diff"""
     if not dest.exists():
