@@ -24,9 +24,25 @@ jobs:
       - name: Check Version(s)
         run: poetry run version-check `poetry run python -c "from noxconfig import PROJECT_CONFIG; print(PROJECT_CONFIG.version_file)"`
 
+  license-check-job:
+    name: Check Licences
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python & Poetry Environment
+        uses: ./.github/actions/python-environment
+
+      - name: Check Version(s)
+        run: poetry run python -m nox -s audit
+
   build-documentation-job:
     name: Build Documentation
-    needs: [ version-check-job ]
+    needs: [ version-check-job, license-check-job ]
     runs-on: ubuntu-latest
 
     steps:
@@ -42,7 +58,7 @@ jobs:
 
   lint-job:
     name: Linting (Python-${{ matrix.python-version }})
-    needs: [ version-check-job ]
+    needs: [ version-check-job, license-check-job ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -69,7 +85,7 @@ jobs:
 
   type-check-job:
     name: Type Checking (Python-${{ matrix.python-version }})
-    needs: [ version-check-job ]
+    needs: [ version-check-job, license-check-job ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
