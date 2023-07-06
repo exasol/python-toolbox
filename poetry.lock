@@ -938,7 +938,7 @@ tests = ["pytest", "pytest-cov", "pytest-lazy-fixture"]
 name = "prysk"
 version = "0.15.1"
 description = "Functional tests for command line applications"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7,<4.0.0"
 files = [
@@ -1588,4 +1588,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "6fd4c7db38f944d5e76607a58b4f780695b32984d64b421f3f3ea5408414cbb1"
+content-hash = "b5bf5d9c323ca52abc953919b624198447c2f2234b5ce2c45204504bcc76aba2"
