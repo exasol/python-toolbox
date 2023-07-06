@@ -848,6 +848,24 @@ files = [
 ]
 
 [[package]]
+name = "pip-licenses"
+version = "4.3.2"
+description = "Dump the software license list of Python packages installed with pip."
+category = "main"
+optional = false
+python-versions = "~=3.8"
+files = [
+    {file = "pip-licenses-4.3.2.tar.gz", hash = "sha256:27ce33be185a009f3128ea59fe4c1490f4f4da5eb53ed951b87ef3c621b583f9"},
+    {file = "pip_licenses-4.3.2-py3-none-any.whl", hash = "sha256:3fede933c47e1f4bc5e91d7cfd1d9b9d4e37a3c03b2875352b12bbad41294cd6"},
+]
+
+[package.dependencies]
+prettytable = ">=2.3.0"
+
+[package.extras]
+test = ["docutils", "mypy", "pytest-cov", "pytest-pycodestyle", "pytest-runner"]
+
+[[package]]
 name = "platformdirs"
 version = "3.8.0"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
@@ -897,6 +915,24 @@ identify = ">=1.0.0"
 nodeenv = ">=0.11.1"
 pyyaml = ">=5.1"
 virtualenv = ">=20.10.0"
+
+[[package]]
+name = "prettytable"
+version = "3.8.0"
+description = "A simple Python library for easily displaying tabular data in a visually appealing ASCII table format"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "prettytable-3.8.0-py3-none-any.whl", hash = "sha256:03481bca25ae0c28958c8cd6ac5165c159ce89f7ccde04d5c899b24b68bb13b7"},
+    {file = "prettytable-3.8.0.tar.gz", hash = "sha256:031eae6a9102017e8c7c7906460d150b7ed78b20fd1d8c8be4edaf88556c07ce"},
+]
+
+[package.dependencies]
+wcwidth = "*"
+
+[package.extras]
+tests = ["pytest", "pytest-cov", "pytest-lazy-fixture"]
 
 [[package]]
 name = "prysk"
@@ -1437,6 +1473,18 @@ docs = ["furo (>=2023.5.20)", "proselint (>=0.13)", "sphinx (>=7.0.1)", "sphinx-
 test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess (>=1)", "flaky (>=3.7)", "packaging (>=23.1)", "pytest (>=7.3.1)", "pytest-env (>=0.8.1)", "pytest-freezer (>=0.4.6)", "pytest-mock (>=3.10)", "pytest-randomly (>=3.12)", "pytest-timeout (>=2.1)", "setuptools (>=67.8)", "time-machine (>=2.9)"]
 
 [[package]]
+name = "wcwidth"
+version = "0.2.6"
+description = "Measures the displayed width of unicode strings in a terminal"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "wcwidth-0.2.6-py2.py3-none-any.whl", hash = "sha256:795b138f6875577cd91bba52baf9e445cd5118fd32723b460e30a0af30ea230e"},
+    {file = "wcwidth-0.2.6.tar.gz", hash = "sha256:a5220780a404dbe3353789870978e472cfe477761f06ee55077256e509b156d0"},
+]
+
+[[package]]
 name = "wrapt"
 version = "1.15.0"
 description = "Module for decorators, wrappers and monkey patching."
@@ -1540,4 +1588,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "74dd38f6c83f00c41b47dca060f7a74552dfd0f8761aece66e3df82ceb631605"
+content-hash = "6fd4c7db38f944d5e76607a58b4f780695b32984d64b421f3f3ea5408414cbb1"
