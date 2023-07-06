@@ -1,5 +1,11 @@
 from __future__ import annotations
 
+from io import (
+    BytesIO,
+    TextIOWrapper,
+)
+from subprocess import run
+
 __all__ = [
     "Mode",
     "fix",
@@ -237,6 +243,38 @@ def _coverage(
     _unit_tests(session, config, context)
     _integration_tests(session, config, context)
     session.run(*command)
+
+
+@nox.session(name="audit", python=False)
+def audit(session: Session) -> None:
+    """Audit project dependencies in regard of their license."""
+
+    def _packages():
+        result = run(
+            ["poetry", "show", "--no-ansi", "--no-interaction", "--only", "main"],
+            capture_output=True,
+            check=True,
+        )
+        stream = TextIOWrapper(BytesIO(result.stdout))
+        lines = (line for line in stream)
+        return (line.split(" ")[0] for line in lines)
+
+    packages = [
+        package
+        for package in _packages()
+        if package not in PROJECT_CONFIG.audit_exceptions
+    ]
+    session.run(
+        "poetry",
+        "run",
+        "python",
+        "-m",
+        "piplicenses",
+        "--packages",
+        *packages,
+        "--allow-only",
+        ";".join(PROJECT_CONFIG.audit_licenses),
+    )
 
 
 @nox.session(name="build-docs", python=False)
