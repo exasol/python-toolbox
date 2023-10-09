@@ -36,10 +36,10 @@ Further references to e.g. other information resources like links to specificati
 
 # Task(s)
 <!---
-A task list containing common task associated with this kind of issue, but also tasks specific to this issue.
+A task list containing common tasks associated with this kind of issue, but also tasks specific to this issue.
 
 e.g.:
-- [ ] Implement XYZ
+- [ ] Implement/Refactor XYZ
 - [ ] Add tests for XYZ
 - [ ] Bump version number
 - [ ] Update changelog

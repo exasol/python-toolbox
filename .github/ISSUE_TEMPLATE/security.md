@@ -7,8 +7,8 @@ assignees: ''
 
 ---
 
-# Summary 
-<!--- 
+# Summary
+<!---
 A short summary of the security issue.
 --->
 
@@ -44,7 +44,7 @@ Describe the impact of the vulnerability.
 
 ### References
 <!---
-Links to related issues or other sources like link to CVE. 
+Links to related issues or other sources like link to CVE.
 --->
 
 # Solutions
