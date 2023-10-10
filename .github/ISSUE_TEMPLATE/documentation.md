@@ -1,5 +1,5 @@
 ---
-name: 📚 Documentation 
+name: 📚 Documentation
 about: Add/Improve Documentation
 title: 📚 <Insert Title>
 labels: documentation
@@ -14,7 +14,7 @@ A short summary on what of what needs to be documented or updated.
 
 # Details
 <!---
-A detailed description about what kind of documentation should be added and/or updated and why.
+A detailed description about what kind of documentation should be added and/or updated.
 --->
 
 ## Background & Context
@@ -31,7 +31,7 @@ Further references to e.g. other information resources like links to specificati
 
 # Task(s)
 <!---
-A task list containing common task associated with this kind of issue, but also tasks specific to this issue.
+A task list containing common tasks associated with this kind of issue, but also tasks specific to this issue.
 
 e.g.:
 - [ ] Update documentation of XYZ

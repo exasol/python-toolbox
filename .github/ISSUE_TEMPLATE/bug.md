@@ -1,7 +1,7 @@
 ---
-name: 🐞 Bug Report 
-about: File a bug report 
-title: 🐞 <Insert Title> 
+name: 🐞 Bug Report
+about: File a bug report
+title: 🐞 <Insert Title>
 labels: bug
 assignees: ''
 
@@ -11,9 +11,9 @@ assignees: ''
 In order to improve the time, how long a bugfix does take, please make sure you address as much as possible of the following checklist.
 
 - [ ] I have reproduced the issue with at least the latest released version of \<PROJECT-NAME\>.
-- [ ] I have added references to issues that sound similar.
+- [ ] I have added references to issues that sound similar in section _Related Issues_.
 
-**Tip: Adding screenshots, outputs and logs help to improve clarity.**
+**Tip: Adding screenshots, outputs and logs might help to improve clarity.**
 
 # Summary
 <!---
@@ -21,7 +21,6 @@ Describe the bug: A clear and concise description of what the bug is.
 -->
 
 ## Reproducing the Issue
-
 Reproducibility: <pick one of> sporadic, regularly, always
 <!---
 Describe how to reproduce the bug, e.g.:
@@ -31,7 +30,7 @@ Describe how to reproduce the bug, e.g.:
 4. See error
 -->
 ### Steps to reproduce the behavior:
-1. <step 1> 
+1. <step 1>
 2. <step 2>
 3. ....
 
@@ -42,8 +41,8 @@ Describe the expected behaviour: A clear and concise description of what you exp
 
 ## Actual Behaviour
 <!---
-Describe the actual observed behaviour: A clear and concise description of what you actually to happen.
-Screenshot: If applicable, add screenshots to help explain your problem.
+Describe the actual observed behaviour: A clear and concise description of what actually happened.
+Screenshot: If applicable, add screenshots to help explaining your problem.
 -->
 
 ## Root Cause (optional)
@@ -55,7 +54,7 @@ If known
 ## Context
 <!---
 Describe the actual observed behaviour: A clear and concise description of what you observed.
-Screenshot: If applicable, add screenshots to help explain your problem.
+Screenshot: If applicable, add screenshots to help explaining your problem.
 -->
 
 ### System
