@@ -44,17 +44,17 @@ runs:
     - name: Convert output of command to common input format
       shell: bash
       run: |
-        security-issues convert ${{inputs.format}} < scan-output > cves.json
+        security-issues convert ${{inputs.format}} < scan-output > cves.jsonl
 
     # Remove irrelevant e.g. if issue already exists or existed
     # Info: a general ignore list could be added here to
     - name: Filter issues
       shell: bash
       run: |
-        security-issues filter github < cves.json > issues.json
+        security-issues filter github < cves.jsonl > issues.jsonl
 
     # Info: alternative issue tracker(s) could be added in the future
     - name: Create Issues
       shell: bash
       run: |
-        security-issues create < issues.json
+        security-issues create < issues.jsonl
