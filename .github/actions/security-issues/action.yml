@@ -5,6 +5,7 @@ description: 'The Security Issues Action creates github issues for open security
 # * Change format to official CVE schema
 # * Change action to support all kinds of formats
 # * Add custom/additional details on ticket creation (e.g. dependency tree)
+# * Output with json/markdown for reported/new security issues could be generated
 
 inputs:
 
@@ -31,24 +32,29 @@ runs:
 
     # Pin this to specifically released version
     - name: Install Python Toolbox / Security tool
+      shell: bash
       run: |
-        pip install 'git+https://github.com/exasol/python-toolbox.git@security-issues-action'
+        pip install 'git+https://github.com/exasol/python-toolbox.git@feature/security-issues-action'
 
     - name: Scan project for security issues
+      shell: bash
       run: |
-        ${{ input.command }} > scan-output
+        ${{ inputs.command }} > scan-output
 
     - name: Convert output of command to common input format
+      shell: bash
       run: |
         security-issues convert ${{inputs.format}} < scan-output > cves.json
 
     # Remove irrelevant e.g. if issue already exists or existed
     # Info: a general ignore list could be added here to
     - name: Filter issues
+      shell: bash
       run: |
         security-issues filter github < cves.json > issues.json
 
     # Info: alternative issue tracker(s) could be added in the future
     - name: Create Issues
+      shell: bash
       run: |
         security-issues create < issues.json
