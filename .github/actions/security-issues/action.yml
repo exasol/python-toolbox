@@ -10,15 +10,16 @@ description: 'The Security Issues Action creates github issues for open security
 inputs:
 
   command:
-    description: 'Command which creates a security report for the repository'
+    description: 'Command for generating a security report'
     required: true
-    default: "mvn org.sonatype.ossindex.maven:ossindex-maven-plugin:audit org.sonatype.ossindex.maven:ossindex-maven-plugin:audit-aggregate -Dossindex.reportFile=security-issues.json"
 
   format:
-    description: 'Converter to apply on the scan-output before processing'
+    description: 'Input format'
     required: false
-    # passthrough in case of None
-    default: maven
+
+  github-token:
+    description: 'Github Token'
+    required: True
 
 runs:
 
@@ -36,25 +37,29 @@ runs:
       run: |
         pip install 'git+https://github.com/exasol/python-toolbox.git@feature/security-issues-action'
 
-    - name: Scan project for security issues
+    - name: Create Security Issue Report
       shell: bash
       run: |
-        ${{ inputs.command }} > scan-output
+        ${{ inputs.command }} > input
 
-    - name: Convert output of command to common input format
+    - name: Convert Report To Common Input Format
       shell: bash
       run: |
-        security-issues convert ${{inputs.format}} < scan-output > cves.jsonl
+        security-issues convert ${{inputs.format}} < input > cves.jsonl
 
     # Remove irrelevant e.g. if issue already exists or existed
     # Info: a general ignore list could be added here to
-    - name: Filter issues
+    - name: Filter Issues
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
         security-issues filter github < cves.jsonl > issues.jsonl
 
     # Info: alternative issue tracker(s) could be added in the future
     - name: Create Issues
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
         security-issues create < issues.jsonl
