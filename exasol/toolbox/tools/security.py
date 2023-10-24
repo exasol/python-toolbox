@@ -150,13 +150,18 @@ def create_security_issue(issue: Issue) -> Tuple[str, str]:
         security_issue_body(issue),
     ]
     try:
-        result = subprocess.run(command, check=True)
-    except:
-        raise
+        result = subprocess.run(command, check=True, capture_output=True)
+    except FileNotFoundError as ex:
+        msg = "Command 'gh' not found. Please make sure you have installed the github cli."
+        raise FileNotFoundError(msg) from ex
+    except subprocess.CalledProcessError as ex:
+        stderr.print(f"{ex}")
+        raise ex
 
-    stderr = result.stderr.decode("utf-8")
-    stdout = result.stdout.decode("utf-8")
-    return stderr, stdout
+    std_err = result.stderr.decode("utf-8")
+    std_out = result.stdout.decode("utf-8")
+
+    return std_err, std_out
 
 
 CLI = typer.Typer()
@@ -200,7 +205,9 @@ def filter(
 @ISSUE_CLI.command(name="create")
 def create() -> None:
     for issue in _issues(sys.stdin):
-        create_security_issue(issue)
+        std_err, std_out = create_security_issue(issue)
+        stderr.print(std_err)
+        stdout.print(std_out)
 
 
 if __name__ == "__main__":
