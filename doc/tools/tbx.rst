@@ -1,8 +1,5 @@
-💻 Tools
-========
-
 tbx
----
+===
 The :code:`tbx` is the main entry point for all of the toolbox specific tooling.
 
 .. code-block:: shell
@@ -22,7 +19,7 @@ The :code:`tbx` is the main entry point for all of the toolbox specific tooling.
     ╰─────────────────────────────────────────────────────────────────────────────────────╯
 
 workflow
-++++++++
+--------
 The workflow command helps to install and maintain GitHub workflows provided by the toolbox.
 
 .. code-block:: shell
@@ -41,8 +38,3 @@ The workflow command helps to install and maintain GitHub workflows provided by 
     │ show      Shows a specific workflow.                                                │
     │ update    Similar to install but checks for existing workflows and shows diff       │
     ╰─────────────────────────────────────────────────────────────────────────────────────╯
-
-
-
-
-
