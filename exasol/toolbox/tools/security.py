@@ -191,7 +191,7 @@ def filter(
         for line in sys.stdin:
             stdout(line)
 
-    to_be_filtered = list(gh_security_issues())
+    to_be_filtered = {cve for _, cve in gh_security_issues()}
     stderr(
         "Filtering:\n{issues}".format(
             issues="\n".join(f"- {i}" for i in to_be_filtered)
