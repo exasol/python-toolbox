@@ -29,7 +29,7 @@ Example Usage
             uses: actions/checkout@v2
 
           - name: Report Security Issues
-            uses: exasol/python-toolbox/.github/actions/security-issues@feature/security-issues-action
+            uses: exasol/python-toolbox/.github/actions/security-issues@0.6.0/security-issues-action
             with:
               format: "maven"
               command: "cat maven-output.json"
