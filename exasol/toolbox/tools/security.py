@@ -2,6 +2,10 @@ import json
 import re
 import subprocess
 import sys
+from dataclasses import (
+    asdict,
+    dataclass,
+)
 from functools import partial
 from inspect import cleandoc
 from typing import (
@@ -14,11 +18,6 @@ import typer
 
 stdout = print
 stderr = partial(print, file=sys.stderr)
-
-from dataclasses import (
-    asdict,
-    dataclass,
-)
 
 
 # Note:
@@ -177,7 +176,7 @@ def convert(
             stdout(issue)
     else:
         stderr(f"Unsupported format: {format}")
-        sys.exit(-1)
+        raise typer.Exit(1)
 
 
 @ISSUE_CLI.command(name="filter")
@@ -190,6 +189,8 @@ def filter(
         )
         for line in sys.stdin:
             stdout(line)
+
+        raise typer.Exit()
 
     to_be_filtered = {cve for _, cve in gh_security_issues()}
     stderr(
