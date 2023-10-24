@@ -10,10 +10,11 @@ from typing import (
 )
 
 import typer
-from rich.console import Console
+from functools import partial
+import sys
 
-stdout = Console()
-stderr = Console(stderr=True)
+stdout = print
+stderr = partial(print, file=sys.stderr)
 
 from dataclasses import (
     asdict,
@@ -36,11 +37,9 @@ class Issue:
 
 
 def _issues(input) -> Generator[Issue, None, None]:
-    issues = input.read()
-    issues = (line for line in issues.split("\n"))
-    issues = (json.loads(raw) for raw in issues)
-    issues = (Issue(**obj) for obj in issues)
-    yield from issues
+    for line in input:
+        obj = json.loads(line)
+        yield Issue(**obj)
 
 
 def _issues_as_json_str(issues):
@@ -80,7 +79,7 @@ def gh_security_issues() -> Generator[Tuple[str, str], None, None]:
         msg = "Command 'gh' not found. Please make sure you have installed the github cli."
         raise FileNotFoundError(msg) from ex
     except subprocess.CalledProcessError as ex:
-        stderr.print(f"{ex}")
+        stderr(f"{ex}")
         raise ex
 
     cve_pattern = re.compile(r"CVE-\d{4}-\d{4,7}")
@@ -155,7 +154,7 @@ def create_security_issue(issue: Issue) -> Tuple[str, str]:
         msg = "Command 'gh' not found. Please make sure you have installed the github cli."
         raise FileNotFoundError(msg) from ex
     except subprocess.CalledProcessError as ex:
-        stderr.print(f"{ex}")
+        stderr(f"{ex}")
         raise ex
 
     std_err = result.stderr.decode("utf-8")
@@ -171,27 +170,27 @@ CLI.add_typer(ISSUE_CLI, name="issue")
 
 @ISSUE_CLI.command(name="convert")
 def convert(
-    format: str = typer.Argument(..., help="input format to be converted."),
+        format: str = typer.Argument(..., help="input format to be converted."),
 ) -> None:
     if format == "maven":
         issues = from_maven(sys.stdin.read())
         for issue in _issues_as_json_str(issues):
-            stdout.print(issue)
+            print(issue)
     else:
-        stderr.print(f"Unsupported format: {format}")
+        stderr(f"Unsupported format: {format}")
         sys.exit(-1)
 
 
 @ISSUE_CLI.command(name="filter")
 def filter(
-    type: str = typer.Argument(..., help="filter type to apply"),
+        type: str = typer.Argument(..., help="filter type to apply"),
 ) -> None:
     if type != "github":
-        stderr.print(
+        stderr(
             f"warning: Invalid filter type: {type}, falling back to pass through mode."
         )
         for line in sys.stdin:
-            stdout.print(line, end="")
+            stdout(line)
 
     to_be_filtered = list(gh_security_issues())
     filtered_issues = [
@@ -199,15 +198,15 @@ def filter(
     ]
 
     for issue in _issues_as_json_str(filtered_issues):
-        stdout.print(issue)
+        stdout(issue)
 
 
 @ISSUE_CLI.command(name="create")
 def create() -> None:
     for issue in _issues(sys.stdin):
         std_err, std_out = create_security_issue(issue)
-        stderr.print(std_err)
-        stdout.print(std_out)
+        stderr(std_err)
+        stdout(std_out)
 
 
 if __name__ == "__main__":
