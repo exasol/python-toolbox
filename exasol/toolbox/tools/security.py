@@ -15,12 +15,38 @@ from rich.console import Console
 stdout = Console()
 stderr = Console(stderr=True)
 
-ISSUE_CLI = typer.Typer()
-
 from dataclasses import (
     asdict,
     dataclass,
 )
+
+
+# Note:
+# In the long term we may want to adapt the official CVE json schema,
+# support for this could be generated using pydantic.
+# See here: https://github.com/CVEProject/cve-schema/blob/master/schema/v5.0/CVE_JSON_5.0_schema.json
+@dataclass(frozen=True)
+class Issue:
+    # Note: Add support additional (custom) information e.g. dependency tree etc.
+    cve: str
+    cwe: str
+    description: str
+    coordinates: str
+    references: tuple
+
+
+def _issues(input) -> Generator[Issue, None, None]:
+    issues = input.read()
+    issues = (line for line in issues.split("\n"))
+    issues = (json.loads(raw) for raw in issues)
+    issues = (Issue(**obj) for obj in issues)
+    yield from issues
+
+
+def _issues_as_json_str(issues):
+    for issue in issues:
+        issue = asdict(issue)  # type: ignore
+        yield json.dumps(issue)
 
 
 def gh_security_issues() -> Generator[Tuple[str, str], None, None]:
@@ -67,34 +93,6 @@ def gh_security_issues() -> Generator[Tuple[str, str], None, None]:
     return issues
 
 
-# Note:
-# In the long term we may want to adapt the official CVE json schema,
-# support for this could be generated using pydantic.
-# See here: https://github.com/CVEProject/cve-schema/blob/master/schema/v5.0/CVE_JSON_5.0_schema.json
-@dataclass(frozen=True)
-class Issue:
-    # Note: Add support additional (custom) information e.g. dependency tree etc.
-    cve: str
-    cwe: str
-    description: str
-    coordinates: str
-    references: tuple
-
-
-def _issues(input) -> Generator[Issue, None, None]:
-    issues = input.read()
-    issues = (line for line in issues.split("\n"))
-    issues = (json.loads(raw) for raw in issues)
-    issues = (Issue(**obj) for obj in issues)
-    yield from issues
-
-
-def _issues_as_json_str(issues):
-    for issue in issues:
-        issue = asdict(issue)  # type: ignore
-        yield json.dumps(issue)
-
-
 def from_maven(report: str) -> Iterable[Issue]:
     # Note: Consider adding warnings if there is the same cve with multiple coordinates
     report = json.loads(report)
@@ -111,9 +109,64 @@ def from_maven(report: str) -> Iterable[Issue]:
             )
 
 
+def security_issue_title(issue: Issue) -> str:
+    return f"🔐 {issue.cve}: {issue.coordinates}"
+
+
+def security_issue_body(issue: Issue) -> str:
+    def as_markdown_listing(elements: Iterable[str]):
+        return "\n".join(f"- {element}" for element in elements)
+
+    body = cleandoc(
+        """
+        ## Summary
+        {description}
+
+        CVE: {cve}
+        CWE: {cwe}
+
+        ## References
+        {references}
+        """
+    )
+    return body.format(
+        cve=issue.cve,
+        cwe=issue.cwe,
+        description=issue.description,
+        references=as_markdown_listing(issue.references),
+    )
+
+
+def create_security_issue(issue: Issue) -> Tuple[str, str]:
+    command = [
+        "gh",
+        "issue",
+        "create",
+        "--label",
+        "security",
+        "--title",
+        security_issue_title(issue),
+        "--body",
+        security_issue_body(issue),
+    ]
+    try:
+        result = subprocess.run(command, check=True)
+    except:
+        raise
+
+    stderr = result.stderr.decode("utf-8")
+    stdout = result.stdout.decode("utf-8")
+    return stderr, stdout
+
+
+CLI = typer.Typer()
+ISSUE_CLI = typer.Typer()
+CLI.add_typer(ISSUE_CLI, name="issue")
+
+
 @ISSUE_CLI.command(name="convert")
 def convert(
-        format: str = typer.Argument(..., help="input format to be converted."),
+    format: str = typer.Argument(..., help="input format to be converted."),
 ) -> None:
     if format == "maven":
         issues = from_maven(sys.stdin.read())
@@ -126,7 +179,7 @@ def convert(
 
 @ISSUE_CLI.command(name="filter")
 def filter(
-        type: str = typer.Argument(..., help="filter type to apply"),
+    type: str = typer.Argument(..., help="filter type to apply"),
 ) -> None:
     if type != "github":
         stderr.print(
@@ -146,47 +199,9 @@ def filter(
 
 @ISSUE_CLI.command(name="create")
 def create() -> None:
-    for line in sys.stdin:
-        stdout.print(line, end="")
+    for issue in _issues(sys.stdin):
+        create_security_issue(issue)
 
-    title = "🔐 {cve}: {coordinates}"
-
-    body = cleandoc(
-        """
-        ## Summary
-        {description}
-
-        CVE: {cve}
-        CWE: {cwe}
-
-        ## References
-        {references}
-        """
-    )
-    body = "another test"
-    command = [
-        "gh",
-        "issue",
-        "create",
-        "--label",
-        "security",
-        "--title",
-        title.format(cve="CVE-TEST", coordinates="some-package"),
-        "--body",
-        body.format(
-            cve="CVE-TEST",
-            cwe="CWE-TEST",
-            description="Some detailed description",
-            references="\n".join(f"- {ref}" for ref in ''),
-        ),
-    ]
-
-    result = subprocess.run(command, check=True)
-    print(result)
-
-
-CLI = typer.Typer()
-CLI.add_typer(ISSUE_CLI, name='issuet s')
 
 if __name__ == "__main__":
     CLI()
