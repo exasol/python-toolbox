@@ -2,6 +2,7 @@ import json
 import re
 import subprocess
 import sys
+from functools import partial
 from inspect import cleandoc
 from typing import (
     Generator,
@@ -10,8 +11,6 @@ from typing import (
 )
 
 import typer
-from functools import partial
-import sys
 
 stdout = print
 stderr = partial(print, file=sys.stderr)
@@ -170,12 +169,12 @@ CLI.add_typer(ISSUE_CLI, name="issue")
 
 @ISSUE_CLI.command(name="convert")
 def convert(
-        format: str = typer.Argument(..., help="input format to be converted."),
+    format: str = typer.Argument(..., help="input format to be converted."),
 ) -> None:
     if format == "maven":
         issues = from_maven(sys.stdin.read())
         for issue in _issues_as_json_str(issues):
-            print(issue)
+            stdout(issue)
     else:
         stderr(f"Unsupported format: {format}")
         sys.exit(-1)
@@ -183,7 +182,7 @@ def convert(
 
 @ISSUE_CLI.command(name="filter")
 def filter(
-        type: str = typer.Argument(..., help="filter type to apply"),
+    type: str = typer.Argument(..., help="filter type to apply"),
 ) -> None:
     if type != "github":
         stderr(
@@ -193,6 +192,11 @@ def filter(
             stdout(line)
 
     to_be_filtered = list(gh_security_issues())
+    stderr(
+        "Filtering:\n{issues}".format(
+            issues="\n".join(f"- {i}" for i in to_be_filtered)
+        )
+    )
     filtered_issues = [
         issue for issue in _issues(sys.stdin) if issue.cve not in to_be_filtered
     ]
