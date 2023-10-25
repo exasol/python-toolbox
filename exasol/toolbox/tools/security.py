@@ -223,7 +223,7 @@ def filter(
         to_be_filtered = {cve for _, cve in gh_security_issues()}
         stderr(
             "Filtering:\n{issues}".format(
-                issues="\n".join(f"- {i}" for i in to_be_filtered)
+                issues="\n".join(f"{i}" for i in to_be_filtered)
             )
         )
         filtered_issues = [
