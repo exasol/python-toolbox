@@ -5,7 +5,7 @@
    :hidden:
 
    user_guide/user_guide
-   tools/tools
+   tools
    github_actions/github_actions
    api
    developer_guide/developer_guide
