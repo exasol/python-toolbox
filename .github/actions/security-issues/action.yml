@@ -46,7 +46,7 @@ runs:
         GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
-        tbx security cve filter github < cves.jsonl | tee issues.jsonl
+        tbx security cve filter github < cves.jsonl 2> filtered.txt | tee issues.jsonl
 
     - name: Create Issues
       env:
@@ -58,5 +58,8 @@ runs:
     - name: Create Report
       shell: bash
       run: |
+        echo -e "# Summary\n" >> $GITHUB_STEP_SUMMARY
+        echo -e "# Filtered Security Issue\n" >> $GITHUB_STEP_SUMMARY
+        tail -n +2 filtered.txt | xargs -n1 echo - >> $GITHUB_STEP_SUMMARY
         echo -e "# Created Security Issue\n" >> $GITHUB_STEP_SUMMARY
-        cat created.txt | xargs -n1 echo -
+        cat created.txt | xargs -n1 echo - >> $GITHUB_STEP_SUMMARY
