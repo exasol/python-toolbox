@@ -24,7 +24,7 @@ class TestCreateSecurityIssue:
         "expected,issue",
         [
             (
-                f"🔐 CVE-2023-39410: pkg:maven/fr.turri/aXMLRPC@1.13.0",
+                "🔐 CVE-2023-39410: pkg:maven/fr.turri/aXMLRPC@1.13.0",
                 security.Issue(
                     cve="CVE-2023-39410",
                     cwe="None",
@@ -45,18 +45,18 @@ class TestCreateSecurityIssue:
             (
                 cleandoc(
                     """
-                            ## Summary
-                            Random Multiline
-                            Description
-                            ;)
+                                ## Summary
+                                Random Multiline
+                                Description
+                                ;)
 
-                            CVE: CVE-2023-39410
-                            CWE: CWE-XYZ
+                                CVE: CVE-2023-39410
+                                CWE: CWE-XYZ
 
-                            ## References
-                            - https://www.example.com
-                            - https://www.foobar.com
-                            """
+                                ## References
+                                - https://www.example.com
+                                - https://www.foobar.com
+                                """
                 ),
                 security.Issue(
                     cve="CVE-2023-39410",
@@ -99,7 +99,7 @@ class TestCreateSecurityIssue:
             ],
         ),
     )
-    def test_gh_cli_failed(self, run_mock):
+    def test_gh_cli_failed(self, _):
         with pytest.raises(subprocess.CalledProcessError) as exec_info:
             set(security.gh_security_issues())
 
@@ -177,7 +177,7 @@ class TestGhSecurityIssues:
             ],
         ),
     )
-    def test_gh_cli_failed(self, run_mock):
+    def test_gh_cli_failed(self, _):
         with pytest.raises(subprocess.CalledProcessError) as exec_info:
             set(security.gh_security_issues())
 
@@ -308,7 +308,7 @@ def maven_report():
     )
 
 
-def test_convert_maven_input(maven_report):
+def test_convert_maven_input(maven_report):  # pylint: disable=redefined-outer-name
     expected = {
         security.Issue(
             cve="CVE-2023-39410",

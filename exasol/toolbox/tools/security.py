@@ -165,6 +165,7 @@ ISSUE_CLI = typer.Typer()
 CLI.add_typer(ISSUE_CLI, name="issue")
 
 
+# pylint: disable=redefined-builtin
 @ISSUE_CLI.command(name="convert")
 def convert(
     format: str = typer.Argument(..., help="input format to be converted."),
@@ -178,6 +179,7 @@ def convert(
         raise typer.Exit(1)
 
 
+# pylint: disable=redefined-builtin
 @ISSUE_CLI.command(name="filter")
 def filter(
     type: str = typer.Argument(..., help="filter type to apply"),
