@@ -1,12 +1,6 @@
 name: 'SIA'
 description: 'The Security Issues Action creates github issues for open security issues in the repository'
 
-# TODOs & Ideas
-# * Change format to official CVE schema
-# * Change action to support all kinds of formats
-# * Add custom/additional details on ticket creation (e.g. dependency tree)
-# * Output with json/markdown for reported/new security issues could be generated
-
 inputs:
 
   command:
