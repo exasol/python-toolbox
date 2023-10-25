@@ -176,8 +176,18 @@ class Format(str, Enum):
 @CVE_CLI.command(name="convert")
 def convert(
     format: Format = typer.Argument(..., help="input format to be converted."),
+    input_file: typer.FileText = typer.Argument(
+        default="-", mode="r", help="input file which shall be converted"
+    ),
 ) -> None:
-    def _maven():
+    """
+    Convert a language or tool specific security report into a list of cve's in the jsonl format
+
+    Output:
+    { "cve": "<cve-id>", "cwe": "<cwe-id>", "description": "<multiline string>", "coordinates": "<string>", "references": ["<url>", "<url>", ...] }
+    """
+
+    def _maven(infile):
         issues = from_maven(sys.stdin.read())
         for issue in _issues_as_json_str(issues):
             stdout(issue)
@@ -185,7 +195,7 @@ def convert(
 
     actions = {Format.Maven: _maven}
     action = actions[format]
-    action()
+    action(input_file)
 
 
 class Filter(str, Enum):
@@ -197,15 +207,19 @@ class Filter(str, Enum):
 @CVE_CLI.command(name="filter")
 def filter(
     type: Filter = typer.Argument(help="filter type to apply"),
+    input_file: typer.FileText = typer.Argument(
+        default="-", mode="r", help="file containing cve's in the jsonl format"
+    ),
 ) -> None:
     """
     Filter specific CVE's from the input
 
-    Args:
-        type:  of filter which shall be applied.
+
+    Input:
+    { "cve": "<cve-id>", "cwe": "<cwe-id>", "description": "<multiline string>", "coordinates": "<string>", "references": ["<url>", "<url>", ...] }
     """
 
-    def _github():
+    def _github(infile):
         to_be_filtered = {cve for _, cve in gh_security_issues()}
         stderr(
             "Filtering:\n{issues}".format(
@@ -213,26 +227,38 @@ def filter(
             )
         )
         filtered_issues = [
-            issue for issue in _issues(sys.stdin) if issue.cve not in to_be_filtered
+            issue for issue in _issues(infile) if issue.cve not in to_be_filtered
         ]
         for issue in _issues_as_json_str(filtered_issues):
             stdout(issue)
         raise typer.Exit(code=0)
 
-    def _pass_through():
-        for line in sys.stdin:
+    def _pass_through(infile):
+        for line in infile:
             stdout(line)
         raise typer.Exit(code=0)
 
     actions = {Filter.Github: _github, Filter.PassThrough: _pass_through}
     action = actions[type]
-    action()
+    action(input_file)
 
 
 @CVE_CLI.command(name="create")
-def create() -> None:
-    """Create GitHub issues for CVE's"""
-    for issue in _issues(sys.stdin):
+def create(
+    input_file: typer.FileText = typer.Argument(
+        default="-", mode="r", help="file of cve's in the jsonl format"
+    ),
+) -> None:
+    """
+    Create GitHub issues for CVE's
+
+    Input:
+    { "cve": "<cve-id>", "cwe": "<cwe-id>", "description": "<multiline string>", "coordinates": "<string>", "references": ["<url>", "<url>", ...] }
+
+    Output:
+    Links to the created issue(s)
+    """
+    for issue in _issues(input_file):
         std_err, std_out = create_security_issue(issue)
         stderr(std_err)
         stdout(std_out)
