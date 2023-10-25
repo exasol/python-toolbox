@@ -1,6 +1,5 @@
 """This module contains security related CLI tools and code"""
 import json
-from enum import Enum
 import re
 import subprocess
 import sys
@@ -8,6 +7,7 @@ from dataclasses import (
     asdict,
     dataclass,
 )
+from enum import Enum
 from functools import partial
 from inspect import cleandoc
 from typing import (
@@ -36,7 +36,7 @@ class Issue:
 
 
 def _issues(input) -> Generator[Issue, None, None]:
-    lines = (l for l in input if l.strip() != '')
+    lines = (l for l in input if l.strip() != "")
     for line in lines:
         obj = json.loads(line)
         yield Issue(**obj)
@@ -169,13 +169,13 @@ CLI.add_typer(CVE_CLI, name="cve", help="Work with CVE's")
 
 
 class Format(str, Enum):
-    Maven = 'maven'
+    Maven = "maven"
 
 
 # pylint: disable=redefined-builtin
 @CVE_CLI.command(name="convert")
 def convert(
-        format: Format = typer.Argument(..., help="input format to be converted."),
+    format: Format = typer.Argument(..., help="input format to be converted."),
 ) -> None:
     def _maven():
         issues = from_maven(sys.stdin.read())
@@ -189,14 +189,14 @@ def convert(
 
 
 class Filter(str, Enum):
-    Github = 'github'
-    PassThrough = 'pass-through'
+    Github = "github"
+    PassThrough = "pass-through"
 
 
 # pylint: disable=redefined-builtin
 @CVE_CLI.command(name="filter")
 def filter(
-        type: Filter = typer.Argument(help="filter type to apply"),
+    type: Filter = typer.Argument(help="filter type to apply"),
 ) -> None:
     """
     Filter specific CVE's from the input
@@ -217,16 +217,14 @@ def filter(
         ]
         for issue in _issues_as_json_str(filtered_issues):
             stdout(issue)
-
         raise typer.Exit(code=0)
 
     def _pass_through():
         for line in sys.stdin:
             stdout(line)
-
         raise typer.Exit(code=0)
 
-    actions = {Filter.Github: _github, Filter.PassThrough: _pass_through()}
+    actions = {Filter.Github: _github, Filter.PassThrough: _pass_through}
     action = actions[type]
     action()
 
