@@ -31,7 +31,7 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
 
-    # Pin this to specifically released version
+    # FIXME: Pin this to specifically released version
     - name: Install Python Toolbox / Security tool
       shell: bash
       run: |
@@ -47,8 +47,6 @@ runs:
       run: |
         tbx security cve convert ${{inputs.format}} < input | tee cves.jsonl
 
-    # Remove irrelevant e.g. if issue already exists or existed
-    # Info: a general ignore list could be added here to
     - name: Filter Issues
       env:
         GH_TOKEN: ${{ inputs.github-token }}
@@ -56,7 +54,6 @@ runs:
       run: |
         tbx security cve filter github < cves.jsonl | tee issues.jsonl
 
-    # Info: alternative issue tracker(s) could be added in the future
     - name: Create Issues
       env:
         GH_TOKEN: ${{ inputs.github-token }}
