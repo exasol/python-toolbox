@@ -1,4 +1,6 @@
+"""This module contains security related CLI tools and code"""
 import json
+from enum import Enum
 import re
 import subprocess
 import sys
@@ -161,54 +163,76 @@ def create_security_issue(issue: Issue) -> Tuple[str, str]:
 
 
 CLI = typer.Typer()
-ISSUE_CLI = typer.Typer()
-CLI.add_typer(ISSUE_CLI, name="issue")
+CVE_CLI = typer.Typer()
+CLI.add_typer(CVE_CLI, name="cve", help="Work with CVE's")
+
+
+class Format(str, Enum):
+    Maven = 'maven'
 
 
 # pylint: disable=redefined-builtin
-@ISSUE_CLI.command(name="convert")
+@CVE_CLI.command(name="convert")
 def convert(
-    format: str = typer.Argument(..., help="input format to be converted."),
+        format: Format = typer.Argument(..., help="input format to be converted."),
 ) -> None:
-    if format == "maven":
+    def _maven():
         issues = from_maven(sys.stdin.read())
         for issue in _issues_as_json_str(issues):
             stdout(issue)
-    else:
-        stderr(f"Unsupported format: {format}")
-        raise typer.Exit(1)
+        raise typer.Exit(code=0)
+
+    actions = {Format.Maven: _maven}
+    action = actions[format]
+    action()
+
+
+class Filter(str, Enum):
+    Github = 'github'
+    PassThrough = 'pass-through'
 
 
 # pylint: disable=redefined-builtin
-@ISSUE_CLI.command(name="filter")
+@CVE_CLI.command(name="filter")
 def filter(
-    type: str = typer.Argument(..., help="filter type to apply"),
+        type: Filter = typer.Argument(help="filter type to apply"),
 ) -> None:
-    if type != "github":
+    """
+    Filter specific CVE's from the input
+
+    Args:
+        type:  of filter which shall be applied.
+    """
+
+    def _github():
+        to_be_filtered = {cve for _, cve in gh_security_issues()}
         stderr(
-            f"warning: Invalid filter type: {type}, falling back to pass through mode."
+            "Filtering:\n{issues}".format(
+                issues="\n".join(f"- {i}" for i in to_be_filtered)
+            )
         )
+        filtered_issues = [
+            issue for issue in _issues(sys.stdin) if issue.cve not in to_be_filtered
+        ]
+        for issue in _issues_as_json_str(filtered_issues):
+            stdout(issue)
+
+        raise typer.Exit(code=0)
+
+    def _pass_through():
         for line in sys.stdin:
             stdout(line)
 
-        raise typer.Exit()
+        raise typer.Exit(code=0)
 
-    to_be_filtered = {cve for _, cve in gh_security_issues()}
-    stderr(
-        "Filtering:\n{issues}".format(
-            issues="\n".join(f"- {i}" for i in to_be_filtered)
-        )
-    )
-    filtered_issues = [
-        issue for issue in _issues(sys.stdin) if issue.cve not in to_be_filtered
-    ]
-
-    for issue in _issues_as_json_str(filtered_issues):
-        stdout(issue)
+    actions = {Filter.Github: _github, Filter.PassThrough: _pass_through()}
+    action = actions[type]
+    action()
 
 
-@ISSUE_CLI.command(name="create")
+@CVE_CLI.command(name="create")
 def create() -> None:
+    """Create GitHub issues for CVE's"""
     for issue in _issues(sys.stdin):
         std_err, std_out = create_security_issue(issue)
         stderr(std_err)

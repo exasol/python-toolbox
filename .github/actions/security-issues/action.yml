@@ -45,7 +45,7 @@ runs:
     - name: Convert Report To Common Input Format
       shell: bash
       run: |
-        tbx security issue convert ${{inputs.format}} < input > cves.jsonl
+        tbx security cve convert ${{inputs.format}} < input > cves.jsonl
 
     # Remove irrelevant e.g. if issue already exists or existed
     # Info: a general ignore list could be added here to
@@ -54,7 +54,7 @@ runs:
         GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
-        tbx security issue filter github < cves.jsonl > issues.jsonl
+        tbx security cve filter github < cves.jsonl > issues.jsonl
 
     # Info: alternative issue tracker(s) could be added in the future
     - name: Create Issues
@@ -62,4 +62,4 @@ runs:
         GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
-        tbx security issue create < issues.jsonl
+        tbx security cve create < issues.jsonl
