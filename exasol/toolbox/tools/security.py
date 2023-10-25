@@ -36,7 +36,8 @@ class Issue:
 
 
 def _issues(input) -> Generator[Issue, None, None]:
-    for line in input:
+    lines = (l for l in input if l.strip() != '')
+    for line in lines:
         obj = json.loads(line)
         yield Issue(**obj)
 
