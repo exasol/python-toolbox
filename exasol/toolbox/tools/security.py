@@ -22,10 +22,8 @@ stdout = print
 stderr = partial(print, file=sys.stderr)
 
 
-# Note:
-# In the long term we may want to adapt the official CVE json schema,
-# support for this could be generated using pydantic.
-# See here: https://github.com/CVEProject/cve-schema/blob/master/schema/v5.0/CVE_JSON_5.0_schema.json
+# Note: In the long term we may want to adapt the official CVE json schema
+# https://github.com/CVEProject/cve-schema/blob/master/schema/v5.0/CVE_JSON_5.0_schema.json
 @dataclass(frozen=True)
 class Issue:
     cve: str
