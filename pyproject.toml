@@ -102,4 +102,3 @@ ignore_errors = true
 
 [tool.poetry.scripts]
 tbx = 'exasol.toolbox.tools.tbx:CLI'
-security = 'exasol.toolbox.tools.security:CLI'
