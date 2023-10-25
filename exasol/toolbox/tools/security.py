@@ -26,7 +26,6 @@ stderr = partial(print, file=sys.stderr)
 # See here: https://github.com/CVEProject/cve-schema/blob/master/schema/v5.0/CVE_JSON_5.0_schema.json
 @dataclass(frozen=True)
 class Issue:
-    # Note: Add support additional (custom) information e.g. dependency tree etc.
     cve: str
     cwe: str
     description: str

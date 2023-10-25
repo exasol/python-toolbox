@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 from contextlib import contextmanager
+from inspect import cleandoc
 from unittest import mock
 
 import pytest
@@ -18,6 +19,133 @@ def empty_path():
     os.environ["PATH"] = old_path
 
 
+class TestCreateSecurityIssue:
+    @pytest.mark.parametrize(
+        "expected,issue",
+        [
+            (
+                f"🔐 CVE-2023-39410: pkg:maven/fr.turri/aXMLRPC@1.13.0",
+                security.Issue(
+                    cve="CVE-2023-39410",
+                    cwe="None",
+                    description="None",
+                    coordinates="pkg:maven/fr.turri/aXMLRPC@1.13.0",
+                    references=tuple(),
+                ),
+            )
+        ],
+    )
+    def test_security_issue_title_template(self, expected, issue):
+        actual = security.security_issue_title(issue)
+        assert actual == expected
+
+    @pytest.mark.parametrize(
+        "expected,issue",
+        [
+            (
+                cleandoc(
+                    """
+                            ## Summary
+                            Random Multiline
+                            Description
+                            ;)
+
+                            CVE: CVE-2023-39410
+                            CWE: CWE-XYZ
+
+                            ## References
+                            - https://www.example.com
+                            - https://www.foobar.com
+                            """
+                ),
+                security.Issue(
+                    cve="CVE-2023-39410",
+                    cwe="CWE-XYZ",
+                    description="Random Multiline\nDescription\n;)",
+                    coordinates="pkg:maven/fr.turri/aXMLRPC@1.13.0",
+                    references=("https://www.example.com", "https://www.foobar.com"),
+                ),
+            )
+        ],
+    )
+    def test_security_issue_body_template(self, expected, issue):
+        actual = security.security_issue_body(issue)
+        assert actual == expected
+
+    def test_gh_cli_is_not_available(self):
+        with empty_path():
+            with pytest.raises(FileNotFoundError) as exec_info:
+                set(security.gh_security_issues())
+
+        actual = f"{exec_info.value}"
+        expected = "Command 'gh' not found. Please make sure you have installed the github cli."
+
+        assert actual == expected
+
+    @mock.patch(
+        "subprocess.run",
+        side_effect=subprocess.CalledProcessError(
+            returncode=1,
+            cmd=[
+                "gh",
+                "issue",
+                "create",
+                "--label",
+                "security",
+                "--title",
+                "<title>",
+                "--body",
+                "<body>",
+            ],
+        ),
+    )
+    def test_gh_cli_failed(self, run_mock):
+        with pytest.raises(subprocess.CalledProcessError) as exec_info:
+            set(security.gh_security_issues())
+
+        actual = f"{exec_info.value}"
+        expected = str(
+            subprocess.CalledProcessError(
+                returncode=1,
+                cmd=[
+                    "gh",
+                    "issue",
+                    "create",
+                    "--label",
+                    "security",
+                    "--title",
+                    "<title>",
+                    "--body",
+                    "<body>",
+                ],
+            )
+        )
+        assert actual == expected
+
+    @mock.patch("subprocess.run")
+    def test_query_gh_security_issues(self, run_mock):
+        result = mock.MagicMock(subprocess.CompletedProcess)
+        result.returncode = 0
+        result.stdout = b"https://github.com/exasol/some-project/issues/16"
+        result.stderr = b"Creating Issue"
+        run_mock.return_value = result
+
+        issues = security.Issue(
+            cve="CVE-2023-39410",
+            cwe="None",
+            description="None",
+            coordinates="pkg:maven/fr.turri/aXMLRPC@1.13.0",
+            references=tuple(),
+        )
+
+        expected = (
+            "Creating Issue",
+            "https://github.com/exasol/some-project/issues/16",
+        )
+        actual = security.create_security_issue(issues)
+        assert actual == expected
+
+
 class TestGhSecurityIssues:
     def test_gh_cli_is_not_available(self):
         with empty_path():
@@ -32,7 +160,21 @@ class TestGhSecurityIssues:
     @mock.patch(
         "subprocess.run",
         side_effect=subprocess.CalledProcessError(
-            returncode=1, cmd=["command", "-l", "-v"]
+            returncode=1,
+            cmd=[
+                "gh",
+                "issue",
+                "list",
+                "--label",
+                "security",
+                "--search",
+                "CVE",
+                "--json",
+                "id,title",
+                "1000",
+                "--state",
+                "all",
+            ],
         ),
     )
     def test_gh_cli_failed(self, run_mock):
@@ -40,7 +182,25 @@ class TestGhSecurityIssues:
             set(security.gh_security_issues())
 
         actual = f"{exec_info.value}"
-        expected = f"{subprocess.CalledProcessError(returncode=1, cmd=['command', '-l', '-v'])}"
+        expected = str(
+            subprocess.CalledProcessError(
+                returncode=1,
+                cmd=[
+                    "gh",
+                    "issue",
+                    "list",
+                    "--label",
+                    "security",
+                    "--search",
+                    "CVE",
+                    "--json",
+                    "id,title",
+                    "1000",
+                    "--state",
+                    "all",
+                ],
+            )
+        )
         assert actual == expected
 
     @mock.patch("subprocess.run")
