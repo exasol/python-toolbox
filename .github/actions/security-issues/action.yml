@@ -8,7 +8,7 @@ inputs:
     required: true
 
   format:
-    description: 'Input format'
+    description: 'Input format (e.g. "maven" or "pass-through")'
     required: true
 
   github-token:
