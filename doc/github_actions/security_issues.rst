@@ -47,7 +47,7 @@ Workspace command which shall be executed in order to check the project's depend
 
 .. note::
 
-    The calling workflow need to make sure the specified command can be executed in the context of the workflow.
+    The calling workflow needs to make sure the specified command can be executed in the context of the workflow.
 
 
 format
