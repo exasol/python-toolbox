@@ -51,7 +51,7 @@ def gh_security_issues() -> Generator[Tuple[str, str], None, None]:
     Yields issue-id, cve-id pairs for all (closed, open) issues associated with CVEs
 
     Return:
-        A generator which yield tuples of (id,title).
+        A generator which yields tuples of (id,title).
 
     Raises:
         subprocess.CalledProcessError: If the underlying command fails.
