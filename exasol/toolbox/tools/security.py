@@ -129,15 +129,10 @@ def security_issue_body(issue: Issue) -> str:
 
 def create_security_issue(issue: Issue) -> Tuple[str, str]:
     command = [
-        "gh",
-        "issue",
-        "create",
-        "--label",
-        "security",
-        "--title",
-        security_issue_title(issue),
-        "--body",
-        security_issue_body(issue),
+        "gh", "issue", "create",
+        "--label", "security",
+        "--title", security_issue_title(issue),
+        "--body", security_issue_body(issue),
     ]
     try:
         result = subprocess.run(command, check=True, capture_output=True)
