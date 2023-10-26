@@ -84,8 +84,8 @@ The expect intput format is jsonl (line based json), of the following form:
 
 github-token
 ++++++++++++
-The temporary github token of the workflow needs to be passed into the action (:code:`${{ secrets.GITHUB_TOKEN }}`),
-in order to enable the action to query and created github issue.
+The temporary GitHub token of the workflow needs to be passed into the action (:code:`${{ secrets.GITHUB_TOKEN }}`),
+in order to enable the action to query and created GitHub issues.
 
 
 Todo's
