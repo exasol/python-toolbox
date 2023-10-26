@@ -186,7 +186,7 @@ def convert(
     """
 
     def _maven(infile):
-        issues = from_maven(sys.stdin.read())
+        issues = from_maven(infile.read())
         for issue in _issues_as_json_str(issues):
             stdout(issue)
         raise typer.Exit(code=0)
