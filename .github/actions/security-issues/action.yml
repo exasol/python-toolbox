@@ -13,7 +13,7 @@ inputs:
 
   github-token:
     description: 'Github Token'
-    required: True
+    required: true
 
 runs:
 
