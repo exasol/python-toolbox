@@ -25,4 +25,4 @@ How to get Help
 
 
 If the details for a specific command are not sufficient checkout the according subsections bellow,
-or `create an isssue <https://github.com/exasol/python-toolbox/issues/new?assignees=&labels=documentation&projects=&template=documentation.md&title=%F0%9F%93%9A+%3CInsert+Title%3E>`_ nothing is avialable yet.
+or `create an isssue <https://github.com/exasol/python-toolbox/issues/new?assignees=&labels=documentation&projects=&template=documentation.md&title=%F0%9F%93%9A+%3CInsert+Title%3E>`_ if nothing is avialable yet.
