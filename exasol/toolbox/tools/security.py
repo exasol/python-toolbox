@@ -57,19 +57,12 @@ def gh_security_issues() -> Generator[Tuple[str, str], None, None]:
         subprocess.CalledProcessError: If the underlying command fails.
     """
     command = [
-        "gh",
-        "issue",
-        "list",
-        "--label",
-        "security",
-        "--search",
-        "CVE",
-        "--json",
-        "id,title",
-        "--limit",
-        "1000",
-        "--state",
-        "all",
+        "gh", "issue", "list",
+        "--label", "security",
+        "--search", "CVE",
+        "--json", "id,title",
+        "--limit", "1000",
+        "--state", "all",
     ]
     try:
         result = subprocess.run(command, check=True, capture_output=True)
