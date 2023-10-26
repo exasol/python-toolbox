@@ -25,11 +25,10 @@ runs:
       with:
         python-version: 3.11
 
-    # FIXME: Pin this to specifically released version
     - name: Install Python Toolbox / Security tool
       shell: bash
       run: |
-        pip install 'git+https://github.com/exasol/python-toolbox.git@feature/security-issues-action'
+        pip install 'git+https://github.com/exasol/python-toolbox.git@0.6.0'
 
     - name: Create Security Issue Report
       shell: bash
