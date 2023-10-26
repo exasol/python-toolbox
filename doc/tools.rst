@@ -21,7 +21,7 @@ How to get Help
 
 .. code-block:: shell
 
-     $ tbx command subcommand subsubcommand--help
+     $ tbx command subcommand subsubcommand --help
 
 
 If the details for a specific command are not sufficient checkout the according subsections bellow,
