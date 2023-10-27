@@ -6,6 +6,15 @@
 Unreleased
 ==========
 
+.. _changelog-0.6.1:
+
+0.6.1 - 2023-10-27
+==================
+
+🐞 Fixed
+
+* Fixed failing security-issues action in case of empty ignore list
+
 .. _changelog-0.6.0:
 
 0.6.0 - 2023-10-27
