@@ -62,4 +62,4 @@ runs:
         echo -e "## Created Security Issue\n" >> $GITHUB_STEP_SUMMARY
         cat created.txt >> $GITHUB_STEP_SUMMARY
         echo -e "## Filtered Security Issue\n" >> $GITHUB_STEP_SUMMARY
-        tail -n +2 filtered.txt | grep . >> $GITHUB_STEP_SUMMARY
+        tail -n +2 filtered.txt | grep . || true >> $GITHUB_STEP_SUMMARY
