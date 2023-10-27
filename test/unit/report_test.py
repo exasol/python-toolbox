@@ -48,8 +48,8 @@ def test_rating_from_score(score, expected):
 
 
 def test_rating_from_score_throws_exception_for_unknown_value():
-    with pytest.raises(ValueError) as ex:
-        actual = Rating.from_score(100)
+    with pytest.raises(ValueError):
+        _ = Rating.from_score(100)
 
 
 @pytest.fixture
@@ -91,7 +91,7 @@ def named_temp_file(tmp_path):
     doc/user_guide/modules/sphinx/multiversion/conf.py:41:0: C0103: Constant name "smv_remote_whitelist" doesn't conform to UPPER_CASE naming style (invalid-name)
     doc/user_guide/modules/sphinx/multiversion/conf.py:42:0: C0103: Constant name "smv_branch_whitelist" doesn't conform to UPPER_CASE naming style (invalid-name)
     doc/user_guide/modules/sphinx/multiversion/conf.py:43:0: C0103: Constant name "smv_tag_whitelist" doesn't conform to UPPER_CASE naming style (invalid-name)
-    
+
     ------------------------------------------------------------------
     Your code has been rated at 7.80/10 (previous run: 7.86/10, -0.05)
     """
@@ -104,7 +104,9 @@ def named_temp_file(tmp_path):
         ),
     ],
 )
-def test_static_code_analysis(named_temp_file, content, expected):
+def test_static_code_analysis(
+    named_temp_file, content, expected
+):  # pylint: disable=redefined-outer-name
     coverage_report = named_temp_file(name=".lint.txt", content=content)
     actual = _static_code_analysis(coverage_report)
     assert actual == expected

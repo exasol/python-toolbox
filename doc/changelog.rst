@@ -6,6 +6,12 @@
 Unreleased
 ==========
 
+✨ Added
+--------
+
+* Added security command
+* Added security-issues action
+
 .. _changelog-0.5.0:
 
 0.5.0 - 2023-10-12

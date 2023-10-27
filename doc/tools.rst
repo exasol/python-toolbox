@@ -1,48 +1,28 @@
 💻 Tools
 ========
 
-tbx
----
-The :code:`tbx` is the main entry point for all of the toolbox specific tooling.
+The python-toolbox ships with a set of command line tools, whose entry point always is the command :code:`tbx`.
+The commands are structured in a *tree* manner, and help is provided along with the command(s) no matter the nesting.
+
+How to get Help
+---------------
 
 .. code-block:: shell
 
      $ tbx --help
 
-     Usage: tbx [OPTIONS] COMMAND [ARGS]...
+.. code-block:: shell
 
-    ╭─ Options ───────────────────────────────────────────────────────────────────────────╮
-    │ --install-completion          Install completion for the current shell.             │
-    │ --show-completion             Show completion for the current shell, to copy it or  │
-    │                               customize the installation.                           │
-    │ --help                        Show this message and exit.                           │
-    ╰─────────────────────────────────────────────────────────────────────────────────────╯
-    ╭─ Commands ──────────────────────────────────────────────────────────────────────────╮
-    │ workflow                                                                            │
-    ╰─────────────────────────────────────────────────────────────────────────────────────╯
-
-workflow
-++++++++
-The workflow command helps to install and maintain GitHub workflows provided by the toolbox.
+     $ tbx command --help
 
 .. code-block:: shell
 
-     $ tbx workflow --help
+     $ tbx command subcommand --help
 
-     Usage: tbx workflow [OPTIONS] COMMAND [ARGS]...
+.. code-block:: shell
 
-    ╭─ Options ───────────────────────────────────────────────────────────────────────────╮
-    │ --help          Show this message and exit.                                         │
-    ╰─────────────────────────────────────────────────────────────────────────────────────╯
-    ╭─ Commands ──────────────────────────────────────────────────────────────────────────╮
-    │ diff      Diff a specific workflow against the installed one.                       │
-    │ install   Installs the requested workflow into the target directory.                │
-    │ list      List all available workflows.                                             │
-    │ show      Shows a specific workflow.                                                │
-    │ update    Similar to install but checks for existing workflows and shows diff       │
-    ╰─────────────────────────────────────────────────────────────────────────────────────╯
+     $ tbx command subcommand subsubcommand --help
 
 
-
-
-
+If the details for a specific command are not sufficient checkout the according subsections bellow,
+or `create an isssue <https://github.com/exasol/python-toolbox/issues/new?assignees=&labels=documentation&projects=&template=documentation.md&title=%F0%9F%93%9A+%3CInsert+Title%3E>`_ if nothing is avialable yet.

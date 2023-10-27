@@ -1,0 +1,65 @@
+name: 'SIA'
+description: 'The Security Issues Action creates github issues for open security issues in the repository'
+
+inputs:
+
+  command:
+    description: 'Command for generating a security report'
+    required: true
+
+  format:
+    description: 'Input format (e.g. "maven" or "pass-through")'
+    required: true
+
+  github-token:
+    description: 'Github Token'
+    required: true
+
+runs:
+
+  using: "composite"
+  steps:
+
+    - name: Setup Python (${{ inputs.python-version}})
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+
+    - name: Install Python Toolbox / Security tool
+      shell: bash
+      run: |
+        pip install exasol-toolbox==0.6.0
+
+    - name: Create Security Issue Report
+      shell: bash
+      run: |
+        ${{ inputs.command }} | tee input
+
+    - name: Convert Report To Common Input Format
+      shell: bash
+      run: |
+        tbx security cve convert ${{inputs.format}} < input | tee cves.jsonl
+
+    - name: Filter Issues
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      shell: bash
+      run: |
+        tbx security cve filter github-issues < cves.jsonl 2> filtered.txt | tee issues.jsonl
+        cat filtered.txt
+
+    - name: Create Issues
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+      shell: bash
+      run: |
+        tbx security cve create < issues.jsonl | tee created.txt
+
+    - name: Create Report
+      shell: bash
+      run: |
+        echo -e "# Summary\n" >> $GITHUB_STEP_SUMMARY
+        echo -e "## Created Security Issue\n" >> $GITHUB_STEP_SUMMARY
+        cat created.txt >> $GITHUB_STEP_SUMMARY
+        echo -e "## Filtered Security Issue\n" >> $GITHUB_STEP_SUMMARY
+        tail -n +2 filtered.txt | grep . >> $GITHUB_STEP_SUMMARY

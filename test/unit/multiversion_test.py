@@ -84,27 +84,27 @@ def version_info(tmp_path):
     )
 
 
-def test_tags_property(version_info):
+def test_tags_property(version_info):  # pylint: disable=redefined-outer-name
     versions = version_info.tags
     assert {version.name for version in versions} == {"v0.1.0"}
 
 
-def test_branches_property(version_info):
+def test_branches_property(version_info):  # pylint: disable=redefined-outer-name
     versions = version_info.branches
     assert {version.name for version in versions} == {"master", "branch-with/slash"}
 
 
-def test_releases_property(version_info):
+def test_releases_property(version_info):  # pylint: disable=redefined-outer-name
     versions = version_info.releases
     assert {version.name for version in versions} == {"v0.1.0"}
 
 
-def test_in_development_property(version_info):
+def test_in_development_property(version_info):  # pylint: disable=redefined-outer-name
     versions = version_info.in_development
     assert {version.name for version in versions} == {"master", "branch-with/slash"}
 
 
-def test_vhasdoc(version_info):
+def test_vhasdoc(version_info):  # pylint: disable=redefined-outer-name
     assert version_info.vhasdoc("master")
     assert not version_info.vhasdoc("v0.1.0")
     assert version_info.vhasdoc("branch-with/slash")
@@ -116,7 +116,7 @@ def test_vhasdoc(version_info):
     assert not version_info.vhasdoc("branch-with/slash")
 
 
-def test_vpathto(version_info):
+def test_vpathto(version_info):  # pylint: disable=redefined-outer-name
     assert version_info.vpathto("master") == "testpage.html"
     assert version_info.vpathto("v0.1.0") == posixpath.join(
         "..", "v0.1.0", "index.html"
@@ -136,7 +136,7 @@ def test_vpathto(version_info):
     )
 
 
-def test_apathto(version_info):
+def test_apathto(version_info):  # pylint: disable=redefined-outer-name
     build_targets = {
         "HTML": {
             "builder": "html",

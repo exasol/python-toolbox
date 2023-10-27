@@ -1,3 +1,4 @@
+"""Configuration for nox based task runner"""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -13,6 +14,8 @@ from nox import Session
 
 @dataclass(frozen=True)
 class Config:
+    """Project specific configuration used by nox infrastructure"""
+
     root: Path = Path(__file__).parent
     doc: Path = Path(__file__).parent / "doc"
     version_file: Path = Path(__file__).parent / "exasol" / "toolbox" / "version.py"
