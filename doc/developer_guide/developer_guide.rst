@@ -7,6 +7,4 @@
 
     ../design
     development
-    todos
-
-
+    ideas

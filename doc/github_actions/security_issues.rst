@@ -88,8 +88,8 @@ The temporary GitHub token of the workflow needs to be passed into the action (:
 in order to enable the action to query and created GitHub issues.
 
 
-Todo's
-------
+Ideas
+-----
 
 .. todo::
 

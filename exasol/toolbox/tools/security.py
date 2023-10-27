@@ -42,7 +42,7 @@ def _issues(input) -> Generator[Issue, None, None]:
 
 def _issues_as_json_str(issues):
     for issue in issues:
-        issue = asdict(issue)  # type: ignore
+        issue = asdict(issue)
         yield json.dumps(issue)
 
 
@@ -56,14 +56,15 @@ def gh_security_issues() -> Generator[Tuple[str, str], None, None]:
     Raises:
         subprocess.CalledProcessError: If the underlying command fails.
     """
+    # fmt: off
     command = [
         "gh", "issue", "list",
         "--label", "security",
         "--search", "CVE",
         "--json", "id,title",
         "--limit", "1000",
-        "--state", "all",
     ]
+    # fmt: on
     try:
         result = subprocess.run(command, check=True, capture_output=True)
     except FileNotFoundError as ex:
@@ -128,12 +129,14 @@ def security_issue_body(issue: Issue) -> str:
 
 
 def create_security_issue(issue: Issue) -> Tuple[str, str]:
+    # fmt: off
     command = [
         "gh", "issue", "create",
         "--label", "security",
         "--title", security_issue_title(issue),
         "--body", security_issue_body(issue),
     ]
+    # fmt: on
     try:
         result = subprocess.run(command, check=True, capture_output=True)
     except FileNotFoundError as ex:
@@ -185,7 +188,7 @@ def convert(
 
 
 class Filter(str, Enum):
-    Github = "github"
+    GitHubIssues = "github-issues"
     PassThrough = "pass-through"
 
 
@@ -207,11 +210,9 @@ def filter(
 
     def _github(infile):
         to_be_filtered = {cve for _, cve in gh_security_issues()}
-        stderr(
-            "Filtering:\n{issues}".format(
-                issues="\n".join(f"{i}" for i in to_be_filtered)
-            )
-        )
+        stderr("Filtering:")
+        for issue in to_be_filtered:
+            stderr(f"{issue}")
         filtered_issues = [
             issue for issue in _issues(infile) if issue.cve not in to_be_filtered
         ]
@@ -224,7 +225,7 @@ def filter(
             stdout(line)
         raise typer.Exit(code=0)
 
-    actions = {Filter.Github: _github, Filter.PassThrough: _pass_through}
+    actions = {Filter.GitHubIssues: _github, Filter.PassThrough: _pass_through}
     action = actions[type]
     action(input_file)
 

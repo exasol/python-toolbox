@@ -172,8 +172,6 @@ class TestGhSecurityIssues:
                 "--json",
                 "id,title",
                 "1000",
-                "--state",
-                "all",
             ],
         ),
     )
@@ -196,8 +194,6 @@ class TestGhSecurityIssues:
                     "--json",
                     "id,title",
                     "1000",
-                    "--state",
-                    "all",
                 ],
             )
         )

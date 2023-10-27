@@ -28,7 +28,7 @@ runs:
     - name: Install Python Toolbox / Security tool
       shell: bash
       run: |
-        pip install 'git+https://github.com/exasol/python-toolbox.git@0.6.0'
+        pip install 'git+https://github.com/exasol/python-toolbox.git@feature/security-issues-action'
 
     - name: Create Security Issue Report
       shell: bash
@@ -45,7 +45,7 @@ runs:
         GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
-        tbx security cve filter github < cves.jsonl 2> filtered.txt | tee issues.jsonl
+        tbx security cve filter github-issues < cves.jsonl 2> filtered.txt | tee issues.jsonl
         cat filtered.txt
 
     - name: Create Issues
@@ -59,7 +59,7 @@ runs:
       shell: bash
       run: |
         echo -e "# Summary\n" >> $GITHUB_STEP_SUMMARY
-        echo -e "# Filtered Security Issue\n" >> $GITHUB_STEP_SUMMARY
-        tail -n +2 filtered.txt | grep . | xargs -n1 echo >> $GITHUB_STEP_SUMMARY
-        echo -e "# Created Security Issue\n" >> $GITHUB_STEP_SUMMARY
-        cat created.txt | xargs -n1 echo >> $GITHUB_STEP_SUMMARY
+        echo -e "## Created Security Issue\n" >> $GITHUB_STEP_SUMMARY
+        cat created.txt >> $GITHUB_STEP_SUMMARY
+        echo -e "## Filtered Security Issue\n" >> $GITHUB_STEP_SUMMARY
+        tail -n +2 filtered.txt | grep .
