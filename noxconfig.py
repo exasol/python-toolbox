@@ -1,4 +1,4 @@
-"""configuration for nox based task runner"""
+"""Configuration for nox based task runner"""
 from __future__ import annotations
 
 from dataclasses import dataclass
