@@ -28,7 +28,7 @@ runs:
     - name: Install Python Toolbox / Security tool
       shell: bash
       run: |
-        pip install 'git+https://github.com/exasol/python-toolbox.git@feature/security-issues-action'
+        pip install exasol-toolbox==0.6.0
 
     - name: Create Security Issue Report
       shell: bash
@@ -62,4 +62,4 @@ runs:
         echo -e "## Created Security Issue\n" >> $GITHUB_STEP_SUMMARY
         cat created.txt >> $GITHUB_STEP_SUMMARY
         echo -e "## Filtered Security Issue\n" >> $GITHUB_STEP_SUMMARY
-        tail -n +2 filtered.txt | grep .
+        tail -n +2 filtered.txt | grep . >> $GITHUB_STEP_SUMMARY
