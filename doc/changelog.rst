@@ -12,6 +12,7 @@ Unreleased
 ==================
 
 🐞 Fixed
+--------
 
 * Fixed failing security-issues action in case of empty ignore list
 
