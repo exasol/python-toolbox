@@ -6,6 +6,12 @@
 Unreleased
 ==========
 
+🔧 Changed
+----------
+
+* Update pylint dependency
+* Update import-lib dependency
+
 .. _changelog-0.6.1:
 
 0.6.1 - 2023-10-27
