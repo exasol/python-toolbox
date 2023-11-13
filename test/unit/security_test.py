@@ -354,3 +354,8 @@ def test_convert_maven_input(maven_report):  # pylint: disable=redefined-outer-n
     }
     actual = set(security.from_maven(maven_report))
     assert actual == expected
+
+
+def test_convert_maven_input_no_vulnerable():  # pylint: disable=redefined-outer-name
+    actual = set(security.from_maven("{}"))
+    assert len(actual) == 0
