@@ -6,6 +6,10 @@
 Unreleased
 ==========
 
+🐞 Fixed
+--------
+* Fix failing vulnerability issue creator when Maven report does not contain "vulnerable" entry
+
 🔧 Changed
 ----------
 

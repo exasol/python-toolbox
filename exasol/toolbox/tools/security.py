@@ -87,7 +87,7 @@ def gh_security_issues() -> Generator[Tuple[str, str], None, None]:
 def from_maven(report: str) -> Iterable[Issue]:
     # Note: Consider adding warnings if there is the same cve with multiple coordinates
     report = json.loads(report)
-    dependencies = report["vulnerable"]  # type: ignore
+    dependencies = report.get("vulnerable", {})  # type: ignore
     for _, dependency in dependencies.items():  # type: ignore
         for v in dependency["vulnerabilities"]:  # type: ignore
             references = [v["reference"]] + v["externalReferences"]
