@@ -6,5 +6,5 @@
 # If you need to change the version, do so in the project.toml, e.g. by using `poetry version X.Y.Z`.
 MAJOR = 0
 MINOR = 6
-PATCH = 1
+PATCH = 2
 VERSION = f"{MAJOR}.{MINOR}.{PATCH}"
