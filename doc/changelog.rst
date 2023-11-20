@@ -6,6 +6,11 @@
 Unreleased
 ==========
 
+.. _changelog-0.6.2:
+
+0.6.2 - 2023-11-20
+==================
+
 🐞 Fixed
 --------
 * Fix failing vulnerability issue creator when Maven report does not contain "vulnerable" entry
