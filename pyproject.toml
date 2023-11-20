@@ -3,7 +3,7 @@ name = "exasol-toolbox"
 packages = [
     { include = "exasol" },
 ]
-version = "0.6.1"
+version = "0.6.2"
 description = ""
 authors = [
     "Nicola Coretti <nicola.coretti@exasol.com>"
