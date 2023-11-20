@@ -13,11 +13,6 @@
 # 🦺 Github Actions
 * [ ] Did you update the version pinning in the action(s)
   * security-issues (exasol-toolbox)
+    -> Only for releases!!
 
 Note: If any of the above is not relevant to your PR just check the box.
-
-## 🔐 Security
-## 🐞 Bug
-## ✨ Feature
-## 🔧 Refactoring
-## 📚 Documentation
