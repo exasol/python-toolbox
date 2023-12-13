@@ -47,7 +47,7 @@ class Metrics(BaseModel):
 if __name__ == "__main__":
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://schemas.exasol.com/metrics-0.1.0.json",
+        "$id": "https://schemas.exasol.com/project-metrics-0.1.0.json",
     }
     schema.update(Metrics.model_json_schema())
     print(json.dumps(schema, indent=2))

@@ -25,6 +25,15 @@ from typing import (
 
 
 class Rating(Enum):
+    """
+    A = Excellent
+    B = Good
+    C = Satisfactory (Ok, could be better though)
+    D = Poor (Improvement necessary)
+    E = Bad (Need for action)
+    F = Broken (Get it fixed!)
+    N/A = Rating is not available
+    """
     A = "A"
     B = "B"
     C = "C"
