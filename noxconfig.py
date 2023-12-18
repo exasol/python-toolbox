@@ -19,7 +19,7 @@ class Config:
     root: Path = Path(__file__).parent
     doc: Path = Path(__file__).parent / "doc"
     version_file: Path = Path(__file__).parent / "exasol" / "toolbox" / "version.py"
-    path_filters: Iterable[str] = ("dist", ".eggs", "venv")
+    path_filters: Iterable[str] = ("dist", ".eggs", "venv", "metrics-schema")
 
     @staticmethod
     def pre_integration_tests_hook(

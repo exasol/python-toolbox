@@ -25,17 +25,26 @@ from typing import (
 
 
 class Rating(Enum):
-    A = auto()
-    B = auto()
-    C = auto()
-    D = auto()
-    E = auto()
-    F = auto()
-    NotAvailable = auto()
+    """
+    A = Excellent
+    B = Good
+    C = Satisfactory (Ok, could be better though)
+    D = Poor (Improvement necessary)
+    E = Bad (Need for action)
+    F = Broken (Get it fixed!)
+    N/A = Rating is not available
+    """
+    A = "A"
+    B = "B"
+    C = "C"
+    D = "D"
+    E = "E"
+    F = "F"
+    NotAvailable = "N/A"
 
     def __format__(self, format_spec: str) -> str:
         if format_spec == "n":
-            return f"{self.name}" if not self == Rating.NotAvailable else "N/A"
+            return f"{self.value}"
         return str(self)
 
     @staticmethod
