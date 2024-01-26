@@ -128,7 +128,7 @@ def security_issue_body(issue: Issue) -> str:
     )
 
 
-def create_security_issue(issue: Issue) -> Tuple[str, str]:
+def create_security_issue(issue: Issue, project="") -> Tuple[str, str]:
     # fmt: off
     command = [
         "gh", "issue", "create",
@@ -136,6 +136,8 @@ def create_security_issue(issue: Issue) -> Tuple[str, str]:
         "--title", security_issue_title(issue),
         "--body", security_issue_body(issue),
     ]
+    if project:
+        command.extend(['--project', project])
     # fmt: on
     try:
         result = subprocess.run(command, check=True, capture_output=True)
@@ -235,6 +237,9 @@ def create(
     input_file: typer.FileText = typer.Argument(
         default="-", mode="r", help="file of cve's in the jsonl format"
     ),
+    project: str = typer.Option(
+       default="", help='Project the crated ticket shall be associated with.'
+    )
 ) -> None:
     """
     Create GitHub issues for CVE's
@@ -246,7 +251,7 @@ def create(
     Links to the created issue(s)
     """
     for issue in _issues(input_file):
-        std_err, std_out = create_security_issue(issue)
+        std_err, std_out = create_security_issue(issue, project)
         stderr(std_err)
         stdout(std_out)
 
