@@ -15,6 +15,10 @@ inputs:
     description: 'Github Token'
     required: true
 
+  project:
+    description: 'Project the created tickets shall be associated with'
+    required: false
+
 runs:
 
   using: "composite"
@@ -28,7 +32,7 @@ runs:
     - name: Install Python Toolbox / Security tool
       shell: bash
       run: |
-        pip install exasol-toolbox==0.6.2
+        pip install exasol-toolbox==0.7.0
 
     - name: Create Security Issue Report
       shell: bash
@@ -53,7 +57,7 @@ runs:
         GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
-        tbx security cve create < issues.jsonl | tee created.txt
+        tbx security cve create --project "${{ inputs.project }}" < issues.jsonl | tee created.txt
 
     - name: Create Report
       shell: bash

@@ -34,6 +34,7 @@ class Rating(Enum):
     F = Broken (Get it fixed!)
     N/A = Rating is not available
     """
+
     A = "A"
     B = "B"
     C = "C"
