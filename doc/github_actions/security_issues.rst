@@ -90,7 +90,7 @@ in order to enable the action to query and created GitHub issues.
 
 project
 +++++++
-Github project the crated issue(s) shall be associated with (default = None).
+Github project the created issue(s) shall be associated with (default = None).
 
 
 
