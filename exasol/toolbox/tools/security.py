@@ -238,8 +238,8 @@ def create(
         default="-", mode="r", help="file of cve's in the jsonl format"
     ),
     project: str = typer.Option(
-       default="", help='Project the crated ticket shall be associated with.'
-    )
+        default="", help="Project the crated ticket shall be associated with."
+    ),
 ) -> None:
     """
     Create GitHub issues for CVE's
