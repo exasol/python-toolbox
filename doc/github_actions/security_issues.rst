@@ -67,7 +67,7 @@ Currently there are only two converters available
 
 
 Input Format
-------------
+____________
 
 The expect intput format is jsonl (line based json), of the following form:
 
@@ -86,6 +86,12 @@ github-token
 ++++++++++++
 The temporary GitHub token of the workflow needs to be passed into the action (:code:`${{ secrets.GITHUB_TOKEN }}`),
 in order to enable the action to query and created GitHub issues.
+
+
+project
++++++++
+Github project the crated issue(s) shall be associated with (default = None).
+
 
 
 Ideas
