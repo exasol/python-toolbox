@@ -6,7 +6,20 @@
 Unreleased
 ==========
 
+
+.. _changelog-0.7.0:
+
+
+0.7.0 - 2023-11-20
+==================
+
+✨ Added
+--------
+* Added support for referencing projects in security-issues action.
+
+
 .. _changelog-0.6.2:
+
 
 0.6.2 - 2023-11-20
 ==================
