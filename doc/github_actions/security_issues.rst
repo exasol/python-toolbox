@@ -90,8 +90,15 @@ in order to enable the action to query and created GitHub issues.
 
 project
 +++++++
-Github project the created issue(s) shall be associated with (default = None).
+Title of the GitHub-Project the created issue(s) shall be associated with (default = None).
+To determine the title of an project you can use the GitHub-CLI, see example below.
 
+.. code-block:: shell
+
+    gh project list --owner exasol
+
+    NUMBER  TITLE                             STATE  ID
+    ...
 
 
 Ideas
