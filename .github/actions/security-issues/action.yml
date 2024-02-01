@@ -38,6 +38,7 @@ runs:
         path: toolbox
 
     - name: Install poetry
+      shell: bash
       run: pipx install poetry
 
     - name: Setup Python (${{ inputs.python-version}})
