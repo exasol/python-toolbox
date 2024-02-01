@@ -317,7 +317,7 @@ def test_convert_maven_input(maven_report):  # pylint: disable=redefined-outer-n
             "Java SDK up to and including 1.11.2.  Users should update "
             "to apache-avro version 1.11.3 which addresses this issue.\n"
             "\n",
-            coordinates="pkg:maven/org.apache.avro/avro@1.7.7",
+            coordinates="org.apache.avro:avro:jar:1.7.7:compile",
             references=(
                 "https://ossindex.sonatype.org/vulnerability/CVE-2023-39410?component-type=maven&component-name=org.apache.avro%2Favro&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1",
                 "http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2023-39410",
@@ -344,7 +344,7 @@ def test_convert_maven_input(maven_report):  # pylint: disable=redefined-outer-n
             "differ from those defined at NVD. See "
             "https://ossindex.sonatype.org/vulnerability/CVE-2020-36641 "
             "for details",
-            coordinates="pkg:maven/fr.turri/aXMLRPC@1.13.0",
+            coordinates="fr.turri:aXMLRPC:jar:1.13.0:test",
             references=(
                 "https://ossindex.sonatype.org/vulnerability/CVE-2020-36641?component-type=maven&component-name=fr.turri%2FaXMLRPC&utm_source=ossindex-client&utm_medium=integration&utm_content=1.8.1",
                 "http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2020-36641",
