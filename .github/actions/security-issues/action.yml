@@ -41,6 +41,22 @@ runs:
         python-version: 3.11
         cache: 'poetry'
 
+    - uses: actions/checkout@v4
+      with:
+        repository: exasol/python-toolbox
+        ref: feature/#130-security-issues-output
+        path: toolbox
+
+    - name: Debug
+      run: |
+        pwd
+        ls -lah
+        echo "GITHUB_WORKSPACE = $GITHUB_WORKSPACE"
+        ls -lha $GITHUB_WORKSPACE/toolbox
+        cd $GITHUB_WORKSPACE/toolbox
+        ls
+        ls *
+
     - name: Install Python Toolbox / Security tool
       shell: bash
       run: |
@@ -62,7 +78,7 @@ runs:
         GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
-        $GITHUB_WORKSPACE/toolbox
+        cd $GITHUB_WORKSPACE/toolbox
         poetry run tbx security cve filter github-issues < ../cves.jsonl 2> ../filtered.txt | tee ../issues.jsonl
         cat ../filtered.txt
 
@@ -71,7 +87,7 @@ runs:
         GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
-        $GITHUB_WORKSPACE/toolbox
+        cd $GITHUB_WORKSPACE/toolbox
         poetry run tbx security cve create --project "${{ inputs.project }}" < ../issues.jsonl | tee ../created.jsonl
 
     - name: Define Output Parameter
