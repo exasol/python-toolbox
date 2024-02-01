@@ -48,6 +48,7 @@ runs:
         path: toolbox
 
     - name: Debug
+      shell: bash
       run: |
         pwd
         ls -lah
