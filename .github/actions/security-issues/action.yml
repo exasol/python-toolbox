@@ -59,6 +59,9 @@ runs:
       run: |
         tbx security cve create --project "${{ inputs.project }}" < issues.jsonl | tee created.txt
 
+    - name: Cat info
+      run: cat created.txt
+
     - name: Create Report
       shell: bash
       run: |
