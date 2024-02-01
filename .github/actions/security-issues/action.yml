@@ -31,15 +31,25 @@ runs:
   using: "composite"
   steps:
 
+    - uses: actions/checkout@v4
+      with:
+        repository: exasol/exasol-toolbox
+        ref: feature/#130-security-issues-output
+        path: toolbox
+
+    - name: Install poetry
+      run: pipx install poetry
+
     - name: Setup Python (${{ inputs.python-version}})
       uses: actions/setup-python@v5
       with:
         python-version: 3.11
+        cache: 'poetry'
 
     - name: Install Python Toolbox / Security tool
       shell: bash
       run: |
-        pip install exasol-toolbox==0.7.0
+        poetry --directory=toolbox install
 
     - name: Create Security Issue Report
       shell: bash
@@ -49,14 +59,14 @@ runs:
     - name: Convert Report To Common Input Format
       shell: bash
       run: |
-        tbx security cve convert ${{inputs.format}} < input | tee cves.jsonl
+        poetry --directory=toolbox run tbx security cve convert ${{inputs.format}} < input | tee cves.jsonl
 
     - name: Filter Issues
       env:
         GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
-        tbx security cve filter github-issues < cves.jsonl 2> filtered.txt | tee issues.jsonl
+        poetry --directory=toolbox run tbx security cve filter github-issues < cves.jsonl 2> filtered.txt | tee issues.jsonl
         cat filtered.txt
 
     - name: Create Issues
@@ -64,7 +74,7 @@ runs:
         GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
-        tbx security cve create --project "${{ inputs.project }}" < issues.jsonl | tee created.jsonl
+        poetry --directory=toolbox run tbx security cve create --project "${{ inputs.project }}" < issues.jsonl | tee created.jsonl
 
     - name: Define Output Parameter
       id: get-created-issues
