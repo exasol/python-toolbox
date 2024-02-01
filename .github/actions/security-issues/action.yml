@@ -60,6 +60,7 @@ runs:
         tbx security cve create --project "${{ inputs.project }}" < issues.jsonl | tee created.txt
 
     - name: Cat info
+      shell: bash
       run: cat created.txt
 
     - name: Create Report
