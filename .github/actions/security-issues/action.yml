@@ -31,12 +31,6 @@ runs:
   using: "composite"
   steps:
 
-    - uses: actions/checkout@v4
-      with:
-        repository: exasol/exasol-toolbox
-        ref: feature/#130-security-issues-output
-        path: toolbox
-
     - name: Install poetry
       shell: bash
       run: pipx install poetry
