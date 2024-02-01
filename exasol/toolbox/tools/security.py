@@ -250,10 +250,16 @@ def create(
     Output:
     Links to the created issue(s)
     """
+    def _format_jsonl(issue_url: str, issue: Issue) -> str:
+        issue = asdict(issue)
+        issue["url"] = issue_url
+        return json.dumps(issue)
+
     for issue in _issues(input_file):
-        std_err, std_out = create_security_issue(issue, project)
+        std_err, issue_url = create_security_issue(issue, project)
         stderr(std_err)
-        stdout(std_out)
+        stdout(_format_jsonl(issue_url, issue))
+
 
 
 if __name__ == "__main__":

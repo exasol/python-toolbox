@@ -19,6 +19,13 @@ inputs:
     description: 'Project the created tickets shall be associated with'
     required: false
 
+
+outputs:
+
+  created-issues:
+    description: 'Information about the created issues and the vulnerabilities in JSONL format'
+    value: ${{ steps.get-created-issues.outputs.issues }}
+
 runs:
 
   using: "composite"
@@ -57,17 +64,21 @@ runs:
         GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
-        tbx security cve create --project "${{ inputs.project }}" < issues.jsonl | tee created.txt
+        tbx security cve create --project "${{ inputs.project }}" < issues.jsonl | tee created.jsonl
 
-    - name: Cat info
+    - name: Define Output Parameter
+      id: get-created-issues
       shell: bash
-      run: cat created.txt
+      run: |
+        echo 'issues<<EOF' >> "$GITHUB_OUTPUT"
+        cat created.jsonl >> "$GITHUB_OUTPUT"
+        echo 'EOF' >> "$GITHUB_OUTPUT"
 
     - name: Create Report
       shell: bash
       run: |
         echo -e "# Summary\n" >> $GITHUB_STEP_SUMMARY
         echo -e "## Created Security Issue\n" >> $GITHUB_STEP_SUMMARY
-        cat created.txt >> $GITHUB_STEP_SUMMARY
+        cat created.jsonl >> $GITHUB_STEP_SUMMARY
         echo -e "## Filtered Security Issue\n" >> $GITHUB_STEP_SUMMARY
         tail -n +2 filtered.txt | grep . || true >> $GITHUB_STEP_SUMMARY
