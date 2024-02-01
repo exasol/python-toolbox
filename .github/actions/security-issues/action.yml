@@ -54,22 +54,25 @@ runs:
     - name: Convert Report To Common Input Format
       shell: bash
       run: |
-        poetry --directory=$GITHUB_WORKSPACE/toolbox run tbx security cve convert ${{inputs.format}} < input | tee cves.jsonl
+        cd $GITHUB_WORKSPACE/toolbox
+        poetry run tbx security cve convert ${{inputs.format}} < ../input | tee ../cves.jsonl
 
     - name: Filter Issues
       env:
         GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
-        poetry --directory=$GITHUB_WORKSPACE/toolbox run tbx security cve filter github-issues < cves.jsonl 2> filtered.txt | tee issues.jsonl
-        cat filtered.txt
+        $GITHUB_WORKSPACE/toolbox
+        poetry run tbx security cve filter github-issues < ../cves.jsonl 2> ../filtered.txt | tee ../issues.jsonl
+        cat ../filtered.txt
 
     - name: Create Issues
       env:
         GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
-        poetry --directory=$GITHUB_WORKSPACE/toolbox run tbx security cve create --project "${{ inputs.project }}" < issues.jsonl | tee created.jsonl
+        $GITHUB_WORKSPACE/toolbox
+        poetry run tbx security cve create --project "${{ inputs.project }}" < ../issues.jsonl | tee ../created.jsonl
 
     - name: Define Output Parameter
       id: get-created-issues
