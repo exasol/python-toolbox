@@ -65,6 +65,7 @@ runs:
       shell: bash
       run: |
         tbx security cve create --project "${{ inputs.project }}" < issues.jsonl | tee created.jsonl
+
     - name: Define Output Parameter
       id: get-created-issues
       shell: bash

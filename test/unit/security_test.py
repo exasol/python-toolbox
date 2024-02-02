@@ -359,3 +359,14 @@ def test_convert_maven_input(maven_report):  # pylint: disable=redefined-outer-n
 def test_convert_maven_input_no_vulnerable():  # pylint: disable=redefined-outer-name
     actual = set(security.from_maven("{}"))
     assert len(actual) == 0
+
+def test_format_jsonl():
+    issue = security.Issue(coordinates="coordinates", cve="cve", cwe="cwe", description="description", references=())
+    actual = security.format_jsonl("issue_url", issue)
+    assert actual == '{"cve": "cve", "cwe": "cwe", "description": "description", "coordinates": "coordinates", "references": [], "url": "issue_url"}'
+
+
+def test_format_jsonl_removes_newline():
+    issue = security.Issue(coordinates="coordinates", cve="cve", cwe="cwe", description="description", references=())
+    actual = security.format_jsonl("issue_url\n", issue)
+    assert actual == '{"cve": "cve", "cwe": "cwe", "description": "description", "coordinates": "coordinates", "references": [], "url": "issue_url"}'

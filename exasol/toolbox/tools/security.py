@@ -250,17 +250,15 @@ def create(
     Output:
     Links to the created issue(s)
     """
-    def _format_jsonl(issue_url: str, issue: Issue) -> str:
-        issue = asdict(issue)
-        issue["url"] = issue_url
-        return json.dumps(issue)
-
     for issue in _issues(input_file):
         std_err, issue_url = create_security_issue(issue, project)
         stderr(std_err)
-        stdout(_format_jsonl(issue_url, issue))
+        stdout(format_jsonl(issue_url, issue))
 
-
+def format_jsonl(issue_url: str, issue: Issue) -> str:
+    issue = asdict(issue)
+    issue["url"] = issue_url.strip()
+    return json.dumps(issue)
 
 if __name__ == "__main__":
     CLI()
