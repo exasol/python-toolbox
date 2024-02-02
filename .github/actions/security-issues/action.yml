@@ -59,7 +59,7 @@ runs:
 
     - name: Filter Issues
       env:
-        GITHUB_TOKEN: ${{ inputs.github-token }}
+        GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
         cd $GITHUB_WORKSPACE/toolbox
@@ -68,7 +68,7 @@ runs:
 
     - name: Create Issues
       env:
-        GITHUB_TOKEN: ${{ inputs.github-token }}
+        GH_TOKEN: ${{ inputs.github-token }}
       shell: bash
       run: |
         cd $GITHUB_WORKSPACE/toolbox
