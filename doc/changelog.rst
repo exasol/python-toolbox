@@ -6,6 +6,9 @@
 Unreleased
 ==========
 
+✨ Added
+--------
+* Added output `created-issues` to `security-issues` action containing the found security issues including the created GitHub issues in JSONL format.
 
 .. _changelog-0.7.0:
 
