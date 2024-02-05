@@ -88,14 +88,14 @@ def from_maven(report: str) -> Iterable[Issue]:
     # Note: Consider adding warnings if there is the same cve with multiple coordinates
     report = json.loads(report)
     dependencies = report.get("vulnerable", {})  # type: ignore
-    for _, dependency in dependencies.items():  # type: ignore
+    for dependency_name, dependency in dependencies.items():  # type: ignore
         for v in dependency["vulnerabilities"]:  # type: ignore
             references = [v["reference"]] + v["externalReferences"]
             yield Issue(
                 cve=v["cve"],
                 cwe=v["cwe"],
                 description=v["description"],
-                coordinates=dependency["coordinates"],
+                coordinates=dependency_name,
                 references=tuple(references),
             )
 
@@ -251,10 +251,14 @@ def create(
     Links to the created issue(s)
     """
     for issue in _issues(input_file):
-        std_err, std_out = create_security_issue(issue, project)
+        std_err, issue_url = create_security_issue(issue, project)
         stderr(std_err)
-        stdout(std_out)
+        stdout(format_jsonl(issue_url, issue))
 
+def format_jsonl(issue_url: str, issue: Issue) -> str:
+    issue_json = asdict(issue)
+    issue_json["url"] = issue_url.strip()
+    return json.dumps(issue_json)
 
 if __name__ == "__main__":
     CLI()
