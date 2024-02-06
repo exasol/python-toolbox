@@ -99,8 +99,8 @@ def _install_workflow(
         raise FileExistsError("Workflow already exists")
 
     with ExitStack() as stack:
-        input_file = stack.enter_context(open(src))
-        output_file = stack.enter_context(open(dest, "w"))
+        input_file = stack.enter_context(open(src, "rb"))
+        output_file = stack.enter_context(open(dest, "wb"))
         output_file.write(input_file.read())
 
 
