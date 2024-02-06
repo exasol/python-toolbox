@@ -6,4 +6,4 @@ List all available issues
   documentation
   feature
   refactoring
-security
+  security
