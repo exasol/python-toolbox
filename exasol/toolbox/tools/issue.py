@@ -1,5 +1,3 @@
-import difflib
-import io
 from contextlib import ExitStack
 from pathlib import Path
 from typing import (
@@ -12,7 +10,6 @@ import importlib_resources as resources
 import typer
 from rich.columns import Columns
 from rich.console import Console
-from rich.syntax import Syntax
 
 stdout = Console()
 stderr = Console(stderr=True)
@@ -66,7 +63,7 @@ def _install_issue(
 def _select_issues(issue: str) -> Mapping[str, Any]:
     issues = _issues()
     if issue != "all" and issue not in issues:
-        raise Exception(f"Issue <{issue}> is unknown")
+        raise ValueError(f"Issue <{issue}> is unknown")
     issues = (
         issues
         if issue == "all"
@@ -100,3 +97,7 @@ def install_issue(
         destination = dest / f"{issue}.md"
         _install_issue(path, destination, exists_ok=True)
         stderr.print(f"Installed {issue} in {destination}")
+
+
+if __name__ == "__main__":
+    CLI()
