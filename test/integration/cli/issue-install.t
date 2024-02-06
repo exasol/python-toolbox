@@ -11,4 +11,3 @@ Check if all issues have been installed
   feature.md
   refactoring.md
   security.md
-  
