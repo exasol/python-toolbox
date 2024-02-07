@@ -360,21 +360,25 @@ def test_convert_maven_input_no_vulnerable():  # pylint: disable=redefined-outer
     actual = set(security.from_maven("{}"))
     assert len(actual) == 0
 
+
 def test_format_jsonl():
     issue = security.Issue(
         coordinates="coordinates",
-        cve="cve", cwe="cwe",
-        description="description", 
-        references=()
+        cve="cve",
+        cwe="cwe",
+        description="description",
+        references=(),
     )
-    expected = json.dumps({ 
-        "cve": "cve",
-        "cwe": "cwe",
-        "description": "description",
-        "coordinates": "coordinates",
-        "references": [],
-        "issue_url": "my_issue_url"
-    })
+    expected = json.dumps(
+        {
+            "cve": "cve",
+            "cwe": "cwe",
+            "description": "description",
+            "coordinates": "coordinates",
+            "references": [],
+            "issue_url": "my_issue_url",
+        }
+    )
     actual = security.format_jsonl("my_issue_url", issue)
     assert actual == expected
 
@@ -382,17 +386,20 @@ def test_format_jsonl():
 def test_format_jsonl_removes_newline():
     issue = security.Issue(
         coordinates="coordinates",
-        cve="cve", cwe="cwe",
+        cve="cve",
+        cwe="cwe",
         description="description",
-        references=()
+        references=(),
     )
-    expected = json.dumps({
-        "cve": "cve",
-        "cwe": "cwe",
-        "description": "description",
-        "coordinates": "coordinates",
-        "references": [],
-        "issue_url": "my_issue_url"
-    })
+    expected = json.dumps(
+        {
+            "cve": "cve",
+            "cwe": "cwe",
+            "description": "description",
+            "coordinates": "coordinates",
+            "references": [],
+            "issue_url": "my_issue_url",
+        }
+    )
     actual = security.format_jsonl("my_issue_url\n", issue)
     assert actual == expected
