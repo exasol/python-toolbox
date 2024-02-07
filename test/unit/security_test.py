@@ -373,9 +373,9 @@ def test_format_jsonl():
         "description": "description",
         "coordinates": "coordinates",
         "references": [],
-        "url": "issue_url"
+        "issue_url": "my_issue_url"
     })
-    actual = security.format_jsonl("issue_url", issue)
+    actual = security.format_jsonl("my_issue_url", issue)
     assert actual == expected
 
 
@@ -392,7 +392,7 @@ def test_format_jsonl_removes_newline():
         "description": "description",
         "coordinates": "coordinates",
         "references": [],
-        "url": "issue_url"
+        "issue_url": "my_issue_url"
     })
-    actual = security.format_jsonl("issue_url\n", issue)
+    actual = security.format_jsonl("my_issue_url\n", issue)
     assert actual == expected

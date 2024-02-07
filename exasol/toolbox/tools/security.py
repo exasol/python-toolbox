@@ -151,7 +151,7 @@ def create_security_issue(issue: Issue, project="") -> Tuple[str, str]:
     std_err = result.stderr.decode("utf-8")
     std_out = result.stdout.decode("utf-8")
 
-    return std_err, std_out
+    return std_err, std_out.strip()
 
 
 CLI = typer.Typer()
@@ -257,7 +257,7 @@ def create(
 
 def format_jsonl(issue_url: str, issue: Issue) -> str:
     issue_json = asdict(issue)
-    issue_json["url"] = issue_url.strip()
+    issue_json["issue_url"] = issue_url.strip()
     return json.dumps(issue_json)
 
 if __name__ == "__main__":
