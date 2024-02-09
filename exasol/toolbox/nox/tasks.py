@@ -325,15 +325,37 @@ def report(session: Session) -> None:
     print(format_report(project_report, fmt))
 
 
-@nox.session(name="prepare-relase", python=False)
+@nox.session(name="prepare-release", python=False)
 def prepare_release(session: Session, python=False) -> None:
     """
     Prepares the project for a new release.
-    
+
     Arguments:
 
         version: A version string of the following format: {number}.{number}.{number} (Major, Minor, Patch).
     """
+
+    def _parser():
+        from exasol.toolbox.cli import version
+
+        parser = argparse.ArgumentParser(
+            prog=f"nox -s prepare-release",
+            usage="nox -s prepare-release -- [-h] version",
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        )
+        parser.add_argument(
+            "version",
+            type=version,
+            help=(
+                "A version string of the following format:"
+                '"NUMBER.NUMBER.NUMBER"'
+            ),
+        )
+        return parser
+
+    parser = _parser()
+    args = parser.parse_args(session.posargs)
+    version = args.version
     # 0. check release version number
     # 1. update version numbers in the project
     # 2. update changelog (version + date)
