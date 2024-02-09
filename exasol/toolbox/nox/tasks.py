@@ -323,3 +323,37 @@ def report(session: Session) -> None:
     fmt = Format.from_string(args.format)
 
     print(format_report(project_report, fmt))
+
+
+@nox.session(name="prepare-relase", python=False)
+def prepare_release(session: Session, python=False) -> None:
+    """
+    Prepares the project for a new release.
+    
+    Arguments:
+
+        version: A version string of the following format: {number}.{number}.{number} (Major, Minor, Patch).
+    """
+    # 0. check release version number
+    # 1. update version numbers in the project
+    # 2. update changelog (version + date)
+    # 3. commit changes
+    # 4. create pr
+    pass
+
+
+@nox.session(name="release", python=False)
+def release(session: Session, python=False) -> None:
+    """
+    Creates a new release and publishing it to GitHub and pypi.
+    """
+    # 0. check if tag does not exist (origin)
+    #   0.1. update git information
+    #   0.2. check if origin does not have the tag yet
+    # 1. create release tag
+    # 2. push release tag to origin
+    # 3. build wheel/package
+    # 4. publish on gh
+    # 5. publish on pypi
+    # 6. output relase message/information
+    pass
