@@ -1,17 +1,18 @@
 from dataclasses import dataclass
 
+
 def _index_or(container, index, default):
     try:
         return container[index]
     except IndexError:
         return default
 
+
 @dataclass(frozen=True)
 class Version:
-    major : int
-    minor : int
-    patch : int
-
+    major: int
+    minor: int
+    patch: int
 
     @staticmethod
     def from_string(version):
