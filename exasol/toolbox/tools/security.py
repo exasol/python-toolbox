@@ -255,10 +255,12 @@ def create(
         stderr(std_err)
         stdout(format_jsonl(issue_url, issue))
 
+
 def format_jsonl(issue_url: str, issue: Issue) -> str:
     issue_json = asdict(issue)
-    issue_json["url"] = issue_url.strip()
+    issue_json["issue_url"] = issue_url.strip()
     return json.dumps(issue_json)
+
 
 if __name__ == "__main__":
     CLI()
