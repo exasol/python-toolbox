@@ -1,9 +1,14 @@
 import subprocess
+from datetime import datetime
+from inspect import cleandoc
 from unittest.mock import patch
 
 import pytest
 
-from exasol.toolbox.release import Version
+from exasol.toolbox.release import (
+    Version,
+    changelog,
+)
 
 
 @pytest.mark.parametrize(
@@ -60,4 +65,38 @@ def test_version_from_poetry(poetry_version, version, expected):
     with patch("subprocess.run", return_value=poetry_version(version)):
         actual = Version.from_poetry()
 
+    assert expected == actual
+
+
+@pytest.mark.parametrize(
+    "version,content,date,expected",
+    [
+        (
+            Version(0, 1, 0),
+            cleandoc(
+                """
+                ## Added 
+                * Some great feature
+
+                ## Refactored
+                * Replaced xyz
+                """
+            ),
+            datetime(2024, 2, 7),
+            cleandoc(
+                """
+                # 0.1.0 - 2024-02-07
+
+                ## Added 
+                * Some great feature
+
+                ## Refactored
+                * Replaced xyz
+                """
+            ),
+        ),
+    ],
+)
+def test_changelog(version, content, date, expected):
+    actual = changelog(version, content, date)
     assert expected == actual

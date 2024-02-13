@@ -1,4 +1,6 @@
+from datetime import datetime
 import subprocess
+from inspect import cleandoc
 from dataclasses import dataclass
 from functools import total_ordering
 from shutil import which
@@ -62,3 +64,30 @@ class Version:
         version = result.stdout.decode().strip()
 
         return Version.from_string(version)
+
+
+def changelog(version : Version, content: str, date: datetime | None = None) -> str:
+    """
+    Create a changelog entry for a specific version.
+
+    Args:
+        version: An instance of the Version class representing the release version.
+        content: The content of the changelog entry.
+        date: Optional. The release date. If not provided, the current date will be used.
+
+    Returns:
+        The generated changelog.
+    """
+    date = datetime.today() if date is None else date
+    template = cleandoc(
+        """
+        # {version} - {date}
+
+        {content}
+        """
+    )
+    return template.format(
+        version=version,
+        date=date.strftime('%Y-%m-%d'),
+        content=content
+    )
