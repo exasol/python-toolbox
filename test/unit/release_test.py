@@ -51,7 +51,7 @@ def poetry_version():
 @pytest.mark.parametrize(
     "version,expected",
     [
-        ("1.2.3", Version(1, 2, 0)),
+        ("1.2.3", Version(1, 2, 3)),
         ("1.2", Version(1, 2, 0)),
         ("1", Version(1, 0, 0)),
     ],
