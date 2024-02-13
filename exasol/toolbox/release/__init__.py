@@ -1,5 +1,9 @@
+import subprocess
 from dataclasses import dataclass
 from functools import total_ordering
+from shutil import which
+
+from exasol.toolbox.error import ToolboxError
 
 
 def _index_or(container, index, default):
@@ -39,3 +43,19 @@ class Version:
         parts = [int(number, base=0) for number in version.split(".")]
         version = [_index_or(parts, i, 0) for i in range(3)]
         return Version(*version)
+
+    @staticmethod
+    def from_poetry():
+        poetry = which("poetry")
+        if not poetry:
+            raise ToolboxError("Couldn't find poetry executable")
+
+        try:
+            result = subprocess.run(
+                [poetry, "version", "--no-ansi", "--short"], capture_output=True
+            )
+        except subprocess.CalledProcessError as ex:
+            raise ToolboxError() from ex
+        version = result.stdout.decode().strip()
+
+        return Version.from_string(version)
