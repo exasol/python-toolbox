@@ -45,3 +45,22 @@ print prepare-release help
     -h, --help  show this help message and exit
 
 
+prepare-release with invalid version number should fail
+========================================================= 
+
+  $ cat > poetry <<EOF
+  > #!/usr/bin/sh
+  > echo 0.2.0
+  > EOF
+
+  $ chmod u+x poetry
+
+  $ export PATH=`pwd`:${PATH}
+
+  $ nox -s prepare-release -- 0.1.0
+  nox > Running session prepare-release
+  nox > Session prepare-release aborted: Invalid version, new version (0.1.0) must be higher than old version (0.2.0)..
+  [1]
+
+
+

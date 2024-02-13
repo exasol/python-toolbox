@@ -20,6 +20,9 @@ class Version:
     minor: int
     patch: int
 
+    def __str__(self):
+        return f"{self.major}.{self.minor}.{self.patch}"
+
     def __lt__(self, other):
         return (
             self.major < other.major
