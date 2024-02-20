@@ -24,7 +24,7 @@ def _issues() -> Mapping[str, Any]:
     pkg = "exasol.toolbox.templates.github.ISSUE_TEMPLATE"
 
     def _normalize(name: str) -> str:
-        name = name[0: name.index(".")]
+        name, ext = name.split(".")
         return name
 
     return {_normalize(w.name): w for w in resources.files(pkg).iterdir()}  # type: ignore
@@ -179,7 +179,7 @@ def update_issue(
             if show_diff:
                 diff_issue(inner_issue, dest)
 
-            overwrite = typer.confirm("Overwrite existing issue?")
+            overwrite = typer.confirm(f"Overwrite existing issue?")
             if overwrite:
                 _install_issue(path, destination, exists_ok=True)
                 stderr.print(f"Updated {inner_issue} in {destination}")
