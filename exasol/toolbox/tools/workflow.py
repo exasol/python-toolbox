@@ -24,7 +24,7 @@ def _workflows() -> Mapping[str, Any]:
     pkg = "exasol.toolbox.templates.github.workflows"
 
     def _normalize(name: str) -> str:
-        name, ext = name[0: name.index(".")]
+        name, _ = name.split(".")
         return name
 
     return {_normalize(w.name): w for w in resources.files(pkg).iterdir()}  # type: ignore

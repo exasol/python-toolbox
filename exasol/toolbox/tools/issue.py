@@ -24,7 +24,7 @@ def _issues() -> Mapping[str, Any]:
     pkg = "exasol.toolbox.templates.github.ISSUE_TEMPLATE"
 
     def _normalize(name: str) -> str:
-        name, ext = name.split(".")
+        name, _ = name.split(".")
         return name
 
     return {_normalize(w.name): w for w in resources.files(pkg).iterdir()}  # type: ignore
