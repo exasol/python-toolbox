@@ -81,8 +81,8 @@ def diff_workflow(
     old: Any = dest / f"{workflow}.yml"
     new: Any = Path(_workflows()[workflow])
     with ExitStack() as stack:
-        old = stack.enter_context(open(old) if old.exists() else io.StringIO(""))
-        new = stack.enter_context(open(new))
+        old = stack.enter_context(open(old, encoding="utf-8") if old.exists() else io.StringIO(""))
+        new = stack.enter_context(open(new, encoding="utf-8"))
         old = old.read().split("\n")
         new = new.read().split("\n")
 
