@@ -179,7 +179,7 @@ def update_workflow(
             if show_diff:
                 diff_workflow(inner_workflow, dest)
 
-            overwrite = typer.confirm(f"Overwrite existing workflow?")
+            overwrite = typer.confirm("Overwrite existing workflow?")
             if overwrite:
                 _install_workflow(path, destination, exists_ok=True)
                 stderr.print(f"Updated {inner_workflow} in {destination}")
