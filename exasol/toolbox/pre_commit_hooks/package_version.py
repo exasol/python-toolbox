@@ -48,7 +48,7 @@ class CommitHookError(Exception):
 
 def version_from_python_module(path: Path) -> Version:
     """Retrieve version information from the `version` module"""
-    with open(path) as file:
+    with open(path, encoding="utf-8") as file:
         _locals: Dict[str, Any] = {}
         _globals: Dict[str, Any] = {}
         exec(file.read(), _locals, _globals)
@@ -76,7 +76,7 @@ def write_version_module(version: Version, path: str, exists_ok: bool = True) ->
     if version_file.exists() and not exists_ok:
         raise CommitHookError(f"Version file [{version_file}] already exists.")
     version_file.unlink(missing_ok=True)
-    with open(version_file, "w") as f:
+    with open(version_file, "w", encoding="utf-8") as f:
         f.write(
             _VERSION_MODULE_TEMPLATE.format(
                 major=version.major, minor=version.minor, patch=version.patch
