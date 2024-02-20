@@ -179,7 +179,7 @@ def update_issue(
             if show_diff:
                 diff_issue(inner_issue, dest)
 
-            overwrite = typer.confirm(f"Overwrite existing issue?")
+            overwrite = typer.confirm("Overwrite existing issue?")
             if overwrite:
                 _install_issue(path, destination, exists_ok=True)
                 stderr.print(f"Updated {inner_issue} in {destination}")
