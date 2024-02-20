@@ -59,7 +59,7 @@ def named_temp_file(tmp_path):
     def _factory(name, content):
         path = tmp_path / name
         mode = "w" if not isinstance(content, bytes) else "wb"
-        with open(path, mode) as f:
+        with open(path, mode, encoding="utf-8") as f:
             f.write(content)
             files.append(path)
 
