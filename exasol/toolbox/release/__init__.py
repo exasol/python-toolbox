@@ -1,8 +1,9 @@
-from datetime import datetime
 import subprocess
-from inspect import cleandoc
 from dataclasses import dataclass
+from datetime import datetime
 from functools import total_ordering
+from inspect import cleandoc
+from pathlib import Path
 from shutil import which
 
 from exasol.toolbox.error import ToolboxError
@@ -66,7 +67,37 @@ class Version:
         return Version.from_string(version)
 
 
-def changelog(version : Version, content: str, date: datetime | None = None) -> str:
+def _content_from(unreleased: str | Path) -> str:
+    with open(unreleased) as f:
+        lines = f.readlines()[1:]
+        content = "".join(lines)
+        content = cleandoc(content)
+    return content
+
+
+def new_changes(file: str | Path, version: str) -> str:
+    file = Path(file)
+    content = []
+
+    with open(file) as f:
+        for line in f:
+            content.append(line)
+            if line.startswith("* [unreleased]"):
+                content.append(f"* [{version}](changes_{version}.md)\n")
+            if line.startswith("unreleased"):
+                content.append(f"changes_{version}\n")
+
+    return "".join(content)
+
+
+def new_unreleased() -> str:
+    """
+    Creates the content of a new "empty" unreleased.md file.
+    """
+    return "# Unreleased\n"
+
+
+def new_changelog(version: Version, content: str, date: datetime | None = None) -> str:
     """
     Create a changelog entry for a specific version.
 
@@ -87,7 +118,5 @@ def changelog(version : Version, content: str, date: datetime | None = None) -> 
         """
     )
     return template.format(
-        version=version,
-        date=date.strftime('%Y-%m-%d'),
-        content=content
+        version=version, date=date.strftime("%Y-%m-%d"), content=content
     )

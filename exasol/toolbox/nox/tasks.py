@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+from inspect import cleandoc
+
+from exasol.toolbox.cli import version
+
 __all__ = [
     "Mode",
     "fix",
@@ -39,6 +43,13 @@ from exasol.toolbox.metrics import (
     format_report,
 )
 from exasol.toolbox.project import python_files as _python_files
+from exasol.toolbox.release import (
+    Version,
+    _content_from,
+    new_changelog,
+    new_changes,
+    new_unreleased,
+)
 from noxconfig import (
     PROJECT_CONFIG,
     Config,
@@ -346,22 +357,68 @@ def prepare_release(session: Session, python=False) -> None:
         parser.add_argument(
             "version",
             type=version,
-            help=(
-                "A version string of the following format:"
-                '"NUMBER.NUMBER.NUMBER"'
-            ),
+            help=("A version string of the following format:" '"NUMBER.NUMBER.NUMBER"'),
+        )
+        parser.add_argument(
+            "--no-branch",
+            default=False,
+            action="store_true",
+            help=("Do not create a branch for the changes"),
+        )
+        parser.add_argument(
+            "--no-pr",
+            default=False,
+            action="store_true",
+            help=("A version string of the following format:" '"NUMBER.NUMBER.NUMBER"'),
         )
         return parser
 
     parser = _parser()
     args = parser.parse_args(session.posargs)
-    version = args.version
-    # 0. check release version number
-    # 1. update version numbers in the project
-    # 2. update changelog (version + date)
+    new_version = args.version
+    old_version = Version.from_poetry()
+    if not new_version > old_version:
+        error_msg = (
+            "Invalid version, new version ({new}) "
+            "must be higher than old version ({old})."
+        )
+        session.error(error_msg.format(new=new_version, old=old_version))
+
+    if not args.no_branch:
+        # prepare branch
+        session.run("git", "switch", "-c", f"release/prepare-{new_version}")
+
+    # bump project version and sync version file
+    session.run("poetry", "version", f"{new_version}")
+    _version(session, Mode.Fix, PROJECT_CONFIG.version_file)
+
+    # create a changelog file for the release and also create a new empty unrleased file
+    unreleased = Path(PROJECT_CONFIG.root) / "doc" / "changes" / "unreleased.md"
+    changelog = (
+        Path(PROJECT_CONFIG.root) / "doc" / "changes" / f"changes_{new_version}.md"
+    )
+    changes = Path(PROJECT_CONFIG.root) / "doc" / "changes" / f"changelog.md"
+
+    changelog_content = _content_from(unreleased)
+    changelog.write_text(new_changelog(new_version, changelog_content))
+
+    unreleased.write_text(new_unreleased())
+
+    changes_content = new_changes(changes, new_version)
+    changes.write_text(changes_content)
+
     # 3. commit changes
+    session.run("git", "add", f"{changelog}")
+    session.run("git", "add", f"{unreleased}")
+    session.run("git", "add", f"{changes}")
+    session.run("git", "add", f"{PROJECT_CONFIG.root / 'pyproject.toml'}")
+    session.run("git", "add", f"{PROJECT_CONFIG.version_file}")
+    session.run("git", "commit", "-m", f"Prepare release {new_version}")
+
     # 4. create pr
-    pass
+    if not args.no_pr:
+        session.warn("not implemented yet")
+        session.run("gh", "pr", "create", "--title", f"Prepare release {new_version}", "--base")
 
 
 @nox.session(name="release", python=False)
@@ -369,13 +426,17 @@ def release(session: Session, python=False) -> None:
     """
     Creates a new release and publishing it to GitHub and pypi.
     """
+    session.error("Not implemented yet")
+    # test are run on pr and on merge no so we assume we should be good
+    # can be changed in the future if that does not work well
+
     # 0. check if tag does not exist (origin)
     #   0.1. update git information
     #   0.2. check if origin does not have the tag yet
+    # 2. check if current branch is main/master
+    # 3. build wheel/package
     # 1. create release tag
     # 2. push release tag to origin
-    # 3. build wheel/package
     # 4. publish on gh
     # 5. publish on pypi
     # 6. output relase message/information
-    pass
