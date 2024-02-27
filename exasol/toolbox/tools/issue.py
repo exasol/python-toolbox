@@ -137,10 +137,10 @@ def install_issue(
         stderr.print(f"[red]{ex}[/red]")
         raise typer.Exit(-1)
 
-    for inner_issue, path in issues.items():
-        destination = dest / f"{issue}.md"
+    for name, path in issues.items():
+        destination = dest / f"{name}.md"
         _install_issue(path, destination, exists_ok=True)
-        stderr.print(f"Installed {inner_issue} in {destination}")
+        stderr.print(f"Installed {name} in {destination}")
 
 
 @CLI.command(name="update")
@@ -167,22 +167,22 @@ def update_issue(
         install_issue(issue, dest)
         raise typer.Exit(0)
 
-    for inner_issue, path in issues.items():
-        destination = dest / f"{inner_issue}.md"
+    for name, path in issues.items():
+        destination = dest / f"{name}.md"
         try:
             _install_issue(path, destination, exists_ok=False)
-            stderr.print(f"Updated {inner_issue} in {destination}")
+            stderr.print(f"Updated {name} in {destination}")
         except Exception:
             show_diff = typer.confirm(
-                f"issue <{inner_issue}> already exists, show diff?"
+                f"issue <{name}> already exists, show diff?"
             )
             if show_diff:
-                diff_issue(inner_issue, dest)
+                diff_issue(name, dest)
 
             overwrite = typer.confirm(f"Overwrite existing issue?")
             if overwrite:
                 _install_issue(path, destination, exists_ok=True)
-                stderr.print(f"Updated {inner_issue} in {destination}")
+                stderr.print(f"Updated {name} in {destination}")
 
 
 if __name__ == "__main__":

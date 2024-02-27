@@ -137,10 +137,10 @@ def install_workflow(
         stderr.print(f"[red]{ex}[/red]")
         raise typer.Exit(-1)
 
-    for inner_workflow, path in workflows.items():
-        destination = dest / f"{inner_workflow}.yml"
+    for name, path in workflows.items():
+        destination = dest / f"{name}.yml"
         _install_workflow(path, destination, exists_ok=True)
-        stderr.print(f"Installed {inner_workflow} in {destination}")
+        stderr.print(f"Installed {name} in {destination}")
 
 
 @CLI.command(name="update")
@@ -167,22 +167,22 @@ def update_workflow(
         install_workflow(workflow, dest)
         raise typer.Exit(0)
 
-    for inner_workflow, path in workflows.items():
-        destination = dest / f"{inner_workflow}.yml"
+    for name, path in workflows.items():
+        destination = dest / f"{name}.yml"
         try:
             _install_workflow(path, destination, exists_ok=False)
-            stderr.print(f"Updated {inner_workflow} in {destination}")
+            stderr.print(f"Updated {name} in {destination}")
         except Exception:
             show_diff = typer.confirm(
-                f"Workflow <{inner_workflow}> already exists, show diff?"
+                f"Workflow <{name}> already exists, show diff?"
             )
             if show_diff:
-                diff_workflow(inner_workflow, dest)
+                diff_workflow(name, dest)
 
             overwrite = typer.confirm("Overwrite existing workflow?")
             if overwrite:
                 _install_workflow(path, destination, exists_ok=True)
-                stderr.print(f"Updated {inner_workflow} in {destination}")
+                stderr.print(f"Updated {name} in {destination}")
 
 
 if __name__ == "__main__":
