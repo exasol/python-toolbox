@@ -197,7 +197,7 @@ def config_inited(app, config):
         if not config.smv_metadata_path:
             return
 
-        with open(config.smv_metadata_path) as f:
+        with open(config.smv_metadata_path, encoding="utf-8") as f:
             metadata = json.load(f)
 
         config.smv_metadata = metadata

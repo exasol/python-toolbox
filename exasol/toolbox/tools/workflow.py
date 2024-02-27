@@ -24,7 +24,7 @@ def _workflows() -> Mapping[str, Any]:
     pkg = "exasol.toolbox.templates.github.workflows"
 
     def _normalize(name: str) -> str:
-        name, ext = name.split(".")
+        name, _ = name.split(".")
         return name
 
     return {_normalize(w.name): w for w in resources.files(pkg).iterdir()}  # type: ignore
@@ -81,8 +81,8 @@ def diff_workflow(
     old: Any = dest / f"{workflow}.yml"
     new: Any = Path(_workflows()[workflow])
     with ExitStack() as stack:
-        old = stack.enter_context(open(old) if old.exists() else io.StringIO(""))
-        new = stack.enter_context(open(new))
+        old = stack.enter_context(open(old, encoding="utf-8") if old.exists() else io.StringIO(""))
+        new = stack.enter_context(open(new, encoding="utf-8"))
         old = old.read().split("\n")
         new = new.read().split("\n")
 
@@ -137,10 +137,10 @@ def install_workflow(
         stderr.print(f"[red]{ex}[/red]")
         raise typer.Exit(-1)
 
-    for workflow, path in workflows.items():
-        destination = dest / f"{workflow}.yml"
+    for name, path in workflows.items():
+        destination = dest / f"{name}.yml"
         _install_workflow(path, destination, exists_ok=True)
-        stderr.print(f"Installed {workflow} in {destination}")
+        stderr.print(f"Installed {name} in {destination}")
 
 
 @CLI.command(name="update")
@@ -167,22 +167,22 @@ def update_workflow(
         install_workflow(workflow, dest)
         raise typer.Exit(0)
 
-    for workflow, path in workflows.items():
-        destination = dest / f"{workflow}.yml"
+    for name, path in workflows.items():
+        destination = dest / f"{name}.yml"
         try:
             _install_workflow(path, destination, exists_ok=False)
-            stderr.print(f"Updated {workflow} in {destination}")
-        except Exception:
+            stderr.print(f"Updated {name} in {destination}")
+        except FileExistsError:
             show_diff = typer.confirm(
-                f"Workflow <{workflow}> already exists, show diff?"
+                f"Workflow <{name}> already exists, show diff?"
             )
             if show_diff:
-                diff_workflow(workflow, dest)
+                diff_workflow(name, dest)
 
-            overwrite = typer.confirm(f"Overwrite existing workflow?")
+            overwrite = typer.confirm("Overwrite existing workflow?")
             if overwrite:
                 _install_workflow(path, destination, exists_ok=True)
-                stderr.print(f"Updated {workflow} in {destination}")
+                stderr.print(f"Updated {name} in {destination}")
 
 
 if __name__ == "__main__":

@@ -24,7 +24,7 @@ def _issues() -> Mapping[str, Any]:
     pkg = "exasol.toolbox.templates.github.ISSUE_TEMPLATE"
 
     def _normalize(name: str) -> str:
-        name, ext = name.split(".")
+        name, _ = name.split(".")
         return name
 
     return {_normalize(w.name): w for w in resources.files(pkg).iterdir()}  # type: ignore
@@ -137,10 +137,10 @@ def install_issue(
         stderr.print(f"[red]{ex}[/red]")
         raise typer.Exit(-1)
 
-    for issue, path in issues.items():
-        destination = dest / f"{issue}.md"
+    for name, path in issues.items():
+        destination = dest / f"{name}.md"
         _install_issue(path, destination, exists_ok=True)
-        stderr.print(f"Installed {issue} in {destination}")
+        stderr.print(f"Installed {name} in {destination}")
 
 
 @CLI.command(name="update")
@@ -167,22 +167,22 @@ def update_issue(
         install_issue(issue, dest)
         raise typer.Exit(0)
 
-    for issue, path in issues.items():
-        destination = dest / f"{issue}.md"
+    for name, path in issues.items():
+        destination = dest / f"{name}.md"
         try:
             _install_issue(path, destination, exists_ok=False)
-            stderr.print(f"Updated {issue} in {destination}")
-        except Exception:
+            stderr.print(f"Updated {name} in {destination}")
+        except FileExistsError:
             show_diff = typer.confirm(
-                f"issue <{issue}> already exists, show diff?"
+                f"issue <{name}> already exists, show diff?"
             )
             if show_diff:
-                diff_issue(issue, dest)
+                diff_issue(name, dest)
 
             overwrite = typer.confirm(f"Overwrite existing issue?")
             if overwrite:
                 _install_issue(path, destination, exists_ok=True)
-                stderr.print(f"Updated {issue} in {destination}")
+                stderr.print(f"Updated {name} in {destination}")
 
 
 if __name__ == "__main__":

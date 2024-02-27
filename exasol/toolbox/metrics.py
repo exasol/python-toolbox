@@ -88,7 +88,7 @@ def total_coverage(file: Union[str, Path]) -> float:
             capture_output=True,
             check=True,
         )
-        with open(report) as r:
+        with open(report, encoding="utf-8") as r:
             data = json.load(r)
             total: float = data["totals"]["percent_covered"]
 
@@ -98,7 +98,7 @@ def total_coverage(file: Union[str, Path]) -> float:
 def _static_code_analysis(file: Union[str, Path]) -> Rating:
     def pylint(f: Union[str, Path]) -> Rating:
         expr = re.compile(r"^Your code has been rated at (\d+.\d+)/.*", re.MULTILINE)
-        with open(f) as results:
+        with open(f, encoding="utf-8") as results:
             data = results.read()
 
         matches = expr.search(data)
