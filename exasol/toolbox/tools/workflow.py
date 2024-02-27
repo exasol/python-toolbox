@@ -172,7 +172,7 @@ def update_workflow(
         try:
             _install_workflow(path, destination, exists_ok=False)
             stderr.print(f"Updated {name} in {destination}")
-        except Exception:
+        except FileExistsError:
             show_diff = typer.confirm(
                 f"Workflow <{name}> already exists, show diff?"
             )

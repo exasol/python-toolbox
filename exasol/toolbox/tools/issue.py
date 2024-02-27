@@ -172,7 +172,7 @@ def update_issue(
         try:
             _install_issue(path, destination, exists_ok=False)
             stderr.print(f"Updated {name} in {destination}")
-        except Exception:
+        except FileExistsError:
             show_diff = typer.confirm(
                 f"issue <{name}> already exists, show diff?"
             )
