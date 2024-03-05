@@ -28,9 +28,10 @@ def _templates(pkg: str) -> Mapping[str, Any]:
     return {_normalize(w.name): w for w in resources.files(pkg).iterdir()}
 
 def _templates_ext(pkg: str) -> str:
-    ext = resources.files(pkg).iterdir()[0]
-    _, ext = ext.split(".")
-    return ext
+    def _normalize(ext: str) -> str:
+        _ , ext = ext.split(".")
+        return ext
+    return str(list({_normalize(w.name): w for w in resources.files(pkg).iterdir()})[0])
 
 def list_templates(
     columns: bool,
@@ -95,7 +96,7 @@ def _install_template(
     src: Union[str, Path], dest: Union[str, Path], exists_ok: bool = False, 
 ) -> None:
     src, dest = Path(src), Path(dest)
-
+    
     if dest.exists() and not exists_ok:
         raise FileExistsError(f"{template_type} already exists")
 
@@ -139,7 +140,7 @@ def install_template(
 
     for name, path in templates.items():
         destination = dest / f"{name}.{_templates_ext(pkg)}"
-        _install_template(path, destination, exists_ok=True)
+        _install_template(template_type, path, destination, exists_ok=True)
         stderr.print(f"Installed {name} in {destination}")
 
 
@@ -161,13 +162,13 @@ def update_template(
         raise typer.Exit(-1)
 
     if confirm:
-        install_template(template, dest)
+        install_template(template, dest, pkg, template_type)
         raise typer.Exit(0)
 
     for name, path in templates.items():
         destination = dest / f"{name}.{_templates_ext(pkg)}"
         try:
-            _install_template(path, destination, exists_ok=False)
+            _install_template(template_type, path, destination, exists_ok=False)
             stderr.print(f"Updated {name} in {destination}")
         except FileExistsError:
             show_diff = typer.confirm(
@@ -178,7 +179,7 @@ def update_template(
 
             overwrite = typer.confirm(f"Overwrite existing {template_type}?") 
             if overwrite:
-                _install_template(path, destination, exists_ok=True)
+                _install_template(template_type, path, destination, exists_ok=True)
                 stderr.print(f"Updated {name} in {destination}")
 
 
