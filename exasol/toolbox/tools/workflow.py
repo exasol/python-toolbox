@@ -19,15 +19,14 @@ stderr = Console(stderr=True)
 
 CLI = typer.Typer()
 
+from functools import partial
+
+from exasol.toolbox.tools import template
+
 
 def _workflows() -> Mapping[str, Any]:
     pkg = "exasol.toolbox.templates.github.workflows"
-
-    def _normalize(name: str) -> str:
-        name, _ = name.split(".")
-        return name
-
-    return {_normalize(w.name): w for w in resources.files(pkg).iterdir()}  # type: ignore
+    return template._templates(pkg)
 
 
 @CLI.command(name="list")
