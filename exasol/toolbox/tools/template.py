@@ -52,7 +52,8 @@ def list_templates(
 def show_templates(
     template: str,
     pkg: str,
-    template_type: str
+    template_type: str,
+    lexer: str,
 ) -> None:
     """Shows a specific template."""
     templates = _templates(pkg)
@@ -61,7 +62,7 @@ def show_templates(
         raise typer.Exit(code=1)
 
     template = templates[template]
-    stdout.print(Syntax(template.read_text(), _templates_ext(pkg)))  # type: ignore
+    stdout.print(Syntax.from_path(path=tamplate, encoding="utf-8", lexer=lexer))  # type: ignore
 
 
 def diff_template(
