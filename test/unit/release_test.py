@@ -7,6 +7,7 @@ import pytest
 
 from exasol.toolbox.release import (
     Version,
+    extract_release_notes,
     new_changelog,
 )
 
@@ -99,4 +100,43 @@ def test_version_from_poetry(poetry_version, version, expected):
 )
 def test_changelog(version, content, date, expected):
     actual = new_changelog(version, content, date)
+    assert expected == actual
+
+
+@pytest.fixture
+def unreleased_md(tmp_path):
+    file = tmp_path / "unreleased.md"
+    file.write_text(
+        cleandoc(
+            """
+        # Unreleased
+
+        ## ✨ Added
+        * Added Awesome feature
+
+        ## 🔧 Changed
+        * Some behaviour
+
+        ## 🐞 Fixed
+        * Fixed nasty bug
+        """
+        )
+    )
+    yield file
+
+
+def test_extract_release_notes(unreleased_md):
+    expected = cleandoc(
+        """
+        ## ✨ Added
+        * Added Awesome feature
+
+        ## 🔧 Changed
+        * Some behaviour
+
+        ## 🐞 Fixed
+        * Fixed nasty bug
+        """
+    )
+    actual = extract_release_notes(unreleased_md)
     assert expected == actual
