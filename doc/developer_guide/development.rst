@@ -1,47 +1,44 @@
 🚧 Development - Contributing
 =============================
 
-Setting up the Development Environment
-++++++++++++++++++++++++++++++++++++++
-
-.. figure:: ../_static/nothing-to-see-here.png
-    :alt: nothing to see here
-    :target: https://imgflip.com/i/2a7gqa
-
-    source: `imgflip.com <https://imgflip.com/>`_
-
 Creating a Release
 ++++++++++++++++++
 
-Prerequisites
--------------
+Prepare the Release
+-------------------
 
-* Change log needs to be up to date
-* Latest change log version needs to match project and package version
-* Release tag needs to match package, changelog and project version
+To prepare for a release, a pull request with the following things needs to be created:
 
-  For Example:
-        * Tag: 0.4.0
-        * Changelog: changes_0.4.0.md
-        * \`poetry version -s\`: 0.4.0
+- Updated version numbers
+- Updated the changelog
+- Updated workflow templates (not automated yet)
+
+This can be achieved by running the following command:
+
+.. code-block:: shell
+
+   nox -s prepare-release -- <major>.<minor>.<patch>
+
+Replace `<major>`, `<minor>`, and `<patch>` with the appropriate version numbers.
+Once the PR is successfully merged, the release can be triggered (see next section).
 
 Triggering the Release
 ----------------------
-In order to trigger a release a new tag must be pushed to Github.
-For further details see: `.github/workflows/ci-cd.yml`.
 
+To trigger a release, a new tag must be pushed to GitHub. For further details, see `.github/workflows/ci-cd.yml`.
 
-#. Create a local tag with the appropriate version number
+1. Create a local tag with the appropriate version number:
 
     .. code-block:: shell
 
         git tag x.y.z
 
-#. Push the tag to Github
+2. Push the tag to GitHub:
 
     .. code-block:: shell
 
         git push origin x.y.z
+
 
 What to do if the release failed?
 ---------------------------------
