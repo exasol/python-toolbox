@@ -1,5 +1,1 @@
 # Unreleased
-
-## Added
-
-* Added foo
