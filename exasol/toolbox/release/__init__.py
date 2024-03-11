@@ -69,8 +69,17 @@ class Version:
         return Version.from_string(version)
 
 
-def _content_from(unreleased: str | Path) -> str:
-    with open(unreleased) as f:
+def extract_release_notes(file: str | Path) -> str:
+    """
+    Extract release notes from a given file.
+
+    Args:
+        file: from which the release notes shall be extracted
+
+    Returns:
+        The extracted and cleaned release notes.
+    """
+    with open(file) as f:
         lines = f.readlines()[1:]
         content = "".join(lines)
         content = cleandoc(content)

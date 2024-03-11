@@ -43,7 +43,7 @@ from exasol.toolbox.metrics import (
 from exasol.toolbox.project import python_files as _python_files
 from exasol.toolbox.release import (
     Version,
-    _content_from,
+    extract_release_notes,
     new_changelog,
     new_changes,
     new_unreleased,
@@ -401,7 +401,7 @@ def prepare_release(session: Session, python=False) -> None:
     )
     changes = Path(PROJECT_CONFIG.root) / "doc" / "changes" / f"changelog.md"
 
-    changelog_content = _content_from(unreleased)
+    changelog_content = extract_release_notes(unreleased)
     changelog.write_text(new_changelog(new_version, changelog_content))
 
     unreleased.write_text(new_unreleased())
