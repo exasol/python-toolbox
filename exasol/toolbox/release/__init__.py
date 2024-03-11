@@ -77,7 +77,7 @@ def extract_release_notes(file: str | Path) -> str:
         file: from which the release notes shall be extracted
 
     Returns:
-        The extracted and cleaned release notes.
+        A string containing the cleaned release notes extracted from the file.
     """
     with open(file) as f:
         lines = f.readlines()[1:]
@@ -87,6 +87,16 @@ def extract_release_notes(file: str | Path) -> str:
 
 
 def new_changes(file: str | Path, version: str) -> str:
+    """
+    Create a new changelog list, adding the provided version to it.
+
+    Args:
+        file: containing the old changelog list.
+        version: of the new entry to add to the list.
+
+    Returns:
+        Content for the new changelog list.
+    """
     file = Path(file)
     content = []
 
@@ -103,7 +113,10 @@ def new_changes(file: str | Path, version: str) -> str:
 
 def new_unreleased() -> str:
     """
-    Creates the content of a new "empty" unreleased.md file.
+    Generates the content for a new Unreleased changelog file.
+
+    Returns:
+        A string representing the content for an empty Unreleased changelog file.
     """
     return "# Unreleased\n"
 
