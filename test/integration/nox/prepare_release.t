@@ -39,10 +39,14 @@ print prepare-release help
   usage: nox -s prepare-release -- [-h] version
   
   positional arguments:
-    version     A version string of the following format:"NUMBER.NUMBER.NUMBER"
+    version      A version string of the following format:"NUMBER.NUMBER.NUMBER"
   
   option*: (glob)
-    -h, --help  show this help message and exit
+    -h, --help   show this help message and exit
+    --no-add     Neither add nor commit the changes (default: False)
+    --no-branch  Do not create a branch to commit the changes on (default:
+                 False)
+    --no-pr      Do not create a pull request for the changes (default: False)
 
 
 prepare-release with invalid version number should fail

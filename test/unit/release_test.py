@@ -7,7 +7,7 @@ import pytest
 
 from exasol.toolbox.release import (
     Version,
-    changelog,
+    new_changelog,
 )
 
 
@@ -98,5 +98,5 @@ def test_version_from_poetry(poetry_version, version, expected):
     ],
 )
 def test_changelog(version, content, date, expected):
-    actual = changelog(version, content, date)
+    actual = new_changelog(version, content, date)
     assert expected == actual
