@@ -379,10 +379,10 @@ def prepare_release(session: Session, python=False) -> None:
     args = parser.parse_args(session.posargs)
     new_version = args.version
     old_version = Version.from_poetry()
-    if not new_version > old_version:
+    if not new_version >= old_version:
         error_msg = (
-            "Invalid version, new version ({new}) "
-            "must be higher than old version ({old})."
+            f"Invalid version: the release version ({new_version}) "
+            f"must be greater than or equal to the current version ({old_version})."
         )
         session.error(error_msg.format(new=new_version, old=old_version))
 
