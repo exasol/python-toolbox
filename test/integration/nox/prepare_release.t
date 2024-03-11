@@ -63,7 +63,7 @@ prepare-release with invalid version number should fail
 
   $ nox -s prepare-release -- 0.1.0
   nox > Running session prepare-release
-  nox > Session prepare-release aborted: Invalid version, new version (0.1.0) must be higher than old version (0.2.0)..
+  nox > Session prepare-release aborted: Invalid version: the release version (0.1.0) must be greater than or equal to the current version (0.2.0)..
   [1]
 
 
