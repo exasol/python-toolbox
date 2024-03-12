@@ -14,6 +14,7 @@ def git_tag():
         returncode=0,
         stdout=cleandoc(
             """
+            0.0.1
             0.1.0
             0.2.0
             0.3.0
@@ -25,7 +26,7 @@ def git_tag():
             0.7.0
             0.8.0
             """
-        ),
+        ).encode("utf8"),
         stderr="",
     )
     yield result
@@ -34,6 +35,7 @@ def git_tag():
 def test_git_tags(git_tag):
     expected = sorted(
         [
+            "0.0.1",
             "0.1.0",
             "0.2.0",
             "0.3.0",

@@ -1,4 +1,4 @@
-from subprocess import run
+import subprocess
 from typing import Iterable
 
 
@@ -11,5 +11,5 @@ def tags() -> Iterable[str]:
     - the code is executed where the working directory is within a git repository
     """
     command = ["git", "tag", "--sort=committerdate"]
-    result = run(command, capture_output=True, check=True)
+    result = subprocess.run(command, capture_output=True, check=True)
     return [tag.strip() for tag in result.stdout.decode("utf-8").splitlines()]
