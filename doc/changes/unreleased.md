@@ -1,5 +1,12 @@
 # Unreleased
 
+## 🚨 Breaking Changes
+* **CI-CD Workflow (Breaking Change)**
+
+    **Overview:**
+
+    The CI-CD workflow now assumes the changelog to be in markdown and the location `/doc/changes/change_x.y.z.md`
+
 ## ✨ Added
 * **Added Nox Task `prepare-release`**
 
