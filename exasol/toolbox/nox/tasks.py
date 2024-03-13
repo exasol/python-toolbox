@@ -29,6 +29,11 @@ from exasol.toolbox.metrics import (
     create_report,
     format_report,
 )
+from exasol.toolbox.nox._documentation import (
+    build_docs,
+    clean_docs,
+    open_docs,
+)
 from exasol.toolbox.nox._format import (
     _code_format,
     _pyupgrade,
@@ -36,7 +41,6 @@ from exasol.toolbox.nox._format import (
 )
 from exasol.toolbox.nox._release import prepare_release
 from exasol.toolbox.nox._shared import (
-    DOCS_OUTPUT_DIR,
     Mode,
     _context,
     _version,
@@ -50,7 +54,6 @@ from exasol.toolbox.nox._test import (
 )
 from noxconfig import (
     PROJECT_CONFIG,
-    Config,
 )
 
 
@@ -99,43 +102,6 @@ def type_check(session: Session) -> None:
     """Runs the type checker on the project"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
     _type_check(session, py_files)
-
-
-@nox.session(name="build-docs", python=False)
-def build_docs(session: Session) -> None:
-    """Builds the project documentation"""
-    _build_docs(session, PROJECT_CONFIG)
-
-
-def _build_docs(session: nox.Session, config: Config) -> None:
-    session.run(
-        "poetry",
-        "run",
-        "sphinx-build",
-        "-W",
-        "-b",
-        "html",
-        f"{config.doc}",
-        DOCS_OUTPUT_DIR,
-    )
-
-
-@nox.session(name="open-docs", python=False)
-def open_docs(session: Session) -> None:
-    """Opens the built project documentation"""
-    docs_folder = PROJECT_CONFIG.root / DOCS_OUTPUT_DIR
-    if not docs_folder.exists():
-        session.error(f"No documentation could be found. {docs_folder} is missing")
-    index = docs_folder / "index.html"
-    webbrowser.open_new_tab(index.as_uri())
-
-
-@nox.session(name="clean-docs", python=False)
-def clean_docs(_session: Session) -> None:
-    """Removes the documentations build folder"""
-    docs_folder = PROJECT_CONFIG.root / DOCS_OUTPUT_DIR
-    if docs_folder.exists():
-        shutil.rmtree(docs_folder)
 
 
 @nox.session(name="report", python=False)
