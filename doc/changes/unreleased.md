@@ -21,7 +21,7 @@
 
     **Usage:**
 
-    To prepare a release, simply execute the following command in your terminal:
+    To prepare a release, simply execute a command in your terminal like in the example below:
 
     ```shell
     nox -s prepare-release -- 1.10.1
