@@ -19,7 +19,6 @@ __all__ = [
 import argparse
 import shutil
 import webbrowser
-from functools import partial
 from typing import Iterable
 
 import nox
@@ -32,9 +31,11 @@ from exasol.toolbox.metrics import (
 )
 from exasol.toolbox.nox._release import prepare_release
 from exasol.toolbox.nox._shared import (
+    DOCS_OUTPUT_DIR,
     Mode,
     _context,
     _version,
+    python_files,
 )
 from exasol.toolbox.nox._test import (
     _coverage,
@@ -42,16 +43,10 @@ from exasol.toolbox.nox._test import (
     integration_tests,
     unit_tests,
 )
-from exasol.toolbox.project import python_files as _python_files
 from noxconfig import (
     PROJECT_CONFIG,
     Config,
 )
-
-_DOCS_OUTPUT_DIR = ".html-documentation"
-_PATH_FILTER = tuple(["dist", ".eggs", "venv"] + list(Config.path_filters))
-
-python_files = partial(_python_files, path_filters=_PATH_FILTER)
 
 
 def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
@@ -145,14 +140,14 @@ def _build_docs(session: nox.Session, config: Config) -> None:
         "-b",
         "html",
         f"{config.doc}",
-        _DOCS_OUTPUT_DIR,
+        DOCS_OUTPUT_DIR,
     )
 
 
 @nox.session(name="open-docs", python=False)
 def open_docs(session: Session) -> None:
     """Opens the built project documentation"""
-    docs_folder = PROJECT_CONFIG.root / _DOCS_OUTPUT_DIR
+    docs_folder = PROJECT_CONFIG.root / DOCS_OUTPUT_DIR
     if not docs_folder.exists():
         session.error(f"No documentation could be found. {docs_folder} is missing")
     index = docs_folder / "index.html"
@@ -162,7 +157,7 @@ def open_docs(session: Session) -> None:
 @nox.session(name="clean-docs", python=False)
 def clean_docs(_session: Session) -> None:
     """Removes the documentations build folder"""
-    docs_folder = PROJECT_CONFIG.root / _DOCS_OUTPUT_DIR
+    docs_folder = PROJECT_CONFIG.root / DOCS_OUTPUT_DIR
     if docs_folder.exists():
         shutil.rmtree(docs_folder)
 
