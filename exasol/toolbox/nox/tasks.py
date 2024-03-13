@@ -17,9 +17,6 @@ __all__ = [
 
 
 import argparse
-import shutil
-import webbrowser
-from typing import Iterable
 
 import nox
 from nox import Session
@@ -39,6 +36,12 @@ from exasol.toolbox.nox._format import (
     _pyupgrade,
     fix,
 )
+from exasol.toolbox.nox._lint import (
+    _pylint,
+    _type_check,
+    lint,
+    type_check,
+)
 from exasol.toolbox.nox._release import prepare_release
 from exasol.toolbox.nox._shared import (
     Mode,
@@ -55,26 +58,6 @@ from exasol.toolbox.nox._test import (
 from noxconfig import PROJECT_CONFIG
 
 
-def _pylint(session: Session, files: Iterable[str]) -> None:
-    session.run("poetry", "run", "python", "-m", "pylint", *files)
-
-
-def _type_check(session: Session, files: Iterable[str]) -> None:
-    session.run(
-        "poetry",
-        "run",
-        "mypy",
-        "--explicit-package-bases",
-        "--namespace-packages",
-        "--show-error-codes",
-        "--pretty",
-        "--show-column-numbers",
-        "--show-error-context",
-        "--scripts-are-modules",
-        *files,
-    )
-
-
 @nox.session(name="check", python=False)
 def check(session: Session) -> None:
     """Runs all available checks on the project"""
@@ -86,20 +69,6 @@ def check(session: Session) -> None:
     _pylint(session, py_files)
     _type_check(session, py_files)
     _coverage(session, PROJECT_CONFIG, context)
-
-
-@nox.session(python=False)
-def lint(session: Session) -> None:
-    """Runs the linter on the project"""
-    py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
-    _pylint(session, py_files)
-
-
-@nox.session(name="type-check", python=False)
-def type_check(session: Session) -> None:
-    """Runs the type checker on the project"""
-    py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
-    _type_check(session, py_files)
 
 
 @nox.session(name="report", python=False)
