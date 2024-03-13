@@ -1,10 +1,8 @@
-import pytest
 from pathlib import Path
 import os
+import pytest
 
-from exasol.toolbox.tools import (
-    template,
-)
+from exasol.toolbox.tools import template
 
 
 def test_retrieve_workflow_templates():
@@ -115,5 +113,5 @@ def test_install_templates(templates, pkg, template_type, expected, tmp_path):
             os.remove(f"{tmp_path}/{name}")
         else:
             print(f"{tmp_path}/{name}")
-            error = True 
+            error = True
     assert not error

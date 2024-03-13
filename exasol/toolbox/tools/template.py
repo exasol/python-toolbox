@@ -27,6 +27,7 @@ def _templates(pkg: str) -> Mapping[str, Any]:
 
     return {_normalize(w.name): w for w in resources.files(pkg).iterdir()}
 
+
 def list_templates(
     columns: bool,
     pkg: str
@@ -89,10 +90,10 @@ def diff_template(
 
 def _install_template(
     template_type: str,
-    src: Union[str, Path], dest: Union[str, Path], exists_ok: bool = False, 
+    src: Union[str, Path], dest: Union[str, Path], exists_ok: bool = False,
 ) -> None:
     src, dest = Path(src), Path(dest)
-    
+
     if dest.exists() and not exists_ok:
         raise FileExistsError(f"{template_type} already exists")
 
@@ -168,12 +169,12 @@ def update_template(
             stderr.print(f"Updated {name} in {destination}")
         except FileExistsError:
             show_diff = typer.confirm(
-                f"{template_type} <{name}> already exists, show diff?" 
+                f"{template_type} <{name}> already exists, show diff?"
             )
             if show_diff:
                 diff_template(name, dest, pkg, template_type)
 
-            overwrite = typer.confirm(f"Overwrite existing {template_type}?") 
+            overwrite = typer.confirm(f"Overwrite existing {template_type}?")
             if overwrite:
                 _install_template(template_type, path, destination, exists_ok=True)
                 stderr.print(f"Updated {name} in {destination}")

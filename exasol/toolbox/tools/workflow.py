@@ -1,12 +1,12 @@
-import typer
 from pathlib import Path
-from rich.columns import Columns
-import exasol.toolbox.tools.template as template
+import typer
+from exasol.toolbox.tools import template
 
 CLI = typer.Typer()
-pkg = "exasol.toolbox.templates.github.workflows"
-template_type = "workflow"
-lexer = "yaml"
+PKG = "exasol.toolbox.templates.github.workflows"
+TEMPLATE_TYPE = "workflow"
+LEXER = "yaml"
+
 
 @CLI.command(name="list")
 def list_issues(
@@ -15,8 +15,7 @@ def list_issues(
     )
 ) -> None:
     """List all available issues."""
-    template.list_templates(columns, pkg) 
-
+    template.list_templates(columns, PKG)
 
 
 @CLI.command(name="show")
@@ -24,7 +23,7 @@ def show_issue(
     issue: str
 ) -> None:
     """Shows a specific issue."""
-    template.show_templates(issue, pkg, template_type, lexer)
+    template.show_templates(issue, PKG, TEMPLATE_TYPE, LEXER)
 
 
 @CLI.command(name="diff")
@@ -36,7 +35,7 @@ def diff_issue(
     ),
 ) -> None:
     """Diff a specific issue against the installed one."""
-    template.diff_template(issue, dest, pkg, template_type)
+    template.diff_template(issue, dest, PKG, TEMPLATE_TYPE)
 
 
 @CLI.command(name="install")
@@ -51,7 +50,7 @@ def install_issue(
 
     Attention: If there is an existing issue with the same name it will be overwritten!
     """
-    template.install_template(issue, dest, pkg, template_type)
+    template.install_template(issue, dest, PKG, TEMPLATE_TYPE)
 
 
 @CLI.command(name="update")
@@ -65,7 +64,7 @@ def update_issue(
     ),
 ) -> None:
     """Similar to install but checks for existing issues and shows diff"""
-    template.update_template(issue, dest, confirm, pkg, template_type)
+    template.update_template(issue, dest, confirm, PKG, TEMPLATE_TYPE)
 
 
 if __name__ == "__main__":
