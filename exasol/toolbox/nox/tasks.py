@@ -7,17 +7,17 @@ from exasol.toolbox.nox._shared import (
 
 __all__ = [
     "Mode",
-    "fix",
+    "build_docs",
     "check",
+    "clean_docs",
+    "coverage",
+    "fix",
+    "integration_tests",
     "lint",
+    "open_docs",
+    "prepare_release",
     "type_check",
     "unit_tests",
-    "integration_tests",
-    "coverage",
-    "build_docs",
-    "open_docs",
-    "clean_docs",
-    "prepare_release",
 ]
 
 import argparse
