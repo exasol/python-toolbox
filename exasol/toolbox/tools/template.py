@@ -27,12 +27,6 @@ def _templates(pkg: str) -> Mapping[str, Any]:
 
     return {_normalize(w.name): w for w in resources.files(pkg).iterdir()}
 
-def _templates_ext(pkg: str) -> str:
-    def _normalize(ext: str) -> str:
-        _ , ext = ext.split(".")
-        return ext
-    return str(list({_normalize(w.name): w for w in resources.files(pkg).iterdir()})[0])
-
 def list_templates(
     columns: bool,
     pkg: str
@@ -63,7 +57,7 @@ def show_templates(
         raise typer.Exit(code=1)
 
     template = templates[template]
-    stdout.print(Syntax.from_path(path=tamplate, encoding="utf-8", lexer=lexer))  # type: ignore
+    stdout.print(Syntax.from_path(path=template, encoding="utf-8", lexer=lexer))  # type: ignore
 
 
 def diff_template(
@@ -79,16 +73,18 @@ def diff_template(
         raise typer.Exit(code=1)
 
     # Use Any type to enable reuse of the variable/binding name
-    old: Any = dest / f"{template}.{_templates_ext(pkg)}"
-    new: Any = Path(_templates(pkg)[template])
-    with ExitStack() as stack:
-        old = stack.enter_context(open(old, encoding="utf-8") if old.exists() else io.StringIO(""))
-        new = stack.enter_context(open(new, encoding="utf-8"))
-        old = old.read().split("\n")
-        new = new.read().split("\n")
+    for name, path in templates.items():
+        if name == template:
+            old: Any = dest / f"{template}{path.suffix}"
+            new: Any = Path(_templates(pkg)[template])
+            with ExitStack() as stack:
+                old = stack.enter_context(open(old, encoding="utf-8") if old.exists() else io.StringIO(""))
+                new = stack.enter_context(open(new, encoding="utf-8"))
+                old = old.read().split("\n")
+                new = new.read().split("\n")
 
-    diff = difflib.unified_diff(old, new, fromfile="old", tofile="new")
-    stdout.print(Syntax("\n".join(diff), "diff"))
+            diff = difflib.unified_diff(old, new, fromfile="old", tofile="new")
+            stdout.print(Syntax("\n".join(diff), "diff"))
 
 
 def _install_template(
@@ -139,7 +135,7 @@ def install_template(
         raise typer.Exit(-1)
 
     for name, path in templates.items():
-        destination = dest / f"{name}.{_templates_ext(pkg)}"
+        destination = dest / f"{name}{path.suffix}"
         _install_template(template_type, path, destination, exists_ok=True)
         stderr.print(f"Installed {name} in {destination}")
 
@@ -166,7 +162,7 @@ def update_template(
         raise typer.Exit(0)
 
     for name, path in templates.items():
-        destination = dest / f"{name}.{_templates_ext(pkg)}"
+        destination = dest / f"{name}{path.suffix}"
         try:
             _install_template(template_type, path, destination, exists_ok=False)
             stderr.print(f"Updated {name} in {destination}")
@@ -175,7 +171,7 @@ def update_template(
                 f"{template_type} <{name}> already exists, show diff?" 
             )
             if show_diff:
-                diff_template(name, dest)
+                diff_template(name, dest, pkg, template_type)
 
             overwrite = typer.confirm(f"Overwrite existing {template_type}?") 
             if overwrite:
