@@ -7,7 +7,7 @@ Creating a Release
 Prepare the Release
 -------------------
 
-To prepare for a release, a pull request with the following things needs to be created:
+To prepare for a release, a pull request with the following parameters needs to be created:
 
 - Updated version numbers
 - Updated the changelog
