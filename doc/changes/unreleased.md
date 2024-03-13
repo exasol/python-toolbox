@@ -33,7 +33,7 @@
     nox -s prepare-release -- 1.10.1 --no-pr --no-branch
     ```
 
-    For additional options and help regarding the prepare-release task, execute:
+    For additional options and help regarding the task `prepare-release`, execute:
 
     ```shell
     nox -s prepare-release -- -h 
