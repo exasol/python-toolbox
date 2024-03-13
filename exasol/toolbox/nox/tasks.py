@@ -338,10 +338,6 @@ def report(session: Session) -> None:
 def prepare_release(session: Session, python=False) -> None:
     """
     Prepares the project for a new release.
-
-    Arguments:
-
-        version: A version string of the following format: {number}.{number}.{number} (Major, Minor, Patch).
     """
 
     def _parser():
@@ -439,13 +435,11 @@ def release(session: Session, python=False) -> None:
     Creates a new release and publishing it to GitHub and pypi.
     """
     session.error("Not implemented yet")
-
-
     # Precondition(s): 
     # Convert ci-cd.yml workflow to cd.yml workflow
     # Tests validation can be skipped. Branch protection together with
     # PR and merge validation shoudl be sufficient
-
+    # ----------------------------------------------------------------------
     # 0. Check that version isn't released yet (tag does not exist (origin))
     #   0.1. update git information
     #   0.2. check if origin does not have the tag yet
