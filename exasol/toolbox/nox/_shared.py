@@ -3,28 +3,50 @@ from enum import (
     Enum,
     auto,
 )
-from functools import partial
 from pathlib import Path
 from typing import (
     Any,
     ChainMap,
+    Iterable,
     MutableMapping,
 )
 
 from nox import Session
 
-from exasol.toolbox.project import python_files as _python_files
 from noxconfig import PROJECT_CONFIG
 
 DOCS_OUTPUT_DIR = ".html-documentation"
-PATH_FILTER = tuple(["dist", ".eggs", "venv"] + list(PROJECT_CONFIG.path_filters))
-
-python_files = partial(_python_files, path_filters=PATH_FILTER)
 
 
 class Mode(Enum):
     Fix = auto()
     Check = auto()
+
+
+def python_files(project_root: Path) -> Iterable[Path]:
+    path_filters = tuple(["dist", ".eggs", "venv"] + list(PROJECT_CONFIG.path_filters))
+    return _python_files(project_root, path_filters)
+
+
+def _python_files(
+    project_root: Path, path_filters: Iterable[str] = ("dist", ".eggs", "venv")
+) -> Iterable[Path]:
+    """Returns all relevant"""
+    return _deny_filter(project_root.glob("**/*.py"), deny_list=path_filters)
+
+
+def _deny_filter(files: Iterable[Path], deny_list: Iterable[str]) -> Iterable[Path]:
+    """
+    Adds a filter to remove unwanted paths containing python files from the iterator.
+
+     args:
+
+
+     return:
+    """
+    for entry in deny_list:
+        files = filter(lambda path: entry not in path.parts, files)
+    return files
 
 
 def _version(session: Session, mode: Mode, version_file: Path) -> None:

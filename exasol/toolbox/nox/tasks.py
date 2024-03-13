@@ -52,9 +52,7 @@ from exasol.toolbox.nox._test import (
     integration_tests,
     unit_tests,
 )
-from noxconfig import (
-    PROJECT_CONFIG,
-)
+from noxconfig import PROJECT_CONFIG
 
 
 def _pylint(session: Session, files: Iterable[str]) -> None:
