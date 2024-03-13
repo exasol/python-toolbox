@@ -14,10 +14,10 @@
 
     A new Nox task, `prepare-release`, has been introduced to streamline the release preparation process. This task automates several crucial steps:
 
-    - Updates the version number to the next release.
-    - Transfers changes from the "Unreleased" section to the appropriate versioned changelog section.
-    - Creates a dedicated branch for the release changes.
-    - Initiates a Pull Request (PR) for review and integration into the main branch.
+    - Create a dedicated branch for the release changes.
+    - Transfer changes from the "Unreleased" section to the appropriate versioned changelog section.
+    - Update the version number to the next release.
+    - Initiate a Pull Request (PR) for review and integration into the main branch.
 
     **Usage:**
 
