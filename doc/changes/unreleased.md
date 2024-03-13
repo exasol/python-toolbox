@@ -27,7 +27,7 @@
     nox -s prepare-release -- 1.10.1
     ```
 
-    Add the changes for releasing ontop of the current branch:
+    Add the changes for releasing on top of the current branch:
 
     ```shell
     nox -s prepare-release -- 1.10.1 --no-pr --no-branch
