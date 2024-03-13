@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 from pathlib import Path
 from typing import (
@@ -65,7 +67,7 @@ def _update_project_version(session: Session, version: Version) -> Version:
     return version
 
 
-def _update_changelog(version: Version) -> Tuple[Path, Path, Path]:
+def _update_changelog(version: Version) -> tuple[Path, Path, Path]:
     unreleased = Path(PROJECT_CONFIG.root) / "doc" / "changes" / "unreleased.md"
     changelog = Path(PROJECT_CONFIG.root) / "doc" / "changes" / f"changes_{version}.md"
     changes = Path(PROJECT_CONFIG.root) / "doc" / "changes" / f"changelog.md"
@@ -81,7 +83,7 @@ def _update_changelog(version: Version) -> Tuple[Path, Path, Path]:
     return changelog, changes, unreleased
 
 
-def _add_files_to_index(session: Session, files: List[Path | str]) -> None:
+def _add_files_to_index(session: Session, files: list[Path | str]) -> None:
     for file in files:
         session.run("git", "add", f"{file}")
 
