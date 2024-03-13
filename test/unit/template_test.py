@@ -1,4 +1,6 @@
 import pytest
+from pathlib import Path
+import os
 
 from exasol.toolbox.tools import (
     template,
@@ -71,3 +73,47 @@ def test_retrieve_templates(subpackage, expected):
     actual = {name: path.name for name, path in actual.items()}
     assert actual == expected
 
+
+@pytest.mark.parametrize(
+    "templates,pkg,template_type,expected",
+    [
+        (
+            "all",
+            "exasol.toolbox.templates.github.ISSUE_TEMPLATE",
+    	    "issue",
+            [
+                "blank.md",
+                "bug.md",
+                "documentation.md",
+                "feature.md",
+                "refactoring.md",
+                "security.md",
+            ],
+        ),
+        (
+            "all",
+            "exasol.toolbox.templates.github.workflows",
+            "workflow",
+            [
+                "build-and-publish.yml",
+                "check-release-tag.yml",
+                "checks.yml",
+                "ci-cd.yml",
+                "ci.yml",
+                "gh-pages.yml",
+                "pr-merge.yml",
+                "report.yml",
+            ],
+        ),
+    ]
+)
+def test_install_templates(templates, pkg, template_type, expected, tmp_path):
+    template.install_template(templates, Path(tmp_path), pkg, template_type)
+    error = False
+    for name in expected:
+        if os.path.exists(f"{tmp_path}/{name}"):
+            os.remove(f"{tmp_path}/{name}")
+        else:
+            print(f"{tmp_path}/{name}")
+            error = True 
+    assert not error
