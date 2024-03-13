@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from exasol.toolbox.cli import version
+
 __all__ = [
     "Mode",
     "fix",
@@ -39,6 +41,13 @@ from exasol.toolbox.metrics import (
     format_report,
 )
 from exasol.toolbox.project import python_files as _python_files
+from exasol.toolbox.release import (
+    Version,
+    extract_release_notes,
+    new_changelog,
+    new_changes,
+    new_unreleased,
+)
 from noxconfig import (
     PROJECT_CONFIG,
     Config,
@@ -323,3 +332,121 @@ def report(session: Session) -> None:
     fmt = Format.from_string(args.format)
 
     print(format_report(project_report, fmt))
+
+
+@nox.session(name="prepare-release", python=False)
+def prepare_release(session: Session, python=False) -> None:
+    """
+    Prepares the project for a new release.
+    """
+
+    def _parser():
+        parser = argparse.ArgumentParser(
+            prog=f"nox -s prepare-release",
+            usage="nox -s prepare-release -- [-h] version",
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        )
+        parser.add_argument(
+            "version",
+            type=version,
+            help=("A version string of the following format:" '"NUMBER.NUMBER.NUMBER"'),
+        )
+        parser.add_argument(
+            "--no-add",
+            default=False,
+            action="store_true",
+            help=("Neither add nor commit the changes"),
+        )
+        parser.add_argument(
+            "--no-branch",
+            default=False,
+            action="store_true",
+            help=("Do not create a branch to commit the changes on"),
+        )
+        parser.add_argument(
+            "--no-pr",
+            default=False,
+            action="store_true",
+            help=("Do not create a pull request for the changes"),
+        )
+        return parser
+
+    parser = _parser()
+    args = parser.parse_args(session.posargs)
+    new_version = args.version
+    old_version = Version.from_poetry()
+    if not (new_version >= old_version):
+        error_msg = (
+            f"Invalid version: the release version ({new_version}) "
+            f"must be greater than or equal to the current version ({old_version})."
+        )
+        session.error(error_msg.format(new=new_version, old=old_version))
+
+    if not args.no_branch and not args.no_add:
+        # prepare branch
+        session.run("git", "switch", "-c", f"release/prepare-{new_version}")
+
+    # bump project version and sync version file
+    session.run("poetry", "version", f"{new_version}")
+    _version(session, Mode.Fix, PROJECT_CONFIG.version_file)
+
+    # create a changelog file for the release and also create a new empty unrleased file
+    unreleased = Path(PROJECT_CONFIG.root) / "doc" / "changes" / "unreleased.md"
+    changelog = (
+        Path(PROJECT_CONFIG.root) / "doc" / "changes" / f"changes_{new_version}.md"
+    )
+    changes = Path(PROJECT_CONFIG.root) / "doc" / "changes" / f"changelog.md"
+
+    changelog_content = extract_release_notes(unreleased)
+    changelog.write_text(new_changelog(new_version, changelog_content))
+
+    unreleased.write_text(new_unreleased())
+
+    changes_content = new_changes(changes, new_version)
+    changes.write_text(changes_content)
+
+    if args.no_add:
+        return
+
+    # 3. commit changes
+    session.run("git", "add", f"{changelog}")
+    session.run("git", "add", f"{unreleased}")
+    session.run("git", "add", f"{changes}")
+    session.run("git", "add", f"{PROJECT_CONFIG.root / 'pyproject.toml'}")
+    session.run("git", "add", f"{PROJECT_CONFIG.version_file}")
+    session.run("git", "commit", "-m", f"Prepare release {new_version}")
+
+    # 4. create pr
+    if not args.no_pr:
+        session.run(
+            "gh",
+            "pr",
+            "create",
+            "--title",
+            f"Prepare release {new_version}",
+            "--body",
+            '""',
+        )
+
+
+@nox.session(name="release", python=False)
+def release(session: Session, python=False) -> None:
+    """
+    Creates a new release and publishing it to GitHub and pypi.
+    """
+    session.error("Not implemented yet")
+    # Precondition(s):
+    # Convert ci-cd.yml workflow to cd.yml workflow
+    # Tests validation can be skipped. Branch protection together with
+    # PR and merge validation shoudl be sufficient
+    # ----------------------------------------------------------------------
+    # 0. Check that version isn't released yet (tag does not exist (origin))
+    #   0.1. update git information
+    #   0.2. check if origin does not have the tag yet
+    # 1. check if current branch is main/master
+    # 2. build wheel/package
+    # 3. create release tag
+    # 4. push release tag to origin
+    # 5. publish on gh
+    # 5. publish on pypi
+    # 6. output relase message/information
