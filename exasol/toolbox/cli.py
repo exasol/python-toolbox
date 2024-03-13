@@ -3,7 +3,7 @@ from argparse import ArgumentTypeError
 from exasol.toolbox.release import Version
 
 
-def version(arg):
+def version(arg: str) -> Version:
     try:
         return Version.from_string(arg)
     except Exception as ex:
