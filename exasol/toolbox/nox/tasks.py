@@ -375,7 +375,7 @@ def prepare_release(session: Session, python=False) -> None:
     args = parser.parse_args(session.posargs)
     new_version = args.version
     old_version = Version.from_poetry()
-    if not new_version >= old_version:
+    if not (new_version >= old_version):
         error_msg = (
             f"Invalid version: the release version ({new_version}) "
             f"must be greater than or equal to the current version ({old_version})."
@@ -435,7 +435,7 @@ def release(session: Session, python=False) -> None:
     Creates a new release and publishing it to GitHub and pypi.
     """
     session.error("Not implemented yet")
-    # Precondition(s): 
+    # Precondition(s):
     # Convert ci-cd.yml workflow to cd.yml workflow
     # Tests validation can be skipped. Branch protection together with
     # PR and merge validation shoudl be sufficient
