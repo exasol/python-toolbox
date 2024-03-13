@@ -9,6 +9,7 @@ from exasol.toolbox.release import Version
 @pytest.mark.parametrize(
     "version_string,expected_error",
     [
+        ("4.4.4.4", ArgumentTypeError),
         ("1.b.a", ArgumentTypeError),
         ("F.b.a", ArgumentTypeError),
         ("F", ArgumentTypeError),
