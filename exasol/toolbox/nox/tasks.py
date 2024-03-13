@@ -1,10 +1,5 @@
 from __future__ import annotations
 
-from exasol.toolbox.nox._shared import (
-    Mode,
-    _version,
-)
-
 __all__ = [
     "Mode",
     "build_docs",
@@ -20,17 +15,12 @@ __all__ = [
     "unit_tests",
 ]
 
+
 import argparse
 import shutil
 import webbrowser
-from collections import ChainMap
 from functools import partial
-from pathlib import Path
-from typing import (
-    Any,
-    Iterable,
-    MutableMapping,
-)
+from typing import Iterable
 
 import nox
 from nox import Session
@@ -39,6 +29,18 @@ from exasol.toolbox.metrics import (
     Format,
     create_report,
     format_report,
+)
+from exasol.toolbox.nox._release import prepare_release
+from exasol.toolbox.nox._shared import (
+    Mode,
+    _context,
+    _version,
+)
+from exasol.toolbox.nox._test import (
+    _coverage,
+    coverage,
+    integration_tests,
+    unit_tests,
 )
 from exasol.toolbox.project import python_files as _python_files
 from noxconfig import (
@@ -50,24 +52,6 @@ _DOCS_OUTPUT_DIR = ".html-documentation"
 _PATH_FILTER = tuple(["dist", ".eggs", "venv"] + list(Config.path_filters))
 
 python_files = partial(_python_files, path_filters=_PATH_FILTER)
-
-
-def _context(session: Session, **kwargs: Any) -> MutableMapping[str, Any]:
-    parser = _context_parser()
-    namespace, _ = parser.parse_known_args(session.posargs)
-    cli_context: MutableMapping[str, Any] = vars(namespace)
-    default_context = {"db_version": "7.1.9", "coverage": False}
-    # Note: ChainMap scans last to first
-    return ChainMap(kwargs, cli_context, default_context)
-
-
-def _context_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    parser.add_argument("--db-version")
-    parser.add_argument("--coverage", action="store_true")
-    return parser
 
 
 def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
@@ -110,51 +94,6 @@ def _type_check(session: Session, files: Iterable[str]) -> None:
     )
 
 
-def _test_command(
-    path: Path, config: Config, context: MutableMapping[str, Any]
-) -> Iterable[str]:
-    base_command = ["poetry", "run"]
-    coverage_command = (
-        ["coverage", "run", "-a", f"--rcfile={config.root / 'pyproject.toml'}", "-m"]
-        if context["coverage"]
-        else []
-    )
-    pytest_command = ["pytest", "-v", f"{path}"]
-    return base_command + coverage_command + pytest_command
-
-
-def _unit_tests(
-    session: Session, config: Config, context: MutableMapping[str, Any]
-) -> None:
-    command = _test_command(config.root / "test" / "unit", config, context)
-    session.run(*command)
-
-
-def _integration_tests(
-    session: Session, config: Config, context: MutableMapping[str, Any]
-) -> None:
-    _pre_integration_tests_hook = getattr(config, "pre_integration_tests_hook", _pass)
-    _post_integration_tests_hook = getattr(config, "post_integration_tests_hook", _pass)
-
-    success = _pre_integration_tests_hook(session, config, context)
-    if not success:
-        session.error("Failure during pre_integration_test_hook")
-
-    command = _test_command(config.root / "test" / "integration", config, context)
-    session.run(*command)
-
-    success = _post_integration_tests_hook(session, config, context)
-    if not success:
-        session.error("Failure during post_integration_test_hook")
-
-
-def _pass(
-    _session: Session, _config: Config, _context: MutableMapping[str, Any]
-) -> bool:
-    """No operation"""
-    return True
-
-
 @nox.session(python=False)
 def fix(session: Session) -> None:
     """Runs all automated fixes on the code base"""
@@ -189,45 +128,6 @@ def type_check(session: Session) -> None:
     """Runs the type checker on the project"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
     _type_check(session, py_files)
-
-
-@nox.session(name="unit-tests", python=False)
-def unit_tests(session: Session) -> None:
-    """Runs all unit tests"""
-    context = _context(session, coverage=False)
-    _unit_tests(session, PROJECT_CONFIG, context)
-
-
-@nox.session(name="integration-tests", python=False)
-def integration_tests(session: Session) -> None:
-    """
-    Runs the all integration tests
-
-    If a project needs to execute code pre-/post the test execution,
-    it should provide appropriate hooks on their config object.
-        * pre_integration_tests_hook(session: Session, config: Config, context: MutableMapping[str, Any]) -> bool:
-        * post_integration_tests_hook(session: Session, config: Config, context: MutableMapping[str, Any]) -> bool:
-    """
-    context = _context(session, coverage=False)
-    _integration_tests(session, PROJECT_CONFIG, context)
-
-
-@nox.session(name="coverage", python=False)
-def coverage(session: Session) -> None:
-    """Runs all tests (unit + integration) and reports the code coverage"""
-    context = _context(session, coverage=True)
-    _coverage(session, PROJECT_CONFIG, context)
-
-
-def _coverage(
-    session: Session, config: Config, context: MutableMapping[str, Any]
-) -> None:
-    command = ["poetry", "run", "coverage", "report", "-m"]
-    coverage_file = config.root / ".coverage"
-    coverage_file.unlink(missing_ok=True)
-    _unit_tests(session, config, context)
-    _integration_tests(session, config, context)
-    session.run(*command)
 
 
 @nox.session(name="build-docs", python=False)
@@ -314,9 +214,3 @@ def report(session: Session) -> None:
     fmt = Format.from_string(args.format)
 
     print(format_report(project_report, fmt))
-
-
-# Note:
-#   Nox orders the targets based on their definition, so in order to have the
-#   listing obey our disired ordering we need to introduce these defintions later on.
-from exasol.toolbox.nox._release import prepare_release  # pylint: disable=E402
