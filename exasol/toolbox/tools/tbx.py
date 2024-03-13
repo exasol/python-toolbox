@@ -1,9 +1,9 @@
 import typer
 
 from exasol.toolbox.tools import (
+    issue,
     security,
     workflow,
-    issue,
 )
 
 CLI = typer.Typer()

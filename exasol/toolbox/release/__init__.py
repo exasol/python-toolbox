@@ -51,8 +51,8 @@ class Version:
         parts = [int(number, base=0) for number in version.split(".")]
         if len(parts) > 3:
             raise ValueError(
-                    "Version has an invalid format, " 
-                    f"expected: '<major>.<minor>.<patch>', actual: '{version}'"
+                "Version has an invalid format, "
+                f"expected: '<major>.<minor>.<patch>', actual: '{version}'"
             )
         version = [_index_or(parts, i, 0) for i in range(3)]
         return Version(*version)
