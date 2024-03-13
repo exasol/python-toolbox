@@ -81,7 +81,9 @@ def diff_workflow(
     old: Any = dest / f"{workflow}.yml"
     new: Any = Path(_workflows()[workflow])
     with ExitStack() as stack:
-        old = stack.enter_context(open(old, encoding="utf-8") if old.exists() else io.StringIO(""))
+        old = stack.enter_context(
+            open(old, encoding="utf-8") if old.exists() else io.StringIO("")
+        )
         new = stack.enter_context(open(new, encoding="utf-8"))
         old = old.read().split("\n")
         new = new.read().split("\n")
@@ -173,9 +175,7 @@ def update_workflow(
             _install_workflow(path, destination, exists_ok=False)
             stderr.print(f"Updated {name} in {destination}")
         except FileExistsError:
-            show_diff = typer.confirm(
-                f"Workflow <{name}> already exists, show diff?"
-            )
+            show_diff = typer.confirm(f"Workflow <{name}> already exists, show diff?")
             if show_diff:
                 diff_workflow(name, dest)
 

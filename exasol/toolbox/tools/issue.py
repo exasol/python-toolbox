@@ -81,7 +81,9 @@ def diff_issue(
     old: Any = dest / f"{issue}.md"
     new: Any = Path(_issues()[issue])
     with ExitStack() as stack:
-        old = stack.enter_context(open(old, encoding="utf-8") if old.exists() else io.StringIO(""))
+        old = stack.enter_context(
+            open(old, encoding="utf-8") if old.exists() else io.StringIO("")
+        )
         new = stack.enter_context(open(new, encoding="utf-8"))
         old = old.read().split("\n")
         new = new.read().split("\n")
@@ -120,7 +122,8 @@ def _select_issues(issue: str) -> Mapping[str, Any]:
 def install_issue(
     issue: str = typer.Argument("all", help="name of the issue to install."),
     dest: Path = typer.Argument(
-        Path("./.github/ISSUE_TEMPLATE"), help="target directory to install the issue to."
+        Path("./.github/ISSUE_TEMPLATE"),
+        help="target directory to install the issue to.",
     ),
 ) -> None:
     """
@@ -147,7 +150,8 @@ def install_issue(
 def update_issue(
     issue: str = typer.Argument("all", help="name of the issue to install."),
     dest: Path = typer.Argument(
-        Path("./.github/ISSUE_TEMPLATE"), help="target directory to install the issue to."
+        Path("./.github/ISSUE_TEMPLATE"),
+        help="target directory to install the issue to.",
     ),
     confirm: bool = typer.Option(
         False, help="Automatically confirm overwritting exsisting issue(s)"
@@ -173,9 +177,7 @@ def update_issue(
             _install_issue(path, destination, exists_ok=False)
             stderr.print(f"Updated {name} in {destination}")
         except FileExistsError:
-            show_diff = typer.confirm(
-                f"issue <{name}> already exists, show diff?"
-            )
+            show_diff = typer.confirm(f"issue <{name}> already exists, show diff?")
             if show_diff:
                 diff_issue(name, dest)
 

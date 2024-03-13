@@ -134,7 +134,11 @@ def file_exists(gitroot, refname, filename):
         f"{refname}:{filename}",
     )
     proc = subprocess.run(
-        cmd, cwd=gitroot, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False
+        cmd,
+        cwd=gitroot,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=False,
     )
     return proc.returncode == 0
 

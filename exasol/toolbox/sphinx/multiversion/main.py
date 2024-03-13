@@ -570,7 +570,9 @@ def _main(args, argv):
         ) as p:
             with open(p, encoding="utf-8") as f:
                 template = Template(f.read())
-            with open(os.path.join(args.outputdir, "index.html"), "w",encoding="utf-8") as f:
+            with open(
+                os.path.join(args.outputdir, "index.html"), "w", encoding="utf-8"
+            ) as f:
                 ref = gitrefs[-1]
                 f.write(template.render(version=ref.name))
 
