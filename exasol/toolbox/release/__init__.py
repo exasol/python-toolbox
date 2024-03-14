@@ -28,7 +28,9 @@ class Version:
     def __str__(self):
         return f"{self.major}.{self.minor}.{self.patch}"
 
-    def __lt__(self, other):
+    def __lt__(self, other: object):
+        if not isinstance(other, Version):
+            return NotImplemented
         return (
             self.major < other.major
             or (self.major <= other.major and self.minor < other.minor)
@@ -39,7 +41,9 @@ class Version:
             )
         )
 
-    def __eq__(self, other):
+    def __eq__(self, other: object):
+        if not isinstance(other, Version):
+            return NotImplemented
         return (
             self.major == other.major
             and self.minor == other.minor
@@ -91,7 +95,7 @@ def extract_release_notes(file: str | Path) -> str:
     return content
 
 
-def new_changes(file: str | Path, version: str) -> str:
+def new_changes(file: str | Path, version: Version) -> str:
     """
     Create a new changelog list, adding the provided version to it.
 

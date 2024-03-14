@@ -38,3 +38,6 @@
     ```shell
     nox -s prepare-release -- -h 
     ```
+
+## 🔩 Internal
+* Restructured `exasol.toolbox.nox` module
