@@ -106,11 +106,7 @@ def test_retrieve_templates(subpackage, expected):
     ]
 )
 def test_install_templates(templates, pkg, template_type, expected, tmp_path):
-    template.install_template(templates, Path(tmp_path), pkg, template_type)
-    error = False
-    for name in expected:
-        if os.path.exists(f"{tmp_path}/{name}"):
-            os.remove(f"{tmp_path}/{name}")
-        else:
-            error = True
-    assert not error
+    template.install_template(templates, tmp_path, pkg, template_type)
+    actual = {file.name for file in tmp_path.iterdir()}
+    expected = {name for name in expected}
+    assert actual == expected
