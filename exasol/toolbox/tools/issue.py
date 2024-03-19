@@ -21,7 +21,7 @@ def list_issues(
 
 @CLI.command(name="show")
 def show_issue(
-    issue: str
+    issue: str = typer.Argument(..., help="issue which shall be shown."),
 ) -> None:
     """Shows a specific issue."""
     template.show_templates(template=issue, pkg=PKG, template_type=TEMPLATE_TYPE, lexer=LEXER)
