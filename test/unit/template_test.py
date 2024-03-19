@@ -112,6 +112,5 @@ def test_install_templates(templates, pkg, template_type, expected, tmp_path):
         if os.path.exists(f"{tmp_path}/{name}"):
             os.remove(f"{tmp_path}/{name}")
         else:
-            print(f"{tmp_path}/{name}")
             error = True
     assert not error
