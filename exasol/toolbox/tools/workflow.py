@@ -15,7 +15,7 @@ def list_issues(
     )
 ) -> None:
     """List all available issues."""
-    template.list_templates(columns, PKG)
+    template.list_templates(columns=columns, pkg=PKG)
 
 
 @CLI.command(name="show")
@@ -23,7 +23,7 @@ def show_issue(
     issue: str
 ) -> None:
     """Shows a specific issue."""
-    template.show_templates(issue, PKG, TEMPLATE_TYPE, LEXER)
+    template.show_templates(template=issue, pkg=PKG, template_type=TEMPLATE_TYPE, lexer=LEXER)
 
 
 @CLI.command(name="diff")
@@ -35,7 +35,7 @@ def diff_issue(
     ),
 ) -> None:
     """Diff a specific issue against the installed one."""
-    template.diff_template(issue, dest, PKG, TEMPLATE_TYPE)
+    template.diff_template(template=issue, dest=dest, pkg=PKG, template_type=TEMPLATE_TYPE)
 
 
 @CLI.command(name="install")
@@ -50,7 +50,7 @@ def install_issue(
 
     Attention: If there is an existing issue with the same name it will be overwritten!
     """
-    template.install_template(issue, dest, PKG, TEMPLATE_TYPE)
+    template.install_template(template=issue, dest=dest, pkg=PKG, template_type=TEMPLATE_TYPE)
 
 
 @CLI.command(name="update")
@@ -64,7 +64,7 @@ def update_issue(
     ),
 ) -> None:
     """Similar to install but checks for existing issues and shows diff"""
-    template.update_template(issue, dest, confirm, PKG, TEMPLATE_TYPE)
+    template.update_template(template=issue, dest=dest, confirm=confirm, pkg=PKG, template_type=TEMPLATE_TYPE)
 
 
 if __name__ == "__main__":
