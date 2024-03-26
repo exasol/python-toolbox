@@ -49,5 +49,3 @@ def _replace_lines(lines: List[str], replace_lines: List[Tuple[int, str]]):
         output[index] = line
     return output
 
-
-replace_version(Path("foo/ci.yml"), "9.9.9")
