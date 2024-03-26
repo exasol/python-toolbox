@@ -14,7 +14,7 @@ def replace_version(template: Path, version: str) -> None:
         file.writelines(output_lines)
 
 
-def _replace_version(input_lines, replace_filter, version) -> list[str]:
+def _replace_version(input_lines, replace_filter, version) -> List[str]:
     filtered_lines = _filter_replace_lines(input_lines, replace_filter)
     replaced_filtered_lines = _replace_filtered_line(filtered_lines, version)
     return _replace_lines(input_lines, replaced_filtered_lines)
@@ -22,7 +22,7 @@ def _replace_version(input_lines, replace_filter, version) -> list[str]:
 
 def _filter_replace_lines(
     input_lines: str, replace_filter: str
-) -> list[tuple[int, str]]:
+) -> List[tuple[int, str]]:
     filtered_lines = (
         (index, line)
         for index, line in enumerate(input_lines)
@@ -35,15 +35,15 @@ def _filter_replace_lines(
 
 
 def _replace_filtered_line(
-    filtered_lines: list[tuple[int, str]], version: str
-) -> list[tuple[int, str]]:
+    filtered_lines: List[tuple[int, str]], version: str
+) -> List[tuple[int, str]]:
     return [
         (index, line[0 : line.index("@") + 1] + version + "\n")
         for index, line in filtered_lines
     ]
 
 
-def _replace_lines(lines: list[str], replace_lines: list[tuple[int, str]]):
+def _replace_lines(lines: List[str], replace_lines: List[tuple[int, str]]):
     output = lines
     for index, line in replace_lines:
         output[index] = line
