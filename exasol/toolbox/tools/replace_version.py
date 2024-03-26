@@ -2,15 +2,31 @@ from pathlib import Path
 from typing import List
 
 def replace_version(template: Path, version: str) -> None:
-    with open(template, "r+", encoding="utf8") as file:
-        lines = file.readlines()
-        _replace(lines, "exasol/python-toolbox/.github/", version)
-        file.seek(0)
-        file.writelines(lines)
+    with open(template, "r", encoding="utf-8") as file:
+        input_lines = file.readlines()
 
+    output_lines = _replace_version(input_lines, "exasol/python-toolbox/.github/", version)
 
-def _replace(lines: List[str], replace_filter: str, version: str) -> None:
-    for count, line in enumerate(lines):
-        if line.find(replace_filter) != -1:
-            if line.find("@") != -1:
-                lines[count] = line[0:line.index("@")+1] + version + "\n"
+    with open(template, "w", encoding="utf-8")as file:
+        file.writelines(output_lines)
+
+def _replace_version(input_lines, replace_filter, version) -> list[str]:
+    filtered_lines = _filter_replace_lines(input_lines, replace_filter)
+    replaced_filtered_lines = _replace_filtered_line(filtered_lines, version)
+    return _replace_lines(input_lines, replaced_filtered_lines)
+
+def _filter_replace_lines(input_lines, replace_filter) -> list[tuple[int, str]]:
+    filtered_lines = ((index, line) for index, line in enumerate(input_lines) if line.find(replace_filter) != -1)
+    filtered_lines = [(index, line) for index, line in filtered_lines if line.find("@") != -1]
+    return filtered_lines
+
+def _replace_filtered_line(filtered_lines: list[tuple[int, str]], version: str) -> list[tuple[int, str]]:
+    return [(index, line[0:line.index("@")+1]+version+"\n") for index, line in filtered_lines]
+
+def _replace_lines(lines: list[str], replace_lines: list[tuple[int, str]]):
+    output = lines
+    for index, line in replace_lines:
+        output[index] = line
+    return output
+
+replace_version(Path("foo/ci.yml"), "9.9.9")
