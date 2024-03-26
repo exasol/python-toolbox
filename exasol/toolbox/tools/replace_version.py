@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 
 def replace_version(template: Path, version: str) -> None:
@@ -22,7 +22,7 @@ def _replace_version(input_lines, replace_filter, version) -> List[str]:
 
 def _filter_replace_lines(
     input_lines: str, replace_filter: str
-) -> List[tuple[int, str]]:
+) -> List[Tuple[int, str]]:
     filtered_lines = (
         (index, line)
         for index, line in enumerate(input_lines)
@@ -35,15 +35,15 @@ def _filter_replace_lines(
 
 
 def _replace_filtered_line(
-    filtered_lines: List[tuple[int, str]], version: str
-) -> List[tuple[int, str]]:
+    filtered_lines: List[Tuple[int, str]], version: str
+) -> List[Tuple[int, str]]:
     return [
         (index, line[0 : line.index("@") + 1] + version + "\n")
         for index, line in filtered_lines
     ]
 
 
-def _replace_lines(lines: List[str], replace_lines: List[tuple[int, str]]):
+def _replace_lines(lines: List[str], replace_lines: List[Tuple[int, str]]):
     output = lines
     for index, line in replace_lines:
         output[index] = line
