@@ -1,5 +1,5 @@
 from pathlib import Path
-
+from typing import List
 
 def replace_version(template: Path, version: str) -> None:
     with open(template, "r+", encoding="utf8") as file:
@@ -9,7 +9,7 @@ def replace_version(template: Path, version: str) -> None:
         file.writelines(lines)
 
 
-def _replace(lines: list[str], replace_filter: str, version: str) -> None:
+def _replace(lines: List[str], replace_filter: str, version: str) -> None:
     for count, line in enumerate(lines):
         if line.find(replace_filter) != -1:
             if line.find("@") != -1:
