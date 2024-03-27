@@ -44,7 +44,7 @@ It should be available to the repository either as Organization-, Repository- or
 
 .. code-block:: shell
 
-    tbox workflow install all
+    tbx workflow install all
 
 .. warning::
 
