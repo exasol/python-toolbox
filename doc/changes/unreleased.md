@@ -7,6 +7,9 @@
 
     The CI-CD workflow now assumes the changelog to be in markdown and the location `/doc/changes/change_x.y.z.md`
 
+## 🐞 Fixed
+* Fixed GitHub workflow references in `ci.yml`, ci-cd.yml` and `pr-merge.yml` workflows
+
 ## ✨ Added
 * **Added Nox Task `prepare-release`**
 
