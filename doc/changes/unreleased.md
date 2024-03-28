@@ -39,5 +39,8 @@
     nox -s prepare-release -- -h 
     ```
 
+## 📚 Documentation
+* Fixed typos and updated documentation
+
 ## 🔩 Internal
 * Restructured `exasol.toolbox.nox` module

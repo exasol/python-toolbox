@@ -17,7 +17,7 @@ jobs:
     uses: exasol/python-toolbox/.github/workflows/checks.yml@0.6.2
 
   cd-job:
-    name: Continues Delivery
+    name: Continuous Delivery
     needs: [ ci-job ]
     uses: exasol/python-toolbox/.github/workflows/build-and-publish.yml@0.6.2
     secrets:
