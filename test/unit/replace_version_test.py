@@ -28,7 +28,7 @@ def test_is_update_required(line, matcher, expected):
         ("hallo/world@0.0.0\n", "9.9.9", "hallo/world@9.9.9\n"),
     ],
 )
-def test_update_required(line, version, expected):
+def test_update_version(line, version, expected):
     actual = update_version(line, version)
     assert actual == expected
 

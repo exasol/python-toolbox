@@ -7,7 +7,10 @@ def update_workflow(template: Path, version: str) -> None:
     with open(template, encoding="utf-8") as file:
         content = file.readlines()
 
-    content = update_versions(content, "exasol/python-toolbox/.github/", version)
+    content = update_versions(
+        lines=content,
+        matcher="exasol/python-toolbox/.github/",
+        version=version)
 
     with open(template, "w", encoding="utf-8") as file:
         file.writelines(content)
