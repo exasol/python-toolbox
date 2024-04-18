@@ -18,6 +18,11 @@ from exasol.toolbox.metrics import Rating
 class Metrics(BaseModel):
     """This schema defines the structure and values for reporting Q/A metrics for projects."""
 
+    project: str = Field(
+        description=(
+            "Information about the originating project."
+        )
+    )
     commit: str = Field(
         description=(
             "Commit-Hash pointing to the state of the codebase used for generating the metrics."
@@ -47,7 +52,7 @@ class Metrics(BaseModel):
 if __name__ == "__main__":
     schema = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://schemas.exasol.com/project-metrics-0.1.0.json",
+        "$id": "https://schemas.exasol.com/project-metrics-0.2.0.json",
     }
     schema.update(Metrics.model_json_schema())
     print(json.dumps(schema, indent=2))
