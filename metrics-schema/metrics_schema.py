@@ -20,7 +20,7 @@ class Metrics(BaseModel):
 
     project: str = Field(
         description=(
-            "Information about the originating project."
+            "Project Name Corresponding to the metrics."
         )
     )
     commit: str = Field(
