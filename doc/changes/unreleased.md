@@ -8,6 +8,7 @@
     The CI-CD workflow now assumes the changelog to be in markdown and the location `/doc/changes/change_x.y.z.md`
 
 ## 🐞 Fixed
+* Fixed `_deny_filter` function in `exasol.toolbox._shared` module
 * Fixed GitHub workflow references in `ci.yml`, ci-cd.yml` and `pr-merge.yml` workflows
 
 ## ✨ Added
