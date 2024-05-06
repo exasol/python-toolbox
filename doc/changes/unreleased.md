@@ -9,6 +9,7 @@
 
 ## 🐞 Fixed
 * Fixed GitHub workflow references in `ci.yml`, ci-cd.yml` and `pr-merge.yml` workflows
+* Fixed indent error/issue in `checks.yml` workflow
 
 ## ✨ Added
 * **Added Nox Task `prepare-release`**
