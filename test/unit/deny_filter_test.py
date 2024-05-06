@@ -38,6 +38,6 @@ def directory_tree(tmp_path):
     ],
 )
 def test_deny_filter(directory_tree, deny_list, expected):
-    root, files = directory_tree
+    _, files = directory_tree
     actual = {f.name for f in _deny_filter(files, deny_list)}
     assert actual == expected
