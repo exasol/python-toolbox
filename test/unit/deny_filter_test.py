@@ -31,7 +31,7 @@ def directory_tree(tmp_path):
         (["d1"], {"d2-f1.txt", "d2-f2.py", ".d3-f1.txt", ".d3-f2.py"}),
         (["d2"], {"d1-f1.txt", "d1-f2.py", ".d3-f1.txt", ".d3-f2.py"}),
         ([".d3"], {"d1-f1.txt", "d1-f2.py", "d2-f1.txt", "d2-f2.py"}),
-        (["d1", "d2"], {".d3-f1.txt", ".d3-f2.py"}),  # Added missing test case
+        (["d1", "d2"], {".d3-f1.txt", ".d3-f2.py"}),
         (["d2", ".d3"], {"d1-f1.txt", "d1-f2.py"}),
         (["d1", ".d3"], {"d2-f1.txt", "d2-f2.py"}),
         (["d1", "d2", ".d3"], set()),
