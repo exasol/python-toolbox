@@ -1,7 +1,8 @@
 from pathlib import Path
-import typer
-from exasol.toolbox.tools import template
 
+import typer
+
+from exasol.toolbox.tools import template
 
 CLI = typer.Typer()
 PKG = "exasol.toolbox.templates.github.ISSUE_TEMPLATE"
@@ -24,7 +25,9 @@ def show_issue(
     issue: str = typer.Argument(..., help="issue which shall be shown."),
 ) -> None:
     """Shows a specific issue."""
-    template.show_templates(template=issue, pkg=PKG, template_type=TEMPLATE_TYPE, lexer=LEXER)
+    template.show_templates(
+        template=issue, pkg=PKG, template_type=TEMPLATE_TYPE, lexer=LEXER
+    )
 
 
 @CLI.command(name="diff")
@@ -36,14 +39,17 @@ def diff_issue(
     ),
 ) -> None:
     """Diff a specific issue against the installed one."""
-    template.diff_template(template=issue, dest=dest, pkg=PKG, template_type=TEMPLATE_TYPE)
+    template.diff_template(
+        template=issue, dest=dest, pkg=PKG, template_type=TEMPLATE_TYPE
+    )
 
 
 @CLI.command(name="install")
 def install_issue(
     issue: str = typer.Argument("all", help="name of the issue to install."),
     dest: Path = typer.Argument(
-        Path("./.github/ISSUE_TEMPLATE"), help="target directory to install the issue to."
+        Path("./.github/ISSUE_TEMPLATE"),
+        help="target directory to install the issue to.",
     ),
 ) -> None:
     """
@@ -51,21 +57,26 @@ def install_issue(
 
     Attention: If there is an existing issue with the same name it will be overwritten!
     """
-    template.install_template(template=issue, dest=dest, pkg=PKG, template_type=TEMPLATE_TYPE)
+    template.install_template(
+        template=issue, dest=dest, pkg=PKG, template_type=TEMPLATE_TYPE
+    )
 
 
 @CLI.command(name="update")
 def update_issue(
     issue: str = typer.Argument("all", help="name of the issue to install."),
     dest: Path = typer.Argument(
-        Path("./.github/ISSUE_TEMPLATE"), help="target directory to install the issue to."
+        Path("./.github/ISSUE_TEMPLATE"),
+        help="target directory to install the issue to.",
     ),
     confirm: bool = typer.Option(
         False, help="Automatically confirm overwritting exsisting issue(s)"
     ),
 ) -> None:
     """Similar to install but checks for existing issues and shows diff"""
-    template.update_template(template=issue, dest=dest, confirm=confirm, pkg=PKG, template_type=TEMPLATE_TYPE)
+    template.update_template(
+        template=issue, dest=dest, confirm=confirm, pkg=PKG, template_type=TEMPLATE_TYPE
+    )
 
 
 if __name__ == "__main__":

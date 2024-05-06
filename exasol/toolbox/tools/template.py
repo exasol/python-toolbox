@@ -28,10 +28,7 @@ def _templates(pkg: str) -> Mapping[str, Any]:
     return {_normalize(w.name): w for w in resources.files(pkg).iterdir()}
 
 
-def list_templates(
-    columns: bool,
-    pkg: str
-) -> None:
+def list_templates(columns: bool, pkg: str) -> None:
     """List all available templates."""
 
     class List:
@@ -41,7 +38,9 @@ def list_templates(
         def __rich__(self) -> str:
             return "\n".join(self.items)
 
-    output = List(_templates(pkg)) if not columns else Columns(_templates(pkg), expand=True)
+    output = (
+        List(_templates(pkg)) if not columns else Columns(_templates(pkg), expand=True)
+    )
     stdout.print(output)
 
 
@@ -61,12 +60,7 @@ def show_templates(
     stdout.print(Syntax.from_path(path=template, encoding="utf-8", lexer=lexer))  # type: ignore
 
 
-def diff_template(
-    template: str,
-    dest: Path,
-    pkg: str,
-    template_type: str
-) -> None:
+def diff_template(template: str, dest: Path, pkg: str, template_type: str) -> None:
     """Diff a specific template against the installed one."""
     templates = _templates(pkg)
     if template not in templates:
@@ -79,7 +73,9 @@ def diff_template(
             old: Any = dest / f"{template}{path.suffix}"
             new: Any = Path(_templates(pkg)[template])
             with ExitStack() as stack:
-                old = stack.enter_context(open(old, encoding="utf-8") if old.exists() else io.StringIO(""))
+                old = stack.enter_context(
+                    open(old, encoding="utf-8") if old.exists() else io.StringIO("")
+                )
                 new = stack.enter_context(open(new, encoding="utf-8"))
                 old = old.read().split("\n")
                 new = new.read().split("\n")
@@ -90,7 +86,9 @@ def diff_template(
 
 def _install_template(
     template_type: str,
-    src: Union[str, Path], dest: Union[str, Path], exists_ok: bool = False,
+    src: Union[str, Path],
+    dest: Union[str, Path],
+    exists_ok: bool = False,
 ) -> None:
     src, dest = Path(src), Path(dest)
 
@@ -115,12 +113,7 @@ def _select_templates(template: str, pkg: str, template_type: str) -> Mapping[st
     return templates
 
 
-def install_template(
-    template: str,
-    dest: Path,
-    pkg: str,
-    template_type: str
-) -> None:
+def install_template(template: str, dest: Path, pkg: str, template_type: str) -> None:
     """
     Installs the requested template into the target directory.
 
@@ -142,11 +135,7 @@ def install_template(
 
 
 def update_template(
-    template: str,
-    dest: Path,
-    confirm: bool,
-    pkg: str,
-    template_type: str
+    template: str, dest: Path, confirm: bool, pkg: str, template_type: str
 ) -> None:
     """Similar to install but checks for existing templates and shows diff"""
     if not dest.exists():

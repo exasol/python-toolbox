@@ -1,5 +1,7 @@
 from pathlib import Path
+
 import typer
+
 from exasol.toolbox.tools import template
 
 CLI = typer.Typer()
@@ -23,7 +25,9 @@ def show_workflow(
     workflow: str = typer.Argument(..., help="Workflow which shall be shown."),
 ) -> None:
     """Shows a specific workflow."""
-    template.show_templates(template=workflow, pkg=PKG, template_type=TEMPLATE_TYPE, lexer=LEXER)
+    template.show_templates(
+        template=workflow, pkg=PKG, template_type=TEMPLATE_TYPE, lexer=LEXER
+    )
 
 
 @CLI.command(name="diff")
@@ -35,7 +39,9 @@ def diff_workflow(
     ),
 ) -> None:
     """Diff a specific workflow against the installed one."""
-    template.diff_template(template=workflow, dest=dest, pkg=PKG, template_type=TEMPLATE_TYPE)
+    template.diff_template(
+        template=workflow, dest=dest, pkg=PKG, template_type=TEMPLATE_TYPE
+    )
 
 
 @CLI.command(name="install")
@@ -50,7 +56,9 @@ def install_workflow(
 
     Attention: If there is an existing workflow with the same name it will be overwritten!
     """
-    template.install_template(template=workflow, dest=dest, pkg=PKG, template_type=TEMPLATE_TYPE)
+    template.install_template(
+        template=workflow, dest=dest, pkg=PKG, template_type=TEMPLATE_TYPE
+    )
 
 
 @CLI.command(name="update")
@@ -64,7 +72,13 @@ def update_workflow(
     ),
 ) -> None:
     """Similar to install but checks for existing workflows and shows diff"""
-    template.update_template(template=workflow, dest=dest, confirm=confirm, pkg=PKG, template_type=TEMPLATE_TYPE)
+    template.update_template(
+        template=workflow,
+        dest=dest,
+        confirm=confirm,
+        pkg=PKG,
+        template_type=TEMPLATE_TYPE,
+    )
 
 
 if __name__ == "__main__":
