@@ -26,15 +26,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: SCM Checkout
-      uses: actions/checkout@v3
+      - name: SCM Checkout
+        uses: actions/checkout@v3
 
-    - name: Setup Python & Poetry Environment
-      uses: exasol/python-toolbox/.github/actions/python-environment@0.8.0
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@0.8.0
 
-    - name: Build Documentation
-      run: |
-        poetry run python -m nox -s build-docs
+      - name: Build Documentation
+        run: |
+          poetry run python -m nox -s build-docs
 
   lint-job:
     name: Linting (Python-${{ matrix.python-version }})
