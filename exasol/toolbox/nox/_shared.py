@@ -40,14 +40,9 @@ def _python_files(
 def _deny_filter(files: Iterable[Path], deny_list: Iterable[str]) -> Iterable[Path]:
     """
     Adds a filter to remove unwanted paths containing python files from the iterator.
-
-     args:
-
-
-     return:
     """
     for entry in deny_list:
-        files = filter(lambda path: entry not in path.parts, files)
+        files = list(filter(lambda path: entry not in path.parts, files))
     return files
 
 
