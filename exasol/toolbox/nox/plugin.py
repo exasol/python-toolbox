@@ -48,6 +48,6 @@ class NoxTasks:
     def plugin_manager(config) -> pluggy.PluginManager:
         pm = pluggy.PluginManager(_PLUGIN_MARKER)
         pm.add_hookspecs(NoxTasks)
-        for plugin in config.plugins:
+        for plugin in getattr(config, "plugins", []):
             pm.register(plugin())
         return pm
