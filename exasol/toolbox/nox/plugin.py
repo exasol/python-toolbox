@@ -9,15 +9,21 @@ class NoxTasks:
     @hookspec
     def prepare_release_update_version(self, session, config, version):
         """
-        Run as part of the version update task
+        This hook is called during version updating when a release is being prepared.
+        Implementors can add their own logic and tasks required to be run during the version update here.
 
         Args:
-            session:
-                tbd
-            config:
-                tbd
-            version:
-                tbd
+            session (nox.Session):
+                The nox session running the release preparation.
+                This it can be used to run commands, etc.
+
+            config (class):
+                The project configuration object from the noxconfig.py file.
+
+            version (str):
+                A string representation of the version to be released.
+                This follows the pattern of Semantic Versioning, i.e., "MAJOR.MINOR.PATCH".
+                An example would be "1.4.2".
         """
 
     @hookspec
@@ -26,7 +32,16 @@ class NoxTasks:
         Files which should be added to the prepare relase commit should be added using add.
 
         Args:
-            add: Function which takes a file which will be added to the index.
+            session (nox.Session):
+                The nox session running the release preparation.
+                This it can be used to run commands, etc.
+
+            config (class):
+                The project configuration object from the noxconfig.py file.
+
+            add (function):
+                Function which takes a nox session and a list of files which will be added to the index.
+                e.g. `add(session, ["file1.txt", "file2.txt"])`
         """
 
     @staticmethod
