@@ -10,9 +10,4 @@
 * [ ] Have you checked to ensure there aren't other open Pull Requests for the same update/change?
 * [ ] Are you mentioning the issue which this PullRequest fixes ("Fixes...")
 
-# 🦺 Github Actions
-* [ ] Did you update the version pinning in the action(s)
-  * security-issues (exasol-toolbox)
-    -> Only for releases!!
-
 Note: If any of the above is not relevant to your PR just check the box.
