@@ -44,6 +44,11 @@
     nox -s prepare-release -- -h 
     ```
 
+* **Added Plugin Support for Nox Task `prepare-release`**
+
+    - For further details on the plugin specification, refer to `exasol.toolbox.nox.plugin`.
+    - For an example of usage, refer to the `noxconfig` of the Python toolbox.
+
 ## 📚 Documentation
 * Fixed typos and updated documentation
 

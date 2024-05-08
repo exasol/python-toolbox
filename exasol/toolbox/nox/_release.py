@@ -15,6 +15,7 @@ from exasol.toolbox.nox._shared import (
     Mode,
     _version,
 )
+from exasol.toolbox.nox.plugin import NoxTasks
 from exasol.toolbox.release import (
     Version,
     extract_release_notes,
@@ -108,8 +109,14 @@ def prepare_release(session: Session, python=False) -> None:
     if not args.no_branch and not args.no_add:
         session.run("git", "switch", "-c", f"release/prepare-{new_version}")
 
+    pm = NoxTasks.plugin_manager(PROJECT_CONFIG)
+
     _ = _update_project_version(session, new_version)
     changelog, changes, unreleased = _update_changelog(new_version)
+
+    pm.hook.prepare_release_update_version(
+        session=session, config=PROJECT_CONFIG, version=new_version
+    )
 
     if args.no_add:
         return
@@ -123,6 +130,9 @@ def prepare_release(session: Session, python=False) -> None:
             PROJECT_CONFIG.root / "pyproject.toml",
             PROJECT_CONFIG.version_file,
         ],
+    )
+    pm.hook.prepare_release_add_files(
+        session=session, config=PROJECT_CONFIG, add=_add_files_to_index
     )
     session.run("git", "commit", "-m", f"Prepare release {new_version}")
 
