@@ -1,6 +1,8 @@
 🔧 Customization
 ================
 
+.. _plugins:
+
 Nox Task Plugins
 ----------------
 
