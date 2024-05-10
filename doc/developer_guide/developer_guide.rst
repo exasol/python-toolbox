@@ -7,4 +7,5 @@
 
     ../design
     development
+    plugins
     ideas
