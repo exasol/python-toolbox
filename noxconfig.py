@@ -3,13 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import (
-    Any,
-    Iterable,
-    MutableMapping,
-)
-
-from nox import Session
+from typing import Iterable
 
 from exasol.toolbox.nox.plugin import hookimpl
 from exasol.toolbox.tools.replace_version import update_workflow
@@ -43,20 +37,6 @@ class Config:
     version_file: Path = Path(__file__).parent / "exasol" / "toolbox" / "version.py"
     path_filters: Iterable[str] = ("dist", ".eggs", "venv", "metrics-schema")
     plugins = [UpdateTemplates]
-
-    @staticmethod
-    def pre_integration_tests_hook(
-        _session: Session, _config: Config, _context: MutableMapping[str, Any]
-    ) -> bool:
-        """Implement if project specific behaviour is required"""
-        return True
-
-    @staticmethod
-    def post_integration_tests_hook(
-        _session: Session, _config: Config, _context: MutableMapping[str, Any]
-    ) -> bool:
-        """Implement if project specific behaviour is required"""
-        return True
 
 
 PROJECT_CONFIG = Config()

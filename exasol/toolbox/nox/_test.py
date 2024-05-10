@@ -11,6 +11,7 @@ import nox
 from nox import Session
 
 from exasol.toolbox.nox._shared import _context
+from exasol.toolbox.nox.plugin import NoxTasks
 from noxconfig import (
     PROJECT_CONFIG,
     Config,
@@ -40,19 +41,17 @@ def _unit_tests(
 def _integration_tests(
     session: Session, config: Config, context: MutableMapping[str, Any]
 ) -> None:
-    _pre_integration_tests_hook = getattr(config, "pre_integration_tests_hook", _pass)
-    _post_integration_tests_hook = getattr(config, "post_integration_tests_hook", _pass)
+    pm = NoxTasks.plugin_manager(config)
 
-    success = _pre_integration_tests_hook(session, config, context)
-    if not success:
-        session.error("Failure during pre_integration_test_hook")
+    # run pre intergration test plugins
+    pm.hook.pre_integration_tests_hook(session=session, config=config, context={})
 
+    # run
     command = _test_command(config.root / "test" / "integration", config, context)
     session.run(*command)
 
-    success = _post_integration_tests_hook(session, config, context)
-    if not success:
-        session.error("Failure during post_integration_test_hook")
+    # run post intergration test plugins
+    pm.hook.post_integration_tests_hook(session=session, config=config, context={})
 
 
 def _pass(
