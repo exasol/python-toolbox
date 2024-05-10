@@ -30,8 +30,8 @@ class UpdateTemplates:
             update_workflow(workflow, version)
 
     @hookimpl
-    def prepare_release_add_files(self, session, config, add):
-        add(session, self.workflows)
+    def prepare_release_add_files(self, session, config):
+        return self.workflows
 
 
 @dataclass(frozen=True)

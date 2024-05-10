@@ -6,6 +6,10 @@ hookimpl = pluggy.HookimplMarker("python-toolbox")
 
 
 class NoxTasks:
+    """
+    Defines extension hooks for the standard nox tasks provided by the python-toolbox.
+    """
+
     @hookspec
     def prepare_release_update_version(self, session, config, version):
         """
@@ -27,7 +31,7 @@ class NoxTasks:
         """
 
     @hookspec
-    def prepare_release_add_files(self, session, config, add):
+    def prepare_release_add_files(self, session, config):
         """
         Files which should be added to the prepare relase commit should be added using add.
 
@@ -39,9 +43,10 @@ class NoxTasks:
             config (class):
                 The project configuration object from the noxconfig.py file.
 
-            add (function):
-                Function which takes a nox session and a list of files which will be added to the index.
-                e.g. `add(session, ["file1.txt", "file2.txt"])`
+        Return:
+            A iterable of Path objects of files to be added.
+
+            e.g.:  [Path("file1.txt")] or [Path("file1.txt"), Path("file2.txt")]
         """
 
     @staticmethod

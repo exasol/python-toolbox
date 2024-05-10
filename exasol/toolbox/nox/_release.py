@@ -121,18 +121,18 @@ def prepare_release(session: Session, python=False) -> None:
     if args.no_add:
         return
 
+    files = [
+        changelog,
+        unreleased,
+        changes,
+        PROJECT_CONFIG.root / "pyproject.toml",
+        PROJECT_CONFIG.version_file,
+    ]
+    results = pm.hook.prepare_release_add_files(session=session, config=PROJECT_CONFIG)
+    files += [f for plugin_response in results for f in plugin_response]
     _add_files_to_index(
         session,
-        [
-            changelog,
-            unreleased,
-            changes,
-            PROJECT_CONFIG.root / "pyproject.toml",
-            PROJECT_CONFIG.version_file,
-        ],
-    )
-    pm.hook.prepare_release_add_files(
-        session=session, config=PROJECT_CONFIG, add=_add_files_to_index
+        files,
     )
     session.run("git", "commit", "-m", f"Prepare release {new_version}")
 
