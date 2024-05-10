@@ -84,7 +84,7 @@ def _update_changelog(version: Version) -> tuple[Path, Path, Path]:
     return changelog, changes, unreleased
 
 
-def _add_files_to_index(session: Session, files: list[Path | str]) -> None:
+def _add_files_to_index(session: Session, files: list[Path]) -> None:
     for file in files:
         session.run("git", "add", f"{file}")
 
