@@ -37,6 +37,10 @@ which is required to to provide the following attributes:
 
 Alternatively you can use the *noxconfig.py* file bellow and adjust the value of the attributes if needed:
 
+.. note::
+
+   Be aware that the plugin definitions are completely optional. For further details on plugins, see the customization section.
+
 .. literalinclude:: ../../noxconfig.py
    :language: python3
 
