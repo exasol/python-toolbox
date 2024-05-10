@@ -6,3 +6,6 @@ For additional information, refer to [customization](../user_guide/customization
 
 ## ✨ Added
 * Implemented plugin support for `pre-` and `post-` integration-tests hooks.
+
+## 📚 Documentation
+* Added documentation on nox task plugins for users and developers.
