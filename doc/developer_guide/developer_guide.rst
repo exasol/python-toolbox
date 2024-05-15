@@ -1,5 +1,7 @@
-🛠 Developer Guide
-===================
+.. _developer_guide:
+
+:octicon:`tools` Developer Guide
+================================
 
 
 .. toctree::

@@ -1,5 +1,5 @@
-🔧 Customization
-================
+Customization
+=============
 
 .. _plugins:
 

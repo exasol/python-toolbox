@@ -1,5 +1,7 @@
-💻 Tools
-========
+.. _tools:
+
+:octicon:`terminal` Tools
+=========================
 
 The python-toolbox ships with a set of command line tools, whose entry point always is the command :code:`tbx`.
 The commands are structured in a *tree* manner, and help is provided along with the command(s) no matter the nesting.

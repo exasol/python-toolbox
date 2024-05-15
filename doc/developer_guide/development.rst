@@ -1,5 +1,5 @@
-🚧 Development - Contributing
-=============================
+Development - Contributing
+==========================
 
 Creating a Release
 ++++++++++++++++++

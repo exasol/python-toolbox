@@ -33,16 +33,14 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosummary",
-    "sphinx.ext.autosectionlabel",
     "sphinx_copybutton",
     "myst_parser",
+    "sphinx_design",
 ]
 
 intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 
 # Make sure the target is unique
-autosectionlabel_maxdepth = 1
-autosectionlabel_prefix_document = True
 source_suffix = {
     ".rst": "restructuredtext",
     ".txt": "markdown",
@@ -64,7 +62,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", ".build-docu"]
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "furo"
+html_theme = "shibuya"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -72,6 +70,8 @@ html_theme = "furo"
 html_static_path = ["_static"]
 html_title = "Toolbox"
 html_theme_options = {
-    "light_logo": "light-exasol-logo.svg",
-    "dark_logo": "dark-exasol-logo.svg",
+    "light_logo": "_static/light-exasol-logo.svg",
+    "dark_logo": "_static/dark-exasol-logo.svg",
+    "github_url": "https://github.com/exasol/python-toolbox",
+    "accent_color": "grass",
 }
