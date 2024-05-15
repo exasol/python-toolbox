@@ -1,5 +1,5 @@
-🔗 Plugin Support
-=================
+Plugin Support
+==============
 
 Our tool currently provides plugin support for Nox tasks. The plugins dedicated to Nox tasks can be found 
 within the :code:`exasol.toolbox.nox.plugins` namespace. To facilitate the implementation of this feature, 

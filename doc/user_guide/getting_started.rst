@@ -1,5 +1,5 @@
-🚦 Getting Started
-==================
+Getting Started
+===============
 
 Preparing the Project
 ---------------------

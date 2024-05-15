@@ -1,4 +1,4 @@
-# 📝 Changes
+# Changelog
 
 * [unreleased](unreleased.md)
 * [0.9.0](changes_0.9.0.md)

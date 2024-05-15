@@ -1,5 +1,5 @@
-📋 Ideas
---------
+Ideas
+-----
 .. todolist::
 
 - Add commit hooks (version check etc.) for the toolbox itself

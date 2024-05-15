@@ -1,5 +1,7 @@
-🦺 Github Actions
-=================
+.. _github_actions:
+
+:octicon:`play` Github Actions
+===============================
 
 .. toctree::
     :maxdepth: 2

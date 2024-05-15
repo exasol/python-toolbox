@@ -1,5 +1,5 @@
-🏗️ Workflows (CI/CD)
-====================
+Workflows (CI/CD)
+=================
 
 Generate CI & CI/CD workflows
 -----------------------------

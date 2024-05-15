@@ -1,5 +1,7 @@
-📗 Design Document
-==================
+.. _design_document:
+
+Design Document
+===============
 
 Motivation
 ----------

@@ -1,5 +1,7 @@
-🧰 API Reference
-================
+.. _api:
+
+:octicon:`cpu` API Reference
+=============================
 
 .. figure:: _static/nothing-to-see-here.png
     :alt: nothing to see here
