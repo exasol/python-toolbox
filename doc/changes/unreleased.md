@@ -9,3 +9,6 @@ For additional information, refer to [customization](../user_guide/customization
 
 ## 📚 Documentation
 * Added documentation on nox task plugins for users and developers.
+
+## 🐞 Fixed
+* Updated templates for GH workflows to add content of changes file for release letter
