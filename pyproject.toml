@@ -9,7 +9,7 @@ authors = [
     "Nicola Coretti <nicola.coretti@exasol.com>"
 ]
 license = "MIT"
-readme = "README.rst"
+readme = "README.md"
 include = [
     "README.rst",
     "doc/changelog.rst",
