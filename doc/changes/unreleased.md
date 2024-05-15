@@ -13,3 +13,6 @@ For additional information, refer to [customization](../user_guide/customization
 ## 📚 Documentation
 * Added documentation on nox task plugins for users and developers.
 * Updated theme and structure of the documentation.
+
+## 🔩 Internal
+* Relocked and updated dependencies
