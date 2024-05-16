@@ -66,7 +66,6 @@ jobs:
         with:
           name: .lint.txt
           path: .lint.txt
-          overwrite: true
 
   type-check-job:
     name: Type Checking (Python-${{ matrix.python-version }})
@@ -114,8 +113,7 @@ jobs:
         run: poetry run nox -s coverage -- -- --db-version ${{ matrix.exasol-version }}
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: .coverage
           path: .coverage
-          overwrite: true
