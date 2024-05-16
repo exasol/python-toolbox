@@ -62,6 +62,7 @@ jobs:
         with:
           name: .lint.txt
           path: .lint.txt
+          overwrite: true
 
   type-check-job:
     name: Type Checking (Python-${{ matrix.python-version }})
@@ -111,3 +112,4 @@ jobs:
         with:
           name: .coverage
           path: .coverage
+          overwrite: true
