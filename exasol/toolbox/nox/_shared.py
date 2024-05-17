@@ -63,8 +63,9 @@ def _context_parser() -> argparse.ArgumentParser:
 
 def _context(session: Session, **kwargs: Any) -> MutableMapping[str, Any]:
     parser = _context_parser()
-    namespace, _ = parser.parse_known_args(session.posargs)
+    namespace, args = parser.parse_known_args(session.posargs)
     cli_context: MutableMapping[str, Any] = vars(namespace)
+    cli_context['fwd-args'] = args
     default_context = {"db_version": "7.1.9", "coverage": False}
     # Note: ChainMap scans last to first
     return ChainMap(kwargs, cli_context, default_context)
