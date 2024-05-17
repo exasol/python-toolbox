@@ -1,5 +1,8 @@
 # Unreleased
 
+## 🐞 Fixed
+* Added missing artifact uploads to checks.yml  
+
 ## ✨ Added
 * **Added Support for Argument Forwarding to Test-Related Nox Tasks**
 
