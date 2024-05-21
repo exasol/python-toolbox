@@ -7,3 +7,4 @@
 ## ✨ Feature
 
 * #162: Updated templates for GitHub workflows to inherit secrets by default
+* #52: Add support for caching python dependencies in GitHub workflows
