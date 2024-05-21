@@ -15,6 +15,7 @@ jobs:
     name: Checks
     needs: [ check-tag-version-job ]
     uses: ./.github/workflows/checks.yml
+    secrets: inherit
 
   cd-job:
     name: Continuous Delivery
