@@ -6,12 +6,12 @@ inputs:
   python-version:
     description: 'Python version to use'
     required: true
-    default: 3.8
+    default: "3.8"
 
   poetry-version:
     description: 'Poetry version to use'
     required: true
-    default: 1.2.2
+    default: "1.2.2"
 
 runs:
 
@@ -20,6 +20,7 @@ runs:
 
     - name: Setup Poetry (${{ inputs.poetry-version }})
       run: pipx install poetry==${{ inputs.poetry-version }}
+      shell: bash
 
     - name: Setup Python (${{ inputs.python-version}})
       uses: actions/setup-python@v5
