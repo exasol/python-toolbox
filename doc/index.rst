@@ -43,6 +43,12 @@ Documentation of the Exasol-Toolbox
 
         Document outlining the architectural and design principles and decisions in this project.
 
+    .. grid-item-card:: :octicon:`question` FAQ
+        :link: faq_toolbox
+        :link-type: ref
+
+        Frequently asked questsions.
+
 
 .. toctree::
    :maxdepth: 1
@@ -53,6 +59,7 @@ Documentation of the Exasol-Toolbox
    tools
    github_actions/github_actions
    api
+   faq
    changes/changelog
 
 

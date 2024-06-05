@@ -69,6 +69,16 @@ forward and you just can use the example *noxfile.py* bellow.
 
 .. literalinclude:: ../../noxfile.py
    :language: python3
+   :end-before: # entry point for debugging
+
+
+.. attention::
+
+    Keep in mind that the current path may not be included in the :code:`PYTHONPATH`, depending on the operating system you are using. This is explained in more detail in this resource: https://fedoraproject.org/wiki/Changes/PythonSafePath. Thus, it might be necessary to properly set the :code:`PYTHONPATH` before running nox. This is because our nox tasks expect the `noxconfig` module to be located within the python path.
+
+    For additional information on resolving this issue, please :ref:`refer to <faq_no_module_noxconfig>`.
+
+        
 
 6. Setup the pre-commit hooks
 +++++++++++++++++++++++++++++

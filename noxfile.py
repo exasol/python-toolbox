@@ -7,7 +7,7 @@ from exasol.toolbox.nox.tasks import *  # pylint: disable=wildcard-import disabl
 # default actions to be run if nothing is explicitly specified with the -s option
 nox.options.sessions = ["fix"]
 
-
+# entry point for debugging
 def main() -> None:
     """
     This excerpt was taken from nox.__main__.py. Generally, users should invoke Nox using the CLI provided by the Nox package.
