@@ -11,3 +11,6 @@
 
 ## 📚 Documentation
 * Updated information about nox tasks and `PYTHONPATH` setup
+
+## 🔩 Internal
+* Relocked and updated dependencies
