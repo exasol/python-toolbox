@@ -1,0 +1,11 @@
+{
+  "repo_name": "Project",
+  "__repo_name": "{{cookiecutter.repo_name|lower|replace(' ', '_')}}",
+  "package_name": "Project",
+  "__package_name": "{{cookiecutter.package_name|lower|replace(' ', '_')}}",
+  "description": "...",
+  "autor_full_name": "...",
+  "autor_email": "...",
+  "year": "{% now 'utc', '%Y' %}",
+  "_extensions": ["cookiecutter.extensions.TimeExtension"]
+}
