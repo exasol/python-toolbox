@@ -103,6 +103,7 @@ module = [
     "exasol.toolbox.sphinx.multiversion.*",
     "test.unit.*",
     "test.integration.*",
+    "coockie-cutter-template.*",
 ]
 ignore_errors = true
 
