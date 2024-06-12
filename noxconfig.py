@@ -37,6 +37,6 @@ class Config:
     version_file: Path = Path(__file__).parent / "exasol" / "toolbox" / "version.py"
     path_filters: Iterable[str] = ("dist", ".eggs", "venv", "metrics-schema", "cookie-cutter-template")
     plugins = [UpdateTemplates]
-
+    
 
 PROJECT_CONFIG = Config()
