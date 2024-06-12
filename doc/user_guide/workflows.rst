@@ -90,3 +90,16 @@ and add the following content:
 
 .. literalinclude:: ../../exasol/toolbox/templates/github/workflows/pr-merge.yml
     :language: yaml
+
+In order to make merging to the main branch faster you can skip running the
+tests again in this workflow.
+
+Before removing the ``ci-job`` from the workflow by please make sure the
+following prerequisites are met, as in some circumstances these tests might be
+the last or even only chance to detect problems.
+
+* GitHub branch protection for main branch is properly configured.
+* All dependencies are pointing to proper pypi packages in specific versions, i.e. no
+  dependencies to the main branch of other git repositories.
+* Development branches are short-lived and merged to main branch soon after
+  finishing tests in the context of a pull request.
