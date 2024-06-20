@@ -37,6 +37,18 @@ def _type_check(session: Session, files: Iterable[str]) -> None:
     )
 
 
+def _security_lint(session: Session, files: Iterable[str]) -> None:
+    session.run(
+        "poetry",
+        "run",
+        "python"
+        "bandit",
+        "-lll",
+        *files,
+    )
+
+
+
 @nox.session(python=False)
 def lint(session: Session) -> None:
     """Runs the linter on the project"""
@@ -47,5 +59,12 @@ def lint(session: Session) -> None:
 @nox.session(name="type-check", python=False)
 def type_check(session: Session) -> None:
     """Runs the type checker on the project"""
+    py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
+    _type_check(session, py_files)
+
+
+@nox.session(name="security-lint", python=False)
+def security_lint(session: Session) -> None:
+    """runs the security linter bandit on the project"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
     _type_check(session, py_files)
