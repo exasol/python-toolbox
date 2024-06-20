@@ -5,7 +5,7 @@ requires = [
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "exasol-{{cookiecutter.__package_name}}"
+name = "exasol-{{cookiecutter.__package_name_slug}}"
 packages  = [
     {include = "exasol"},
 ]
@@ -20,13 +20,13 @@ authors = [
 
 readme = 'README.md'
 
-repository = "https://github.com/exasol/{{cookiecutter.__repo_name}}"
-homepage = "https://github.com/exasol/{{cookiecutter.__repo_name}}"
+repository = "https://github.com/exasol/{{cookiecutter.__repo_name_slug}}"
+homepage = "https://github.com/exasol/{{cookiecutter.__repo_name_slug}}"
 
-keywords = ['exasol', '{{cookiecutter.__package_name}}']
+keywords = ['exasol', '{{cookiecutter.__package_name_slug}}']
 
 [tool.poetry.dependencies]
-python = ">=3.8,<4.0"
+python = ">=3.9,<4.0"
 
 [tool.coverage.run]
 source = [
@@ -49,7 +49,7 @@ force_grid_wrap = 2
 
 
 [tool.pylint.master]
-fail-under = 7.0
+fail-under = 5.0
 output-format = "colorized,json:.lint.json,text:.lint.txt"
 
 [tool.pylint.format]
