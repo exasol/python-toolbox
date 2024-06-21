@@ -41,9 +41,13 @@ def _security_lint(session: Session, files: Iterable[str]) -> None:
     session.run(
         "poetry",
         "run",
-        "python"
         "bandit",
-        "-lll",
+        "-l",
+        "-f",
+        "txt",
+        "-o",
+        ".security_lint.txt",
+        "-q",
         *files,
     )
 
@@ -67,4 +71,4 @@ def type_check(session: Session) -> None:
 def security_lint(session: Session) -> None:
     """runs the security linter bandit on the project"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
-    _type_check(session, py_files)
+    _security_lint(session, py_files)
