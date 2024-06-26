@@ -42,12 +42,9 @@ def _security_lint(session: Session, files: Iterable[str]) -> None:
         "poetry",
         "run",
         "bandit",
-        "-l",
-        "-f",
-        "txt",
-        "-o",
-        ".security_lint.txt",
-        "-q",
+        "--severity-level",
+        "low",
+        "--quiet",
         *files,
     )
 
@@ -67,7 +64,7 @@ def type_check(session: Session) -> None:
     _type_check(session, py_files)
 
 
-@nox.session(name="security-lint", python=False)
+@nox.session(name="security", python=False)
 def security_lint(session: Session) -> None:
     """runs the security linter bandit on the project"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
