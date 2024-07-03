@@ -1,2 +1,2 @@
-def test_unit_smoke_test():
+def test_passing_integration_test():
     assert True
