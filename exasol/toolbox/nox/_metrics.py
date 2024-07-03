@@ -47,6 +47,7 @@ def report(session: Session) -> None:
     required_files = (
         PROJECT_CONFIG.root / ".coverage",
         PROJECT_CONFIG.root / ".lint.txt",
+        PROJECT_CONFIG.root / ".security.json",
     )
     if not all(file.exists() for file in required_files):
         session.error(

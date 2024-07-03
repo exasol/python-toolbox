@@ -124,7 +124,9 @@ def reliability() -> Rating:
     return Rating.NotAvailable
 
 
-def security() -> Rating:
+def security(file: Union[str, Path]) -> Rating:
+    with open(file, 'r') as json_file:
+        security_lint = json.load(json_file)
     return Rating.NotAvailable
 
 
@@ -137,6 +139,7 @@ def create_report(
     date: Optional[datetime.datetime] = None,
     coverage_report: Union[str, Path] = ".coverage",
     pylint_report: Union[str, Path] = ".lint.txt",
+    bandit_report: Union[str, Path] = ".security.json",
 ) -> Report:
     return Report(
         commit=commit,
@@ -144,7 +147,7 @@ def create_report(
         coverage=total_coverage(coverage_report),
         maintainability=maintainability(pylint_report),
         reliability=reliability(),
-        security=security(),
+        security=security(bandit_report),
         technical_debt=technical_debt(),
     )
 
