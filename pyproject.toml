@@ -103,7 +103,6 @@ module = [
     "exasol.toolbox.sphinx.multiversion.*",
     "test.unit.*",
     "test.integration.*",
-    "project-template.*",
 ]
 ignore_errors = true
 
