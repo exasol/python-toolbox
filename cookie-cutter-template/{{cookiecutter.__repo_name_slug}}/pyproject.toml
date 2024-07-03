@@ -9,7 +9,7 @@ name = "exasol-{{cookiecutter.__package_name_slug}}"
 packages  = [
     {include = "exasol"},
 ]
-version = "0.10.0"
+version = "0.1.0"
 description = "{{cookiecutter.description}}"
 
 license = "MIT"
