@@ -5,7 +5,7 @@ requires = [
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "exasol-{{cookiecutter.__package_name_slug}}"
+name = "exasol-{{cookiecutter.repo_name}}"
 packages  = [
     {include = "exasol"},
 ]
@@ -20,10 +20,10 @@ authors = [
 
 readme = 'README.md'
 
-repository = "https://github.com/exasol/{{cookiecutter.__repo_name_slug}}"
-homepage = "https://github.com/exasol/{{cookiecutter.__repo_name_slug}}"
+repository = "https://github.com/exasol/{{cookiecutter.repo_name}}"
+homepage = "https://github.com/exasol/{{cookiecutter.repo_name}}"
 
-keywords = ['exasol', '{{cookiecutter.__package_name_slug}}']
+keywords = ['exasol', '{{cookiecutter.package_name}}']
 
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"

@@ -29,9 +29,9 @@
 ## 💾 Installation
 
 ```shell
-pip install {{cookiecutter.__repo_name_slug}}
+pip install {{cookiecutter.package_name}}
 ```
 
 ## 📚 Documentation
 
-For futher details, checkout the latest [documentation](https://exasol.github.io/python-toolbox/).
+For futher details, checkout the latest [documentation](https://exasol.github.io/{{cookiecutter.repo_name}}/).
