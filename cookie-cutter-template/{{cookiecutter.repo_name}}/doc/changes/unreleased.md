@@ -1,4 +1,2 @@
 # Unreleased
 
-## Internal
-
