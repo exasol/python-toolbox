@@ -1,5 +1,5 @@
 .. _developer_guide:
 
-Development - Contributing
-==========================
+:octicon:`tools` Developer Guide
+================================
 

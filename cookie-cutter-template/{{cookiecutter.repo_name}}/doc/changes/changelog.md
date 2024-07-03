@@ -1,4 +1,4 @@
-# 📝 Changes
+# Changes
 
 * [unreleased](unreleased.md)
 

@@ -1,4 +1,4 @@
-Documentation of the {{cookiecutter.package_name}}
+Documentation of the {{cookiecutter.project_name}}
 ---------------------{{ '-' * cookiecutter.package_name | length }}
 
 .. grid:: 1 1 3 2
@@ -30,6 +30,6 @@ Documentation of the {{cookiecutter.package_name}}
 
    user_guide
    developer_guide
-   changes/changelog
    faq
+   changes/changelog
 
