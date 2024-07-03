@@ -1,8 +1,84 @@
 Getting Started
 ===============
 
-Preparing the Project
----------------------
+Your usage of the `exasol-toolbox` will likely fall into one of two scenarios:
+
+#. Integration into an existing project.
+
+    If this is your situation, proceed to the section titled :ref:`Integrating Exasol-Toolbox into your Project <existing>`.
+
+#. Creation of a new project.
+
+    If you are starting a new project, please read the section :ref:`Create a New Project with Exasol-Toolbox Support <new>`.
+
+.. _new:
+
+Create a New Project with Exasol-Toolbox Support
+-------------------------------------------------
+
+.. important::
+
+    To establish a new project with toolbox support, you need to have `Cookiecutter <https://www.cookiecutter.io>`_ installed.
+
+    **TL;DR:** 
+        :code:`pipx install cookiecutter`
+
+
+**1. Create a new project**
+
+Use the following command to create a new project:
+
+.. code-block:: shell
+
+   cookiecutter https://github.com/exasol/python-toolbox.git --directory project-template
+
+**2. Follow the interactive project setup prompt**
+
+**3. Bootstrapp the development environment**
+
+Navigate to the directory of the newly created project:
+
+.. code-block:: shell
+
+    cd <your-project-name>
+
+Generate a poetry environment for the project:
+
+.. code-block:: shell
+
+    poetry shell
+
+Install all necessary project and development dependencies for the project:
+
+.. code-block:: shell
+
+    poetry install
+
+**4. Start using your project**
+
+List all available nox tasks:
+
+.. code-block:: shell
+
+    nox -l
+
+Build and open the documentation:
+
+.. code-block:: shell
+
+    nox -s build-docs  open-docs
+
+Execute the unit tests of the project:
+
+.. code-block:: shell
+
+    nox -s unit-tests
+
+
+.. _existing:
+
+Integrating Exasol-Toolbox into your Project
+--------------------------------------------
 
 1. Add the toolbox as dependency
 ++++++++++++++++++++++++++++++++
