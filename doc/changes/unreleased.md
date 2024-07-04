@@ -1,6 +1,5 @@
 # Unreleased
 
+## ✨ Added
+* Added cookiecutter-template for creating new project
 
-## Doc
-
-* #204: Added a guideline for removing `ci-job` from workflow `pr-merge.yml`
