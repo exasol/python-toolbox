@@ -36,24 +36,24 @@ keywords = [
 [tool.poetry.dependencies]
 python = "^3.8"
 nox = ">=2022.8.7"
-sphinx = ">=5.3,<7.0"
-pytest = "^7.2.2"
+sphinx = ">=5.3,<8"
+pytest = ">=7.2.2,<9"
 mypy = ">=0.971"
 sphinx-copybutton = "^0.5.0"
 furo = ">=2022.9.15"
 pyupgrade = ">=2.38.2,<4.0.0"
 black = ">=24.1.0"
 isort = "^5.12.0"
-pre-commit = "^3.1.1"
+pre-commit = ">=3.1.1,<4"
 coverage = ">=6.4.4,<8.0.0"
 pylint = ">=2.15.4"
 typer = {extras = ["all"], version = ">=0.7.0"}
-prysk = {extras = ["pytest-plugin"], version = "^0.17.0"}
+prysk = {extras = ["pytest-plugin"], version = ">0.17.0,<1"}
 importlib-resources = ">=5.12.0"
 myst-parser = ">=2.0.0,<4"
 pluggy = "^1.5.0"
 shibuya = ">=2024.5.14"
-sphinx-design = "^0.5.0"
+sphinx-design = ">=0.5.0,<1"
 
 
 bandit = {extras = ["toml"], version = "^1.7.9"}
