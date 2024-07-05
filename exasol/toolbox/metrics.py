@@ -130,6 +130,55 @@ def security(file: Union[str, Path]) -> Rating:
     return Rating.NotAvailable
 
 
+def security_scoring(ratings: list[Dict[str, any]]) -> float:
+    evaluation = {"LL": 0, "LM": 0, "LH": 0,
+                  "ML": 0, "MM": 0, "MH": 0,
+                  "HL": 0, "HM": 0, "HH": 0}
+    for infos in ratings:
+        if infos["issue_severity"] == "HIGH":
+            severity = "H"
+        else:
+            if infos["issue_severity"] == "MEDIUM":
+                severity = "H"
+            else:
+                if infos["issue_severity"] == "LOW":
+                    severity = "L"
+                else:
+                    severity = "H"
+
+        if infos["issue_confidence"] == "HIGH":
+            confidence = "H"
+        else:
+            if infos["issue_confidence"] == "MEDIUM":
+                confidence = "M"
+            else:
+                if infos["issue_confidence"] == "LOW":
+                    confidence = "L"
+                else:
+                    confidence = "H"
+        evaluation[f"{severity}{confidence}"] += 1
+    weighting ={
+        "HH": evaluation["HH"] * (4**(1/8))**8,
+        "HM": evaluation["HM"] * (4**(1/8))**7,
+        "HL": evaluation["HL"] * (4**(1/8))**6,
+        "MH": evaluation["MH"] * (4**(1/8))**5,
+        "MM": evaluation["MM"] * (4**(1/8))**4,
+        "ML": evaluation["ML"] * (4**(1/8))**3,
+        "LH": evaluation["LH"] * (4**(1/8))**2,
+        "LM": evaluation["LM"] * (4**(1/8))**1,
+        "LL": evaluation["LL"] * (4**(1/8))**0}
+    score = 0
+    quantity = 0
+    multiplier = 0
+    for level in weighting:
+        score += weighting[level] * multiplier
+        quantity += weighting[level]
+        multiplier += 1
+    if quantity == 0:
+        return 10
+    return score / quantity
+
+
 def technical_debt() -> Rating:
     return Rating.NotAvailable
 
