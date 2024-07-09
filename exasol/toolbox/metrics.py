@@ -67,6 +67,26 @@ class Rating(Enum):
                 "Uncategorized score, score should be in the following interval [0,10]."
             )
 
+    @staticmethod
+    def bandit_rating(score: float) -> "Rating":
+        score = round(score, 3)
+        if score == 0:
+            return Rating.F
+        elif 0 < score <= 2:
+            return Rating.E
+        elif 2 < score <= 4:
+            return Rating.D
+        elif 4 < score <= 5:
+            return Rating.C
+        elif 5 < score <= 6:
+            return Rating.B
+        elif 6 < score <= 7:
+            return Rating.A
+        else:
+            raise ValueError(
+                "Uncategorized score, score should be in the following interval [0,7]."
+            )
+
 
 @dataclass(frozen=True)
 class Report:
@@ -127,55 +147,48 @@ def reliability() -> Rating:
 def security(file: Union[str, Path]) -> Rating:
     with open(file, 'r') as json_file:
         security_lint = json.load(json_file)
-    return Rating.NotAvailable
+    return Rating.bandit_rating(bandit_scoring(security_lint["results"]))
 
 
-def security_scoring(ratings: list[Dict[str, any]]) -> float:
+def bandit_scoring(ratings: list[Dict[str, any]]) -> float:
     evaluation = {"LL": 0, "LM": 0, "LH": 0,
-                  "ML": 0, "MM": 0, "MH": 0,
-                  "HL": 0, "HM": 0, "HH": 0}
+                  "ML": 0, "MM": 0, "MH": 0}
+    multiplier = {"LL": 6, "LM": 5, "LH": 4,
+                  "ML": 3, "MM": 2, "MH": 1}
     for infos in ratings:
         if infos["issue_severity"] == "HIGH":
-            severity = "H"
+            return 0.0
+        elif infos["issue_severity"] == "MEDIUM":
+            severity = "M"
+        elif infos["issue_severity"] == "LOW":
+            severity = "L"
         else:
-            if infos["issue_severity"] == "MEDIUM":
-                severity = "H"
-            else:
-                if infos["issue_severity"] == "LOW":
-                    severity = "L"
-                else:
-                    severity = "H"
-
+            severity = "H"
         if infos["issue_confidence"] == "HIGH":
             confidence = "H"
+        elif infos["issue_confidence"] == "MEDIUM":
+            confidence = "M"
+        elif infos["issue_confidence"] == "LOW":
+            confidence = "L"
         else:
-            if infos["issue_confidence"] == "MEDIUM":
-                confidence = "M"
-            else:
-                if infos["issue_confidence"] == "LOW":
-                    confidence = "L"
-                else:
-                    confidence = "H"
+            confidence = "H"
         evaluation[f"{severity}{confidence}"] += 1
-    weighting ={
-        "HH": evaluation["HH"] * (4**(1/8))**8,
-        "HM": evaluation["HM"] * (4**(1/8))**7,
-        "HL": evaluation["HL"] * (4**(1/8))**6,
-        "MH": evaluation["MH"] * (4**(1/8))**5,
-        "MM": evaluation["MM"] * (4**(1/8))**4,
-        "ML": evaluation["ML"] * (4**(1/8))**3,
-        "LH": evaluation["LH"] * (4**(1/8))**2,
-        "LM": evaluation["LM"] * (4**(1/8))**1,
-        "LL": evaluation["LL"] * (4**(1/8))**0}
+
+    print(evaluation)
+    weighting = {
+        "MH": evaluation["MH"] * (1/(2 ** (1 / 4))) ** 5,
+        "MM": evaluation["MM"] * (1/(2 ** (1 / 4))) ** 4,
+        "ML": evaluation["ML"] * (1/(2 ** (1 / 4))) ** 3,
+        "LH": evaluation["LH"] * (1/(2 ** (1 / 4))) ** 2,
+        "LM": evaluation["LM"] * (1/(2 ** (1 / 4))) ** 1,
+        "LL": evaluation["LL"] * (1/(2 ** (1 / 4))) ** 0}
     score = 0
     quantity = 0
-    multiplier = 0
     for level in weighting:
-        score += weighting[level] * multiplier
+        score += weighting[level] * multiplier[level]
         quantity += weighting[level]
-        multiplier += 1
     if quantity == 0:
-        return 10
+        return 7
     return score / quantity
 
 
