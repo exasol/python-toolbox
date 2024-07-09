@@ -19,9 +19,9 @@ from typing import (
     Any,
     Callable,
     Dict,
+    List,
     Optional,
     Union,
-    List,
 )
 
 
@@ -146,16 +146,14 @@ def reliability() -> Rating:
 
 
 def security(file: Union[str, Path]) -> Rating:
-    with open(file, 'r') as json_file:
+    with open(file) as json_file:
         security_lint = json.load(json_file)
     return Rating.bandit_rating(bandit_scoring(security_lint["results"]))
 
 
-def bandit_scoring(ratings: List[Dict[str, any]]) -> float:
-    evaluation = {"LL": 0, "LM": 0, "LH": 0,
-                  "ML": 0, "MM": 0, "MH": 0}
-    multiplier = {"LL": 6, "LM": 5, "LH": 4,
-                  "ML": 3, "MM": 2, "MH": 1}
+def bandit_scoring(ratings: List[Dict[str, Any]]) -> float:
+    evaluation = {"LL": 0, "LM": 0, "LH": 0, "ML": 0, "MM": 0, "MH": 0}
+    multiplier = {"LL": 6, "LM": 5, "LH": 4, "ML": 3, "MM": 2, "MH": 1}
     for infos in ratings:
         if infos["issue_severity"] == "HIGH":
             return 0.0
@@ -177,14 +175,15 @@ def bandit_scoring(ratings: List[Dict[str, any]]) -> float:
 
     print(evaluation)
     weighting = {
-        "MH": evaluation["MH"] * (1/(2 ** (1 / 4))) ** 5,
-        "MM": evaluation["MM"] * (1/(2 ** (1 / 4))) ** 4,
-        "ML": evaluation["ML"] * (1/(2 ** (1 / 4))) ** 3,
-        "LH": evaluation["LH"] * (1/(2 ** (1 / 4))) ** 2,
-        "LM": evaluation["LM"] * (1/(2 ** (1 / 4))) ** 1,
-        "LL": evaluation["LL"] * (1/(2 ** (1 / 4))) ** 0}
-    score = 0
-    quantity = 0
+        "MH": evaluation["MH"] * (1 / (2 ** (1 / 4))) ** 5,
+        "MM": evaluation["MM"] * (1 / (2 ** (1 / 4))) ** 4,
+        "ML": evaluation["ML"] * (1 / (2 ** (1 / 4))) ** 3,
+        "LH": evaluation["LH"] * (1 / (2 ** (1 / 4))) ** 2,
+        "LM": evaluation["LM"] * (1 / (2 ** (1 / 4))) ** 1,
+        "LL": evaluation["LL"] * (1 / (2 ** (1 / 4))) ** 0,
+    }
+    score = 0.0
+    quantity = 0.0
     for level in weighting:
         score += weighting[level] * multiplier[level]
         quantity += weighting[level]
