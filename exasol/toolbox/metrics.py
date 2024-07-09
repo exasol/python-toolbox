@@ -21,6 +21,7 @@ from typing import (
     Dict,
     Optional,
     Union,
+    List,
 )
 
 
@@ -150,7 +151,7 @@ def security(file: Union[str, Path]) -> Rating:
     return Rating.bandit_rating(bandit_scoring(security_lint["results"]))
 
 
-def bandit_scoring(ratings: list[Dict[str, any]]) -> float:
+def bandit_scoring(ratings: List[Dict[str, any]]) -> float:
     evaluation = {"LL": 0, "LM": 0, "LH": 0,
                   "ML": 0, "MM": 0, "MH": 0}
     multiplier = {"LL": 6, "LM": 5, "LH": 4,
