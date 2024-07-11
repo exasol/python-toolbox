@@ -5,6 +5,7 @@ import pytest
 from exasol.toolbox.metrics import (
     Rating,
     _static_code_analysis,
+    _bandit_scoring,
 )
 
 
@@ -110,3 +111,22 @@ def test_static_code_analysis(
     coverage_report = named_temp_file(name=".lint.txt", content=content)
     actual = _static_code_analysis(coverage_report)
     assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "rating, expected",
+    [
+        ([{"issue_severity": "HIGH", "issue_confidence": "HIGH"}], 0),
+        ([{"issue_severity": "HIGH", "issue_confidence": "MEDIUM"}], 0),
+        ([{"issue_severity": "HIGH", "issue_confidence": "LOW"}], 0),
+        ([{"issue_severity": "MEDIUM", "issue_confidence": "HIGH"}], 1),
+        ([{"issue_severity": "MEDIUM", "issue_confidence": "MEDIUM"}], 2),
+        ([{"issue_severity": "MEDIUM", "issue_confidence": "LOW"}], 3),
+        ([{"issue_severity": "LOW", "issue_confidence": "HIGH"}], 4),
+        ([{"issue_severity": "LOW", "issue_confidence": "MEDIUM"}], 5),
+        ([{"issue_severity": "LOW", "issue_confidence": "LOW"}], 6),
+    ]
+)
+def test_bandit_scoring(rating, expected):
+    actual = _bandit_scoring(rating)
+    assert actual <= expected

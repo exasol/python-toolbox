@@ -148,10 +148,10 @@ def reliability() -> Rating:
 def security(file: Union[str, Path]) -> Rating:
     with open(file) as json_file:
         security_lint = json.load(json_file)
-    return Rating.bandit_rating(bandit_scoring(security_lint["results"]))
+    return Rating.bandit_rating(_bandit_scoring(security_lint["results"]))
 
 
-def bandit_scoring(ratings: List[Dict[str, Any]]) -> float:
+def _bandit_scoring(ratings: List[Dict[str, Any]]) -> float:
     evaluation = {"LL": 0, "LM": 0, "LH": 0, "ML": 0, "MM": 0, "MH": 0}
     multiplier = {"LL": 6, "LM": 5, "LH": 4, "ML": 3, "MM": 2, "MH": 1}
     for infos in ratings:
@@ -172,8 +172,6 @@ def bandit_scoring(ratings: List[Dict[str, Any]]) -> float:
         else:
             confidence = "H"
         evaluation[f"{severity}{confidence}"] += 1
-
-    print(evaluation)
     weighting = {
         "MH": evaluation["MH"] * (1 / (2 ** (1 / 4))) ** 5,
         "MM": evaluation["MM"] * (1 / (2 ** (1 / 4))) ** 4,
