@@ -29,7 +29,7 @@
 ## 💾 Installation
 
 ```shell
-pip install {{cookiecutter.package_name}}
+pip install exasol_{{cookiecutter.package_name}}
 ```
 
 ## 📚 Documentation
