@@ -18,7 +18,7 @@ authors = [
     "{{cookiecutter.autor_full_name}} <{{cookiecutter.autor_email}}>"
 ]
 
-readme = 'README.md'
+readme = "README.md"
 
 repository = "https://github.com/exasol/{{cookiecutter.repo_name}}"
 homepage = "https://github.com/exasol/{{cookiecutter.repo_name}}"
