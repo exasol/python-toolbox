@@ -68,3 +68,6 @@ module = [
     "test.*",
 ]
 ignore_errors = true
+
+[tool.poetry.scripts]
+tbx = 'exasol.toolbox.tools.tbx:CLI'
