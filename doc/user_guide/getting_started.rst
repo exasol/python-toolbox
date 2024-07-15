@@ -20,17 +20,22 @@ Create a New Project with Exasol-Toolbox Support
 
     To establish a new project with toolbox support, you need to have `Cookiecutter <https://www.cookiecutter.io>`_ installed.
 
-    **TL;DR:** 
+    **TL;DR:**
         :code:`pipx install cookiecutter`
 
 
 **1. Create a new project**
 
+Cookiecutter will create the project within the current directory. So if you
+usually checkout all your GitHub repos in ``~/git`` you could use ``cd ~/git``
+before calling cookiecutter.
+
 Use the following command to create a new project:
 
 .. code-block:: shell
 
-   cookiecutter https://github.com/exasol/python-toolbox.git --directory project-template
+   cookiecutter https://github.com/exasol/python-toolbox.git \
+     --directory project-template
 
 **2. Follow the interactive project setup prompt**
 
@@ -154,7 +159,7 @@ forward and you just can use the example *noxfile.py* bellow.
 
     For additional information on resolving this issue, please :ref:`refer to <faq_no_module_noxconfig>`.
 
-        
+
 
 6. Setup the pre-commit hooks
 +++++++++++++++++++++++++++++

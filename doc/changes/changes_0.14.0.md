@@ -7,3 +7,7 @@
 ## 🔩 Internal
 
 * Relock dependencies
+
+## Refactorings
+
+* #219: Updated project template configuration

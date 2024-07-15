@@ -5,7 +5,7 @@
   "description": "",
   "autor_full_name": "",
   "autor_email": "",
-  "error_tags": "",
+  "project_short_tag": "",
   "license_year": "{% now 'utc', '%Y' %}",
   "__repo_name_slug": "{{cookiecutter.package_name}}",
   "__package_name_slug": "{{cookiecutter.package_name}}",
