@@ -9,7 +9,7 @@ on:
 jobs:
 
   cd-job:
-    name: Continues Delivery
+    name: Continuous Delivery
     runs-on: ubuntu-latest
     steps:
 
