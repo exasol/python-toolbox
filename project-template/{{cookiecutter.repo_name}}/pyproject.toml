@@ -5,7 +5,7 @@ requires = [
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "exasol-{{cookiecutter.repo_name}}"
+name = "{{cookiecutter.pypi_package_name}}"
 packages  = [
     {include = "exasol"},
 ]
@@ -26,7 +26,7 @@ homepage = "https://github.com/exasol/{{cookiecutter.repo_name}}"
 keywords = ['exasol', '{{cookiecutter.package_name}}']
 
 [tool.poetry.dependencies]
-python = ">=3.10,<4.0"
+python = ">={{python_version_min}},<4.0"
 
 [tool.poetry.group.dev.dependencies]
 exasol-toolbox = ">=0.12.0"
