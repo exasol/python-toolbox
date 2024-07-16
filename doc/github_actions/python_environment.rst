@@ -37,7 +37,7 @@ Example Usage
 
         steps:
           - name: SCM Checkout
-            uses: actions/checkout@v3
+            uses: actions/checkout@v4
 
           - name: Setup Python & Poetry Environment
             uses: exasol/python-toolbox/.github/actions/python-environment@0.9.0
