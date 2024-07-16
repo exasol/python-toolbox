@@ -24,7 +24,7 @@ jobs:
         uses: ./.github/actions/python-environment
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           path: ./artifacts
 
@@ -38,7 +38,7 @@ jobs:
         run: poetry run nox -s report -- -- --format json | tee metrics.json
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: metrics.json
           path: metrics.json
