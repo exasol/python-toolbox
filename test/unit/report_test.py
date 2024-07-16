@@ -7,6 +7,7 @@ from exasol.toolbox.metrics import (
     _static_code_analysis,
     _bandit_scoring,
 )
+from typing import List, Dict
 
 
 @pytest.mark.parametrize(
@@ -114,19 +115,53 @@ def test_static_code_analysis(
 
 
 @pytest.mark.parametrize(
-    "rating, expected",
+    "severity, confidence, expected",
     [
-        ([{"issue_severity": "HIGH", "issue_confidence": "HIGH"}], 0),
-        ([{"issue_severity": "HIGH", "issue_confidence": "MEDIUM"}], 0),
-        ([{"issue_severity": "HIGH", "issue_confidence": "LOW"}], 0),
-        ([{"issue_severity": "MEDIUM", "issue_confidence": "HIGH"}], 1),
-        ([{"issue_severity": "MEDIUM", "issue_confidence": "MEDIUM"}], 2),
-        ([{"issue_severity": "MEDIUM", "issue_confidence": "LOW"}], 3),
-        ([{"issue_severity": "LOW", "issue_confidence": "HIGH"}], 4),
-        ([{"issue_severity": "LOW", "issue_confidence": "MEDIUM"}], 5),
-        ([{"issue_severity": "LOW", "issue_confidence": "LOW"}], 6),
+        ("HIGH",   "HIGH",   0),
+        ("HIGH",   "MEDIUM", 0),
+        ("HIGH",   "LOW",    0),
+        ("MEDIUM", "HIGH",   1),
+        ("MEDIUM", "MEDIUM", 2),
+        ("MEDIUM", "LOW",    3),
+        ("LOW",    "HIGH",   4),
+        ("LOW",    "MEDIUM", 5),
+        ("LOW",    "LOW",    6),
     ]
 )
-def test_bandit_scoring(rating, expected):
+def test_bandit_scoring(severity, confidence, expected):
+    rating = [{"issue_severity": severity, "issue_confidence": confidence}]
     actual = _bandit_scoring(rating)
-    assert actual <= expected
+    assert actual == expected
+
+@pytest.mark.parametrize(
+    "testcase",
+    [
+        ("HH<LL"),
+        ("LL,HH<LL"),
+        ("MM<LL"),
+        ("MM<ML,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL"),
+        ("MH,MH,LL=MM")
+    ]
+)
+def test_bandit_multi_scoring(testcase):
+    def rating(input: List[str]):
+        level = {"H": "HIGH", "M": "MEDIUM", "L": "LOW"}
+        return [{
+            "issue_severity": level[s[0]],
+            "issue_confidence": level[s[1]],
+        } for s in input]
+    if "<" in testcase:
+        left, right = testcase.split("<")
+        comparison = "<"
+    else:
+        left, right = testcase.split("=")
+        comparison = "="
+    left = left.split(",")
+    lower = rating(left)
+    right = right.split(",")
+    higher = rating(right)
+    if "<" in comparison:
+        assert _bandit_scoring(lower) < _bandit_scoring(higher)
+    else:
+        assert _bandit_scoring(lower) == _bandit_scoring(higher)
+

@@ -152,43 +152,31 @@ def security(file: Union[str, Path]) -> Rating:
 
 
 def _bandit_scoring(ratings: List[Dict[str, Any]]) -> float:
-    evaluation = {"LL": 0, "LM": 0, "LH": 0, "ML": 0, "MM": 0, "MH": 0}
-    multiplier = {"LL": 6, "LM": 5, "LH": 4, "ML": 3, "MM": 2, "MH": 1}
+    def char(value: str, default: str = "H") -> str:
+        if value in ["HIGH", "MEDIUM", "LOW"]:
+            return value[0]
+        return default
+
+    def rating_dict(*values: int) -> Dict[str, int]:
+        return dict(zip(["LL", "LM", "LH", "ML", "MM", "MH"], values))
+
+    count = rating_dict(0, 0, 0, 0, 0, 0,)
     for infos in ratings:
-        if infos["issue_severity"] == "HIGH":
+        severity = infos["issue_severity"]
+        if severity == "HIGH":
             return 0.0
-        elif infos["issue_severity"] == "MEDIUM":
-            severity = "M"
-        elif infos["issue_severity"] == "LOW":
-            severity = "L"
-        else:
-            severity = "H"
-        if infos["issue_confidence"] == "HIGH":
-            confidence = "H"
-        elif infos["issue_confidence"] == "MEDIUM":
-            confidence = "M"
-        elif infos["issue_confidence"] == "LOW":
-            confidence = "L"
-        else:
-            confidence = "H"
-        evaluation[f"{severity}{confidence}"] += 1
-    weighting = {
-        "MH": evaluation["MH"] * (1 / (2 ** (1 / 4))) ** 5,
-        "MM": evaluation["MM"] * (1 / (2 ** (1 / 4))) ** 4,
-        "ML": evaluation["ML"] * (1 / (2 ** (1 / 4))) ** 3,
-        "LH": evaluation["LH"] * (1 / (2 ** (1 / 4))) ** 2,
-        "LM": evaluation["LM"] * (1 / (2 ** (1 / 4))) ** 1,
-        "LL": evaluation["LL"] * (1 / (2 ** (1 / 4))) ** 0,
-    }
+        index = char(severity) + char(infos["issue_confidence"])
+        count[index] += 1
+    weight: Dict[str, float] = rating_dict(0, 1, 2, 3, 4, 5)
+    for k, v in weight.items():
+        weight[k] = count[k] * round((2 ** 0.20) ** v, 10)
     score = 0.0
     quantity = 0.0
-    for level in weighting:
-        score += weighting[level] * multiplier[level]
-        quantity += weighting[level]
-    if quantity == 0:
-        return 7
-    return score / quantity
-
+    factor = rating_dict(6, 5, 4, 3, 2, 1)
+    for value in weight:
+        score += weight[value] * factor[value]
+        quantity += weight[value]
+    return 7 if quantity == 0 else score / quantity
 
 def technical_debt() -> Rating:
     return Rating.NotAvailable
