@@ -3,6 +3,7 @@
   "repo_name": "{{cookiecutter.project_name | lower | replace(' ', '-')}}",
   "package_name": "{{cookiecutter.repo_name | replace('-', '_')}}",
   "pypi_package_name": "exasol-{{cookiecutter.repo_name}}",
+  "import_package": "exasol.{{cookiecutter.package_name}}",
   "description": "",
   "autor_full_name": "",
   "autor_email": "",

@@ -29,7 +29,7 @@
 ## 💾 Installation
 
 ```shell
-pip install {{cookiecutter.pypipackage_name}}
+pip install {{cookiecutter.pypi_package_name}}
 ```
 
 ## 📚 Documentation
