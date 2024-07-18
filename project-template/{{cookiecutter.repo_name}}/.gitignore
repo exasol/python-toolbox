@@ -140,3 +140,6 @@ doc/api
 .build_output
 .html-documentation
 itde/
+
+# Emacs
+TAGS

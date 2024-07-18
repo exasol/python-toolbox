@@ -17,7 +17,7 @@ jobs:
     uses: ./.github/workflows/checks.yml
 
   cd-job:
-    name: Continues Delivery
+    name: Continuous Delivery
     needs: [ ci-job ]
     uses: ./.github/workflows/build-and-publish.yml
     secrets:

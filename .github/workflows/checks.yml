@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: SCM Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -31,7 +31,7 @@ jobs:
 
     steps:
       - name: SCM Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
@@ -51,14 +51,14 @@ jobs:
 
     steps:
       - name: SCM Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Run Tests
+      - name: Run lint
         run: poetry run nox -s lint
 
       - name: Upload Artifacts
@@ -66,6 +66,7 @@ jobs:
         with:
           name: .lint.txt
           path: .lint.txt
+          overwrite: true
 
   type-check-job:
     name: Type Checking (Python-${{ matrix.python-version }})
@@ -78,14 +79,14 @@ jobs:
 
     steps:
       - name: SCM Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Run Tests
+      - name: Run type-check
         run: poetry run nox -s type-check
 
   tests-job:
@@ -102,14 +103,14 @@ jobs:
 
     steps:
       - name: SCM Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Run Tests
+      - name: Run Tests and Collect Coverage
         run: poetry run nox -s coverage -- -- --db-version ${{ matrix.exasol-version }}
 
       - name: Upload Artifacts
