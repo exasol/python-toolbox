@@ -110,10 +110,3 @@ ignore_errors = true
 [tool.poetry.scripts]
 tbx = 'exasol.toolbox.tools.tbx:CLI'
 
-[tool.importlinter]
-root_package = "exasol.toolbox"
-include_external_packages = true
-
-[[tool.importlinter.contracts]]
-name = "contract test"
-type = "independence"

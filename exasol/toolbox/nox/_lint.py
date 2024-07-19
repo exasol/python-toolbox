@@ -37,6 +37,16 @@ def _type_check(session: Session, files: Iterable[str]) -> None:
     )
 
 
+def _import_lint(session: Session, path: str) -> None:
+    session.run(
+        "poetry",
+        "run",
+        "lint-imports",
+        "--config",
+        path
+    )
+
+
 @nox.session(python=False)
 def lint(session: Session) -> None:
     """Runs the linter on the project"""
@@ -49,3 +59,14 @@ def type_check(session: Session) -> None:
     """Runs the type checker on the project"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
     _type_check(session, py_files)
+
+
+@nox.session(name="import-lint", python=False)
+@nox.parametrize('own_config_file', ['no', 'yes'])
+def import_lint(session: Session, own_config_file: str) -> None:
+    """Runs the import linter on the project"""
+    if own_config_file == 'yes':
+        path = input("Config file: ")
+    else:
+        path = str(PROJECT_CONFIG.importlinter)
+    _import_lint(session, path)
