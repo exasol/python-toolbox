@@ -167,7 +167,7 @@ def _bandit_scoring(ratings: List[Dict[str, Any]]) -> float:
             return 0.0
         index = char(severity) + char(infos["issue_confidence"])
         count[index] += 1
-    weight: Dict[str, float] = rating_dict(0, 1, 2, 3, 4, 5)
+    weight: Dict[str, float] = {"LL": 0, "LM": 1, "LH": 2, "ML": 3, "MM": 4, "MH": 5}
     for k, v in weight.items():
         weight[k] = count[k] * round((2 ** 0.20) ** v, 10)
     score = 0.0
