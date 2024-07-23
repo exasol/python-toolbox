@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from typing import Iterable
+import argparse
+from pathlib import Path
 
 import nox
 from nox import Session
@@ -62,11 +64,34 @@ def type_check(session: Session) -> None:
 
 
 @nox.session(name="import-lint", python=False)
-@nox.parametrize('own_config_file', ['no', 'yes'])
-def import_lint(session: Session, own_config_file: str) -> None:
+def import_lint(session: Session) -> None:
     """Runs the import linter on the project"""
-    if own_config_file == 'yes':
-        path = input("Config file: ")
+
+    usage = "nox -s import-lint -- [options]"
+    description = "Runs the import linter on the project"
+    parser = argparse.ArgumentParser(
+        description=description,
+        usage=usage
+    )
+    parser.add_argument(
+        "-c",
+        "--config",
+        type=str,
+        help="path to the configuration file for the importlinter",
+        metavar="TEXT"
+    )
+
+    args: argparse.Namespace = parser.parse_args(args=session.posargs)
+    file: str = args.config
+    print(f"-{file}-")
+    if file is None:
+        path: path = getattr(PROJECT_CONFIG, "importlinter", Path(".importlinter"))
     else:
-        path = str(PROJECT_CONFIG.importlinter)
-    _import_lint(session, path)
+        path: path = Path(file)
+    if path.exists():
+        _import_lint(session=session, path=path)
+    else:
+        session.error(
+            "Please make sure you have a configuration file for the importlinter"
+        )
+
