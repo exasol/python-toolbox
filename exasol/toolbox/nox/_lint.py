@@ -83,8 +83,7 @@ def import_lint(session: Session) -> None:
 
     args: argparse.Namespace = parser.parse_args(args=session.posargs)
     file: str = args.config
-    print(f"-{file}-")
-    path: Path
+    path: Path | None = None
     if file is None:
         path = getattr(PROJECT_CONFIG, "importlinter", Path(".importlinter"))
     else:
