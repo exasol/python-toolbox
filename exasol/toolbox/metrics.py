@@ -71,21 +71,21 @@ class Rating(Enum):
     @staticmethod
     def bandit_rating(score: float) -> "Rating":
         score = round(score, 3)
-        if score == 0:
+        if score <= 0.2:
             return Rating.F
-        elif 0 < score <= 2:
+        elif 0.2 < score <= 1.6:
             return Rating.E
-        elif 2 < score <= 4:
+        elif 1.6 < score <= 3:
             return Rating.D
-        elif 4 < score <= 5:
+        elif 3 < score <= 4.4:
             return Rating.C
-        elif 5 < score <= 6:
+        elif 4.4 < score <= 5.8:
             return Rating.B
-        elif 6 < score <= 7:
+        elif 5.8 < score <= 6:
             return Rating.A
         else:
             raise ValueError(
-                "Uncategorized score, score should be in the following interval [0,7]."
+                "Uncategorized score, score should be in the following interval [0,6]."
             )
 
 
@@ -157,26 +157,16 @@ def _bandit_scoring(ratings: List[Dict[str, Any]]) -> float:
             return value[0]
         return default
 
-    def rating_dict(*values: int) -> Dict[str, int]:
-        return dict(zip(["LL", "LM", "LH", "ML", "MM", "MH"], values))
-
-    count = rating_dict(0, 0, 0, 0, 0, 0,)
+    weight = {"LL": 1/18, "LM": 1/15, "LH": 1/12, "ML": 1/9, "MM": 1/6, "MH": 1/3}
+    exp = 0.0
     for infos in ratings:
         severity = infos["issue_severity"]
         if severity == "HIGH":
             return 0.0
         index = char(severity) + char(infos["issue_confidence"])
-        count[index] += 1
-    weight: Dict[str, float] = {"LL": 0, "LM": 1, "LH": 2, "ML": 3, "MM": 4, "MH": 5}
-    for k, v in weight.items():
-        weight[k] = count[k] * round((2 ** 0.20) ** v, 10)
-    score = 0.0
-    quantity = 0.0
-    factor = rating_dict(6, 5, 4, 3, 2, 1)
-    for value in weight:
-        score += weight[value] * factor[value]
-        quantity += weight[value]
-    return 7 if quantity == 0 else score / quantity
+        exp += weight[index]
+    return 6 * (2**-exp)
+
 
 def technical_debt() -> Rating:
     return Rating.NotAvailable

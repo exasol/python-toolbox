@@ -1,13 +1,16 @@
 from inspect import cleandoc
+from typing import (
+    Dict,
+    List,
+)
 
 import pytest
 
 from exasol.toolbox.metrics import (
     Rating,
-    _static_code_analysis,
     _bandit_scoring,
+    _static_code_analysis,
 )
-from typing import List, Dict
 
 
 @pytest.mark.parametrize(
@@ -115,53 +118,39 @@ def test_static_code_analysis(
 
 
 @pytest.mark.parametrize(
-    "severity, confidence, expected",
+    "lower,compare",
     [
-        ("HIGH",   "HIGH",   0),
-        ("HIGH",   "MEDIUM", 0),
-        ("HIGH",   "LOW",    0),
-        ("MEDIUM", "HIGH",   1),
-        ("MEDIUM", "MEDIUM", 2),
-        ("MEDIUM", "LOW",    3),
-        ("LOW",    "HIGH",   4),
-        ("LOW",    "MEDIUM", 5),
-        ("LOW",    "LOW",    6),
-    ]
+        (["HH", "LL"], 0),
+        (["HM", "LM", "ML"], 0),
+        (["HL", "MH"], 0),
+        ([], 6),
+        (["HL"], ["MH"]),
+        (["MH"], ["MM"]),
+        (["MM"], ["ML"]),
+        (["HL"], ["LL"]),
+        (["LL"], []),
+        (["MH", "LL"], ["MH"]),
+    ],
 )
-def test_bandit_scoring(severity, confidence, expected):
-    rating = [{"issue_severity": severity, "issue_confidence": confidence}]
-    actual = _bandit_scoring(rating)
-    assert actual == expected
+def test_bandit_order(lower, compare):
+    def level(char):
+        levels = {"H": "HIGH", "M": "MEDIUM", "L": "LOW"}
+        return levels[char]
 
-@pytest.mark.parametrize(
-    "testcase",
-    [
-        ("HH<LL"),
-        ("LL,HH<LL"),
-        ("MM<LL"),
-        ("MM<ML,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL,LL"),
-        ("MH,MH,LL=MM")
-    ]
-)
-def test_bandit_multi_scoring(testcase):
-    def rating(input: List[str]):
-        level = {"H": "HIGH", "M": "MEDIUM", "L": "LOW"}
-        return [{
-            "issue_severity": level[s[0]],
-            "issue_confidence": level[s[1]],
-        } for s in input]
-    if "<" in testcase:
-        left, right = testcase.split("<")
-        comparison = "<"
-    else:
-        left, right = testcase.split("=")
-        comparison = "="
-    left = left.split(",")
-    lower = rating(left)
-    right = right.split(",")
-    higher = rating(right)
-    if "<" in comparison:
-        assert _bandit_scoring(lower) < _bandit_scoring(higher)
-    else:
-        assert _bandit_scoring(lower) == _bandit_scoring(higher)
+    def ratings(cases):
+        output = []
+        for rating in cases:
+            output.append(
+                {
+                    "issue_severity": level(rating[0]),
+                    "issue_confidence": level(rating[1]),
+                }
+            )
+        return output
 
+    if isinstance(compare, int):
+        assert _bandit_scoring(ratings(lower)) == compare
+    elif isinstance(compare, list):
+        assert _bandit_scoring(ratings(lower)) < _bandit_scoring(ratings(compare))
+    else:
+        assert False
