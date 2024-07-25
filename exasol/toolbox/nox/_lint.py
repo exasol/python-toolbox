@@ -39,7 +39,7 @@ def _type_check(session: Session, files: Iterable[str]) -> None:
     )
 
 
-def _import_lint(session: Session, path: str) -> None:
+def _import_lint(session: Session, path: Path) -> None:
     session.run(
         "poetry",
         "run",
@@ -84,10 +84,11 @@ def import_lint(session: Session) -> None:
     args: argparse.Namespace = parser.parse_args(args=session.posargs)
     file: str = args.config
     print(f"-{file}-")
+    path: Path
     if file is None:
-        path: path = getattr(PROJECT_CONFIG, "importlinter", Path(".importlinter"))
+        path = getattr(PROJECT_CONFIG, "importlinter", Path(".importlinter"))
     else:
-        path: path = Path(file)
+        path = Path(file)
     if path.exists():
         _import_lint(session=session, path=path)
     else:
