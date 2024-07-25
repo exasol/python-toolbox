@@ -1,9 +1,14 @@
 from inspect import cleandoc
+from typing import (
+    Dict,
+    List,
+)
 
 import pytest
 
 from exasol.toolbox.metrics import (
     Rating,
+    _bandit_scoring,
     _static_code_analysis,
 )
 
@@ -110,3 +115,42 @@ def test_static_code_analysis(
     coverage_report = named_temp_file(name=".lint.txt", content=content)
     actual = _static_code_analysis(coverage_report)
     assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "lower,compare",
+    [
+        (["HH", "LL"], 0),
+        (["HM", "LM", "ML"], 0),
+        (["HL", "MH"], 0),
+        ([], 6),
+        (["HL"], ["MH"]),
+        (["MH"], ["MM"]),
+        (["MM"], ["ML"]),
+        (["HL"], ["LL"]),
+        (["LL"], []),
+        (["MH", "LL"], ["MH"]),
+    ],
+)
+def test_bandit_order(lower, compare):
+    def level(char):
+        levels = {"H": "HIGH", "M": "MEDIUM", "L": "LOW"}
+        return levels[char]
+
+    def ratings(cases):
+        output = []
+        for rating in cases:
+            output.append(
+                {
+                    "issue_severity": level(rating[0]),
+                    "issue_confidence": level(rating[1]),
+                }
+            )
+        return output
+
+    if isinstance(compare, int):
+        assert _bandit_scoring(ratings(lower)) == compare
+    elif isinstance(compare, list):
+        assert _bandit_scoring(ratings(lower)) < _bandit_scoring(ratings(compare))
+    else:
+        assert False

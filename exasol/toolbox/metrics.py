@@ -19,6 +19,7 @@ from typing import (
     Any,
     Callable,
     Dict,
+    List,
     Optional,
     Union,
 )
@@ -65,6 +66,26 @@ class Rating(Enum):
         else:
             raise ValueError(
                 "Uncategorized score, score should be in the following interval [0,10]."
+            )
+
+    @staticmethod
+    def bandit_rating(score: float) -> "Rating":
+        score = round(score, 3)
+        if score <= 0.2:
+            return Rating.F
+        elif 0.2 < score <= 1.6:
+            return Rating.E
+        elif 1.6 < score <= 3:
+            return Rating.D
+        elif 3 < score <= 4.4:
+            return Rating.C
+        elif 4.4 < score <= 5.8:
+            return Rating.B
+        elif 5.8 < score <= 6:
+            return Rating.A
+        else:
+            raise ValueError(
+                "Uncategorized score, score should be in the following interval [0,6]."
             )
 
 
@@ -124,8 +145,27 @@ def reliability() -> Rating:
     return Rating.NotAvailable
 
 
-def security() -> Rating:
-    return Rating.NotAvailable
+def security(file: Union[str, Path]) -> Rating:
+    with open(file) as json_file:
+        security_lint = json.load(json_file)
+    return Rating.bandit_rating(_bandit_scoring(security_lint["results"]))
+
+
+def _bandit_scoring(ratings: List[Dict[str, Any]]) -> float:
+    def char(value: str, default: str = "H") -> str:
+        if value in ["HIGH", "MEDIUM", "LOW"]:
+            return value[0]
+        return default
+
+    weight = {"LL": 1/18, "LM": 1/15, "LH": 1/12, "ML": 1/9, "MM": 1/6, "MH": 1/3}
+    exp = 0.0
+    for infos in ratings:
+        severity = infos["issue_severity"]
+        if severity == "HIGH":
+            return 0.0
+        index = char(severity) + char(infos["issue_confidence"])
+        exp += weight[index]
+    return 6 * (2**-exp)
 
 
 def technical_debt() -> Rating:
@@ -137,6 +177,7 @@ def create_report(
     date: Optional[datetime.datetime] = None,
     coverage_report: Union[str, Path] = ".coverage",
     pylint_report: Union[str, Path] = ".lint.txt",
+    bandit_report: Union[str, Path] = ".security.json",
 ) -> Report:
     return Report(
         commit=commit,
@@ -144,7 +185,7 @@ def create_report(
         coverage=total_coverage(coverage_report),
         maintainability=maintainability(pylint_report),
         reliability=reliability(),
-        security=security(),
+        security=security(bandit_report),
         technical_debt=technical_debt(),
     )
 
