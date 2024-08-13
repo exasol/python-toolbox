@@ -117,13 +117,39 @@ def test_static_code_analysis(
     assert actual == expected
 
 
+def _level(char):
+    levels = {"H": "HIGH", "M": "MEDIUM", "L": "LOW"}
+    return levels[char]
+
+
+def _ratings(cases):
+    output = []
+    for rating in cases:
+        output.append(
+            {
+                "issue_severity": _level(rating[0]),
+                "issue_confidence": _level(rating[1]),
+            }
+        )
+    return output
+
+
 @pytest.mark.parametrize(
-    "lower,compare",
+    "given,expected",
     [
         (["HH", "LL"], 0),
         (["HM", "LM", "ML"], 0),
         (["HL", "MH"], 0),
         ([], 6),
+    ],
+)
+def test_bandit_value(given, expected):
+    assert _bandit_scoring(_ratings(given)) == expected
+
+
+@pytest.mark.parametrize(
+    "lower,higher",
+    [
         (["HL"], ["MH"]),
         (["MH"], ["MM"]),
         (["MM"], ["ML"]),
@@ -132,25 +158,5 @@ def test_static_code_analysis(
         (["MH", "LL"], ["MH"]),
     ],
 )
-def test_bandit_order(lower, compare):
-    def level(char):
-        levels = {"H": "HIGH", "M": "MEDIUM", "L": "LOW"}
-        return levels[char]
-
-    def ratings(cases):
-        output = []
-        for rating in cases:
-            output.append(
-                {
-                    "issue_severity": level(rating[0]),
-                    "issue_confidence": level(rating[1]),
-                }
-            )
-        return output
-
-    if isinstance(compare, int):
-        assert _bandit_scoring(ratings(lower)) == compare
-    elif isinstance(compare, list):
-        assert _bandit_scoring(ratings(lower)) < _bandit_scoring(ratings(compare))
-    else:
-        assert False
+def test_bandit_order(lower, higher):
+    assert _bandit_scoring(_ratings(lower)) < _bandit_scoring(_ratings(higher))
