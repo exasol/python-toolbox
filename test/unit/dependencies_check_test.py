@@ -8,27 +8,27 @@ from exasol.toolbox.tools.dependencies_check import _source_filter
         (
             ['url', 'git', 'path'],
             """example-url = {url = "https://example.com/my-package-0.1.0.tar.gz"}""",
-            True),
+            'url'),
         (
             ['url', 'git', 'path'],
             """example-git = {git = "git@github.com:requests/requests.git"}""",
-            True),
+            'git'),
         (
             ['url', 'git', 'path'],
             """example-path = {path = "../my-package/dist/my-package-0.1.0.tar.gz"}""",
-            True),
+            'path'),
         (
             ['url', 'git', 'path'],
             """example-url = {platform = "darwin", url = "https://example.com/my-package-0.1.0.tar.gz"}""",
-            True),
+            'url'),
         (
             ['url', 'git', 'path'],
             """example = "^2.31.0.6" """,
-            False),
+            None),
         (
             ['url', 'git', 'path'],
             """python = ">=3.8.0,<4.0" """,
-            False
+            None
         )
     ]
 )
