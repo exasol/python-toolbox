@@ -25,4 +25,5 @@ def dependency_check():
     exit(0)
 
 
-dependency_check()
+if __name__ == "__main__":
+    dependency_check()
