@@ -22,17 +22,12 @@ def dependency_check():
     for name, version in toml["tool"]["poetry"]["dependencies"].items():
         key = _source_filter(version, FILTER)
         if key:
-            dependencies.append(f"{[key]} | {name} : {version}")
+            dependencies.append(f"{name} = {version}")
 
-    if not dependencies:
-        exit(0)
-    else:
-        if len(dependencies) == 1:
-            output = "One dependency is not allowed!"
-        else:
-            output = f"{len(dependencies)} dependency are not allowed!"
-        for dependency in dependencies:
-            output += f"\n{dependency}"
+    if dependencies:
+        n = len(dependencies)
+        suffix = "y" if n == 1 else "ies"
+        output = f"{n} illegal dependenc{suffix}:\n" + "\n".join(dependencies)
         exit(output)
 
 
