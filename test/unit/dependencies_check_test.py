@@ -4,7 +4,6 @@ from exasol.toolbox.nox._dependencies_check import (
     _source_filter,
     _dependencies_check
 )
-import pathlib
 
 
 @pytest.mark.parametrize(
@@ -59,9 +58,10 @@ example-git = {git = "git@github.com:requests/requests.git"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.2.2,<9"
-example-path = {path = "../my-package/dist/my-package-0.1.0.tar.gz"}
+example-path1 = {path = "../my-package/dist/my-package-0.1.0.tar.gz"}
+example-path2 = {path = "../my-package/dist/my-package-0.2.0.tar.gz"}
 """,
-                """3 illegal dependencies:
+                """4 illegal dependencies:
 
 [tool.poetry.dependencies]
 example-url = {'url': 'https://example.com/my-package-0.1.0.tar.gz'}
@@ -70,7 +70,8 @@ example-url = {'url': 'https://example.com/my-package-0.1.0.tar.gz'}
 example-git = {'git': 'git@github.com:requests/requests.git'}
 
 [tool.poetry.group.dev.dependencies]
-example-path = {'path': '../my-package/dist/my-package-0.1.0.tar.gz'}
+example-path1 = {'path': '../my-package/dist/my-package-0.1.0.tar.gz'}
+example-path2 = {'path': '../my-package/dist/my-package-0.2.0.tar.gz'}
 """
         ),
     ]
