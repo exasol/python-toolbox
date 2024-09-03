@@ -3,67 +3,70 @@ import sys
 from pathlib import Path
 import nox
 from nox import Session
+from noxconfig import PROJECT_CONFIG
+from typing import List
 
 
 FILTERS = ['url', 'git', 'path']
 
 
 @nox.session(name="dependencies-check", python=False)
-def dependency_check(session: Session):
-    file = Path("pyproject.toml")
-    sys.exit(_dependencies_check(file.read_text()))
+def dependency_check(session: Session) -> None:
+    file = Path(PROJECT_CONFIG.root, "pyproject.toml")
+    output = _dependencies_check(file.read_text())
+    print("\033[31m"+output) if output else print("\033[32m"+"Success: no wrong dependencies found")
+    sys.exit(0 if not output else 1)
 
 
-def _source_filter(version, filters):
-    output = None
-    if isinstance(version, dict):
-        for key in version.keys():
-            if key in filters:
-                output = key
-    return output
+def _source_filter(version, filters) -> bool:
+    for f in filters:
+        if f in version:
+            return True
+    return False
 
 
-def _dependencies_check(string: str):
+def extract_dependencies(section, filters) -> List[str]:
+    dependencies = []
+    for name, version in section.items():
+        if _source_filter(version, filters):
+            dependencies.append(f"{name} = {version}")
+    return dependencies
+
+
+def _dependencies_check(string: str) -> str:
     toml = tomlkit.loads(string)
-    dependencies: list = []
-    dev_dependencies: list = []
-    group_dependencies: dict = {}
-    if "tool" in toml:
-        if "poetry" in toml["tool"].unwrap():
-            if "dependencies" in toml["tool"].unwrap()["poetry"]:
-                for name, version in toml["tool"].unwrap()["poetry"]["dependencies"].items():
-                    key = _source_filter(version, FILTERS)
-                    if key:
-                        dependencies.append(f"{name} = {version}")
+    group_dependencies = {}
 
-            if "dev" in toml["tool"].unwrap()["poetry"]:
-                if "dependencies" in toml["tool"].unwrap()["poetry"]["dev"]:
-                    for name, version in toml["tool"].unwrap()["poetry"]["dev"]["dependencies"].items():
-                        key = _source_filter(version, FILTERS)
-                        if key:
-                            dev_dependencies.append(f"{name} = {version}")
+    poetry = toml.get("tool", {}).get("poetry", {})
 
-            if "group" in toml["tool"].unwrap()["poetry"]:
-                for group in toml["tool"].unwrap()["poetry"]["group"]:
-                    if "dependencies" in toml["tool"].unwrap()["poetry"]["group"][group]:
-                        for name, version in toml["tool"].unwrap()["poetry"]["group"][group]["dependencies"].items():
-                            key = _source_filter(version, FILTERS)
-                            if key:
-                                if f'[tool.poetry.group.{group}.dependencies]' not in group_dependencies:
-                                    group_dependencies[f'[tool.poetry.group.{group}.dependencies]'] = []
-                                group_dependencies[f'[tool.poetry.group.{group}.dependencies]'].append(f"{name} = {version}")
+    dependencies = extract_dependencies(poetry.get("dependencies", {}), FILTERS)
 
-    if dependencies or dev_dependencies or group_dependencies:
-        l = len(dependencies)
-        m = len(dev_dependencies)
-        n = 0
-        for _, dependency in group_dependencies.items():
-            n += len(dependency)
-        suffix = "y" if l+m+n == 1 else "ies"
-        output = f"{l+m+n} illegal dependenc{suffix}:{chr(10)}"
-        output += ("\n[tool.poetry.dependencies]\n"+"\n".join(dependencies)+"\n") if l > 0 else ""
-        output += ("\n[tool.poetry.dev.dependencies]\n"+"\n".join(dev_dependencies)+"\n") if m > 0 else ""
-        output += ("\n".join(f"{chr(10)}{key}{chr(10)}{chr(10).join(value)}"for key, value in group_dependencies.items())) if n > 0 else ""
-        output += "\n"
-        return output
-    return 0
+    dev_section = poetry.get("dev", {}).get("dependencies", {})
+    dev_dependencies = extract_dependencies(dev_section, FILTERS)
+
+    group_section = poetry.get("group", {})
+    for group, content in group_section.items():
+        group_deps = extract_dependencies(content.get("dependencies", {}), FILTERS)
+        if group_deps:
+            group_key = f'[tool.poetry.group.{group}.dependencies]'
+            group_dependencies[group_key] = group_deps
+
+    total_count = len(dependencies) + len(dev_dependencies) + sum(len(deps) for deps in group_dependencies.values())
+    if total_count > 0:
+        suffix = "y" if total_count == 1 else "ies"
+        output = [f"{total_count} illegal dependenc{suffix}:\n"]
+
+        if dependencies:
+            output.append(f"\n[tool.poetry.dependencies]\n" + "\n".join(dependencies) + "\n")
+        if dev_dependencies:
+            output.append(f"\n[tool.poetry.dev.dependencies]\n" + "\n".join(dev_dependencies) + "\n")
+        for key, value in group_dependencies.items():
+            output.append(f"\n{key}\n" + "\n".join(value) + "\n")
+
+        return "".join(output)
+
+    return ""
+
+
+if __name__ == "__main__":
+    print(_dependencies_check(Path("pyproject.toml").read_text()))
