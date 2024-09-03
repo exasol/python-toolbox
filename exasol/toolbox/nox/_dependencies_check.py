@@ -60,10 +60,10 @@ def _dependencies_check(string: str):
         for _, dependency in group_dependencies.items():
             n += len(dependency)
         suffix = "y" if l+m+n == 1 else "ies"
-        output = f"{l+m+n} illegal dependenc{suffix}:\n"
+        output = f"{l+m+n} illegal dependenc{suffix}:{chr(10)}"
         output += ("\n[tool.poetry.dependencies]\n"+"\n".join(dependencies)+"\n") if l > 0 else ""
         output += ("\n[tool.poetry.dev.dependencies]\n"+"\n".join(dev_dependencies)+"\n") if m > 0 else ""
-        output += ("\n".join(f"\n{key}\n{'\n'.join(value)}"for key, value in group_dependencies.items())) if n > 0 else ""
+        output += ("\n".join(f"{chr(10)}{key}{chr(10)}{chr(10).join(value)}"for key, value in group_dependencies.items())) if n > 0 else ""
         output += "\n"
         return output
     return 0
