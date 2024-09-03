@@ -64,7 +64,6 @@ def _dependencies_check(string: str) -> str:
             output.append(f"\n{key}\n" + "\n".join(value) + "\n")
 
         return "".join(output)
-
     return ""
 
 
