@@ -66,12 +66,9 @@ def type_check(session: Session) -> None:
 @nox.session(name="import-lint", python=False)
 def import_lint(session: Session) -> None:
     """Runs the import linter on the project"""
-
-    usage = "nox -s import-lint -- [options]"
-    description = "Runs the import linter on the project"
     parser = argparse.ArgumentParser(
-        description=description,
-        usage=usage
+        usage="nox -s import-lint -- [options]",
+        description="Runs the import linter on the project"
     )
     parser.add_argument(
         "-c",
@@ -85,13 +82,12 @@ def import_lint(session: Session) -> None:
     file: str = args.config
     path: Path | None = None
     if file is None:
-        path = getattr(PROJECT_CONFIG, "importlinter", Path(".importlinter"))
+        path = getattr(PROJECT_CONFIG, "import_linter_config", Path(".import_linter_config"))
     else:
         path = Path(file)
-    if path.exists():
-        _import_lint(session=session, path=path)
-    else:
+    if not path.exists():
         session.error(
             "Please make sure you have a configuration file for the importlinter"
         )
+    _import_lint(session=session, path=path)
 
