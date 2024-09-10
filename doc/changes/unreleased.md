@@ -17,3 +17,6 @@
 
 * #219: Updated project template configuration
 * Updated actions/checkout to v4
+
+## 📚 Documentation
+* Updated User Documentation
