@@ -27,7 +27,7 @@ class DependenciesCheck:
     ILLEGAL_DEPENDENCIES = ['url', 'git', 'path']
 
     def __init__(self, pyproject_toml: str):
-        self.illegal_dict: Dict[str, List[str]] | None = None
+        self.illegal_dict: Dict[str, List[str]] = {}
         self.content = pyproject_toml
 
     def parse(self) -> "DependenciesCheck":
@@ -80,5 +80,5 @@ class DependenciesCheck:
         else:
             console.print("Success: All dependencies refer to explicit pipy releases.", style="green")
 
-    def illegal(self) -> Dict[str, List[str]] | None:
+    def illegal(self) -> Dict[str, List[str]]:
         return self.illegal_dict
