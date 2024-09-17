@@ -1,4 +1,6 @@
 import pytest
+import rich.console
+
 from exasol.toolbox.nox._dependencies_check import DependenciesCheck
 
 
@@ -121,16 +123,16 @@ example-path2 = {path = "../my-package/dist/my-package-0.2.0.tar.gz"}
             """,
             """5 illegal dependencies
 
-\\[tool.poetry.dependencies]
+[tool.poetry.dependencies]
 example-url1 = {'url': 'https://example.com/my-package-0.1.0.tar.gz'}
 
-\\[tool.poetry.dev.dependencies]
+[tool.poetry.dev.dependencies]
 example-url2 = {'url': 'https://example.com/my-package-0.2.0.tar.gz'}
 
-\\[tool.poetry.group.test.dependencies]
+[tool.poetry.group.test.dependencies]
 example-git = {'git': 'git@github.com:requests/requests.git'}
 
-\\[tool.poetry.group.dev.dependencies]
+[tool.poetry.group.dev.dependencies]
 example-path1 = {'path': '../my-package/dist/my-package-0.1.0.tar.gz'}
 example-path2 = {'path': '../my-package/dist/my-package-0.2.0.tar.gz'}
 
@@ -155,15 +157,8 @@ pytest = ">=7.2.2,<9"
         ),
     ]
 )
-def test_dependencies_check_report(toml, expected):
-    class Console:
-        def __init__(self):
-            self.output = ""
-
-        def print(self, output: str, style: str = None):
-            self.output += output + "\n"
-
-    console = Console()
+def test_dependencies_check_report(toml, expected, capsys):
+    console = rich.console.Console()
     dependencies = DependenciesCheck(toml).parse()
     dependencies.report_illegal(console)
-    assert console.output == expected
+    assert capsys.readouterr().out == expected
