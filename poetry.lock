@@ -1492,6 +1492,24 @@ theme-rtd = ["sphinx-rtd-theme (>=1.0,<2.0)"]
 theme-sbt = ["sphinx-book-theme (>=1.0,<2.0)"]
 
 [[package]]
+name = "sphinx-inline-tabs"
+version = "2023.4.21"
+description = "Add inline tabbed content to your Sphinx documentation."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "sphinx_inline_tabs-2023.4.21-py3-none-any.whl", hash = "sha256:06809ac613f7c48ddd6e2fa588413e3fe92cff2397b56e2ccf0b0218f9ef6a78"},
+    {file = "sphinx_inline_tabs-2023.4.21.tar.gz", hash = "sha256:5df2f13f602c158f3f5f6c509e008aeada199a8c76d97ba3aa2822206683bebc"},
+]
+
+[package.dependencies]
+sphinx = ">=3"
+
+[package.extras]
+doc = ["furo", "myst-parser"]
+test = ["pytest", "pytest-cov", "pytest-xdist"]
+
+[[package]]
 name = "sphinxcontrib-applehelp"
 version = "1.0.4"
 description = "sphinxcontrib-applehelp is a Sphinx extension which outputs Apple help books"
@@ -1722,4 +1740,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "0c3d812d374a65bb11dd86cd5ee2029011e536ed80836fada04c7d8ad55e774f"
+content-hash = "ca885528be7bd58edf02ee1880c86d73109549c8d04f5ab89defb1d5112f13eb"

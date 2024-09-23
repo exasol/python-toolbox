@@ -19,6 +19,18 @@ Documentation of the Exasol-Toolbox
 
         Instructions and best practices to help developers contribute to the project and set up their development environment.
 
+    .. grid-item-card:: :octicon:`paintbrush` Python Styleguide
+        :link: styleguide
+        :link-type: ref
+
+        Python Style Guide of the Exasol Integration Team
+
+    .. grid-item-card:: :octicon:`list-unordered` Issue Tracking Guide
+        :link: issue_tracking
+        :link-type: ref
+
+        Guide to Issues and Issue Tracking
+
     .. grid-item-card:: :octicon:`terminal` Tools
         :link: tools
         :link-type: ref
@@ -51,11 +63,13 @@ Documentation of the Exasol-Toolbox
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 4
    :hidden:
 
    user_guide/user_guide
    developer_guide/developer_guide
+   styleguide/index
+   issues
    tools
    github_actions/github_actions
    api
