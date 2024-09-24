@@ -89,7 +89,7 @@ jobs:
       - name: Run type-check
         run: poetry run nox -s type-check
 
-  security-check-job:
+  security-job:
     name: Security Checking (Python-${{ matrix.python-version }})
     needs: [ version-check-job ]
     runs-on: ubuntu-latest
@@ -107,8 +107,15 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Run security-check
+      - name: Run security
         run: poetry run nox -s security
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: lint-python${{ matrix.python-version }}
+          path: .security.json
+          include-hidden-files: true
 
   tests-job:
     name: Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
