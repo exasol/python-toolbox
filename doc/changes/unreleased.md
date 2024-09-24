@@ -11,6 +11,7 @@
 
 ## 🐞 Bug Fixes
 
+* #181 Updated metrics related workflow's
 * Fixed coverage for empty project
 
 ## ⚒️ Refactorings
