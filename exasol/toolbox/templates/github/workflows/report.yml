@@ -24,15 +24,15 @@ jobs:
         uses: exasol/python-toolbox/.github/actions/python-environment@0.14.0
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.8
         with:
           path: ./artifacts
 
       - name: Copy Artifacts into Root Folder
         working-directory: ./artifacts
         run: |
-          cp .coverage/.coverage ../
-          cp .lint.txt/.lint.txt ../
+          cp coverage-python3.9/.coverage ../
+          cp lint-python3.9/.lint.txt ../
 
       - name: Generate Report
         run: poetry run nox -s report -- -- --format json | tee metrics.json
