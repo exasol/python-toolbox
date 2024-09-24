@@ -1,7 +1,7 @@
 import pytest
 import rich.console
 
-from exasol.toolbox.nox._dependencies_check import DependenciesCheck
+from exasol.toolbox.nox._dependencies_check import Dependencies, report_illegal
 
 
 @pytest.mark.parametrize(
@@ -95,7 +95,7 @@ example-url2 = {url = "https://example.com/my-package-0.2.0.tar.gz"}
     ]
 )
 def test_dependency_check_parse(toml, expected):
-    dependencies = DependenciesCheck(toml).parse()
+    dependencies = Dependencies(toml).parse()
     assert dependencies.illegal() == expected
 
 
@@ -159,6 +159,6 @@ pytest = ">=7.2.2,<9"
 )
 def test_dependencies_check_report(toml, expected, capsys):
     console = rich.console.Console()
-    dependencies = DependenciesCheck(toml).parse()
-    dependencies.report_illegal(console)
+    dependencies = Dependencies(toml).parse()
+    report_illegal(dependencies.illegal(), console)
     assert capsys.readouterr().out == expected
