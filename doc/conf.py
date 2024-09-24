@@ -36,6 +36,8 @@ extensions = [
     "sphinx_copybutton",
     "myst_parser",
     "sphinx_design",
+    "sphinx_inline_tabs",
+    "sphinx_copybutton",
 ]
 
 intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}

@@ -19,4 +19,6 @@
 * Updated actions/checkout to v4
 
 ## 📚 Documentation
+* Add Python Styleguide
+* Add Issue Guide
 * Updated User Documentation
