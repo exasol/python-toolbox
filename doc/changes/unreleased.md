@@ -3,6 +3,7 @@
 ## ✨ Added
 
 * Added cookiecutter-template for creating new project
+* #149: Added import linter and nox task for it
 
 ## 🔩 Internal
 
