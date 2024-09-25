@@ -16,9 +16,8 @@ def dependency_check(session: Session) -> None:
     content = Path(PROJECT_CONFIG.root, "pyproject.toml").read_text()
     dependencies = Dependencies(content).parse()
     console = rich.console.Console()
-    illegal = dependencies.illegal()
-    report_illegal(illegal, console)
-    if illegal:
+    if illegal := dependencies.illegal:
+        report_illegal(illegal, console)
         sys.exit(1)
 
 
@@ -66,19 +65,17 @@ class Dependencies:
         self.illegal_dict = illegal
         return self
 
+    @property
     def illegal(self) -> Dict[str, List[str]]:
         return self.illegal_dict
 
 
 def report_illegal(illegal: Dict[str, List[str]], console: rich.console.Console):
-    if illegal:
-        count = sum(len(deps) for deps in illegal.values())
-        suffix = "y" if count == 1 else "ies"
-        console.print(f"{count} illegal dependenc{suffix}\n", style="red")
-        for section, dependencies in illegal.items():
-            console.print(f"\\[{section}]", style="red")
-            for dependency in dependencies:
-                console.print(dependency, style="red")
-            console.print("")
-    else:
-        console.print("Success: All dependencies refer to explicit pipy releases.", style="green")
+    count = sum(len(deps) for deps in illegal.values())
+    suffix = "y" if count == 1 else "ies"
+    console.print(f"{count} illegal dependenc{suffix}\n", style="red")
+    for section, dependencies in illegal.items():
+        console.print(f"\\[{section}]", style="red")
+        for dependency in dependencies:
+            console.print(dependency, style="red")
+        console.print("")

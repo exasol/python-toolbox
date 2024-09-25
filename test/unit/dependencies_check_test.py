@@ -96,7 +96,7 @@ example-url2 = {url = "https://example.com/my-package-0.2.0.tar.gz"}
 )
 def test_dependency_check_parse(toml, expected):
     dependencies = Dependencies(toml).parse()
-    assert dependencies.illegal() == expected
+    assert dependencies.illegal == expected
 
 
 @pytest.mark.parametrize(
@@ -138,27 +138,10 @@ example-path2 = {'path': '../my-package/dist/my-package-0.2.0.tar.gz'}
 
 """
         ),
-        (
-            """
-[tool.poetry.dependencies]
-python = "^3.8"
-
-[tool.poetry.dev.dependencies]
-nox = ">=2022.8.7"
-
-[tool.poetry.group.test.dependencies]
-sphinx = ">=5.3,<8"
-
-[tool.poetry.group.dev.dependencies]
-pytest = ">=7.2.2,<9"
-            """,
-            """Success: All dependencies refer to explicit pipy releases.
-"""
-        ),
     ]
 )
 def test_dependencies_check_report(toml, expected, capsys):
     console = rich.console.Console()
     dependencies = Dependencies(toml).parse()
-    report_illegal(dependencies.illegal(), console)
+    report_illegal(dependencies.illegal, console)
     assert capsys.readouterr().out == expected
