@@ -22,7 +22,13 @@ jobs:
         uses: exasol/python-toolbox/.github/actions/python-environment@0.14.0
 
       - name: Check Version(s)
-        run: poetry run version-check  <<Add path to version.py file>> 
+        run: |
+          echo "Please enable the version check by replacing this output with shell command bellow:"
+          echo ""
+          echo "poetry run version-check <<VERSION_PY>>"
+          echo ""
+          echo "Note: <<VERSION_PY>> needs to point to the version file of the project (version.py)."
+          exit 1
 
   build-documentation-job:
     name: Build Documentation
