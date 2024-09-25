@@ -3,6 +3,7 @@
 ## ✨ Added
 
 * Added cookiecutter-template for creating new project
+* #74: Added security linter bandit and a nox task for it
 
 ## 🔩 Internal
 
