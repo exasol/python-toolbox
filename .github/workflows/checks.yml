@@ -89,6 +89,34 @@ jobs:
       - name: Run type-check
         run: poetry run nox -s type-check
 
+  security-job:
+    name: Security Checking (Python-${{ matrix.python-version }})
+    needs: [ version-check-job ]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.8", "3.9", "3.10", "3.11" ]
+
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python & Poetry Environment
+        uses: ./.github/actions/python-environment
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run security
+        run: poetry run nox -s security
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: security-python${{ matrix.python-version }}
+          path: .security.json
+          include-hidden-files: true
+
   tests-job:
     name: Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
     needs: [ build-documentation-job, lint-job, type-check-job ]

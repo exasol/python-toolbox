@@ -47,10 +47,11 @@ def report(session: Session) -> None:
     required_files = (
         PROJECT_CONFIG.root / ".coverage",
         PROJECT_CONFIG.root / ".lint.txt",
+        PROJECT_CONFIG.root / ".security.json",
     )
     if not all(file.exists() for file in required_files):
         session.error(
-            "Please make sure you run the `coverage` and the `lint` target first"
+            "Please make sure you run the `coverage`, `security` and the `lint` target first"
         )
     sha1 = str(
         session.run("git", "rev-parse", "HEAD", external=True, silent=True)
