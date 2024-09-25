@@ -80,6 +80,6 @@ def type_check(session: Session) -> None:
 
 @nox.session(name="security", python=False)
 def security_lint(session: Session) -> None:
-    """runs the security linter bandit on the project without the test files"""
+    """Runs the security linter on the project"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
     _security_lint(session, list(filter(lambda file: "test" not in file, py_files)))
