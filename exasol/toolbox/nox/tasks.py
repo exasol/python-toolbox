@@ -51,6 +51,9 @@ from exasol.toolbox.nox._test import (
     integration_tests,
     unit_tests,
 )
+from exasol.toolbox.nox._dependencies_check import (
+    dependency_check
+)
 from noxconfig import PROJECT_CONFIG
 
 

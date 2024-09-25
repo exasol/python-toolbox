@@ -3,6 +3,7 @@
 ## ✨ Added
 
 * Added cookiecutter-template for creating new project
+* #233: Added nox task to verify dependency-declarations
 
 ## 🔩 Internal
 
