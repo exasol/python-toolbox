@@ -12,6 +12,7 @@
 ## 🐞 Bug Fixes
 
 * #181 Updated metrics related workflows
+* #225 Fixed broken reference to version file in workflow
 * Fixed coverage for empty project
 
 ## ⚒️ Refactorings
