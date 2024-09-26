@@ -8,8 +8,8 @@ on:
 
 jobs:
 
-  version-check-job:
-    name: Version Check
+  Version-Check:
+    name: Version
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +22,7 @@ jobs:
         uses: exasol/python-toolbox/.github/actions/python-environment@0.14.0
 
       - name: Check Version(s)
-        run: |
+        run: poetry run version-check `poetry run python -c "from noxconfig import PROJECT_CONFIG; print(PROJECT_CONFIG.version_file)"`
           echo "Please enable the version check by replacing this output with shell command bellow:"
           echo ""
           echo "poetry run version-check <<VERSION_PY>>"
@@ -30,9 +30,9 @@ jobs:
           echo "Note: <<VERSION_PY>> needs to point to the version file of the project (version.py)."
           exit 1
 
-  build-documentation-job:
-    name: Build Documentation
-    needs: [version-check-job]
+  Documentation:
+    name: Docs
+    needs: [ Version-Check ]
     runs-on: ubuntu-latest
 
     steps:
@@ -46,9 +46,9 @@ jobs:
         run: |
           poetry run python -m nox -s build-docs
 
-  lint-job:
+  Lint:
     name: Linting (Python-${{ matrix.python-version }})
-    needs: [version-check-job]
+    needs: [ Version-Check ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -74,9 +74,9 @@ jobs:
           path: .lint.txt
           include-hidden-files: true
 
-  type-check-job:
+  Type-Check:
     name: Type Checking (Python-${{ matrix.python-version }})
-    needs: [version-check-job]
+    needs: [ Version-Check ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -95,9 +95,37 @@ jobs:
       - name: Run type-check
         run: poetry run nox -s type-check
 
-  tests-job:
+  Security:
+    name: Security Checks (Python-${{ matrix.python-version }})
+    needs: [ Version-Check ]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.8", "3.9", "3.10", "3.11" ]
+
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@0.14.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run security linter
+        run: poetry run nox -s security
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: security-python${{ matrix.python-version }}
+          path: .security.json
+          include-hidden-files: true
+
+  Tests:
     name: Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
-    needs: [build-documentation-job, lint-job, type-check-job]
+    needs: [ Documentation, Lint, Type-Check, Security]
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.ALTERNATIVE_GITHUB_TOKEN ||  secrets.GITHUB_TOKEN }}
