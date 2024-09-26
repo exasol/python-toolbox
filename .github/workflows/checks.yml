@@ -8,8 +8,8 @@ on:
 
 jobs:
 
-  version-check-job:
-    name: Version Check
+  Version-Check:
+    name: Version
     runs-on: ubuntu-latest
 
     steps:
@@ -24,9 +24,9 @@ jobs:
       - name: Check Version(s)
         run: poetry run version-check `poetry run python -c "from noxconfig import PROJECT_CONFIG; print(PROJECT_CONFIG.version_file)"`
 
-  build-documentation-job:
-    name: Build Documentation
-    needs: [ version-check-job ]
+  Documentation:
+    name: Docs
+    needs: [ Version-Check ]
     runs-on: ubuntu-latest
 
     steps:
@@ -40,9 +40,9 @@ jobs:
         run: |
           poetry run python -m nox -s build-docs
 
-  lint-job:
+  Lint:
     name: Linting (Python-${{ matrix.python-version }})
-    needs: [ version-check-job ]
+    needs: [ Version-Check ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -68,9 +68,9 @@ jobs:
           path: .lint.txt
           include-hidden-files: true
 
-  type-check-job:
+  Type-Check:
     name: Type Checking (Python-${{ matrix.python-version }})
-    needs: [ version-check-job ]
+    needs: [ Version-Check ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -89,9 +89,9 @@ jobs:
       - name: Run type-check
         run: poetry run nox -s type-check
 
-  security-job:
-    name: Security Checking (Python-${{ matrix.python-version }})
-    needs: [ version-check-job ]
+  Security:
+    name: Security Checks (Python-${{ matrix.python-version }})
+    needs: [ Version-Check ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -107,7 +107,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Run security
+      - name: Run security linter
         run: poetry run nox -s security
 
       - name: Upload Artifacts
@@ -117,9 +117,9 @@ jobs:
           path: .security.json
           include-hidden-files: true
 
-  tests-job:
+  Tests:
     name: Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
-    needs: [ build-documentation-job, lint-job, type-check-job ]
+    needs: [ Documentation, Lint, Type-Check, Security]
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.ALTERNATIVE_GITHUB_TOKEN ||  secrets.GITHUB_TOKEN }}
