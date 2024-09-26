@@ -5,11 +5,6 @@
 * Added cookiecutter-template for creating new project
 * [#246](https://github.com/exasol/python-toolbox/issues/246): Add standard branch protection workflow
 
-## 🔩 Internal
-
-* Update depdency constraints
-* Relock dependencies
-
 ## 🐞 Bug Fixes
 
 * [#181](https://github.com/exasol/python-toolbox/issues/181): Updated metrics related workflows
@@ -25,3 +20,9 @@
 * Add Python Styleguide
 * Add Issue Guide
 * Updated User Documentation
+
+## 🔩 Internal
+
+* Update depdency constraints
+* Relock dependencies
+
