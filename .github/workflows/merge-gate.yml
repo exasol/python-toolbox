@@ -16,8 +16,8 @@ jobs:
     name: Slow
     runs-on: ubuntu-latest
 
-    # Even though the "manual-approval" environment will be created automatically,
-    # it still needs to be configured to require manual approval.
+    # Even though the environment "manual-approval" will be created automatically,
+    # it still needs to be configured to require interactive review.
     # See project settings on GitHub (Settings / Environments / manual-approval).
     environment: manual-approval
 
