@@ -25,7 +25,7 @@ jobs:
     # and/or add additional jobs if required
     # Note: 
     #   If you add additional jobs, make sure they are added as a requirement 
-    #   to the approve-merge jobs input requirements (needs).
+    #   to the approve-merge job's input requirements (needs).
     steps:
       - name: Tests
         run: |
