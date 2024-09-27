@@ -9,7 +9,6 @@ on:
 jobs:
 
   report:
-    name: Generate Status Report
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.ALTERNATIVE_GITHUB_TOKEN ||  secrets.GITHUB_TOKEN }}
@@ -33,12 +32,13 @@ jobs:
         run: |
           cp coverage-python3.9/.coverage ../
           cp lint-python3.9/.lint.txt ../
+          cp security-python3.9/.security.json ../
 
       - name: Generate Report
         run: poetry run nox -s report -- -- --format json | tee metrics.json
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.4.0
         with:
           name: metrics.json
           path: metrics.json
