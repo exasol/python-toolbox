@@ -3,7 +3,7 @@
 ## ✨ Added
 
 * Added cookiecutter-template for creating new project
-* [#246](https://github.com/exasol/python-toolbox/issues/246): Add standard branch protection workflow
+* [#246](https://github.com/exasol/python-toolbox/issues/246): Added standard branch protection workflow
 
 ## 🐞 Bug Fixes
 
