@@ -99,7 +99,7 @@ def security_lint(session: Session) -> None:
 
 @nox.session(name="import-lint", python=False)
 def import_lint(session: Session) -> None:
-    """Runs the import linter on the project"""
+    """Runs import linter on the project"""
     parser = argparse.ArgumentParser(
         usage="nox -s import-lint -- [options]",
         description="Runs the import linter on the project"
