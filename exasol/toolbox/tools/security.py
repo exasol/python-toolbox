@@ -117,7 +117,7 @@ def from_json(report_str: str) -> Iterable[Issue]:
             description=issue["issue_text"],
             coordinates=issue["filename"].replace(
                 str(PROJECT_CONFIG.root) + "/", ""
-                ) + f":{str(issue["line_number"])}:{str(issue["col_offset"])}:",
+                ) + ":" + str(issue["line_number"]) + ":" + str(issue["col_offset"]) + ":",
             references=tuple(references)
         )
 
