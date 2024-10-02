@@ -100,8 +100,8 @@ def from_maven(report: str) -> Iterable[Issue]:
             )
 
 
-def from_json(report: str) -> Iterable[Issue]:
-    report = json.loads(report)
+def from_json(report_str: str) -> Iterable[Issue]:
+    report = json.loads(report_str)
     issues = report.get("results", {})
     for issue in issues:
         references = []
@@ -117,7 +117,7 @@ def from_json(report: str) -> Iterable[Issue]:
             description=issue["issue_text"],
             coordinates=issue["filename"].replace(
                 str(PROJECT_CONFIG.root) + "/", ""
-                ) + f":{issue["line_number"]}:{issue["col_offset"]}:",
+                ) + f":{str(issue["line_number"])}:{str(issue["col_offset"])}:",
             references=tuple(references)
         )
 
