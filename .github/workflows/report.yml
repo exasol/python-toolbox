@@ -51,3 +51,4 @@ jobs:
           poetry run coverage report -- --format markdown >> $GITHUB_STEP_SUMMARY
           echo  -e "\n\n# Static Code Analysis\n" >> $GITHUB_STEP_SUMMARY
           cat .lint.txt >> $GITHUB_STEP_SUMMARY
+          tbx security prettyprint markdown .security.json >> $GITHUB_STEP_SUMMARY

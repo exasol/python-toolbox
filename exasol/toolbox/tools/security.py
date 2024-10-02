@@ -15,7 +15,7 @@ from typing import (
     Iterable,
     Tuple,
 )
-
+from noxconfig import PROJECT_CONFIG
 import typer
 
 stdout = print
@@ -100,6 +100,43 @@ def from_maven(report: str) -> Iterable[Issue]:
             )
 
 
+def from_json(report: str) -> Iterable[Issue]:
+    report = json.loads(report)
+    issues = report.get("results", {})
+    for issue in issues:
+        references = []
+        if issue["more_info"]:
+            references.append(issue["more_info"])
+        if issue.get("issue_cve", {}).get("link", None):
+            references.append(issue["issue_cve"]["link"])
+        if issue.get("issue_cwe", {}).get("link", None):
+            references.append(issue["issue_cwe"]["link"])
+        yield Issue(
+            cve=str(issue.get("issue_cve", {}).get("id", "")),
+            cwe=str(issue.get("issue_cwe", {}).get("id", "")),
+            description=issue["issue_text"],
+            coordinates=issue["filename"].replace(
+                str(PROJECT_CONFIG.root) + "/", ""
+                ) + f":{issue["line_number"]}:{issue["col_offset"]}:",
+            references=tuple(references)
+        )
+
+
+def issues_to_markdown(issues: Iterable[Issue]) -> str:
+    markdown_str = ""
+    markdown_str += "# Security\n\n"
+    markdown_str += "|File|Cve|Cwe|Details|\n"
+    markdown_str += "|---|:-:|:-:|---|\n"
+    for issue in issues:
+        row = "|" + issue.coordinates + "|"
+        row += issue.cve + "|"
+        row += issue.cwe + "|"
+        for element in issue.references:
+            row += element + " ,<br>"
+        markdown_str += row[:-5] + "|\n"
+    return markdown_str
+
+
 def security_issue_title(issue: Issue) -> str:
     return f"🔐 {issue.cve}: {issue.coordinates}"
 
@@ -149,15 +186,16 @@ def create_security_issue(issue: Issue, project="") -> Tuple[str, str]:
         raise ex
 
     std_err = result.stderr.decode("utf-8")
-    std_out = result.stdout.decode("utf-8")
+    std_out = result.stdout.decode("utf-8r")
 
     return std_err, std_out
 
 
 CLI = typer.Typer()
 CVE_CLI = typer.Typer()
+PP_CLI = typer.Typer()
 CLI.add_typer(CVE_CLI, name="cve", help="Work with CVE's")
-
+CLI.add_typer(PP_CLI, name="prettyprint", help="Prints pretty")
 
 class Format(str, Enum):
     Maven = "maven"
@@ -254,6 +292,15 @@ def create(
         std_err, issue_url = create_security_issue(issue, project)
         stderr(std_err)
         stdout(format_jsonl(issue_url, issue))
+
+
+@PP_CLI.command(name="markdown")
+def json_issue_to_markdown(
+        json_file: str = typer.Argument(help="json file with issues to convert"),
+) -> None:
+    with open(json_file, "r") as file:
+        issues_ = from_json(file.read())
+    print(issues_to_markdown(issues_))
 
 
 def format_jsonl(issue_url: str, issue: Issue) -> str:
