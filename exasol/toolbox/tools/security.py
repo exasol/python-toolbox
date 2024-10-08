@@ -126,10 +126,9 @@ def issues_to_markdown(issues: Iterable[Issue]) -> str:
     template = cleandoc("""
         {header}{rows}
     """)
+
     def _header():
-        header = ""
-        markdown_str = ""
-        markdown_str += "# Security\n\n"
+        header = "# Security\n\n"
         header += "|File|Cve|Cwe|Details|\n"
         header += "|---|:-:|:-:|---|\n"
         return header
@@ -140,7 +139,7 @@ def issues_to_markdown(issues: Iterable[Issue]) -> str:
         row += issue.cwe + "|"
         for element in issue.references:
             row += element + " ,<br>"
-        row += row[:-5] + "|"
+        row = row[:-5] + "|"
         return row
 
     return template.format(
@@ -310,7 +309,6 @@ class PPrintFormats(str, Enum):
 
 @CLI.command(name="pretty-print")
 def json_issue_to_markdown(
-        format: PPrintFormats = typer.Option(default="", help="output format",),
         json_file: typer.FileText = typer.Argument(default="", mode="r", help="json file with issues to convert"),
 ) -> None:
     content = json_file.read()
