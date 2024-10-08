@@ -7,7 +7,7 @@ Create test input
   >       "code": "555                 subprocess.check_call(\n556                     config.smv_postbuild_command, cwd=current_cwd, shell=True\n557                 )\n558                 if config.smv_postbuild_export_pattern != \"\":\n559                     matches = find_matching_files_and_dirs(\n",
   >       "col_offset": 16,
   >       "end_col_offset": 17,
-  >       "filename": "/home/jami/Git/python-toolbox/exasol/toolbox/sphinx/multiversion/main.py",
+  >       "filename": "/home/user/Git/python-toolbox/exasol/toolbox/sphinx/multiversion/main.py",
   >       "issue_confidence": "HIGH",
   >       "issue_cwe": {
   >         "id": 78,
