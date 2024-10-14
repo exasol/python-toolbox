@@ -62,7 +62,7 @@ jobs:
         run: poetry run nox -s lint
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4.4.0
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: lint-python${{ matrix.python-version }}
           path: .lint.txt
@@ -111,7 +111,7 @@ jobs:
         run: poetry run nox -s security
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4.4.0
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: security-python${{ matrix.python-version }}
           path: .security.json
@@ -142,7 +142,7 @@ jobs:
         run: poetry run nox -s coverage -- -- --db-version ${{ matrix.exasol-version }}
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4.4.0
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: coverage-python${{ matrix.python-version }}
           path: .coverage
