@@ -2,10 +2,11 @@ List all available workflows
 
   $ tbx workflow list | sort
   build-and-publish
+  cd
   check-release-tag
   checks
   ci
-  ci-cd
   gh-pages
+  merge-gate
   pr-merge
   report
