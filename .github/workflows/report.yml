@@ -8,8 +8,7 @@ on:
 
 jobs:
 
-  report:
-    name: Generate Status Report
+  Report:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.ALTERNATIVE_GITHUB_TOKEN ||  secrets.GITHUB_TOKEN }}
