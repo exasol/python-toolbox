@@ -17,6 +17,7 @@ from typing import (
 )
 from noxconfig import PROJECT_CONFIG
 import typer
+from pathlib import Path
 
 stdout = print
 stderr = partial(print, file=sys.stderr)
@@ -100,7 +101,7 @@ def from_maven(report: str) -> Iterable[Issue]:
             )
 
 
-def from_json(report_str: str) -> Iterable[Issue]:
+def from_json(report_str: str, prefix: Path = PROJECT_CONFIG.root) -> Iterable[Issue]:
     report = json.loads(report_str)
     issues = report.get("results", {})
     for issue in issues:
@@ -116,7 +117,7 @@ def from_json(report_str: str) -> Iterable[Issue]:
             cwe=str(issue.get("issue_cwe", {}).get("id", "")),
             description=issue["issue_text"],
             coordinates=issue["filename"].replace(
-                str(PROJECT_CONFIG.root) + "/", ""
+                str(prefix) + "/", ""
                 ) + ":" + str(issue["line_number"]) + ":" + str(issue["col_offset"]) + ":",
             references=tuple(references)
         )
