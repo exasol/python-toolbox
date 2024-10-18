@@ -3,13 +3,12 @@ nox_tasks
 
 import-lint
 ___________
-check that you are following a self-imposed architecture within your Python project.
+`Import Linter <https://import-linter.readthedocs.io/en/stable/readme.html>`_
+allows you to define and enforce rules for the imports within and between Python packages.
 
 .. important::
 
-    first configure the ".import_linter_config" file
-
-    information about the configuration you find on
+    First configure the linter in file :code:`.import_linter_config`, see
     `import-linter top-level-configuration <https://import-linter.readthedocs.io/en/stable/usage.html#top-level-configuration>`_
-    and `import-linter contrakt types <https://import-linter.readthedocs.io/en/stable/contract_types.html>`_
+    and `import-linter contract types <https://import-linter.readthedocs.io/en/stable/contract_types.html>`_
 
