@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from typing import Iterable
+import argparse
+from pathlib import Path
 
 import nox
 from nox import Session
@@ -64,6 +66,16 @@ def _security_lint(session: Session, files: Iterable[str]) -> None:
     )
 
 
+def _import_lint(session: Session, path: Path) -> None:
+    session.run(
+        "poetry",
+        "run",
+        "lint-imports",
+        "--config",
+        path
+    )
+
+
 @nox.session(python=False)
 def lint(session: Session) -> None:
     """Runs the linter on the project"""
@@ -83,3 +95,33 @@ def security_lint(session: Session) -> None:
     """Runs the security linter on the project"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
     _security_lint(session, list(filter(lambda file: "test" not in file, py_files)))
+
+
+@nox.session(name="import-lint", python=False)
+def import_lint(session: Session) -> None:
+    """Runs import linter on the project"""
+    parser = argparse.ArgumentParser(
+        usage="nox -s import-lint -- [options]",
+        description="Runs the import linter on the project"
+    )
+    parser.add_argument(
+        "-c",
+        "--config",
+        type=str,
+        help="path to the configuration file for the importlinter",
+        metavar="TEXT"
+    )
+
+    args: argparse.Namespace = parser.parse_args(args=session.posargs)
+    file: str = args.config
+    path: Path | None = None
+    if file is None:
+        path = getattr(PROJECT_CONFIG, "import_linter_config", Path(".import_linter_config"))
+    else:
+        path = Path(file)
+    if not path.exists():
+        session.error(
+            "Please make sure you have a configuration file for the importlinter"
+        )
+    _import_lint(session=session, path=path)
+
