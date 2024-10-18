@@ -1,5 +1,6 @@
 import json
 import os
+import pathlib
 import subprocess
 from contextlib import contextmanager
 from inspect import cleandoc
@@ -403,3 +404,60 @@ def test_format_jsonl_removes_newline():
     )
     actual = security.format_jsonl("my_issue_url\n", issue)
     assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "json_file,expected",
+    [
+        (
+            '''{
+  "results": [
+    {
+      "code": "1 import subprocess\n2 from typing import Iterable\n3 \n",
+      "col_offset": 0,
+      "end_col_offset": 17,
+      "filename": "/home/test/Git/python-toolbox/exasol/toolbox/git.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 78,
+        "link": "https://cwe.mitre.org/data/definitions/78.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Consider possible security implications associated with the subprocess module.",
+      "line_number": 1,
+      "line_range": [
+        1
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.7.10/blacklists/blacklist_imports.html#b404-import-subprocess",
+      "test_id": "B404",
+      "test_name": "blacklist"
+    }
+  ]
+}
+            ''',
+            {
+                "cve": "",
+                "cwe": "78",
+                "description": "Consider possible security implications associated with the subprocess module.",
+                "coordinates": "exasol/toolbox/git.py:1:0:",
+                "references": (
+                    "https://bandit.readthedocs.io/en/1.7.10/blacklists/blacklist_imports.html#b404-import-subprocess",
+                    "https://cwe.mitre.org/data/definitions/78.html"
+                )
+            }
+        )
+    ]
+)
+def test_from_json(json_file, expected):
+    issues = security.from_json(json_file, pathlib.Path("/home/test/Git/python-toolbox"))
+    expected_issue = security.Issue(
+        cve=expected["cve"],
+        cwe=expected["cwe"],
+        description=expected["description"],
+        coordinates=expected["coordinates"],
+        references=expected["references"]
+    )
+    actual = []
+    for issue in issues:
+        actual.append(issue)
+    assert actual == [expected_issue]
