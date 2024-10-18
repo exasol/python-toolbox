@@ -3,6 +3,7 @@ nox_tasks
 
 import-lint
 ___________
+check that you are following a self-imposed architecture within your Python project.
 
 .. important::
 
