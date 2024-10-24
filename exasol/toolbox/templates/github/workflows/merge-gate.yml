@@ -1,0 +1,46 @@
+name: Merge-Gate
+
+on:
+  workflow_call:
+    secrets:
+      ALTERNATIVE_GITHUB_TOKEN:
+        required: false
+
+jobs:
+
+  fast-checks:
+    name: Fast
+    uses: ./.github/workflows/checks.yml
+
+  slow-checks:
+    name: Slow
+    runs-on: ubuntu-latest
+
+    # Even though the environment "manual-approval" will be created automatically,
+    # it still needs to be configured to require interactive review.
+    # See project settings on GitHub (Settings / Environments / manual-approval).
+    environment: manual-approval
+
+    # Replace the steps below with the required actions 
+    # and/or add additional jobs if required
+    # Note: 
+    #   If you add additional jobs, make sure they are added as a requirement 
+    #   to the approve-merge job's input requirements (needs).
+    steps:
+      - name: Tests
+        run: |
+          echo "Slow tests ran successfully"
+
+
+  # This job ensures inputs have been executed successfully.
+  approve-merge:
+    name: Allow Merge 
+    runs-on: ubuntu-latest
+    # If you need additional jobs to be part of the merge gate, add them below
+    needs: [ fast-checks, slow-checks ]
+
+    # Each job requires a step, so we added this dummy step.
+    steps:
+      - name: Approve 
+        run: |
+          echo "Merge Approved"

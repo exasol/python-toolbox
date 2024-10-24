@@ -1,4 +1,4 @@
-name: CI/CD
+name: CD
 
 on:
   push:
@@ -11,19 +11,9 @@ jobs:
     name: Check Release Tag
     uses: ./.github/workflows/check-release-tag.yml
 
-  ci-job:
-    name: Checks
-    needs: [ check-tag-version-job ]
-    uses: ./.github/workflows/checks.yml
-    secrets: inherit
-
   cd-job:
     name: Continuous Delivery
     needs: [ ci-job ]
     uses: ./.github/workflows/build-and-publish.yml
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-
-  metrics:
-    needs: [ ci-job ]
-    uses: ./.github/workflows/report.yml

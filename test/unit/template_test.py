@@ -10,11 +10,12 @@ def test_retrieve_workflow_templates():
     subpackage = "exasol.toolbox.templates.github.workflows"
     expected = {
         "build-and-publish": "build-and-publish.yml",
+        "cd": "cd.yml",
         "check-release-tag": "check-release-tag.yml",
         "checks": "checks.yml",
-        "ci-cd": "ci-cd.yml",
         "ci": "ci.yml",
         "gh-pages": "gh-pages.yml",
+        "merge-gate": "merge-gate.yml",
         "pr-merge": "pr-merge.yml",
         "report": "report.yml",
     }
@@ -45,11 +46,12 @@ def test_retrieve_issue_templates():
             "exasol.toolbox.templates.github.workflows",
             {
                 "build-and-publish": "build-and-publish.yml",
+                "cd": "cd.yml",
                 "check-release-tag": "check-release-tag.yml",
                 "checks": "checks.yml",
-                "ci-cd": "ci-cd.yml",
                 "ci": "ci.yml",
                 "gh-pages": "gh-pages.yml",
+                "merge-gate": "merge-gate.yml",
                 "pr-merge": "pr-merge.yml",
                 "report": "report.yml",
             },
@@ -95,11 +97,12 @@ def test_retrieve_templates(subpackage, expected):
             "workflow",
             [
                 "build-and-publish.yml",
+                "cd.yml",
                 "check-release-tag.yml",
                 "checks.yml",
-                "ci-cd.yml",
                 "ci.yml",
                 "gh-pages.yml",
+                "merge-gate.yml",
                 "pr-merge.yml",
                 "report.yml",
             ],
