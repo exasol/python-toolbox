@@ -70,7 +70,7 @@ ________
 Workflows
 ---------
 
-As some may already know, the Python toolbox comes with various tools to help maintain our Python projects. One of these tools is the workflow templates, which can be generated and updated by default. The toolbox also provides a workflow called *report*, which gathers and reports a metrics summary for the project's CI run. For details on the workflow, run :code:`tbx workflow show report` to see the full workflow definitions. Below, you can see two screenshots of the results and artifacts this workflow provides.
+The Python toolbox comes with various tools to help maintain our Python projects. One of these tools are workflow templates, which can be generated and updated by default. The toolbox also provides a workflow called *report*, which gathers and reports a metrics summary for the project's CI run. For details on the workflow, run :code:`tbx workflow show report` to see the full workflow definitions. Below, you can see two screenshots of the results and artifacts this workflow provides.
 
 .. figure:: _static/metrics-workflow-summary.png
     :alt: Metrics Workflow Summary
