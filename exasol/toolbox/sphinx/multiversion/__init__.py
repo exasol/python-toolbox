@@ -20,6 +20,7 @@ TODO's:
 """
 
 from exasol.toolbox.sphinx.multiversion.main import main
+from exasol.toolbox.sphinx.multiversion.sphinx import setup
 
 __version__ = "0.1.0"
 

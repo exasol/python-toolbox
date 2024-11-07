@@ -94,8 +94,30 @@ class VersionInfo:
         ]
 
     def __iter__(self):
-        yield from self.tags
+        def to_int(v):
+            if v == '':
+                return 0
+            return int(v, base=0)
+
+        def version_key(version):
+            version = version.strip()
+            parts = version.split(".")
+            try:
+                major = int(parts[0])
+                minor = int(parts[1])
+                patch = int(parts[2])
+            except ValueError as ex:
+                # TODO: skip tag and log that it was skipped
+                print(f'version:{version} <<')
+                print(f'parts:{parts} <<')
+                print(ex)
+            return (
+                major,
+                minor,
+                patch
+            )
         yield from self.branches
+        yield from sorted(self.tags, key=lambda v: version_key(v.name), reverse=True)
 
     def __getitem__(self, name):
         v = self.metadata.get(name)
@@ -183,7 +205,8 @@ def html_page_context(app, pagename, templatename, context, doctree):
     context["vhasdoc"] = versioninfo.vhasdoc
     context["vpathto"] = versioninfo.vpathto
 
-    context["current_version"] = versioninfo[app.config.smv_current_version]
+    current = versioninfo[app.config.smv_current_version]
+    context["current_version"] = current.name
     context["latest_version"] = versioninfo[app.config.smv_latest_version]
     context["html_theme"] = app.config.html_theme
 
