@@ -62,11 +62,6 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", ".build-docu"]
 
 # -- Options for HTML output -------------------------------------------------
 
-## Multi version output configuration
-smv_tag_whitelist = r'^.*$'                   # Include all tags
-smv_branch_whitelist = r'(master|main)'                # Include all branches
-smv_remote_whitelist = None                   # Only use local branches
-
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #

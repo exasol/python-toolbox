@@ -9,20 +9,19 @@ The original version of this package was published under the BSD license and can
 We also took some patches from `this <https://github.com/samuel-emrys/sphinx-multiversion>`_ which was also published under the BSD license.
 
 So huge thanks to the original author `Jan Holthuis <https://github.com/Holzhaus>`_ and all contributors.
-
-TODO's:
-* add standard default templates
-* add support for index page
-* add sorting support
-* add gh pages support
-* add command to deploy to gh-pages
-* add support for loading packed version template?
 """
 
+# TODO:
+# * add sorting support
+# * add gh pages support
+# * add command to deploy to gh-pages
+# * add support for loading packed version template?
+
+from exasol.toolbox.version import VERSION
 from exasol.toolbox.sphinx.multiversion.main import main
 from exasol.toolbox.sphinx.multiversion.sphinx import setup
 
-__version__ = "0.1.0"
+__version__ = VERSION
 
 __all__ = [
     "setup",

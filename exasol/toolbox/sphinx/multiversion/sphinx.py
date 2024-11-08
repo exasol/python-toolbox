@@ -12,8 +12,8 @@ from sphinx.util import i18n as sphinx_i18n
 logger = logging.getLogger(__name__)
 
 DATE_FMT = "%Y-%m-%d %H:%M:%S %z"
-DEFAULT_TAG_WHITELIST = r"^.*$"
-DEFAULT_BRANCH_WHITELIST = r"^.*$"
+DEFAULT_TAG_WHITELIST = r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$"
+DEFAULT_BRANCH_WHITELIST = r"(master|main)"
 DEFAULT_REMOTE_WHITELIST = None
 DEFAULT_RELEASED_PATTERN = r"^tags/.*$"
 DEFAULT_OUTPUTDIR_FORMAT = r"{ref.name}"
@@ -38,6 +38,46 @@ Version = collections.namedtuple(
         "artefacts",
     ],
 )
+
+
+class TagFormatError(Exception):
+    """
+    Exception raised for errors in the tag format.
+
+    The exception is raised when a tag is found to be incorrectly formatted.
+    """
+
+
+class ExasolVersionTag:
+
+    def __init__(self, version):
+        try:
+            v = version.name.strip()
+            parts = v.split(".")
+            major, minor, patch = map(int, parts)
+        except Exception as ex:
+            msg = f"Invalid tag format: '{version}', details: {ex}"
+            raise TagFormatError(msg) from ex
+
+        self._version = version
+        self._version_tripple = (major, minor, patch)
+
+    @property
+    def version(self):
+        return self._version
+
+    @property
+    def version_triple(self):
+        return self._version_tripple
+
+    @staticmethod
+    def is_valid_tag(tag):
+        try:
+            ExasolVersionTag(tag)
+        except TagFormatError as ex:
+            logger.warn("%s", ex)
+            return False
+        return True
 
 
 class VersionInfo:
@@ -94,30 +134,14 @@ class VersionInfo:
         ]
 
     def __iter__(self):
-        def to_int(v):
-            if v == '':
-                return 0
-            return int(v, base=0)
-
-        def version_key(version):
-            version = version.strip()
-            parts = version.split(".")
-            try:
-                major = int(parts[0])
-                minor = int(parts[1])
-                patch = int(parts[2])
-            except ValueError as ex:
-                # TODO: skip tag and log that it was skipped
-                print(f'version:{version} <<')
-                print(f'parts:{parts} <<')
-                print(ex)
-            return (
-                major,
-                minor,
-                patch
-            )
+        tags = (
+            ExasolVersionTag(tag)
+            for tag in self.tags if ExasolVersionTag.is_valid_tag(tag)
+        )
         yield from self.branches
-        yield from sorted(self.tags, key=lambda v: version_key(v.name), reverse=True)
+        yield from [
+            t.version for t in sorted(tags, key=lambda t: t.version_triple, reverse=True)
+        ]
 
     def __getitem__(self, name):
         v = self.metadata.get(name)
@@ -143,19 +167,22 @@ class VersionInfo:
         other_outputroot = os.path.abspath(other_version["outputdir"])
         outputroot = os.path.commonpath((current_outputroot, other_outputroot))
 
-        current_outputroot = os.path.relpath(current_outputroot, start=outputroot)
+        current_outputroot = os.path.relpath(
+            current_outputroot, start=outputroot)
         other_outputroot = os.path.relpath(other_outputroot, start=outputroot)
 
         # Ensure that we use POSIX separators in the path (for the HTML code)
         if os.sep != posixpath.sep:
-            current_outputroot = posixpath.join(*os.path.split(current_outputroot))
+            current_outputroot = posixpath.join(
+                *os.path.split(current_outputroot))
             other_outputroot = posixpath.join(*os.path.split(other_outputroot))
 
         # Find relative path to root of other_version's outputdir
         current_outputdir = posixpath.dirname(
             posixpath.join(current_outputroot, self.context["pagename"])
         )
-        other_outputdir = posixpath.relpath(other_outputroot, start=current_outputdir)
+        other_outputdir = posixpath.relpath(
+            other_outputroot, start=current_outputdir)
 
         if not self.vhasdoc(other_version_name):
             return posixpath.join(other_outputdir, "index.html")
@@ -257,10 +284,14 @@ def setup(app):
     app.add_config_value("smv_current_version", "", "html")
     app.add_config_value("smv_latest_version", "master", "html")
     app.add_config_value("smv_tag_whitelist", DEFAULT_TAG_WHITELIST, "html")
-    app.add_config_value("smv_branch_whitelist", DEFAULT_BRANCH_WHITELIST, "html")
-    app.add_config_value("smv_remote_whitelist", DEFAULT_REMOTE_WHITELIST, "html")
-    app.add_config_value("smv_released_pattern", DEFAULT_RELEASED_PATTERN, "html")
-    app.add_config_value("smv_outputdir_format", DEFAULT_OUTPUTDIR_FORMAT, "html")
+    app.add_config_value("smv_branch_whitelist",
+                         DEFAULT_BRANCH_WHITELIST, "html")
+    app.add_config_value("smv_remote_whitelist",
+                         DEFAULT_REMOTE_WHITELIST, "html")
+    app.add_config_value("smv_released_pattern",
+                         DEFAULT_RELEASED_PATTERN, "html")
+    app.add_config_value("smv_outputdir_format",
+                         DEFAULT_OUTPUTDIR_FORMAT, "html")
     app.add_config_value("smv_build_targets", DEFAULT_BUILD_TARGETS, "html")
     app.add_config_value(
         "smv_clean_intermediate_files",
