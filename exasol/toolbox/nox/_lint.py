@@ -11,14 +11,15 @@ from noxconfig import PROJECT_CONFIG
 
 def _pylint(session: Session, files: Iterable[str]) -> None:
     session.run(
-            "poetry",
-            "run",
-            "python",
-            "-m",
-            "pylint",
-            "--output-format",
-            "colorized,json:.lint.json,text:.lint.txt",
-            *files)
+        "poetry",
+        "run",
+        "python",
+        "-m",
+        "pylint",
+        "--output-format",
+        "colorized,json:.lint.json,text:.lint.txt",
+        *files,
+    )
 
 
 def _type_check(session: Session, files: Iterable[str]) -> None:

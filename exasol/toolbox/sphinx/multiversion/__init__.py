@@ -15,9 +15,9 @@ NOTE:
 The original version and its defaults were minimally adjusted to work in Exasol's projects with the defaults and without adding an extra template. The [Shibuya](https://github.com/lepture/shibuya) theme is expected to be used for HTML, which already evaluates the versions field in the HTML context and generates an appropriate selector for the versions.
 """
 
-from exasol.toolbox.version import VERSION
 from exasol.toolbox.sphinx.multiversion.main import main
 from exasol.toolbox.sphinx.multiversion.sphinx import setup
+from exasol.toolbox.version import VERSION
 
 __version__ = VERSION
 

@@ -38,7 +38,7 @@ extensions = [
     "sphinx_design",
     "sphinx_inline_tabs",
     "sphinx_copybutton",
-    "exasol.toolbox.sphinx.multiversion"
+    "exasol.toolbox.sphinx.multiversion",
 ]
 
 intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}

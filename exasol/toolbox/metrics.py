@@ -157,7 +157,14 @@ def _bandit_scoring(ratings: List[Dict[str, Any]]) -> float:
             return value[0]
         return default
 
-    weight = {"LL": 1/18, "LM": 1/15, "LH": 1/12, "ML": 1/9, "MM": 1/6, "MH": 1/3}
+    weight = {
+        "LL": 1 / 18,
+        "LM": 1 / 15,
+        "LH": 1 / 12,
+        "ML": 1 / 9,
+        "MM": 1 / 6,
+        "MH": 1 / 3,
+    }
     exp = 0.0
     for infos in ratings:
         severity = infos["issue_severity"]

@@ -9,6 +9,8 @@ from sphinx import config as sphinx_config
 from sphinx.locale import _
 from sphinx.util import i18n as sphinx_i18n
 
+from exasol.toolbox.version import VERSION
+
 logger = logging.getLogger(__name__)
 
 DATE_FMT = "%Y-%m-%d %H:%M:%S %z"
@@ -136,11 +138,13 @@ class VersionInfo:
     def __iter__(self):
         tags = (
             ExasolVersionTag(tag)
-            for tag in self.tags if ExasolVersionTag.is_valid_tag(tag)
+            for tag in self.tags
+            if ExasolVersionTag.is_valid_tag(tag)
         )
         yield from self.branches
         yield from [
-            t.version for t in sorted(tags, key=lambda t: t.version_triple, reverse=True)
+            t.version
+            for t in sorted(tags, key=lambda t: t.version_triple, reverse=True)
         ]
 
     def __getitem__(self, name):
@@ -167,22 +171,19 @@ class VersionInfo:
         other_outputroot = os.path.abspath(other_version["outputdir"])
         outputroot = os.path.commonpath((current_outputroot, other_outputroot))
 
-        current_outputroot = os.path.relpath(
-            current_outputroot, start=outputroot)
+        current_outputroot = os.path.relpath(current_outputroot, start=outputroot)
         other_outputroot = os.path.relpath(other_outputroot, start=outputroot)
 
         # Ensure that we use POSIX separators in the path (for the HTML code)
         if os.sep != posixpath.sep:
-            current_outputroot = posixpath.join(
-                *os.path.split(current_outputroot))
+            current_outputroot = posixpath.join(*os.path.split(current_outputroot))
             other_outputroot = posixpath.join(*os.path.split(other_outputroot))
 
         # Find relative path to root of other_version's outputdir
         current_outputdir = posixpath.dirname(
             posixpath.join(current_outputroot, self.context["pagename"])
         )
-        other_outputdir = posixpath.relpath(
-            other_outputroot, start=current_outputdir)
+        other_outputdir = posixpath.relpath(other_outputroot, start=current_outputdir)
 
         if not self.vhasdoc(other_version_name):
             return posixpath.join(other_outputdir, "index.html")
@@ -284,14 +285,10 @@ def setup(app):
     app.add_config_value("smv_current_version", "", "html")
     app.add_config_value("smv_latest_version", "master", "html")
     app.add_config_value("smv_tag_whitelist", DEFAULT_TAG_WHITELIST, "html")
-    app.add_config_value("smv_branch_whitelist",
-                         DEFAULT_BRANCH_WHITELIST, "html")
-    app.add_config_value("smv_remote_whitelist",
-                         DEFAULT_REMOTE_WHITELIST, "html")
-    app.add_config_value("smv_released_pattern",
-                         DEFAULT_RELEASED_PATTERN, "html")
-    app.add_config_value("smv_outputdir_format",
-                         DEFAULT_OUTPUTDIR_FORMAT, "html")
+    app.add_config_value("smv_branch_whitelist", DEFAULT_BRANCH_WHITELIST, "html")
+    app.add_config_value("smv_remote_whitelist", DEFAULT_REMOTE_WHITELIST, "html")
+    app.add_config_value("smv_released_pattern", DEFAULT_RELEASED_PATTERN, "html")
+    app.add_config_value("smv_outputdir_format", DEFAULT_OUTPUTDIR_FORMAT, "html")
     app.add_config_value("smv_build_targets", DEFAULT_BUILD_TARGETS, "html")
     app.add_config_value(
         "smv_clean_intermediate_files",
@@ -301,7 +298,7 @@ def setup(app):
     app.connect("config-inited", config_inited)
 
     return {
-        "version": "0.2",
+        "version": VERSION,
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }

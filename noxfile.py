@@ -1,4 +1,5 @@
 """defines nox tasks/targets for this project"""
+
 import nox
 
 # imports all nox task provided by the toolbox
@@ -6,6 +7,7 @@ from exasol.toolbox.nox.tasks import *  # pylint: disable=wildcard-import disabl
 
 # default actions to be run if nothing is explicitly specified with the -s option
 nox.options.sessions = ["fix"]
+
 
 # entry point for debugging
 def main() -> None:
