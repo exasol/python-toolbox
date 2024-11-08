@@ -13,7 +13,6 @@ jobs:
 
   cd-job:
     name: Continuous Delivery
-    needs: [ ci-job ]
     uses: ./.github/workflows/build-and-publish.yml
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
