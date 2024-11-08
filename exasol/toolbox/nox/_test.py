@@ -28,7 +28,7 @@ def _test_command(
         else []
     )
     pytest_command = ["pytest", "-v", f"{path}"]
-    return base_command + coverage_command + pytest_command + context['fwd-args']
+    return base_command + coverage_command + pytest_command + context["fwd-args"]
 
 
 def _unit_tests(

@@ -4,15 +4,19 @@
 
 * Dropped python 3.8 support
 
+## ✨ Added
+
+* Added support for multi version Documentation
+
 ## 🐞 Fixed
 
 * Fixed CD workflow template
 
 ## 📚 Documentation
 
-* Add Documentation on Metrics
+* Added Documentation on Metrics
 
 ## 🔩 Internal
 
-* Relock dependencies
+* Relocked dependencies
 

@@ -566,7 +566,7 @@ def _main(args, argv):
                     export_to_destination(matches, export_dst)
 
         with resources.path(
-            "exasol.sphinx_extensions.multiversion.templates", "multiversion-index.html"
+            "exasol.toolbox.sphinx.multiversion.templates", "multiversion-index.html"
         ) as p:
             with open(p, encoding="utf-8") as f:
                 template = Template(f.read())

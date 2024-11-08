@@ -9,11 +9,13 @@ from sphinx import config as sphinx_config
 from sphinx.locale import _
 from sphinx.util import i18n as sphinx_i18n
 
+from exasol.toolbox.version import VERSION
+
 logger = logging.getLogger(__name__)
 
 DATE_FMT = "%Y-%m-%d %H:%M:%S %z"
-DEFAULT_TAG_WHITELIST = r"^.*$"
-DEFAULT_BRANCH_WHITELIST = r"^.*$"
+DEFAULT_TAG_WHITELIST = r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$"
+DEFAULT_BRANCH_WHITELIST = r"(master|main)"
 DEFAULT_REMOTE_WHITELIST = None
 DEFAULT_RELEASED_PATTERN = r"^tags/.*$"
 DEFAULT_OUTPUTDIR_FORMAT = r"{ref.name}"
@@ -38,6 +40,37 @@ Version = collections.namedtuple(
         "artefacts",
     ],
 )
+
+
+class TagFormatError(Exception):
+    """
+    Exception raised for errors in the tag format.
+
+    The exception is raised when a tag is found to be incorrectly formatted.
+    """
+
+
+class ExasolVersionTag:
+
+    def __init__(self, version):
+        try:
+            v = version.name.strip()
+            parts = v.split(".")
+            major, minor, patch = map(int, parts)
+        except Exception as ex:
+            msg = f"Invalid tag format: '{version}', details: {ex}"
+            raise TagFormatError(msg) from ex
+
+        self._version = version
+        self._version_tripple = (major, minor, patch)
+
+    @property
+    def version(self):
+        return self._version
+
+    @property
+    def version_triple(self):
+        return self._version_tripple
 
 
 class VersionInfo:
@@ -94,8 +127,10 @@ class VersionInfo:
         ]
 
     def __iter__(self):
-        yield from self.tags
         yield from self.branches
+        yield from sorted(
+            self.tags, key=lambda t: ExasolVersionTag(t).version_triple, reverse=True
+        )
 
     def __getitem__(self, name):
         v = self.metadata.get(name)
@@ -183,7 +218,8 @@ def html_page_context(app, pagename, templatename, context, doctree):
     context["vhasdoc"] = versioninfo.vhasdoc
     context["vpathto"] = versioninfo.vpathto
 
-    context["current_version"] = versioninfo[app.config.smv_current_version]
+    current = versioninfo[app.config.smv_current_version]
+    context["current_version"] = current.name
     context["latest_version"] = versioninfo[app.config.smv_latest_version]
     context["html_theme"] = app.config.html_theme
 
@@ -247,7 +283,7 @@ def setup(app):
     app.connect("config-inited", config_inited)
 
     return {
-        "version": "0.2",
+        "version": VERSION,
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }
