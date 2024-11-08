@@ -1,3 +1,4 @@
+from __future__ import annotations
 import tomlkit
 import sys
 from pathlib import Path
@@ -14,7 +15,7 @@ import rich.console
 @nox.session(name="dependencies-check", python=False)
 def dependency_check(session: Session) -> None:
     content = Path(PROJECT_CONFIG.root, "pyproject.toml").read_text()
-    dependencies = dependencies = Dependencies.parse(content)
+    dependencies = Dependencies.parse(content)
     console = rich.console.Console()
     if illegal := dependencies.illegal:
         report_illegal(illegal, console)
@@ -32,6 +33,7 @@ class Dependencies:
                 specifier in version
                 for specifier in ILLEGAL_SPECIFIERS
             )
+
         def _extract_dependencies(section) -> List[str]:
             dependencies = []
             for name, version in section.items():

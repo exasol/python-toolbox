@@ -1,7 +1,7 @@
 import pytest
 import rich.console
 
-from exasol.toolbox.nox._dependencies_check import Dependencies, report_illegal
+from exasol.toolbox.nox._dependencies import Dependencies, report_illegal
 
 
 @pytest.mark.parametrize(
