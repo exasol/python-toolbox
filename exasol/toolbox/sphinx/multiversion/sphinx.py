@@ -72,15 +72,6 @@ class ExasolVersionTag:
     def version_triple(self):
         return self._version_tripple
 
-    @staticmethod
-    def is_valid_tag(tag):
-        try:
-            ExasolVersionTag(tag)
-        except TagFormatError as ex:
-            logger.warn("%s", ex)
-            return False
-        return True
-
 
 class VersionInfo:
     def __init__(self, app, context, metadata, current_version_name):
@@ -136,16 +127,10 @@ class VersionInfo:
         ]
 
     def __iter__(self):
-        tags = (
-            ExasolVersionTag(tag)
-            for tag in self.tags
-            if ExasolVersionTag.is_valid_tag(tag)
-        )
         yield from self.branches
-        yield from [
-            t.version
-            for t in sorted(tags, key=lambda t: t.version_triple, reverse=True)
-        ]
+        yield from sorted(
+            self.tags, key=lambda t: ExasolVersionTag(t).version_triple, reverse=True
+        )
 
     def __getitem__(self, name):
         v = self.metadata.get(name)
