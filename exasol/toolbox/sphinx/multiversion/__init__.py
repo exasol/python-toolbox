@@ -9,13 +9,11 @@ The original version of this package was published under the BSD license and can
 We also took some patches from `this <https://github.com/samuel-emrys/sphinx-multiversion>`_ which was also published under the BSD license.
 
 So huge thanks to the original author `Jan Holthuis <https://github.com/Holzhaus>`_ and all contributors.
-"""
 
-# TODO:
-# * add sorting support
-# * add gh pages support
-# * add command to deploy to gh-pages
-# * add support for loading packed version template?
+
+NOTE:
+The original version and its defaults were minimally adjusted to work in Exasol's projects with the defaults and without adding an extra template. The [Shibuya](https://github.com/lepture/shibuya) theme is expected to be used for HTML, which already evaluates the versions field in the HTML context and generates an appropriate selector for the versions.
+"""
 
 from exasol.toolbox.version import VERSION
 from exasol.toolbox.sphinx.multiversion.main import main
