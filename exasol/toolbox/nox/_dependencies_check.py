@@ -14,7 +14,7 @@ import rich.console
 @nox.session(name="dependencies-check", python=False)
 def dependency_check(session: Session) -> None:
     content = Path(PROJECT_CONFIG.root, "pyproject.toml").read_text()
-    dependencies = Dependencies(content).parse()
+    dependencies = dependencies = Dependencies.parse(content)
     console = rich.console.Console()
     if illegal := dependencies.illegal:
         report_illegal(illegal, console)
@@ -22,52 +22,42 @@ def dependency_check(session: Session) -> None:
 
 
 class Dependencies:
-    ILLEGAL_DEPENDENCIES = ['url', 'git', 'path']
-
-    def __init__(self, pyproject_toml: str):
-        self.illegal_dict: Dict[str, List[str]] = {}
-        self.content = pyproject_toml
-
-    def parse(self) -> "Dependencies":
-        def source_filter(version) -> bool:
-            for f in self.ILLEGAL_DEPENDENCIES:
-                if f in version:
-                    return True
-            return False
-
-        def extract_dependencies(section) -> List[str]:
+    def __init__(self, illegal: Dict[str, List[str]] | None):
+        self._illegal = illegal or {}
+    @staticmethod
+    def parse(pyproject_toml: str) -> "Dependencies":
+        def _source_filter(version) -> bool:
+            ILLEGAL_SPECIFIERS = ['url', 'git', 'path']
+            return any(
+                specifier in version
+                for specifier in ILLEGAL_SPECIFIERS
+            )
+        def _extract_dependencies(section) -> List[str]:
             dependencies = []
             for name, version in section.items():
-                if source_filter(version):
+                if _source_filter(version):
                     dependencies.append(f"{name} = {version}")
             return dependencies
-
         illegal: Dict[str, List[str]] = {}
-        toml = tomlkit.loads(self.content)
+        toml = tomlkit.loads(pyproject_toml)
         poetry = toml.get("tool", {}).get("poetry", {})
-
         part = poetry.get("dependencies", {})
-        dependencies_list = extract_dependencies(part)
+        dependencies_list = _extract_dependencies(part)
         if dependencies_list:
             illegal["tool.poetry.dependencies"] = dependencies_list
-
         part = poetry.get("dev", {}).get("dependencies", {})
-        dependencies_list = extract_dependencies(part)
+        dependencies_list = _extract_dependencies(part)
         if dependencies_list:
             illegal["tool.poetry.dev.dependencies"] = dependencies_list
-
         part = poetry.get("group", {})
         for group, content in part.items():
-            dependencies_list = extract_dependencies(content.get("dependencies", {}))
+            dependencies_list = _extract_dependencies(content.get("dependencies", {}))
             if dependencies_list:
                 illegal[f"tool.poetry.group.{group}.dependencies"] = dependencies_list
-
-        self.illegal_dict = illegal
-        return self
-
+        return Dependencies(illegal)
     @property
     def illegal(self) -> Dict[str, List[str]]:
-        return self.illegal_dict
+        return self._illegal
 
 
 def report_illegal(illegal: Dict[str, List[str]], console: rich.console.Console):

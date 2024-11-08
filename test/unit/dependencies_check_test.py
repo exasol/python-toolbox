@@ -95,7 +95,7 @@ example-url2 = {url = "https://example.com/my-package-0.2.0.tar.gz"}
     ]
 )
 def test_dependency_check_parse(toml, expected):
-    dependencies = Dependencies(toml).parse()
+    dependencies =  dependencies = Dependencies.parse(toml)
     assert dependencies.illegal == expected
 
 
@@ -142,6 +142,6 @@ example-path2 = {'path': '../my-package/dist/my-package-0.2.0.tar.gz'}
 )
 def test_dependencies_check_report(toml, expected, capsys):
     console = rich.console.Console()
-    dependencies = Dependencies(toml).parse()
+    dependencies = Dependencies.parse(toml)
     report_illegal(dependencies.illegal, console)
     assert capsys.readouterr().out == expected
