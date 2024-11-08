@@ -16,7 +16,7 @@ jobs:
 
       - name: Build Documentation
         run: |
-          poetry run python -m nox -s build-docs
+          poetry run python sphinx-multiversion docs/ .html-documentation 
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.6.0
