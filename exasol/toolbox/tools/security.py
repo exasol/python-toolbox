@@ -310,9 +310,10 @@ class PPrintFormats(str, Enum):
 @CLI.command(name="pretty-print")
 def json_issue_to_markdown(
         json_file: typer.FileText = typer.Argument(default="", mode="r", help="json file with issues to convert"),
+        path: Path = typer.Argument(default=Path("/home/jami/Git/python-toolbox"), help="path to project root")
 ) -> None:
     content = json_file.read()
-    issues = from_json(content, Path(__file__).parent.parent.parent.parent)
+    issues = from_json(content, path.absolute())
     print(issues_to_markdown(issues))
 
 
