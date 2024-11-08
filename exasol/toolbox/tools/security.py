@@ -15,7 +15,6 @@ from typing import (
     Iterable,
     Tuple,
 )
-from noxconfig import PROJECT_CONFIG
 import typer
 from pathlib import Path
 
@@ -101,7 +100,7 @@ def from_maven(report: str) -> Iterable[Issue]:
             )
 
 
-def from_json(report_str: str, prefix: Path = PROJECT_CONFIG.root) -> Iterable[Issue]:
+def from_json(report_str: str, prefix: Path) -> Iterable[Issue]:
     report = json.loads(report_str)
     issues = report.get("results", {})
     for issue in issues:
@@ -313,7 +312,7 @@ def json_issue_to_markdown(
         json_file: typer.FileText = typer.Argument(default="", mode="r", help="json file with issues to convert"),
 ) -> None:
     content = json_file.read()
-    issues = from_json(content)
+    issues = from_json(content, Path(__file__).parent.parent.parent.parent)
     print(issues_to_markdown(issues))
 
 
