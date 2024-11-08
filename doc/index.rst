@@ -55,6 +55,12 @@ Documentation of the Exasol-Toolbox
 
         Document outlining the architectural and design principles and decisions in this project.
 
+    .. grid-item-card:: :octicon:`graph` Metrics
+        :link: metrics
+        :link-type: ref
+
+        Details on metrics collection and support related to and supported by the Python toolbox.
+
     .. grid-item-card:: :octicon:`question` FAQ
         :link: faq_toolbox
         :link-type: ref
@@ -73,6 +79,7 @@ Documentation of the Exasol-Toolbox
    tools
    github_actions/github_actions
    api
+   metrics
    faq
    changes/changelog
 
