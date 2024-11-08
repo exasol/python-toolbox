@@ -1,5 +1,9 @@
 # Unreleased
 
+## 🚨 Breaking Changes
+
+* Dropped python 3.8 support
+
 ## 🐞 Fixed
 
 * Fixed CD workflow template
