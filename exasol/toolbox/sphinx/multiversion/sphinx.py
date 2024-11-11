@@ -9,13 +9,14 @@ from sphinx import config as sphinx_config
 from sphinx.locale import _
 from sphinx.util import i18n as sphinx_i18n
 
-from exasol.toolbox.version import VERSION
+from exasol.toolbox.release import Version as ExasolVersion
+from exasol.toolbox.version import VERSION as PLUGIN_VERSION
 
 logger = logging.getLogger(__name__)
 
 DATE_FMT = "%Y-%m-%d %H:%M:%S %z"
 DEFAULT_TAG_WHITELIST = r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$"
-DEFAULT_BRANCH_WHITELIST = r"(master|main)"
+DEFAULT_BRANCH_WHITELIST = r"master|main"
 DEFAULT_REMOTE_WHITELIST = None
 DEFAULT_RELEASED_PATTERN = r"^tags/.*$"
 DEFAULT_OUTPUTDIR_FORMAT = r"{ref.name}"
@@ -40,37 +41,6 @@ Version = collections.namedtuple(
         "artefacts",
     ],
 )
-
-
-class TagFormatError(Exception):
-    """
-    Exception raised for errors in the tag format.
-
-    The exception is raised when a tag is found to be incorrectly formatted.
-    """
-
-
-class ExasolVersionTag:
-
-    def __init__(self, version):
-        try:
-            v = version.name.strip()
-            parts = v.split(".")
-            major, minor, patch = map(int, parts)
-        except Exception as ex:
-            msg = f"Invalid tag format: '{version}', details: {ex}"
-            raise TagFormatError(msg) from ex
-
-        self._version = version
-        self._version_tripple = (major, minor, patch)
-
-    @property
-    def version(self):
-        return self._version
-
-    @property
-    def version_triple(self):
-        return self._version_tripple
 
 
 class VersionInfo:
@@ -129,7 +99,7 @@ class VersionInfo:
     def __iter__(self):
         yield from self.branches
         yield from sorted(
-            self.tags, key=lambda t: ExasolVersionTag(t).version_triple, reverse=True
+            self.tags, key=lambda t: ExasolVersion.from_string(t.name), reverse=True
         )
 
     def __getitem__(self, name):
@@ -268,7 +238,7 @@ def setup(app):
     app.add_config_value("smv_metadata", {}, "html")
     app.add_config_value("smv_metadata_path", "", "html")
     app.add_config_value("smv_current_version", "", "html")
-    app.add_config_value("smv_latest_version", "master", "html")
+    app.add_config_value("smv_latest_version", "main", "html")
     app.add_config_value("smv_tag_whitelist", DEFAULT_TAG_WHITELIST, "html")
     app.add_config_value("smv_branch_whitelist", DEFAULT_BRANCH_WHITELIST, "html")
     app.add_config_value("smv_remote_whitelist", DEFAULT_REMOTE_WHITELIST, "html")
@@ -283,7 +253,7 @@ def setup(app):
     app.connect("config-inited", config_inited)
 
     return {
-        "version": VERSION,
+        "version": PLUGIN_VERSION,
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }

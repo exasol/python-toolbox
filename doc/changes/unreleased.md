@@ -11,6 +11,7 @@
 ## 🐞 Fixed
 
 * Fixed CD workflow template
+* Fixed the selection of the latest version in Multi-Version Documentation
 
 ## 📚 Documentation
 
