@@ -10,5 +10,4 @@
     getting_started
     workflows
     customization
-    modules/modules
 

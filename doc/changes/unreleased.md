@@ -16,6 +16,8 @@
 ## 📚 Documentation
 
 * Added Documentation on Metrics
+* Added additional details regarding adjusted sphinx-multiversion 
+* Restructured documentation
 
 ## 🔩 Internal
 
