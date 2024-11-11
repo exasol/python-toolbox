@@ -10,4 +10,4 @@
     ../design
     development
     plugins
-    ideas
+    modules/modules
