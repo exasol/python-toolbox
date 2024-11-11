@@ -21,6 +21,7 @@ from rich.logging import RichHandler
 from sphinx import config as sphinx_config
 from sphinx import project as sphinx_project
 
+from exasol.toolbox.release import Version as ExasolVersion
 from exasol.toolbox.sphinx.multiversion import (
     git,
     sphinx,
@@ -573,7 +574,12 @@ def _main(args, argv):
             with open(
                 os.path.join(args.outputdir, "index.html"), "w", encoding="utf-8"
             ) as f:
-                ref = gitrefs[-1]
-                f.write(template.render(version=ref.name))
+                versions = [
+                    ref.name for ref in gitrefs if re.match(config.smv_tag_whitelist, ref.name)
+                ]
+                versions = sorted(
+                    versions, key=lambda v: ExasolVersion.from_string(v), reverse=True
+                )
+                f.write(template.render(version=versions[0]))
 
     return 0
