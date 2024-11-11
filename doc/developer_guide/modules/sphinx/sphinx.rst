@@ -12,7 +12,7 @@ It has been adjusted with minor code changes and modified defaults to work seaml
 
     **Attribution**
 
-    A big thanks to the original author and project `Jan Holthuis <https://github.com/Holzhaus>`_, as well as `Samuel Dowling <https://github.com/samuel-emrys>`_, from whom we took various patches for the plugin from his fork.
+    A big thanks to the original author and project `Jan Holthuis <https://github.com/Holzhaus>`_, as well as `Samuel Dowling <https://github.com/samuel-emrys>`_, as we took various patches for the plugin from his fork.
 
     Note: Both projects are published under the `BSD-2 license <https://opensource.org/license/bsd-2-clause>`_.
 
