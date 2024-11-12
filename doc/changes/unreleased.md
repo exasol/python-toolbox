@@ -16,10 +16,13 @@
 ## 🐞 Fixed
 
 * Fixed CD workflow template
+* Fixed the selection of the latest version in Multi-Version Documentation
 
 ## 📚 Documentation
 
 * Added Documentation on Metrics
+* Added additional details regarding adjusted sphinx-multiversion 
+* Restructured documentation
 
 ## 🔩 Internal
 
