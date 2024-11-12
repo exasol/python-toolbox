@@ -53,8 +53,7 @@ def open_docs(session: Session) -> None:
     """Opens the built project documentation"""
     docs_folder = PROJECT_CONFIG.root / DOCS_OUTPUT_DIR
     if not docs_folder.exists():
-        session.error(
-            f"No documentation could be found. {docs_folder} is missing")
+        session.error(f"No documentation could be found. {docs_folder} is missing")
     index = docs_folder / "index.html"
     webbrowser.open_new_tab(index.as_uri())
 
