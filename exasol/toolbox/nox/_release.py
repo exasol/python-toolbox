@@ -148,24 +148,3 @@ def prepare_release(session: Session, python=False) -> None:
         )
 
 
-@nox.session(name="release", python=False)
-def release(session: Session, python=False) -> None:
-    """
-    Creates a new release and publishing it to GitHub and pypi.
-    """
-    session.error("Not implemented yet")
-    # Precondition(s):
-    # Convert ci-cd.yml workflow to cd.yml workflow
-    # Tests validation can be skipped. Branch protection together with
-    # PR and merge validation shoudl be sufficient
-    # ----------------------------------------------------------------------
-    # 0. Check that version isn't released yet (tag does not exist (origin))
-    #   0.1. update git information
-    #   0.2. check if origin does not have the tag yet
-    # 1. check if current branch is main/master
-    # 2. build wheel/package
-    # 3. create release tag
-    # 4. push release tag to origin
-    # 5. publish on gh
-    # 5. publish on pypi
-    # 6. output relase message/information
