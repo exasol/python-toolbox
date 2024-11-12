@@ -192,7 +192,7 @@ You are ready to use the toolbox. With *nox -l* you can list all available tasks
     - lint:code -> Runs the static code analyzer on the project
     - lint:typing -> Runs the type checker on the project
     - lint:security -> Runs the security linter on the project
-    - report -> Collects and generates metrics summary for the workspace
+    - project:report -> Collects and generates metrics summary for the workspace
     - release:prepare -> Prepares the project for a new release.
     - unit-tests -> Runs all unit tests
     - integration-tests -> Runs the all integration tests

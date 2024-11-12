@@ -84,7 +84,7 @@ Tooling
 Projects
 ________
 
-Projects can run the nox task :code:`nox -s report` to generate their project metrics if they are using the :code:`exasol-toolbox`.
+Projects can run the nox task :code:`nox -s project:report` to generate their project metrics if they are using the :code:`exasol-toolbox`.
 
 
 Development

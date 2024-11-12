@@ -13,7 +13,7 @@ from exasol.toolbox.metrics import (
 from noxconfig import PROJECT_CONFIG
 
 
-@nox.session(name="report", python=False)
+@nox.session(name="project:report", python=False)
 def report(session: Session) -> None:
     """
     Collects and generates metrics summary for the workspace
@@ -32,7 +32,7 @@ def report(session: Session) -> None:
             - :code:`nox -s lint`
     """
     formats = tuple(fmt.name.lower() for fmt in Format)
-    usage = "nox -s report -- [options]"
+    usage = "nox -s project:report -- [options]"
     parser = argparse.ArgumentParser(
         description="Generates status report for the project", usage=usage
     )
