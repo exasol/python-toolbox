@@ -77,7 +77,7 @@ Execute the unit tests of the project:
 
 .. code-block:: shell
 
-    nox -s unit-tests
+    nox -s test:unit
 
 
 .. _existing:

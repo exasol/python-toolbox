@@ -72,7 +72,7 @@ def _coverage(
     session.run(*command)
 
 
-@nox.session(name="unit-tests", python=False)
+@nox.session(name="test:unit", python=False)
 def unit_tests(session: Session) -> None:
     """Runs all unit tests"""
     context = _context(session, coverage=False)
