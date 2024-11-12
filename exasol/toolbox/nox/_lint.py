@@ -65,9 +65,9 @@ def _security_lint(session: Session, files: Iterable[str]) -> None:
     )
 
 
-@nox.session(python=False)
+@nox.session(name="lint:code", python=False)
 def lint(session: Session) -> None:
-    """Runs the linter on the project"""
+    "Runs the static code analyzer on the project"
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
     _pylint(session, py_files)
 
