@@ -93,7 +93,7 @@ def integration_tests(session: Session) -> None:
     _integration_tests(session, PROJECT_CONFIG, context)
 
 
-@nox.session(name="coverage", python=False)
+@nox.session(name="test:coverage", python=False)
 def coverage(session: Session) -> None:
     """Runs all tests (unit + integration) and reports the code coverage"""
     context = _context(session, coverage=True)

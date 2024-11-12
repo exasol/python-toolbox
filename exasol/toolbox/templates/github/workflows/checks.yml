@@ -145,7 +145,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run Tests and Compute Coverage
-        run: poetry run nox -s coverage -- -- --db-version ${{ matrix.exasol-version }}
+        run: poetry run nox -s test:coverage -- -- --db-version ${{ matrix.exasol-version }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4.4.0
