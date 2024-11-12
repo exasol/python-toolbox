@@ -184,18 +184,20 @@ You are ready to use the toolbox. With *nox -l* you can list all available tasks
     $ nox -l
     Sessions defined in <PATH_TO_YOUR_PROJECT>/noxfile.py:
 
-    * fix -> Runs all automated fixes on the code base
-    - check -> Runs all available checks on the project
-    - lint:code -> Runs the static code analyzer on the project
-    - lint:typing -> Runs the type checker on the project
-    - lint:security -> Runs the security linter on the project
-    - unit-tests -> Runs all unit tests
-    - integration-tests -> Runs the all integration tests
-    - coverage -> Runs all tests (unit + integration) and reports the code coverage
+    - docs:multiversion -> Builds the project documentation
     - docs:build -> Builds the project documentation
     - docs:open -> Opens the built project documentation
     - docs:clean -> Removes the documentations build folder
-    - report -> Collects and generates a metrics summary for the workspace
+    - project:fix -> Runs all automated fixes on the code base
+    - lint:code -> Runs the static code analyzer on the project
+    - lint:typing -> Runs the type checker on the project
+    - lint:security -> Runs the security linter on the project
+    - report -> Collects and generates metrics summary for the workspace
+    - release:prepare -> Prepares the project for a new release.
+    - unit-tests -> Runs all unit tests
+    - integration-tests -> Runs the all integration tests
+    - coverage -> Runs all tests (unit + integration) and reports the code coverage
+    - check -> Runs all available checks on the project
 
     sessions marked with * are selected, sessions marked with - are skipped.
 

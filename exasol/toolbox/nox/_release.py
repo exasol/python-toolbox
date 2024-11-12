@@ -28,8 +28,8 @@ from noxconfig import PROJECT_CONFIG
 
 def _create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-            prog="nox -s release:prepare",
-            usage="nox -s release:prepare -- [-h] version",
+        prog="nox -s release:prepare",
+        usage="nox -s release:prepare -- [-h] version",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
@@ -146,4 +146,3 @@ def prepare_release(session: Session, python=False) -> None:
             "--body",
             '""',
         )
-

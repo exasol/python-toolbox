@@ -33,7 +33,7 @@ def _pyupgrade(session: Session, files: Iterable[str]) -> None:
     )
 
 
-@nox.session(python=False)
+@nox.session(name="project:fix", python=False)
 def fix(session: Session) -> None:
     """Runs all automated fixes on the code base"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
