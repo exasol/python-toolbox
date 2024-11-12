@@ -48,7 +48,7 @@ def build_docs(session: Session) -> None:
     _build_docs(session, PROJECT_CONFIG)
 
 
-@nox.session(name="open-docs", python=False)
+@nox.session(name="docs:open", python=False)
 def open_docs(session: Session) -> None:
     """Opens the built project documentation"""
     docs_folder = PROJECT_CONFIG.root / DOCS_OUTPUT_DIR
