@@ -26,13 +26,29 @@ def _build_docs(session: nox.Session, config: Config) -> None:
     )
 
 
-@nox.session(name="build-docs", python=False)
+def _build_multiversion_docs(session: nox.Session, config: Config) -> None:
+    session.run(
+        "poetry",
+        "run",
+        "sphinx-multiversion",
+        f"{config.doc}",
+        DOCS_OUTPUT_DIR,
+    )
+
+
+@nox.session(name="docs:multiversion", python=False)
+def build_multiversion(session: Session) -> None:
+    """Builds the project documentation"""
+    _build_multiversion_docs(session, PROJECT_CONFIG)
+
+
+@nox.session(name="docs:build", python=False)
 def build_docs(session: Session) -> None:
     """Builds the project documentation"""
     _build_docs(session, PROJECT_CONFIG)
 
 
-@nox.session(name="open-docs", python=False)
+@nox.session(name="docs:open", python=False)
 def open_docs(session: Session) -> None:
     """Opens the built project documentation"""
     docs_folder = PROJECT_CONFIG.root / DOCS_OUTPUT_DIR
@@ -42,7 +58,7 @@ def open_docs(session: Session) -> None:
     webbrowser.open_new_tab(index.as_uri())
 
 
-@nox.session(name="clean-docs", python=False)
+@nox.session(name="docs:clean", python=False)
 def clean_docs(_session: Session) -> None:
     """Removes the documentations build folder"""
     docs_folder = PROJECT_CONFIG.root / DOCS_OUTPUT_DIR
