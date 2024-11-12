@@ -37,7 +37,7 @@ def _build_multiversion_docs(session: nox.Session, config: Config) -> None:
 
 
 @nox.session(name="docs:multiversion", python=False)
-def build_docs(session: Session) -> None:
+def build_multiversion(session: Session) -> None:
     """Builds the project documentation"""
     _build_multiversion_docs(session, PROJECT_CONFIG)
 
