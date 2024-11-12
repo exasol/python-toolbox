@@ -79,7 +79,7 @@ def type_check(session: Session) -> None:
     _type_check(session, py_files)
 
 
-@nox.session(name="security", python=False)
+@nox.session(name="lint:security", python=False)
 def security_lint(session: Session) -> None:
     """Runs the security linter on the project"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]

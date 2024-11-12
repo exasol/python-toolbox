@@ -188,6 +188,7 @@ You are ready to use the toolbox. With *nox -l* you can list all available tasks
     - check -> Runs all available checks on the project
     - lint -> Runs the linter on the project
     - lint:typing -> Runs the type checker on the project
+    - lint:security -> Runs the security linter on the project
     - unit-tests -> Runs all unit tests
     - integration-tests -> Runs the all integration tests
     - coverage -> Runs all tests (unit + integration) and reports the code coverage
