@@ -87,7 +87,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run type-check
-        run: poetry run nox -s linst:typing
+        run: poetry run nox -s lint:typing
 
   Security:
     name: Security Checks (Python-${{ matrix.python-version }})
