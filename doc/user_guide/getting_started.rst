@@ -193,7 +193,7 @@ You are ready to use the toolbox. With *nox -l* you can list all available tasks
     - lint:code -> Runs the static code analyzer on the project
     - lint:typing -> Runs the type checker on the project
     - lint:security -> Runs the security linter on the project
-    - docs:multiversion -> Builds the project documentation
+    - docs:multiversion -> Builds the multiversion project documentation
     - docs:build -> Builds the project documentation
     - docs:open -> Opens the built project documentation
     - docs:clean -> Removes the documentations build folder
