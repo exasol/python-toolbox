@@ -26,6 +26,22 @@ def _build_docs(session: nox.Session, config: Config) -> None:
     )
 
 
+def _build_multiversion_docs(session: nox.Session, config: Config) -> None:
+    session.run(
+        "poetry",
+        "run",
+        "sphinx-multiversion",
+        f"{config.doc}",
+        DOCS_OUTPUT_DIR,
+    )
+
+
+@nox.session(name="docs:multiversion", python=False)
+def build_docs(session: Session) -> None:
+    """Builds the project documentation"""
+    _build_multiversion_docs(session, PROJECT_CONFIG)
+
+
 @nox.session(name="build-docs", python=False)
 def build_docs(session: Session) -> None:
     """Builds the project documentation"""
@@ -37,7 +53,8 @@ def open_docs(session: Session) -> None:
     """Opens the built project documentation"""
     docs_folder = PROJECT_CONFIG.root / DOCS_OUTPUT_DIR
     if not docs_folder.exists():
-        session.error(f"No documentation could be found. {docs_folder} is missing")
+        session.error(
+            f"No documentation could be found. {docs_folder} is missing")
     index = docs_folder / "index.html"
     webbrowser.open_new_tab(index.as_uri())
 
