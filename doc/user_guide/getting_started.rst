@@ -71,7 +71,7 @@ Build and open the documentation:
 
 .. code-block:: shell
 
-    nox -s build-docs  open-docs
+    nox -s docs:build  docs:open
 
 Execute the unit tests of the project:
 
@@ -191,9 +191,9 @@ You are ready to use the toolbox. With *nox -l* you can list all available tasks
     - unit-tests -> Runs all unit tests
     - integration-tests -> Runs the all integration tests
     - coverage -> Runs all tests (unit + integration) and reports the code coverage
-    - build-docs -> Builds the project documentation
-    - open-docs -> Opens the built project documentation
-    - clean-docs -> Removes the documentations build folder
+    - docs:build -> Builds the project documentation
+    - docs:open -> Opens the built project documentation
+    - docs:clean -> Removes the documentations build folder
     - report -> Collects and generates a metrics summary for the workspace
 
     sessions marked with * are selected, sessions marked with - are skipped.
