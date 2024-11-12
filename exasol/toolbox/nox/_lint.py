@@ -72,7 +72,7 @@ def lint(session: Session) -> None:
     _pylint(session, py_files)
 
 
-@nox.session(name="type-check", python=False)
+@nox.session(name="lint:typing", python=False)
 def type_check(session: Session) -> None:
     """Runs the type checker on the project"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
@@ -83,4 +83,5 @@ def type_check(session: Session) -> None:
 def security_lint(session: Session) -> None:
     """Runs the security linter on the project"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
-    _security_lint(session, list(filter(lambda file: "test" not in file, py_files)))
+    _security_lint(session, list(
+        filter(lambda file: "test" not in file, py_files)))
