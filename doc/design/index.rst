@@ -1,7 +1,7 @@
 .. _design_documents:
 
 
-:octicon:`repo` Desing Documents
+:octicon:`repo` Design Documents
 ================================
 
 .. toctree::
