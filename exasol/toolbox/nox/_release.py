@@ -28,8 +28,8 @@ from noxconfig import PROJECT_CONFIG
 
 def _create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="nox -s prepare-release",
-        usage="nox -s prepare-release -- [-h] version",
+            prog="nox -s release:prepare",
+            usage="nox -s release:prepare -- [-h] version",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
@@ -89,7 +89,7 @@ def _add_files_to_index(session: Session, files: list[Path]) -> None:
         session.run("git", "add", f"{file}")
 
 
-@nox.session(name="prepare-release", python=False)
+@nox.session(name="release:prepare", python=False)
 def prepare_release(session: Session, python=False) -> None:
     """
     Prepares the project for a new release.
@@ -146,5 +146,4 @@ def prepare_release(session: Session, python=False) -> None:
             "--body",
             '""',
         )
-
 

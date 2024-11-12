@@ -17,7 +17,7 @@ This can be achieved by running the following command:
 
 .. code-block:: shell
 
-   nox -s prepare-release -- <major>.<minor>.<patch>
+   nox -s release:prepare -- <major>.<minor>.<patch>
 
 Replace `<major>`, `<minor>`, and `<patch>` with the appropriate version numbers.
 Once the PR is successfully merged, the release can be triggered (see next section).
