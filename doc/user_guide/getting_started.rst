@@ -193,7 +193,7 @@ You are ready to use the toolbox. With *nox -l* you can list all available tasks
     - coverage -> Runs all tests (unit + integration) and reports the code coverage
     - docs:build -> Builds the project documentation
     - docs:open -> Opens the built project documentation
-    - clean-docs -> Removes the documentations build folder
+    - docs:clean -> Removes the documentations build folder
     - report -> Collects and generates a metrics summary for the workspace
 
     sessions marked with * are selected, sessions marked with - are skipped.

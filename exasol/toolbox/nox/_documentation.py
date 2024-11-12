@@ -59,7 +59,7 @@ def open_docs(session: Session) -> None:
     webbrowser.open_new_tab(index.as_uri())
 
 
-@nox.session(name="clean-docs", python=False)
+@nox.session(name="docs:clean", python=False)
 def clean_docs(_session: Session) -> None:
     """Removes the documentations build folder"""
     docs_folder = PROJECT_CONFIG.root / DOCS_OUTPUT_DIR
