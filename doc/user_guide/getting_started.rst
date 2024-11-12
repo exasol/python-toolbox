@@ -194,8 +194,8 @@ You are ready to use the toolbox. With *nox -l* you can list all available tasks
     - lint:security -> Runs the security linter on the project
     - project:report -> Collects and generates metrics summary for the workspace
     - release:prepare -> Prepares the project for a new release.
-    - unit-tests -> Runs all unit tests
-    - integration-tests -> Runs the all integration tests
+    - test:unit -> Runs all unit tests
+    - test:integration -> Runs the all integration tests
     - coverage -> Runs all tests (unit + integration) and reports the code coverage
     - check -> Runs all available checks on the project
 

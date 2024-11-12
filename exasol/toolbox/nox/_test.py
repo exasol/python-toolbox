@@ -79,7 +79,7 @@ def unit_tests(session: Session) -> None:
     _unit_tests(session, PROJECT_CONFIG, context)
 
 
-@nox.session(name="integration-tests", python=False)
+@nox.session(name="test:integration", python=False)
 def integration_tests(session: Session) -> None:
     """
     Runs the all integration tests
