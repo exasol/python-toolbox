@@ -28,8 +28,8 @@ from noxconfig import PROJECT_CONFIG
 
 def _create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="nox -s prepare-release",
-        usage="nox -s prepare-release -- [-h] version",
+        prog="nox -s release:prepare",
+        usage="nox -s release:prepare -- [-h] version",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
@@ -89,7 +89,7 @@ def _add_files_to_index(session: Session, files: list[Path]) -> None:
         session.run("git", "add", f"{file}")
 
 
-@nox.session(name="prepare-release", python=False)
+@nox.session(name="release:prepare", python=False)
 def prepare_release(session: Session, python=False) -> None:
     """
     Prepares the project for a new release.
@@ -146,26 +146,3 @@ def prepare_release(session: Session, python=False) -> None:
             "--body",
             '""',
         )
-
-
-@nox.session(name="release", python=False)
-def release(session: Session, python=False) -> None:
-    """
-    Creates a new release and publishing it to GitHub and pypi.
-    """
-    session.error("Not implemented yet")
-    # Precondition(s):
-    # Convert ci-cd.yml workflow to cd.yml workflow
-    # Tests validation can be skipped. Branch protection together with
-    # PR and merge validation shoudl be sufficient
-    # ----------------------------------------------------------------------
-    # 0. Check that version isn't released yet (tag does not exist (origin))
-    #   0.1. update git information
-    #   0.2. check if origin does not have the tag yet
-    # 1. check if current branch is main/master
-    # 2. build wheel/package
-    # 3. create release tag
-    # 4. push release tag to origin
-    # 5. publish on gh
-    # 5. publish on pypi
-    # 6. output relase message/information

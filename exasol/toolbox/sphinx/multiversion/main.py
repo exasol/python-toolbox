@@ -575,7 +575,9 @@ def _main(args, argv):
                 os.path.join(args.outputdir, "index.html"), "w", encoding="utf-8"
             ) as f:
                 versions = [
-                    ref.name for ref in gitrefs if re.match(config.smv_tag_whitelist, ref.name)
+                    ref.name
+                    for ref in gitrefs
+                    if re.match(config.smv_tag_whitelist, ref.name)
                 ]
                 versions = sorted(
                     versions, key=lambda v: ExasolVersion.from_string(v), reverse=True
