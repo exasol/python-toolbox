@@ -100,7 +100,16 @@ def from_maven(report: str) -> Iterable[Issue]:
             )
 
 
-def from_json(report_str: str, prefix: Path) -> Iterable[Issue]:
+@dataclass(frozen=True)
+class SecurityIssue:
+    coordinates: str
+    cwe: str
+    test_id: str
+    description: str
+    references: tuple
+
+
+def from_json(report_str: str, prefix: Path) -> Iterable[SecurityIssue]:
     report = json.loads(report_str)
     issues = report.get("results", {})
     for issue in issues:
@@ -111,10 +120,10 @@ def from_json(report_str: str, prefix: Path) -> Iterable[Issue]:
             references.append(issue["issue_cve"]["link"])
         if issue.get("issue_cwe", {}).get("link", None):
             references.append(issue["issue_cwe"]["link"])
-        yield Issue(
-            cve=str(issue.get("issue_cve", {}).get("id", "")),
-            cwe=str(issue.get("issue_cwe", {}).get("id", "")),
+        yield SecurityIssue(
+            cwe=str(issue["issue_cwe"].get("id", "")),
             description=issue["issue_text"],
+            test_id=issue["test_id"],
             coordinates=issue["filename"].replace(
                 str(prefix) + "/", ""
                 ) + ":" + str(issue["line_number"]) + ":" + str(issue["col_offset"]) + ":",
@@ -122,21 +131,21 @@ def from_json(report_str: str, prefix: Path) -> Iterable[Issue]:
         )
 
 
-def issues_to_markdown(issues: Iterable[Issue]) -> str:
+def issues_to_markdown(issues: Iterable[SecurityIssue]) -> str:
     template = cleandoc("""
         {header}{rows}
     """)
 
     def _header():
         header = "# Security\n\n"
-        header += "|File|Cve|Cwe|Details|\n"
+        header += "|File|Cwe|Test ID|Details|\n"
         header += "|---|:-:|:-:|---|\n"
         return header
 
     def _row(issue):
         row = "|" + issue.coordinates + "|"
-        row += issue.cve + "|"
         row += issue.cwe + "|"
+        row += issue.test_id + "|"
         for element in issue.references:
             row += element + " ,<br>"
         row = row[:-5] + "|"
@@ -314,6 +323,7 @@ def json_issue_to_markdown(
 ) -> None:
     content = json_file.read()
     issues = from_json(content, path.absolute())
+    issues = sorted(issues, key=lambda i: (i.coordinates[0:i.coordinates.index(":")], i.cwe, i.test_id))
     print(issues_to_markdown(issues))
 
 

@@ -12,7 +12,7 @@ Run test case
   $ tbx security pretty-print .security.json
   # Security
   
-  |File|Cve|Cwe|Details|
+  |File|Cwe|Test ID|Details|
   |---|:-:|:-:|---|
   
 

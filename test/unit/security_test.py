@@ -436,8 +436,8 @@ def test_format_jsonl_removes_newline():
 }
             ''',
             {
-                "cve": "",
                 "cwe": "78",
+                "test_id": "B404",
                 "description": "Consider possible security implications associated with the subprocess module.",
                 "coordinates": "exasol/toolbox/git.py:1:0:",
                 "references": (
@@ -450,9 +450,9 @@ def test_format_jsonl_removes_newline():
 )
 def test_from_json(json_file, expected):
     actual = security.from_json(json_file, pathlib.Path("/home/test/Git/python-toolbox"))
-    expected_issue = security.Issue(
-        cve=expected["cve"],
+    expected_issue = security.SecurityIssue(
         cwe=expected["cwe"],
+        test_id=expected["test_id"],
         description=expected["description"],
         coordinates=expected["coordinates"],
         references=expected["references"]
