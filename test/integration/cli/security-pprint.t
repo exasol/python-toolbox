@@ -29,7 +29,7 @@ Create test input
   >       "code": "156         )\n157         subprocess.check_call(cmd, cwd=gitroot, stdout=fp)\n158         fp.seek(0)\n",
   >       "col_offset": 8,
   >       "end_col_offset": 58,
-  >       "filename": "/home/jami/Git/python-toolbox/exasol/toolbox/sphinx/multiversion/git.py",
+  >       "filename": "exasol/toolbox/sphinx/multiversion/git.py",
   >       "issue_confidence": "HIGH",
   >       "issue_cwe": {
   >         "id": 78,
