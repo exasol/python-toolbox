@@ -103,7 +103,9 @@ def from_maven(report: str) -> Iterable[Issue]:
 
 @dataclass(frozen=True)
 class SecurityIssue:
-    coordinates: str
+    file_name: str
+    line: int
+    column: int
     cwe: str
     test_id: str
     description: str
@@ -117,17 +119,15 @@ def from_json(report_str: str, prefix: Path) -> Iterable[SecurityIssue]:
         references = []
         if issue["more_info"]:
             references.append(issue["more_info"])
-        if issue.get("issue_cve", {}).get("link", None):
-            references.append(issue["issue_cve"]["link"])
         if issue.get("issue_cwe", {}).get("link", None):
             references.append(issue["issue_cwe"]["link"])
         yield SecurityIssue(
+            file_name=issue["filename"].replace(str(prefix) + "/", ""),
+            line=issue["line_number"],
+            column=issue["col_offset"],
             cwe=str(issue["issue_cwe"].get("id", "")),
-            description=issue["issue_text"],
             test_id=issue["test_id"],
-            coordinates=issue["filename"].replace(
-                str(prefix) + "/", ""
-                ) + ":" + str(issue["line_number"]) + ":" + str(issue["col_offset"]) + ":",
+            description=issue["issue_text"],
             references=tuple(references)
         )
 
@@ -139,12 +139,13 @@ def issues_to_markdown(issues: Iterable[SecurityIssue]) -> str:
 
     def _header():
         header = "# Security\n\n"
-        header += "|File|Cwe|Test ID|Details|\n"
-        header += "|---|:-:|:-:|---|\n"
+        header += "|File|line/<br>column|Cwe|Test ID|Details|\n"
+        header += "|---|:-:|:-:|:-:|---|\n"
         return header
 
     def _row(issue):
-        row = "|" + issue.coordinates + "|"
+        row = "|" + issue.file_name + "|"
+        row += f"line: {issue.line}<br>column: {issue.column}|"
         row += issue.cwe + "|"
         row += issue.test_id + "|"
         for element in issue.references:
@@ -324,7 +325,7 @@ def json_issue_to_markdown(
 ) -> None:
     content = json_file.read()
     issues = from_json(content, path.absolute())
-    issues = sorted(issues, key=lambda i: (i.coordinates[0:i.coordinates.index(":")], i.cwe, i.test_id))
+    issues = sorted(issues, key=lambda i: (i.file_name, i.cwe, i.test_id))
     print(issues_to_markdown(issues))
 
 

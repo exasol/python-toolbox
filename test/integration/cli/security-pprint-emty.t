@@ -12,7 +12,7 @@ Run test case
   $ tbx security pretty-print .security.json
   # Security
   
-  |File|Cwe|Test ID|Details|
-  |---|:-:|:-:|---|
+  |File|line/<br>column|Cwe|Test ID|Details|
+  |---|:-:|:-:|:-:|---|
   
 

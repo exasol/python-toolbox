@@ -74,8 +74,8 @@ Run test case
   $ tbx security pretty-print .security.json
   # Security
   
-  |File|Cwe|Test ID|Details|
-  |---|:-:|:-:|---|
-  |exasol/toolbox/sphinx/multiversion/git.py:160:12:|22|B202|https://bandit.readthedocs.io/en/1.7.10/plugins/b202_tarfile_unsafe_members.html ,<br>https://cwe.mitre.org/data/definitions/22.html |
-  |exasol/toolbox/sphinx/multiversion/git.py:157:8:|78|B603|https://bandit.readthedocs.io/en/1.7.10/plugins/b603_subprocess_without_shell_equals_true.html ,<br>https://cwe.mitre.org/data/definitions/78.html |
-  |exasol/toolbox/sphinx/multiversion/main.py:556:16:|78|B602|https://bandit.readthedocs.io/en/1.7.10/plugins/b602_subprocess_popen_with_shell_equals_true.html ,<br>https://cwe.mitre.org/data/definitions/78.html |
+  |File|line/<br>column|Cwe|Test ID|Details|
+  |---|:-:|:-:|:-:|---|
+  |exasol/toolbox/sphinx/multiversion/git.py|line: 160<br>column: 12|22|B202|https://bandit.readthedocs.io/en/1.7.10/plugins/b202_tarfile_unsafe_members.html ,<br>https://cwe.mitre.org/data/definitions/22.html |
+  |exasol/toolbox/sphinx/multiversion/git.py|line: 157<br>column: 8|78|B603|https://bandit.readthedocs.io/en/1.7.10/plugins/b603_subprocess_without_shell_equals_true.html ,<br>https://cwe.mitre.org/data/definitions/78.html |
+  |exasol/toolbox/sphinx/multiversion/main.py|line: 556<br>column: 16|78|B602|https://bandit.readthedocs.io/en/1.7.10/plugins/b602_subprocess_popen_with_shell_equals_true.html ,<br>https://cwe.mitre.org/data/definitions/78.html |

@@ -414,9 +414,9 @@ def test_format_jsonl_removes_newline():
     "results": [
         {
             "code": "1 import subprocess\\n2 from typing import Iterable\\n3 \\n",
-            "col_offset": 0,
+            "col_offset": 12,
             "end_col_offset": 17,
-            "filename": "/home/test/Git/python-toolbox/exasol/toolbox/git.py",
+            "filename": "/home/test/python-toolbox/exasol/toolbox/git.py",
             "issue_confidence": "HIGH",
             "issue_cwe": {
                 "id": 78,
@@ -424,7 +424,7 @@ def test_format_jsonl_removes_newline():
             },
             "issue_severity": "LOW",
             "issue_text": "Consider possible security implications associated with the subprocess module.",
-            "line_number": 1,
+            "line_number": 53,
             "line_range": [
                 1
             ],
@@ -436,10 +436,12 @@ def test_format_jsonl_removes_newline():
 }
             ''',
             {
+                "file_name": "exasol/toolbox/git.py",
+                "line": 53,
+                "column": 12,
                 "cwe": "78",
                 "test_id": "B404",
                 "description": "Consider possible security implications associated with the subprocess module.",
-                "coordinates": "exasol/toolbox/git.py:1:0:",
                 "references": (
                     "https://bandit.readthedocs.io/en/1.7.10/blacklists/blacklist_imports.html#b404-import-subprocess",
                     "https://cwe.mitre.org/data/definitions/78.html"
@@ -449,12 +451,14 @@ def test_format_jsonl_removes_newline():
     ]
 )
 def test_from_json(json_file, expected):
-    actual = security.from_json(json_file, pathlib.Path("/home/test/Git/python-toolbox"))
+    actual = security.from_json(json_file, pathlib.Path("/home/test/python-toolbox"))
     expected_issue = security.SecurityIssue(
+        file_name=expected["file_name"],
+        line=expected["line"],
+        column=expected["column"],
         cwe=expected["cwe"],
         test_id=expected["test_id"],
         description=expected["description"],
-        coordinates=expected["coordinates"],
         references=expected["references"]
     )
     assert list(actual) == [expected_issue]
