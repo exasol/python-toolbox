@@ -67,9 +67,7 @@ from exasol.toolbox.nox._shared import (
     _version,
     python_files,
 )
-from exasol.toolbox.nox._dependencies import (
-    dependency_check
-)
+
 
 # isort: on
 # fmt: on

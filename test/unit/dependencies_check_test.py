@@ -1,7 +1,7 @@
 import pytest
 import rich.console
 
-from exasol.toolbox.nox._dependencies import Dependencies, report_illegal
+from exasol.toolbox.nox._lint import Dependencies, report_illegal
 
 
 @pytest.mark.parametrize(
@@ -95,7 +95,7 @@ example-url2 = {url = "https://example.com/my-package-0.2.0.tar.gz"}
     ]
 )
 def test_dependency_check_parse(toml, expected):
-    dependencies =  dependencies = Dependencies.parse(toml)
+    dependencies = dependencies = Dependencies.parse(toml)
     assert dependencies.illegal == expected
 
 
