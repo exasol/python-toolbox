@@ -25,6 +25,7 @@ def dependency_check(session: Session) -> None:
 class Dependencies:
     def __init__(self, illegal: Dict[str, List[str]] | None):
         self._illegal = illegal or {}
+
     @staticmethod
     def parse(pyproject_toml: str) -> "Dependencies":
         def _source_filter(version) -> bool:
@@ -34,29 +35,30 @@ class Dependencies:
                 for specifier in ILLEGAL_SPECIFIERS
             )
 
-        def _extract_dependencies(section) -> List[str]:
-            dependencies = []
-            for name, version in section.items():
-                if _source_filter(version):
-                    dependencies.append(f"{name} = {version}")
-            return dependencies
+        def find_illegal(section) -> List[str]:
+            return [
+                f"{name} = {version}"
+                for name, version in section.items()
+                if _source_filter(version)
+            ]
         illegal: Dict[str, List[str]] = {}
         toml = tomlkit.loads(pyproject_toml)
         poetry = toml.get("tool", {}).get("poetry", {})
         part = poetry.get("dependencies", {})
-        dependencies_list = _extract_dependencies(part)
-        if dependencies_list:
-            illegal["tool.poetry.dependencies"] = dependencies_list
+        illegal_group = find_illegal(part)
+        if illegal_group:   
+            illegal["tool.poetry.dependencies"] = illegal_group
         part = poetry.get("dev", {}).get("dependencies", {})
-        dependencies_list = _extract_dependencies(part)
-        if dependencies_list:
-            illegal["tool.poetry.dev.dependencies"] = dependencies_list
+        illegal_group = find_illegal(part)
+        if illegal_group:
+            illegal["tool.poetry.dev.dependencies"] = illegal_group
         part = poetry.get("group", {})
         for group, content in part.items():
-            dependencies_list = _extract_dependencies(content.get("dependencies", {}))
-            if dependencies_list:
-                illegal[f"tool.poetry.group.{group}.dependencies"] = dependencies_list
+            illegal_group = find_illegal(content.get("dependencies", {}))
+            if illegal_group:
+                illegal[f"tool.poetry.group.{group}.dependencies"] = illegal_group
         return Dependencies(illegal)
+    
     @property
     def illegal(self) -> Dict[str, List[str]]:
         return self._illegal
