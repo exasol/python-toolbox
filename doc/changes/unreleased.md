@@ -1,8 +1,10 @@
-# Unreleased
+j Unreleased
 
 ## 🐞 Fixed
 
 * Fixed the issue with publishing new documentation after releasing a new version
+* Fixed the issue where master/main was not part of the multiversion documentation
+
 ## ✨ Added
 
 * #149: Added nox task to lint imports
