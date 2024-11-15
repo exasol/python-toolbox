@@ -410,7 +410,7 @@ def test_format_jsonl_removes_newline():
     "json_file,expected",
     [
         (
-            '''{
+            """{
     "results": [
         {
             "code": "1 import subprocess\\n2 from typing import Iterable\\n3 \\n",
@@ -434,7 +434,7 @@ def test_format_jsonl_removes_newline():
         }
     ]
 }
-            ''',
+            """,
             {
                 "file_name": "exasol/toolbox/git.py",
                 "line": 53,
@@ -444,11 +444,11 @@ def test_format_jsonl_removes_newline():
                 "description": "Consider possible security implications associated with the subprocess module.",
                 "references": (
                     "https://bandit.readthedocs.io/en/1.7.10/blacklists/blacklist_imports.html#b404-import-subprocess",
-                    "https://cwe.mitre.org/data/definitions/78.html"
-                )
-            }
+                    "https://cwe.mitre.org/data/definitions/78.html",
+                ),
+            },
         )
-    ]
+    ],
 )
 def test_from_json(json_file, expected):
     actual = security.from_json(json_file, pathlib.Path("/home/test/python-toolbox"))
@@ -459,6 +459,6 @@ def test_from_json(json_file, expected):
         cwe=expected["cwe"],
         test_id=expected["test_id"],
         description=expected["description"],
-        references=expected["references"]
+        references=expected["references"],
     )
     assert list(actual) == [expected_issue]

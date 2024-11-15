@@ -11,13 +11,14 @@ from dataclasses import (
 from enum import Enum
 from functools import partial
 from inspect import cleandoc
+from pathlib import Path
 from typing import (
     Generator,
     Iterable,
     Tuple,
 )
+
 import typer
-from pathlib import Path
 
 stdout = print
 stderr = partial(print, file=sys.stderr)
@@ -128,14 +129,16 @@ def from_json(report_str: str, prefix: Path) -> Iterable[SecurityIssue]:
             cwe=str(issue["issue_cwe"].get("id", "")),
             test_id=issue["test_id"],
             description=issue["issue_text"],
-            references=tuple(references)
+            references=tuple(references),
         )
 
 
 def issues_to_markdown(issues: Iterable[SecurityIssue]) -> str:
-    template = cleandoc("""
+    template = cleandoc(
+        """
         {header}{rows}
-    """)
+    """
+    )
 
     def _header():
         header = "# Security\n\n"
@@ -153,10 +156,7 @@ def issues_to_markdown(issues: Iterable[SecurityIssue]) -> str:
         row = row[:-5] + "|"
         return row
 
-    return template.format(
-        header=_header(),
-        rows="\n".join(_row(i) for i in issues)
-    )
+    return template.format(header=_header(), rows="\n".join(_row(i) for i in issues))
 
 
 def security_issue_title(issue: Issue) -> str:
@@ -216,6 +216,7 @@ def create_security_issue(issue: Issue, project="") -> Tuple[str, str]:
 CLI = typer.Typer()
 CVE_CLI = typer.Typer()
 CLI.add_typer(CVE_CLI, name="cve", help="Work with CVE's")
+
 
 class Format(str, Enum):
     Maven = "maven"
@@ -320,8 +321,10 @@ class PPrintFormats(str, Enum):
 
 @CLI.command(name="pretty-print")
 def json_issue_to_markdown(
-        json_file: typer.FileText = typer.Argument(mode="r", help="json file with issues to convert"),
-        path: Path = typer.Argument(default=Path("."), help="path to project root")
+    json_file: typer.FileText = typer.Argument(
+        mode="r", help="json file with issues to convert"
+    ),
+    path: Path = typer.Argument(default=Path("."), help="path to project root"),
 ) -> None:
     content = json_file.read()
     issues = from_json(content, path.absolute())
