@@ -1,5 +1,8 @@
 # Unreleased
 
+## 🐞 Fixed
+
+* Fixed the issue with publishing new documentation after releasing a new version
 ## ✨ Added
 
 * Added support to manually trigger documentation build
