@@ -13,7 +13,7 @@ from exasol.toolbox.metrics import (
 from noxconfig import PROJECT_CONFIG
 
 
-@nox.session(name="report", python=False)
+@nox.session(name="project:report", python=False)
 def report(session: Session) -> None:
     """
     Collects and generates metrics summary for the workspace
@@ -28,11 +28,12 @@ def report(session: Session) -> None:
                 * :code:`rm .coverage .lint.txt`
 
         * Run the following targets:
-            - :code:`nox -s coverage`
-            - :code:`nox -s lint`
+            - :code:`nox -s test:coverage`
+            - :code:`nox -s lint:code`
+            - :code:`nox -s lint:security`
     """
     formats = tuple(fmt.name.lower() for fmt in Format)
-    usage = "nox -s report -- [options]"
+    usage = "nox -s project:report -- [options]"
     parser = argparse.ArgumentParser(
         description="Generates status report for the project", usage=usage
     )
@@ -51,7 +52,7 @@ def report(session: Session) -> None:
     )
     if not all(file.exists() for file in required_files):
         session.error(
-            "Please make sure you run the `coverage`, `security` and the `lint` target first"
+            "Please make sure you run the `test:coverage`, `lint:security` and the `lint:code` target first"
         )
     sha1 = str(
         session.run("git", "rev-parse", "HEAD", external=True, silent=True)

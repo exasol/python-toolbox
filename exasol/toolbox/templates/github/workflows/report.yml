@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@0.15.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@0.16.0
 
       - name: Download Artifacts
         uses: actions/download-artifact@v4.1.8
@@ -35,7 +35,7 @@ jobs:
           cp security-python3.9/.security.json ../
 
       - name: Generate Report
-        run: poetry run nox -s report -- -- --format json | tee metrics.json
+        run: poetry run nox -s project:report -- -- --format json | tee metrics.json
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4.4.0
@@ -46,7 +46,7 @@ jobs:
       - name: Generate GitHub Summary
         run: |
           echo -e "# Summary\n" >> $GITHUB_STEP_SUMMARY
-          poetry run nox -s report -- -- --format markdown >> $GITHUB_STEP_SUMMARY
+          poetry run nox -s project:report -- -- --format markdown >> $GITHUB_STEP_SUMMARY
           echo -e "\n\n# Coverage\n" >> $GITHUB_STEP_SUMMARY
           poetry run coverage report -- --format markdown >> $GITHUB_STEP_SUMMARY
           echo  -e "\n\n# Static Code Analysis\n" >> $GITHUB_STEP_SUMMARY

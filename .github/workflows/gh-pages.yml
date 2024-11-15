@@ -10,13 +10,15 @@ jobs:
     steps:
       - name: SCM Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
 
       - name: Build Documentation
         run: |
-          poetry run python -m nox -s build-docs
+          poetry run python -m nox -s docs:multiversion
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.6.3
