@@ -1,4 +1,5 @@
 """This module contains security related CLI tools and code"""
+
 import json
 import re
 import subprocess

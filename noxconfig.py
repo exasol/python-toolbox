@@ -1,4 +1,5 @@
 """Configuration for nox based task runner"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -35,8 +36,15 @@ class Config:
     root: Path = Path(__file__).parent
     doc: Path = Path(__file__).parent / "doc"
     version_file: Path = Path(__file__).parent / "exasol" / "toolbox" / "version.py"
-    path_filters: Iterable[str] = ("dist", ".eggs", "venv", "metrics-schema", "project-template", "idioms")
+    path_filters: Iterable[str] = (
+        "dist",
+        ".eggs",
+        "venv",
+        "metrics-schema",
+        "project-template",
+        "idioms",
+    )
     plugins = [UpdateTemplates]
-    
+
 
 PROJECT_CONFIG = Config()

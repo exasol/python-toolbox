@@ -38,7 +38,7 @@ jobs:
 
       - name: Build Documentation
         run: |
-          poetry run python -m nox -s build-docs
+          poetry run python -m nox -s docs:build
 
   Lint:
     name: Linting (Python-${{ matrix.python-version }})
@@ -47,7 +47,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.8", "3.9", "3.10", "3.11" ]
+        python-version: [ "3.9", "3.10", "3.11" ]
 
     steps:
       - name: SCM Checkout
@@ -59,7 +59,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run lint
-        run: poetry run nox -s lint
+        run: poetry run nox -s lint:code
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4.4.0
@@ -75,7 +75,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.8", "3.9", "3.10", "3.11" ]
+        python-version: [ "3.9", "3.10", "3.11" ]
 
     steps:
       - name: SCM Checkout
@@ -87,7 +87,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run type-check
-        run: poetry run nox -s type-check
+        run: poetry run nox -s lint:typing
 
   Security:
     name: Security Checks (Python-${{ matrix.python-version }})
@@ -96,7 +96,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.8", "3.9", "3.10", "3.11" ]
+        python-version: [ "3.9", "3.10", "3.11" ]
 
     steps:
       - name: SCM Checkout
@@ -108,7 +108,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run security linter
-        run: poetry run nox -s security
+        run: poetry run nox -s lint:security
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4.4.0
@@ -126,7 +126,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.8", "3.9", "3.10", "3.11" ]
+        python-version: [ "3.9", "3.10", "3.11" ]
         exasol-version: [ "7.1.9" ]
 
     steps:
@@ -139,7 +139,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run Tests and Collect Coverage
-        run: poetry run nox -s coverage -- -- --db-version ${{ matrix.exasol-version }}
+        run: poetry run nox -s test:coverage -- -- --db-version ${{ matrix.exasol-version }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4.4.0
