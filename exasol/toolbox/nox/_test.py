@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from pathlib import Path
-from typing import (
-    Any,
+from collections.abc import (
     Iterable,
     MutableMapping,
 )
+from pathlib import Path
+from typing import Any
 
 import nox
 from nox import Session

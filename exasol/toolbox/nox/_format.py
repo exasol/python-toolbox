@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Iterable
 
 import nox
 from nox import Session
@@ -27,7 +27,7 @@ def _pyupgrade(session: Session, files: Iterable[str]) -> None:
         "poetry",
         "run",
         "pyupgrade",
-        "--py38-plus",
+        "--py39-plus",
         "--exit-zero-even-if-changed",
         *files,
     )
@@ -40,3 +40,9 @@ def fix(session: Session) -> None:
     _version(session, Mode.Fix, PROJECT_CONFIG.version_file)
     _pyupgrade(session, py_files)
     _code_format(session, Mode.Fix, py_files)
+
+
+@nox.session(name="project:format", python=False)
+def fmt_check(session: Session) -> None:
+    py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
+    _code_format(session=session, mode=Mode.Check, files=py_files)

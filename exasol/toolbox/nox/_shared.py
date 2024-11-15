@@ -1,17 +1,17 @@
 from __future__ import annotations
 
 import argparse
+from collections import ChainMap
+from collections.abc import (
+    Iterable,
+    MutableMapping,
+)
 from enum import (
     Enum,
     auto,
 )
 from pathlib import Path
-from typing import (
-    Any,
-    ChainMap,
-    Iterable,
-    MutableMapping,
-)
+from typing import Any
 
 from nox import Session
 

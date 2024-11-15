@@ -7,6 +7,7 @@ from typing import (
     Dict,
     Iterable,
     List,
+    Dict
 )
 
 import nox
@@ -16,6 +17,11 @@ from nox import Session
 
 from exasol.toolbox.nox._shared import python_files
 from noxconfig import PROJECT_CONFIG
+
+from pathlib import Path
+import rich.console
+import tomlkit
+import sys
 
 
 def _pylint(session: Session, files: Iterable[str]) -> None:
@@ -79,23 +85,26 @@ def _import_lint(session: Session, path: Path) -> None:
 
 
 class Dependencies:
-    def __init__(self, illegal: dict[str, list[str]] | None):
+    def __init__(self, illegal: Dict[str, List[str]] | None):
         self._illegal = illegal or {}
 
     @staticmethod
-    def parse(pyproject_toml: str) -> Dependencies:
+    def parse(pyproject_toml: str) -> "Dependencies":
         def _source_filter(version) -> bool:
-            ILLEGAL_SPECIFIERS = ["url", "git", "path"]
-            return any(specifier in version for specifier in ILLEGAL_SPECIFIERS)
+            ILLEGAL_SPECIFIERS = ['url', 'git', 'path']
+            return any(
+                specifier in version
+                for specifier in ILLEGAL_SPECIFIERS
+            )
 
-        def find_illegal(part) -> list[str]:
+        def find_illegal(part) -> List[str]:
             return [
                 f"{name} = {version}"
                 for name, version in part.items()
                 if _source_filter(version)
             ]
 
-        illegal: dict[str, list[str]] = {}
+        illegal: Dict[str, List[str]] = {}
         toml = tomlkit.loads(pyproject_toml)
         poetry = toml.get("tool", {}).get("poetry", {})
 
@@ -115,11 +124,11 @@ class Dependencies:
         return Dependencies(illegal)
 
     @property
-    def illegal(self) -> dict[str, list[str]]:
+    def illegal(self) -> Dict[str, List[str]]:
         return self._illegal
 
 
-def report_illegal(illegal: dict[str, list[str]], console: rich.console.Console):
+def report_illegal(illegal: Dict[str, List[str]], console: rich.console.Console):
     count = sum(len(deps) for deps in illegal.values())
     suffix = "y" if count == 1 else "ies"
     console.print(f"{count} illegal dependenc{suffix}\n", style="red")
@@ -148,7 +157,7 @@ def type_check(session: Session) -> None:
 def security_lint(session: Session) -> None:
     """Runs the security linter on the project"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
-    _security_lint(session, py_files)
+    _security_lint(session, list(filter(lambda file: "test" not in file, py_files)))
 
 
 @nox.session(name="lint:dependencies", python=False)

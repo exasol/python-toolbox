@@ -25,7 +25,7 @@ def update_version(line, version):
     return f"{keep}{updated}"
 
 
-def update_versions(lines, matcher, version) -> List[str]:
+def update_versions(lines, matcher, version) -> list[str]:
     result = []
     for line in lines:
         if is_update_required(line, matcher):

@@ -151,7 +151,7 @@ def security(file: Union[str, Path]) -> Rating:
     return Rating.bandit_rating(_bandit_scoring(security_lint["results"]))
 
 
-def _bandit_scoring(ratings: List[Dict[str, Any]]) -> float:
+def _bandit_scoring(ratings: list[dict[str, Any]]) -> float:
     def char(value: str, default: str = "H") -> str:
         if value in ["HIGH", "MEDIUM", "LOW"]:
             return value[0]
@@ -258,7 +258,7 @@ def _json(report: Report) -> str:
     def identity(obj: Any) -> Any:
         return obj
 
-    transformation: Dict[type, Callable[[Any], Any]] = defaultdict(
+    transformation: dict[type, Callable[[Any], Any]] = defaultdict(
         lambda: identity,
         {
             Rating: lambda value: f"{value:n}",
