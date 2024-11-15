@@ -228,6 +228,11 @@ def _create_parser():
         action="store_true",
         help="dump generated metadata and exit",
     )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="enable debug mode, which increase log verbosity, etc."
+    )
     return parser
 
 
@@ -247,6 +252,8 @@ def main(argv=None):
 
 
 def _main(args, argv):
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
     sourcedir_absolute = os.path.abspath(args.sourcedir)
     confdir_absolute = (
         os.path.abspath(args.confdir)
