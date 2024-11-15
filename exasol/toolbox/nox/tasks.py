@@ -68,5 +68,6 @@ from exasol.toolbox.nox._shared import (
     python_files,
 )
 
+
 # isort: on
 # fmt: on
