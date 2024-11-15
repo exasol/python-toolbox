@@ -1,5 +1,6 @@
 pre_commit_hooks
 =================
+
 In the pre_commit_hook package contains git commit hooks and similar functionalities.
 
 .. figure:: ../../_static/nothing-to-see-here.png

@@ -11,6 +11,7 @@ from dataclasses import (
 from enum import Enum
 from functools import partial
 from inspect import cleandoc
+from pathlib import Path
 from typing import (
     Generator,
     Iterable,
@@ -99,6 +100,63 @@ def from_maven(report: str) -> Iterable[Issue]:
                 coordinates=dependency_name,
                 references=tuple(references),
             )
+
+
+@dataclass(frozen=True)
+class SecurityIssue:
+    file_name: str
+    line: int
+    column: int
+    cwe: str
+    test_id: str
+    description: str
+    references: tuple
+
+
+def from_json(report_str: str, prefix: Path) -> Iterable[SecurityIssue]:
+    report = json.loads(report_str)
+    issues = report.get("results", {})
+    for issue in issues:
+        references = []
+        if issue["more_info"]:
+            references.append(issue["more_info"])
+        if issue.get("issue_cwe", {}).get("link", None):
+            references.append(issue["issue_cwe"]["link"])
+        yield SecurityIssue(
+            file_name=issue["filename"].replace(str(prefix) + "/", ""),
+            line=issue["line_number"],
+            column=issue["col_offset"],
+            cwe=str(issue["issue_cwe"].get("id", "")),
+            test_id=issue["test_id"],
+            description=issue["issue_text"],
+            references=tuple(references),
+        )
+
+
+def issues_to_markdown(issues: Iterable[SecurityIssue]) -> str:
+    template = cleandoc(
+        """
+        {header}{rows}
+    """
+    )
+
+    def _header():
+        header = "# Security\n\n"
+        header += "|File|line/<br>column|Cwe|Test ID|Details|\n"
+        header += "|---|:-:|:-:|:-:|---|\n"
+        return header
+
+    def _row(issue):
+        row = "|" + issue.file_name + "|"
+        row += f"line: {issue.line}<br>column: {issue.column}|"
+        row += issue.cwe + "|"
+        row += issue.test_id + "|"
+        for element in issue.references:
+            row += element + " ,<br>"
+        row = row[:-5] + "|"
+        return row
+
+    return template.format(header=_header(), rows="\n".join(_row(i) for i in issues))
 
 
 def security_issue_title(issue: Issue) -> str:
@@ -255,6 +313,23 @@ def create(
         std_err, issue_url = create_security_issue(issue, project)
         stderr(std_err)
         stdout(format_jsonl(issue_url, issue))
+
+
+class PPrintFormats(str, Enum):
+    markdown = "markdown"
+
+
+@CLI.command(name="pretty-print")
+def json_issue_to_markdown(
+    json_file: typer.FileText = typer.Argument(
+        mode="r", help="json file with issues to convert"
+    ),
+    path: Path = typer.Argument(default=Path("."), help="path to project root"),
+) -> None:
+    content = json_file.read()
+    issues = from_json(content, path.absolute())
+    issues = sorted(issues, key=lambda i: (i.file_name, i.cwe, i.test_id))
+    print(issues_to_markdown(issues))
 
 
 def format_jsonl(issue_url: str, issue: Issue) -> str:

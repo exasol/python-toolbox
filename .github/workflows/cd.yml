@@ -16,3 +16,9 @@ jobs:
     uses: ./.github/workflows/build-and-publish.yml
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+
+  publish-docs:
+    needs: [ cd-job ]
+    name: Publish Documentation
+    uses: ./.github/workflows/gh-pages.yml
+

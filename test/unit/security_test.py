@@ -1,5 +1,6 @@
 import json
 import os
+import pathlib
 import subprocess
 from contextlib import contextmanager
 from inspect import cleandoc
@@ -403,3 +404,61 @@ def test_format_jsonl_removes_newline():
     )
     actual = security.format_jsonl("my_issue_url\n", issue)
     assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "json_file,expected",
+    [
+        (
+            """{
+    "results": [
+        {
+            "code": "1 import subprocess\\n2 from typing import Iterable\\n3 \\n",
+            "col_offset": 12,
+            "end_col_offset": 17,
+            "filename": "/home/test/python-toolbox/exasol/toolbox/git.py",
+            "issue_confidence": "HIGH",
+            "issue_cwe": {
+                "id": 78,
+                "link": "https://cwe.mitre.org/data/definitions/78.html"
+            },
+            "issue_severity": "LOW",
+            "issue_text": "Consider possible security implications associated with the subprocess module.",
+            "line_number": 53,
+            "line_range": [
+                1
+            ],
+            "more_info": "https://bandit.readthedocs.io/en/1.7.10/blacklists/blacklist_imports.html#b404-import-subprocess",
+            "test_id": "B404",
+            "test_name": "blacklist"
+        }
+    ]
+}
+            """,
+            {
+                "file_name": "exasol/toolbox/git.py",
+                "line": 53,
+                "column": 12,
+                "cwe": "78",
+                "test_id": "B404",
+                "description": "Consider possible security implications associated with the subprocess module.",
+                "references": (
+                    "https://bandit.readthedocs.io/en/1.7.10/blacklists/blacklist_imports.html#b404-import-subprocess",
+                    "https://cwe.mitre.org/data/definitions/78.html",
+                ),
+            },
+        )
+    ],
+)
+def test_from_json(json_file, expected):
+    actual = security.from_json(json_file, pathlib.Path("/home/test/python-toolbox"))
+    expected_issue = security.SecurityIssue(
+        file_name=expected["file_name"],
+        line=expected["line"],
+        column=expected["column"],
+        cwe=expected["cwe"],
+        test_id=expected["test_id"],
+        description=expected["description"],
+        references=expected["references"],
+    )
+    assert list(actual) == [expected_issue]
