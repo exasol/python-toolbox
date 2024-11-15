@@ -28,7 +28,7 @@ def _test_command(
         else []
     )
     pytest_command = ["pytest", "-v", f"{path}"]
-    return base_command + coverage_command + pytest_command + context['fwd-args']
+    return base_command + coverage_command + pytest_command + context["fwd-args"]
 
 
 def _unit_tests(
@@ -72,14 +72,14 @@ def _coverage(
     session.run(*command)
 
 
-@nox.session(name="unit-tests", python=False)
+@nox.session(name="test:unit", python=False)
 def unit_tests(session: Session) -> None:
     """Runs all unit tests"""
     context = _context(session, coverage=False)
     _unit_tests(session, PROJECT_CONFIG, context)
 
 
-@nox.session(name="integration-tests", python=False)
+@nox.session(name="test:integration", python=False)
 def integration_tests(session: Session) -> None:
     """
     Runs the all integration tests
@@ -93,7 +93,7 @@ def integration_tests(session: Session) -> None:
     _integration_tests(session, PROJECT_CONFIG, context)
 
 
-@nox.session(name="coverage", python=False)
+@nox.session(name="test:coverage", python=False)
 def coverage(session: Session) -> None:
     """Runs all tests (unit + integration) and reports the code coverage"""
     context = _context(session, coverage=True)

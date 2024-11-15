@@ -3,7 +3,7 @@ name = "exasol-toolbox"
 packages = [
     { include = "exasol" },
 ]
-version = "0.15.0"
+version = "0.16.0"
 description = "Your one-stop solution for managing all standard tasks and core workflows of your Python project."
 authors = [
     "Nicola Coretti <nicola.coretti@exasol.com>"
@@ -48,7 +48,7 @@ pre-commit = ">=3.1.1,<4"
 prysk = {extras = ["pytest-plugin"], version = ">0.17.0,<1"}
 pylint = ">=2.15.4"
 pytest = ">=7.2.2,<9"
-python = "^3.8"
+python = "^3.9"
 pyupgrade = ">=2.38.2,<4.0.0"
 shibuya = ">=2024.5.14"
 sphinx = ">=5.3,<8"
@@ -56,20 +56,15 @@ sphinx-copybutton = "^0.5.0"
 sphinx-inline-tabs = "^2023.4.21"
 sphinx-design = ">=0.5.0,<1"
 typer = {extras = ["all"], version = ">=0.7.0"}
-
-
 bandit = {extras = ["toml"], version = "^1.7.9"}
+jinja2 = "^3.1.4"
+
 [tool.poetry.group.dev.dependencies]
 autoimport = "^1.4.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-
-[tool.poetry.plugins."console_scripts"]
-"sphinx-multiversion" = "exasol.toolbox.sphinx.multiversion.main:main"
-"version-check" = "exasol.toolbox.pre_commit_hooks.package_version:main"
 
 # Tooling
 [tool.coverage.run]
@@ -109,5 +104,10 @@ module = [
 ]
 ignore_errors = true
 
+[tool.poetry.plugins."console_scripts"]
+"version-check" = "exasol.toolbox.pre_commit_hooks.package_version:main"
+
+
 [tool.poetry.scripts]
 tbx = 'exasol.toolbox.tools.tbx:CLI'
+sphinx-multiversion = 'exasol.toolbox.sphinx.multiversion:main'

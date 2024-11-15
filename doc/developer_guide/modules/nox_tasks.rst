@@ -1,7 +1,7 @@
 nox_tasks
 =========
 
-import-lint (experimental)
+lint:import (experimental)
 __________________________
 
 `Import Linter <https://import-linter.readthedocs.io/en/stable/readme.html>`_

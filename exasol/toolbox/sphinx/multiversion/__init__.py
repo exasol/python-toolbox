@@ -10,18 +10,16 @@ We also took some patches from `this <https://github.com/samuel-emrys/sphinx-mul
 
 So huge thanks to the original author `Jan Holthuis <https://github.com/Holzhaus>`_ and all contributors.
 
-TODO's:
-* add standard default templates
-* add support for index page
-* add sorting support
-* add gh pages support
-* add command to deploy to gh-pages
-* add support for loading packed version template?
+
+NOTE:
+The original version and its defaults were minimally adjusted to work in Exasol's projects with the defaults and without adding an extra template. The [Shibuya](https://github.com/lepture/shibuya) theme is expected to be used for HTML, which already evaluates the versions field in the HTML context and generates an appropriate selector for the versions.
 """
 
 from exasol.toolbox.sphinx.multiversion.main import main
+from exasol.toolbox.sphinx.multiversion.sphinx import setup
+from exasol.toolbox.version import VERSION
 
-__version__ = "0.1.0"
+__version__ = VERSION
 
 __all__ = [
     "setup",

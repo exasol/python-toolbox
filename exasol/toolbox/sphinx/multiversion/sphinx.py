@@ -9,11 +9,14 @@ from sphinx import config as sphinx_config
 from sphinx.locale import _
 from sphinx.util import i18n as sphinx_i18n
 
+from exasol.toolbox.release import Version as ExasolVersion
+from exasol.toolbox.version import VERSION as PLUGIN_VERSION
+
 logger = logging.getLogger(__name__)
 
 DATE_FMT = "%Y-%m-%d %H:%M:%S %z"
-DEFAULT_TAG_WHITELIST = r"^.*$"
-DEFAULT_BRANCH_WHITELIST = r"^.*$"
+DEFAULT_TAG_WHITELIST = r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$"
+DEFAULT_BRANCH_WHITELIST = r"master|main"
 DEFAULT_REMOTE_WHITELIST = None
 DEFAULT_RELEASED_PATTERN = r"^tags/.*$"
 DEFAULT_OUTPUTDIR_FORMAT = r"{ref.name}"
@@ -94,8 +97,10 @@ class VersionInfo:
         ]
 
     def __iter__(self):
-        yield from self.tags
         yield from self.branches
+        yield from sorted(
+            self.tags, key=lambda t: ExasolVersion.from_string(t.name), reverse=True
+        )
 
     def __getitem__(self, name):
         v = self.metadata.get(name)
@@ -183,7 +188,8 @@ def html_page_context(app, pagename, templatename, context, doctree):
     context["vhasdoc"] = versioninfo.vhasdoc
     context["vpathto"] = versioninfo.vpathto
 
-    context["current_version"] = versioninfo[app.config.smv_current_version]
+    current = versioninfo[app.config.smv_current_version]
+    context["current_version"] = current.name
     context["latest_version"] = versioninfo[app.config.smv_latest_version]
     context["html_theme"] = app.config.html_theme
 
@@ -232,7 +238,7 @@ def setup(app):
     app.add_config_value("smv_metadata", {}, "html")
     app.add_config_value("smv_metadata_path", "", "html")
     app.add_config_value("smv_current_version", "", "html")
-    app.add_config_value("smv_latest_version", "master", "html")
+    app.add_config_value("smv_latest_version", "main", "html")
     app.add_config_value("smv_tag_whitelist", DEFAULT_TAG_WHITELIST, "html")
     app.add_config_value("smv_branch_whitelist", DEFAULT_BRANCH_WHITELIST, "html")
     app.add_config_value("smv_remote_whitelist", DEFAULT_REMOTE_WHITELIST, "html")
@@ -247,7 +253,7 @@ def setup(app):
     app.connect("config-inited", config_inited)
 
     return {
-        "version": "0.2",
+        "version": PLUGIN_VERSION,
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }
