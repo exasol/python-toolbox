@@ -35,23 +35,24 @@ class Dependencies:
                 for specifier in ILLEGAL_SPECIFIERS
             )
 
-        def find_illegal(section) -> List[str]:
+        def find_illegal(part) -> List[str]:
             return [
                 f"{name} = {version}"
-                for name, version in section.items()
+                for name, version in part.items()
                 if _source_filter(version)
             ]
         illegal: Dict[str, List[str]] = {}
         toml = tomlkit.loads(pyproject_toml)
         poetry = toml.get("tool", {}).get("poetry", {})
+
         part = poetry.get("dependencies", {})
-        illegal_group = find_illegal(part)
-        if illegal_group:   
+        if illegal_group := find_illegal(part):
             illegal["tool.poetry.dependencies"] = illegal_group
+
         part = poetry.get("dev", {}).get("dependencies", {})
-        illegal_group = find_illegal(part)
-        if illegal_group:
+        if illegal_group := find_illegal(part):
             illegal["tool.poetry.dev.dependencies"] = illegal_group
+
         part = poetry.get("group", {})
         for group, content in part.items():
             illegal_group = find_illegal(content.get("dependencies", {}))
