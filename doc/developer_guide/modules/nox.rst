@@ -1,5 +1,6 @@
 nox
 ===
+
 The nox package contains nox related functionalities like pre defined nox tasks.
 
 .. figure:: ../../_static/nothing-to-see-here.png

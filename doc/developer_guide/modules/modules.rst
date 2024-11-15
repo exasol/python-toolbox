@@ -6,5 +6,6 @@ Modules
 
     sphinx/sphinx
     nox
+    nox_tasks
     pre_commit_hooks
 
