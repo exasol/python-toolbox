@@ -20,7 +20,7 @@ jobs:
 
       - name: Build Documentation
         run: |
-          poetry run sphinx-multiversion doc/ .html-documentation 
+          poetry run nox -s docs:multiversion
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.6.0
