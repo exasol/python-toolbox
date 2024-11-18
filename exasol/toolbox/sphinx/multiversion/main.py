@@ -231,7 +231,7 @@ def _create_parser():
     parser.add_argument(
         "--debug",
         action="store_true",
-        help="enable debug mode, which increase log verbosity, etc."
+        help="enable debug mode with increased log verbosity, etc."
     )
     return parser
 
