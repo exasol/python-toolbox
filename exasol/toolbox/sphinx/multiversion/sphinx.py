@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 DATE_FMT = "%Y-%m-%d %H:%M:%S %z"
 DEFAULT_TAG_WHITELIST = r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$"
-DEFAULT_BRANCH_WHITELIST = r"master|main"
+DEFAULT_BRANCH_WHITELIST = r"^(master|main)"
 DEFAULT_REMOTE_WHITELIST = None
 DEFAULT_RELEASED_PATTERN = r"^tags/.*$"
 DEFAULT_OUTPUTDIR_FORMAT = r"{ref.name}"

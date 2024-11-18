@@ -59,7 +59,7 @@ def load_sphinx_config_worker(q, confpath, confoverrides, add_defaults):
             )
             current_config.add(
                 "smv_branch_whitelist",
-                sphinx.DEFAULT_TAG_WHITELIST,
+                sphinx.DEFAULT_BRANCH_WHITELIST,
                 "html",
                 str,
             )
@@ -228,6 +228,11 @@ def _create_parser():
         action="store_true",
         help="dump generated metadata and exit",
     )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="enable debug mode with increased log verbosity, etc."
+    )
     return parser
 
 
@@ -247,6 +252,8 @@ def main(argv=None):
 
 
 def _main(args, argv):
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
     sourcedir_absolute = os.path.abspath(args.sourcedir)
     confdir_absolute = (
         os.path.abspath(args.confdir)
@@ -279,13 +286,13 @@ def _main(args, argv):
     conffile = os.path.join(confdir, "conf.py")
 
     # Get git references
-    gitrefs = git.get_refs(
+    gitrefs = list(git.get_refs(
         str(gitroot),
         config.smv_tag_whitelist,
         config.smv_branch_whitelist,
         config.smv_remote_whitelist,
         files=(sourcedir, conffile),
-    )
+    ))
 
     # Order git refs
     if config.smv_prefer_remote_refs:
@@ -574,14 +581,22 @@ def _main(args, argv):
             with open(
                 os.path.join(args.outputdir, "index.html"), "w", encoding="utf-8"
             ) as f:
-                versions = [
+                logger.debug("Picked up Git references: %s", [ref.name for ref in gitrefs])
+                tag_versions = [
                     ref.name
                     for ref in gitrefs
                     if re.match(config.smv_tag_whitelist, ref.name)
                 ]
-                versions = sorted(
-                    versions, key=lambda v: ExasolVersion.from_string(v), reverse=True
+                tag_versions = sorted(
+                    tag_versions, key=lambda v: ExasolVersion.from_string(v), reverse=True
                 )
+                branches = [
+                    ref.name
+                    for ref in gitrefs
+                    if re.match(config.smv_branch_whitelist, ref.name)
+                ]
+                versions = branches + tag_versions
+                logger.debug("Selected versions for documentation: %s", versions)
                 f.write(template.render(version=versions[0]))
 
     return 0
