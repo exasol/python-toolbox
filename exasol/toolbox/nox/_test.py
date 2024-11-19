@@ -43,14 +43,14 @@ def _integration_tests(
 ) -> None:
     pm = NoxTasks.plugin_manager(config)
 
-    # run pre intergration test plugins
+    # run pre integration test plugins
     pm.hook.pre_integration_tests_hook(session=session, config=config, context={})
 
     # run
     command = _test_command(config.root / "test" / "integration", config, context)
     session.run(*command)
 
-    # run post intergration test plugins
+    # run post integration test plugins
     pm.hook.post_integration_tests_hook(session=session, config=config, context={})
 
 
