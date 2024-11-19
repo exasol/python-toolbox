@@ -7,3 +7,7 @@
 ## 🔧 Changed
 
 * Updated gh-pages workflow to use the new multiversion nox task target
+
+## 🐞 Fixed
+
+* Removed the `test` file filter from `lint:security`
