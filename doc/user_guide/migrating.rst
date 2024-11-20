@@ -35,11 +35,75 @@ This can be done incrementally for different checks of your project, such as lin
 -----------------------
 Configure code quality and settings in the :code:`pyproject.toml` and establish a baseline for your project. If necessary, create tickets for further improvements, especially if major parts of your code need suppression, e.g., in the mypy configuration.
 
+TODO: Add config examples and links to config
+
 4. Introduce GitHub Workflows
 -----------------------------
-Install the GitHub workflow provided by the :code:`python-toolbox` for futher details refer to the section :ref:`GitHub Workflows`.
+Install the GitHub workflows provided by the :code:`python-toolbox` for futher details refer to the section :ref:`GitHub Workflows`.
 
 .. attention::
    This is just guidance. If you have a good understanding of the standard project setup, technologies, and tools used, feel free to diverge at any point or exercise your own judgment.
 
 .. _Nox: https://github.com/exasol/python-toolbox/pull/289
+
+
+Migration Progess
++++++++++++++++++
+
+Could be tracked in a format and based on the information listed in the example bellow.
+
+.. list-table:: Migration Progress
+    :widths: 20 15 15 15 15 15 15 15
+    :header-rows: 1
+
+    * - Project
+      - pyproject.toml
+      - poetry
+      - PyPI
+      - Sphinx Docs
+      - nox
+      - toolbox-tasks
+      - toolbox-workflows
+    * - Project 1
+      - ✓
+      - ✓
+      - ✓
+      - ✓
+      - ✓
+      - ✓
+      - ✓
+    * - Project 2
+      - ✗
+      - ✗
+      - ✗
+      - ✗
+      - ✗
+      - ✗
+      - ✗
+    * - Project 3
+      - ✓
+      - ✗
+      - ✗
+      - ✓
+      - ✓
+      - ✗
+      - ✗
+    * - Project 4
+      - ✓
+      - ✓
+      - ✓
+      - ✗
+      - ✗
+      - ✗
+      - ✗
+
+Legend
+
+* Project
+* pyproject.toml
+* poetr
+* PyPI
+* Sphinx Docs
+* nox
+* toolbox-tasks
+* toolbox-workflows
