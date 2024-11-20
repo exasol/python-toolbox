@@ -142,8 +142,8 @@ and adjust the following settings to your project needs:
     :language: toml
     :start-after: # Tooling
 
-5. Make the toolbox task available
-++++++++++++++++++++++++++++++++++
+5. Make the toolbox tasks available
++++++++++++++++++++++++++++++++++++
 In order to use the standard toolbox task via nox, just import them in your *noxfile.py*.
 If you only need the standard tasks provided by the toolbox your *noxfile.py* is straight
 forward and you just can use the example *noxfile.py* bellow.
