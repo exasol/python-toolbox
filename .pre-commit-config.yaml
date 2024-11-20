@@ -1,4 +1,4 @@
-default_stages: [ commit ]
+default_stages: [ pre-commit, pre-push ]
 repos:
 
   - repo: local
@@ -6,10 +6,20 @@ repos:
       - id: code-format
         name: code-format
         types: [ python ]
-        files: "pyproject.toml"
         pass_filenames: false
         language: system
-        entry: poetry run nox -s fix
+        entry: poetry run nox -s project:fix
+        stages: [ pre-commit ]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-yaml
+        stages: [ pre-commit ]
+      - id: end-of-file-fixer
+        stages: [ pre-commit ]
+      - id: trailing-whitespace
+        stages: [ pre-commit ]
 
   - repo: local
     hooks:
@@ -18,7 +28,8 @@ repos:
         types: [ python ]
         pass_filenames: false
         language: system
-        entry: poetry run nox -s type-check
+        entry: poetry run nox -s lint:typing
+        stages: [ pre-push ]
 
   - repo: local
     hooks:
@@ -27,11 +38,5 @@ repos:
         types: [ python ]
         pass_filenames: false
         language: system
-        entry: poetry run nox -s lint
-
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
-    hooks:
-      - id: check-yaml
-      - id: end-of-file-fixer
-      - id: trailing-whitespace
+        entry: poetry run nox -s lint:code
+        stages: [ pre-push ]

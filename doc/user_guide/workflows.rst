@@ -1,26 +1,25 @@
-Github Workflows
+GitHub Workflows
 ================
 
-The exasol-toolbox ships with various GitHub workflows. By default, we suggest installing all of them,
-while the core workflows are:
+.. figure:: ../_static/github-workflows.png
+    :alt: GitHub Workflow Example
 
-**Workflows**:
+The exasol-toolbox ships with various GitHub workflow templates. To leverage the full feature set of the toolbox, you should use them.
 
-* CI
-    Verifies PRs and regularly checks the project.
+.. attention::
 
-* CD
-    Publishes releases of the project.
+   Generally, it is advised to install/use all workflows provided by the toolbox as a whole due to their interdependencies.
 
-* PR-Merge
-    Validates merges and updates the documentation.
+   However, if you know what you are doing and are well-versed in GitHub workflows and actions, you can use just select individual ones or use them as inspiration. Still, an individual approach is likely to be more error-prone.
+
+.. note::
+
+    The toolbox command itself, :code:`tbx`, provides various CLI functions to help you maintain those workflows.
+    For further help, run the command :code:`tbx workflow --help`.
 
 
-The toolbox command itself, :code:`tbx`, provides various CLI functions to help you maintain those workflows.
-For further help, run the command :code:`tbx workflow --help`.
-
-1. Configure your project
-+++++++++++++++++++++++++
+1. Configure the GitHub project
++++++++++++++++++++++++++++++++
 
 * Make sure your GitHub project has access to a deployment token for PyPi with the following name: **PYPI_TOKEN**. It should be available to the repository either as an Organization-, Repository-, or Environment-secret.
 

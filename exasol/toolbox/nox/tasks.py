@@ -36,7 +36,6 @@ def check(session: Session) -> None:
     context = _context(session, coverage=True)
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
     _version(session, Mode.Check, PROJECT_CONFIG.version_file)
-    _pyupgrade(session, py_files)
     _code_format(session, Mode.Check, py_files)
     _pylint(session, py_files)
     _type_check(session, py_files)
