@@ -161,10 +161,12 @@ forward and you just can use the example *noxfile.py* bellow.
 
 
 
-6. Setup the pre-commit hooks
-+++++++++++++++++++++++++++++
+6. Setup the pre-commit hooks [optional]
+++++++++++++++++++++++++++++++++++++++++
 
-#. Add the following .pre-commit-config.yaml to your project root
+#. Add a :code:`.pre-commit-config.yaml` file to your project root
+
+    If you want to reuse Nox tasks in the pre-commit hooks, feel free to get some inspiration from the Python toolbox itself:
 
     .. literalinclude:: ../../.pre-commit-config.yaml
        :language: yaml
