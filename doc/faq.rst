@@ -16,3 +16,10 @@ There are several methods to configure your shell:
     1. For a one-time setup: :code:`PYTHONPATH=\`pwd\` nox -s task`
     2. For a general setup: :code:`export PYTHONPATH=`pwd``
     3. Alternatively, tools like `direnv <https://direnv.net>`_ can be used.
+
+.. _faq_duplicated_label_error:
+
+Duplicated label error when building documentation
+--------------------------------------------------
+
+Similar error to :code:`Warning, treated as error: integration-test-docker-environment/doc/changes/changes_0.10.0.md:5:duplicate label summary, other instance in integration-test-docker-environment/doc/changes/changes_0.1.0.md'`, might be caused by sphinx extension `sphinx.ext.autosectionlabel`. Try to remove this extension in `doc/conf.py`.
