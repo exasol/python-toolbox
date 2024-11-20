@@ -175,7 +175,7 @@ forward and you just can use the example *noxfile.py* bellow.
 
     .. code-block:: shell
 
-        poetry run pre-commit install
+        poetry run pre-commit install --hook-type pre-commit --hook-type pre-push
 
 7. Go 🥜
 +++++++++++++
