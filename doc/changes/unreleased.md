@@ -1,6 +1,5 @@
 # Unreleased
 
-
 ## 🔧 Changed
 
 * Excluded pyupgrade from project check due to its destructive nature
@@ -14,4 +13,5 @@
 ## 📚 Documentation
 
 * Fixed various documentation typos
+* Fixed version information in GitHub Actions reference
 * Updated the `pre-commit` related documentation
