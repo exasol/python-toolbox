@@ -14,7 +14,7 @@ Parameters
    * - python-version
      - Python version to use
      - True
-     - 3.8
+     - 3.10
    * - poetry-version
      - Poetry version to use
      - True
