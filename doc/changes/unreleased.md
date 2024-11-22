@@ -13,5 +13,6 @@
 ## 📚 Documentation
 
 * Fixed various documentation typos
+* Added a toolbox migration guide
 * Fixed version information in GitHub Actions reference
 * Updated the `pre-commit` related documentation

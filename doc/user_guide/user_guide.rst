@@ -10,4 +10,4 @@
     getting_started
     workflows
     customization
-
+    migrating

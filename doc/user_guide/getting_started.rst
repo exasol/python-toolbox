@@ -9,9 +9,9 @@ Your usage of the `exasol-toolbox` will likely fall into one of two scenarios:
 
 #. Creation of a new project.
 
-    If you are starting a new project, please read the section :ref:`Create a New Project with Exasol-Toolbox Support <new>`.
+    If you are starting a new project, please read the section :ref:`Create a New Project with Exasol-Toolbox Support <new project>`.
 
-.. _new:
+.. _new project:
 
 Create a New Project with Exasol-Toolbox Support
 -------------------------------------------------
@@ -177,6 +177,8 @@ forward and you just can use the example *noxfile.py* bellow.
 
         poetry run pre-commit install --hook-type pre-commit --hook-type pre-push
 
+.. _toolbox tasks:
+
 7. Go 🥜
 +++++++++++++
 You are ready to use the toolbox. With *nox -l* you can list all available tasks.
@@ -206,3 +208,7 @@ You are ready to use the toolbox. With *nox -l* you can list all available tasks
 
 
 Enjoy!
+
+.. note::
+
+    The targets and their names may change over time, so the list below may not be up to date, as it is not automatically generated yet. Therefore, if you find discrepancies, please `submit a quick PR <https://github.com/exasol/python-toolbox/compare>`_ to address them.
