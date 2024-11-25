@@ -18,6 +18,7 @@ def test_retrieve_workflow_templates():
         "merge-gate": "merge-gate.yml",
         "pr-merge": "pr-merge.yml",
         "report": "report.yml",
+        "slow-checks": "slow-checks.yml",
     }
     actual = template._templates(subpackage)
     actual = {name: path.name for name, path in actual.items()}
@@ -54,6 +55,7 @@ def test_retrieve_issue_templates():
                 "merge-gate": "merge-gate.yml",
                 "pr-merge": "pr-merge.yml",
                 "report": "report.yml",
+                "slow-checks": "slow-checks.yml",
             },
         ),
         (
@@ -105,6 +107,7 @@ def test_retrieve_templates(subpackage, expected):
                 "merge-gate.yml",
                 "pr-merge.yml",
                 "report.yml",
+                "slow-checks.yml",
             ],
         ),
     ],
