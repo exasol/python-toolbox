@@ -14,10 +14,6 @@ jobs:
 
   slow-checks:
     name: Slow
-    # Even though the environment "manual-approval" will be created automatically,
-    # it still needs to be configured to require interactive review.
-    # See project settings on GitHub (Settings / Environments / manual-approval).
-    environment: manual-approval
     uses: ./.github/workflows/slow-checks.yml
 
   # This job ensures inputs have been executed successfully.
