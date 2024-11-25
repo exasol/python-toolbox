@@ -56,8 +56,12 @@ def _context_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    parser.add_argument("--db-version")
-    parser.add_argument("--coverage", action="store_true")
+    parser.add_argument(
+        "--db-version", default="7.1.9", help="Specify the Exasol DB version to be used"
+    )
+    parser.add_argument(
+        "--coverage", action="store_true", help="Enable the collection of coverage data"
+    )
     return parser
 
 
