@@ -10,3 +10,4 @@ List all available workflows
   merge-gate
   pr-merge
   report
+  slow-checks

@@ -30,7 +30,8 @@ jobs:
       - name: Copy Artifacts into Root Folder
         working-directory: ./artifacts
         run: |
-          cp coverage-python3.9/.coverage ../
+          poetry run coverage combine --keep coverage-python3.9*/.coverage
+          cp .coverage ../
           cp lint-python3.9/.lint.txt ../
           cp security-python3.9/.security.json ../
 

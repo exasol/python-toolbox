@@ -14,3 +14,4 @@ Check if all workflows have been installed
   merge-gate.yml
   pr-merge.yml
   report.yml
+  slow-checks.yml

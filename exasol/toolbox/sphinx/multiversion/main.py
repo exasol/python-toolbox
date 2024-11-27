@@ -231,7 +231,7 @@ def _create_parser():
     parser.add_argument(
         "--debug",
         action="store_true",
-        help="enable debug mode with increased log verbosity, etc."
+        help="enable debug mode with increased log verbosity, etc.",
     )
     return parser
 
@@ -286,13 +286,15 @@ def _main(args, argv):
     conffile = os.path.join(confdir, "conf.py")
 
     # Get git references
-    gitrefs = list(git.get_refs(
-        str(gitroot),
-        config.smv_tag_whitelist,
-        config.smv_branch_whitelist,
-        config.smv_remote_whitelist,
-        files=(sourcedir, conffile),
-    ))
+    gitrefs = list(
+        git.get_refs(
+            str(gitroot),
+            config.smv_tag_whitelist,
+            config.smv_branch_whitelist,
+            config.smv_remote_whitelist,
+            files=(sourcedir, conffile),
+        )
+    )
 
     # Order git refs
     if config.smv_prefer_remote_refs:
@@ -581,14 +583,18 @@ def _main(args, argv):
             with open(
                 os.path.join(args.outputdir, "index.html"), "w", encoding="utf-8"
             ) as f:
-                logger.debug("Picked up Git references: %s", [ref.name for ref in gitrefs])
+                logger.debug(
+                    "Picked up Git references: %s", [ref.name for ref in gitrefs]
+                )
                 tag_versions = [
                     ref.name
                     for ref in gitrefs
                     if re.match(config.smv_tag_whitelist, ref.name)
                 ]
                 tag_versions = sorted(
-                    tag_versions, key=lambda v: ExasolVersion.from_string(v), reverse=True
+                    tag_versions,
+                    key=lambda v: ExasolVersion.from_string(v),
+                    reverse=True,
                 )
                 branches = [
                     ref.name
