@@ -118,7 +118,7 @@ jobs:
           include-hidden-files: true
 
   Format:
-    name: Format Check 3.9
+    name: Format Check
     runs-on: ubuntu-latest
 
     steps:
