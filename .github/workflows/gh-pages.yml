@@ -23,7 +23,7 @@ jobs:
           poetry run nox -s docs:multiversion
 
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.6.3
+        uses: JamesIves/github-pages-deploy-action@v4.7.1
         with:
           branch: gh-pages
           folder: .html-documentation
