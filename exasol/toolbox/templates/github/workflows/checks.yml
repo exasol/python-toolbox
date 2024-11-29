@@ -125,12 +125,7 @@ jobs:
 
   Format:
     name: Format Check (Python-${{ matrix.python-version }})
-    needs: [ Version-Check ]
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [ "3.9" ]
 
     steps:
       - name: SCM Checkout
@@ -139,8 +134,7 @@ jobs:
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@0.18.0
         with:
-          python-version: ${{ matrix.python-version }}
-
+          python-version: "3.9"
       - name: Run format check
         run: poetry run nox -s project:format
 
