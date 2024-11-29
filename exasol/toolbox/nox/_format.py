@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
+from typing import Iterable
 
 import nox
 from nox import Session
@@ -27,7 +27,7 @@ def _pyupgrade(session: Session, files: Iterable[str]) -> None:
         "poetry",
         "run",
         "pyupgrade",
-        "--py39-plus",
+        "--py38-plus",
         "--exit-zero-even-if-changed",
         *files,
     )
