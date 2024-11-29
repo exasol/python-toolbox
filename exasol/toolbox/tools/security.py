@@ -4,6 +4,10 @@ import json
 import re
 import subprocess
 import sys
+from collections.abc import (
+    Generator,
+    Iterable,
+)
 from dataclasses import (
     asdict,
     dataclass,
@@ -12,11 +16,7 @@ from enum import Enum
 from functools import partial
 from inspect import cleandoc
 from pathlib import Path
-from typing import (
-    Generator,
-    Iterable,
-    Tuple,
-)
+from typing import Tuple
 
 import typer
 
@@ -48,7 +48,7 @@ def _issues_as_json_str(issues):
         yield json.dumps(issue)
 
 
-def gh_security_issues() -> Generator[Tuple[str, str], None, None]:
+def gh_security_issues() -> Generator[tuple[str, str], None, None]:
     """
     Yields issue-id, cve-id pairs for all (closed, open) issues associated with CVEs
 
@@ -187,7 +187,7 @@ def security_issue_body(issue: Issue) -> str:
     )
 
 
-def create_security_issue(issue: Issue, project="") -> Tuple[str, str]:
+def create_security_issue(issue: Issue, project="") -> tuple[str, str]:
     # fmt: off
     command = [
         "gh", "issue", "create",

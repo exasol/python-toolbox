@@ -123,9 +123,24 @@ jobs:
           path: .security.json
           include-hidden-files: true
 
+  Format:
+    name: Format Check (Python-${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@0.18.0
+        with:
+          python-version: "3.9"
+      - name: Run format check
+        run: poetry run nox -s project:format
+
   Tests:
     name: Unit-Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
-    needs: [ Documentation, Lint, Type-Check, Security]
+    needs: [ Documentation, Lint, Type-Check, Security, Format ]
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.ALTERNATIVE_GITHUB_TOKEN ||  secrets.GITHUB_TOKEN }}
