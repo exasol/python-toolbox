@@ -1,0 +1,34 @@
+default_theme := 'solarized'
+
+@default:
+    just --list
+
+@list-themes:
+    echo "* black"
+    echo "* white"
+    echo "* league"
+    echo "* beige"
+    echo "* night"
+    echo "* serif"
+    echo "* simple"
+    echo "* solarized"
+    echo "* moon"
+    echo "* dracula"
+    echo "* sky"
+    echo "* blood"
+
+
+@build theme=default_theme:
+    echo "Building Presentation..."
+    pandoc --to=revealjs --embed-resources --standalone \
+    --resource-path=./images \
+    00-metadata.yml  *.md \
+    --slide-level=3 --variable "progress=true" \
+    --variable "mainfont=Courier" \
+    --highlight-style haddock \
+    --include-in-header=slides.css \
+    -o python-toolbox.html
+    #--css style.css # --variable "theme={{theme}}" \
+
+@open:
+    xdg-open python-toolbox.html
