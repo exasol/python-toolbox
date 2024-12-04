@@ -9,6 +9,9 @@
 ## 🐞 Fixed
 
 * Fixed syntax error in the `check.yml` template which resulted in an invalid workflow file
+* Fixed context forwarding to plugins hooking into `pre` and `post` integration test hooks
+    - `pre_integration_tests_hook(self, session, config, context)`
+    - `post_integration_tests_hook(self, session, config, context)`
 
 ## 📚 Documentation
 
