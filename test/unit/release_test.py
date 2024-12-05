@@ -76,7 +76,7 @@ def test_version_from_poetry(poetry_version, version, expected):
             Version(0, 1, 0),
             cleandoc(
                 """
-                ## Added 
+                ## Added
                 * Some great feature
 
                 ## Refactored
@@ -88,7 +88,7 @@ def test_version_from_poetry(poetry_version, version, expected):
                 """
                 # 0.1.0 - 2024-02-07
 
-                ## Added 
+                ## Added
                 * Some great feature
 
                 ## Refactored
@@ -126,8 +126,9 @@ def unreleased_md(tmp_path):
 
 
 def test_extract_release_notes(unreleased_md):
-    expected = cleandoc(
-        """
+    expected = (
+        cleandoc(
+            """
         ## ✨ Added
         * Added Awesome feature
 
@@ -137,6 +138,8 @@ def test_extract_release_notes(unreleased_md):
         ## 🐞 Fixed
         * Fixed nasty bug
         """
+        )
+        + "\n"
     )
     actual = extract_release_notes(unreleased_md)
     assert expected == actual

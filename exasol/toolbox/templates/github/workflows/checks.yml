@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@0.18.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@0.19.0
 
       - name: Check Version(s)
         run: |
@@ -40,7 +40,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@0.18.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@0.19.0
 
       - name: Build Documentation
         run: |
@@ -60,7 +60,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@0.18.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@0.19.0
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -88,7 +88,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@0.18.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@0.19.0
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -109,7 +109,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@0.18.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@0.19.0
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -132,7 +132,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@0.18.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@0.19.0
         with:
           python-version: "3.9"
       - name: Run format check
@@ -155,7 +155,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@0.18.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@0.19.0
         with:
           python-version: ${{ matrix.python-version }}
 

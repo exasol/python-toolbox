@@ -92,6 +92,7 @@ def extract_release_notes(file: str | Path) -> str:
         lines = f.readlines()[1:]
         content = "".join(lines)
         content = cleandoc(content)
+        content += "\n"
     return content
 
 
