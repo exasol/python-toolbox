@@ -11,6 +11,7 @@
 
 ## 🐞 Fixed
 
+* Fixed whitespace and final newline behavior in `release:prepare` to work well with `trailing whitespace` commit hook
 * Fixed syntax error in the `check.yml` template which resulted in an invalid workflow file
 * Fixed context forwarding to plugins hooking into `pre` and `post` integration test hooks
     - `pre_integration_tests_hook(self, session, config, context)`
