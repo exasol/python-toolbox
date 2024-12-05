@@ -1,6 +1,6 @@
 name: Publish Documentation
 
-on: 
+on:
   workflow_call:
   workflow_dispatch:
 
