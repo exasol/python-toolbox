@@ -2,6 +2,7 @@
 
 ## 🔧 Changed
 
+* Add `__version__` member to generated `version.py` for comatibility with other versions schemes
 * Excluded pyupgrade from project check due to its destructive nature
 * Updated cookiecutter template
     - removed obsolete template file `version.html`
