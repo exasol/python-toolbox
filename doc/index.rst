@@ -49,8 +49,8 @@ Documentation of the Exasol-Toolbox
 
         Detailed descriptions, syntax, and usage examples for the API provided by this project.
 
-    .. grid-item-card:: :octicon:`repo` Design Document
-        :link: design_document
+    .. grid-item-card:: :octicon:`repo` Design Documents
+        :link: design_documents
         :link-type: ref
 
         Document outlining the architectural and design principles and decisions in this project.
