@@ -5,13 +5,13 @@ from argparse import (
     Namespace,
 )
 from collections import namedtuple
+from collections.abc import Iterable
 from inspect import cleandoc
 from pathlib import Path
 from shutil import which
 from typing import (
     Any,
     Dict,
-    Iterable,
     Union,
 )
 
@@ -49,8 +49,8 @@ class CommitHookError(Exception):
 def version_from_python_module(path: Path) -> Version:
     """Retrieve version information from the `version` module"""
     with open(path, encoding="utf-8") as file:
-        _locals: Dict[str, Any] = {}
-        _globals: Dict[str, Any] = {}
+        _locals: dict[str, Any] = {}
+        _globals: dict[str, Any] = {}
         exec(file.read(), _locals, _globals)
 
         try:

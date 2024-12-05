@@ -1,10 +1,10 @@
 import difflib
 import io
+from collections.abc import Mapping
 from contextlib import ExitStack
 from pathlib import Path
 from typing import (
     Any,
-    Mapping,
     Union,
 )
 

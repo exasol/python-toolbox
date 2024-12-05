@@ -1,5 +1,5 @@
 import subprocess
-from typing import Iterable
+from collections.abc import Iterable
 
 
 def tags() -> Iterable[str]:
