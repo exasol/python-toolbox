@@ -66,7 +66,8 @@ from exasol.toolbox.nox._shared import (
     _version,
     python_files,
 )
-
-
+from exasol.toolbox.nox._gh import (
+    check_lint_files
+)
 # isort: on
 # fmt: on
