@@ -121,7 +121,7 @@ def test_check_lint_json(attributes, expected, tmp_path):
         (["errors", "generated_at", "metrics"], "incompatible format"),
     ]
 )
-def test_check_lint_json(attributes, expected, tmp_path):
+def test_check_security_json(attributes, expected, tmp_path):
     path = Path(tmp_path, ".security.json")
     path.touch()
     attributes_dict = {}
