@@ -1,19 +1,21 @@
-import nox
-from nox import Session
-from noxconfig import PROJECT_CONFIG
-import sys
-from pathlib import Path
 import json
 import sqlite3
+import sys
+from pathlib import Path
 from typing import Iterable
+
+import nox
+from nox import Session
+
+from noxconfig import PROJECT_CONFIG
 
 
 @nox.session(name="check:lint-files", python=False)
 def check_lint_files(session: Session) -> None:
     """task to validate linting files"""
     if not_available := files_not_available(
-            [".lint.json", ".lint.txt", ".security.json", ".coverage"],
-            PROJECT_CONFIG.root):
+        [".lint.json", ".lint.txt", ".security.json", ".coverage"], PROJECT_CONFIG.root
+    ):
         print(f"not available: {not_available}")
         sys.exit(1)
 
@@ -47,8 +49,19 @@ def check_lint_json(path: Path) -> str:
             issues = json.load(file)
             error = False
             for issue in issues:
-                attributes = ["type", "module", "obj", "line", "column", "endLine",
-                              "endColumn", "path", "symbol", "message", "message-id"]
+                attributes = [
+                    "type",
+                    "module",
+                    "obj",
+                    "line",
+                    "column",
+                    "endLine",
+                    "endColumn",
+                    "path",
+                    "symbol",
+                    "message",
+                    "message-id",
+                ]
                 for attribute in attributes:
                     error |= attribute not in issue
             if error:

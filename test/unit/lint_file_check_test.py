@@ -1,10 +1,11 @@
 import json
+import sqlite3
+from pathlib import Path
 
 import pytest
-from pathlib import Path
-import sqlite3
 
 from exasol.toolbox.nox import _gh
+
 
 @pytest.mark.parametrize(
     "files,requested_files,expected",
@@ -12,29 +13,34 @@ from exasol.toolbox.nox import _gh
         (
             [".lint.json", ".lint.txt", ".security.json", ".coverage"],
             [".lint.json", ".lint.txt", ".security.json", ".coverage"],
-            []
-        ), (
+            [],
+        ),
+        (
             [".lint.txt", ".security.json", ".coverage"],
             [".lint.json", ".lint.txt", ".security.json", ".coverage"],
-            [".lint.json"]
-        ), (
+            [".lint.json"],
+        ),
+        (
             [".lint.json", ".security.json", ".coverage"],
             [".lint.json", ".lint.txt", ".security.json", ".coverage"],
-            [".lint.txt"]
-        ), (
+            [".lint.txt"],
+        ),
+        (
             [".lint.json", ".lint.txt", ".coverage"],
             [".lint.json", ".lint.txt", ".security.json", ".coverage"],
-            [".security.json"]
-        ), (
+            [".security.json"],
+        ),
+        (
             [".lint.json", ".lint.txt", ".security.json"],
             [".lint.json", ".lint.txt", ".security.json", ".coverage"],
-            [".coverage"]
-        ), (
+            [".coverage"],
+        ),
+        (
             [],
             [".lint.json", ".lint.txt", ".security.json", ".coverage"],
-            [".lint.json", ".lint.txt", ".security.json", ".coverage"]
+            [".lint.json", ".lint.txt", ".security.json", ".coverage"],
         ),
-    ]
+    ],
 )
 def test_check_lint_files(files, requested_files, expected, tmp_path):
     path = Path(tmp_path)
@@ -49,55 +55,187 @@ def test_check_lint_files(files, requested_files, expected, tmp_path):
     "attributes,expected",
     [
         (
-            ["type", "module", "obj", "line", "column", "endLine",
-                "endColumn", "path", "symbol", "message", "message-id"],
-            ""
-        ),  (
-            ["module", "obj", "line", "column", "endLine",
-                "endColumn", "path", "symbol", "message", "message-id"],
-            "incompatible format"
-        ),  (
-            ["type", "obj", "line", "column", "endLine",
-             "endColumn", "path", "symbol", "message", "message-id"],
-            "incompatible format"
-        ),  (
-            ["type", "module", "line", "column", "endLine",
-             "endColumn", "path", "symbol", "message", "message-id"],
-            "incompatible format"
-        ),  (
-            ["type", "module", "obj", "column", "endLine",
-             "endColumn", "path", "symbol", "message", "message-id"],
-            "incompatible format"
-        ),  (
-            ["type", "module", "obj", "line", "endLine",
-             "endColumn", "path", "symbol", "message", "message-id"],
-            "incompatible format"
-        ),  (
-            ["type", "module", "obj", "line", "column",
-             "endColumn", "path", "symbol", "message", "message-id"],
-            "incompatible format"
-        ),  (
-            ["type", "module", "obj", "line", "column", "endLine",
-             "path", "symbol", "message", "message-id"],
-            "incompatible format"
-        ),  (
-            ["type", "module", "obj", "line", "column", "endLine",
-             "endColumn", "symbol", "message", "message-id"],
-            "incompatible format"
-        ),  (
-            ["type", "module", "obj", "line", "column", "endLine",
-             "endColumn", "path", "message", "message-id"],
-            "incompatible format"
-        ),  (
-            ["type", "module", "obj", "line", "column", "endLine",
-             "endColumn", "path", "symbol", "message-id"],
-            "incompatible format"
-        ),  (
-            ["type", "module", "obj", "line", "column", "endLine",
-             "endColumn", "path", "symbol", "message"],
-            "incompatible format"
+            [
+                "type",
+                "module",
+                "obj",
+                "line",
+                "column",
+                "endLine",
+                "endColumn",
+                "path",
+                "symbol",
+                "message",
+                "message-id",
+            ],
+            "",
         ),
-    ]
+        (
+            [
+                "module",
+                "obj",
+                "line",
+                "column",
+                "endLine",
+                "endColumn",
+                "path",
+                "symbol",
+                "message",
+                "message-id",
+            ],
+            "incompatible format",
+        ),
+        (
+            [
+                "type",
+                "obj",
+                "line",
+                "column",
+                "endLine",
+                "endColumn",
+                "path",
+                "symbol",
+                "message",
+                "message-id",
+            ],
+            "incompatible format",
+        ),
+        (
+            [
+                "type",
+                "module",
+                "line",
+                "column",
+                "endLine",
+                "endColumn",
+                "path",
+                "symbol",
+                "message",
+                "message-id",
+            ],
+            "incompatible format",
+        ),
+        (
+            [
+                "type",
+                "module",
+                "obj",
+                "column",
+                "endLine",
+                "endColumn",
+                "path",
+                "symbol",
+                "message",
+                "message-id",
+            ],
+            "incompatible format",
+        ),
+        (
+            [
+                "type",
+                "module",
+                "obj",
+                "line",
+                "endLine",
+                "endColumn",
+                "path",
+                "symbol",
+                "message",
+                "message-id",
+            ],
+            "incompatible format",
+        ),
+        (
+            [
+                "type",
+                "module",
+                "obj",
+                "line",
+                "column",
+                "endColumn",
+                "path",
+                "symbol",
+                "message",
+                "message-id",
+            ],
+            "incompatible format",
+        ),
+        (
+            [
+                "type",
+                "module",
+                "obj",
+                "line",
+                "column",
+                "endLine",
+                "path",
+                "symbol",
+                "message",
+                "message-id",
+            ],
+            "incompatible format",
+        ),
+        (
+            [
+                "type",
+                "module",
+                "obj",
+                "line",
+                "column",
+                "endLine",
+                "endColumn",
+                "symbol",
+                "message",
+                "message-id",
+            ],
+            "incompatible format",
+        ),
+        (
+            [
+                "type",
+                "module",
+                "obj",
+                "line",
+                "column",
+                "endLine",
+                "endColumn",
+                "path",
+                "message",
+                "message-id",
+            ],
+            "incompatible format",
+        ),
+        (
+            [
+                "type",
+                "module",
+                "obj",
+                "line",
+                "column",
+                "endLine",
+                "endColumn",
+                "path",
+                "symbol",
+                "message-id",
+            ],
+            "incompatible format",
+        ),
+        (
+            [
+                "type",
+                "module",
+                "obj",
+                "line",
+                "column",
+                "endLine",
+                "endColumn",
+                "path",
+                "symbol",
+                "message",
+            ],
+            "incompatible format",
+        ),
+    ],
 )
 def test_check_lint_json(attributes, expected, tmp_path):
     path = Path(tmp_path, ".lint.json")
@@ -114,12 +252,12 @@ def test_check_lint_json(attributes, expected, tmp_path):
 @pytest.mark.parametrize(
     "attributes,expected",
     [
-        (['errors', 'generated_at', 'metrics', 'results'], ""),
+        (["errors", "generated_at", "metrics", "results"], ""),
         (["generated_at", "metrics", "results"], "incompatible format"),
         (["errors", "metrics", "results"], "incompatible format"),
         (["errors", "generated_at", "results"], "incompatible format"),
         (["errors", "generated_at", "metrics"], "incompatible format"),
-    ]
+    ],
 )
 def test_check_security_json(attributes, expected, tmp_path):
     path = Path(tmp_path, ".security.json")
@@ -140,8 +278,15 @@ def test_check_security_json(attributes, expected, tmp_path):
         (["meta", "file", "line_bits"], "not existing tables: ['coverage_schema']"),
         (["coverage_schema", "file", "line_bits"], "not existing tables: ['meta']"),
         (["coverage_schema", "meta", "line_bits"], "not existing tables: ['file']"),
-        (["coverage_schema", "meta", "file", ], "not existing tables: ['line_bits']"),
-    ]
+        (
+            [
+                "coverage_schema",
+                "meta",
+                "file",
+            ],
+            "not existing tables: ['line_bits']",
+        ),
+    ],
 )
 def test_check_coverage(tables, expected, tmp_path):
     path = Path(tmp_path, ".coverage")
