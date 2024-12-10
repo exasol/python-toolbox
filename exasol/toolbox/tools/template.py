@@ -139,7 +139,7 @@ def update_template(
 ) -> None:
     """Similar to install but checks for existing templates and shows diff"""
     if not dest.exists():
-        dest.mkdir()
+        dest.mkdir(parents=True)
 
     try:
         templates = _select_templates(template, pkg, template_type)
