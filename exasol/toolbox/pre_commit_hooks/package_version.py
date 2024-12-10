@@ -32,6 +32,7 @@ _VERSION_MODULE_TEMPLATE = cleandoc('''
     MINOR = {minor}
     PATCH = {patch}
     VERSION = f"{{MAJOR}}.{{MINOR}}.{{PATCH}}"
+    __version__ = VERSION
 ''') + "\n"
 # fmt: on
 
