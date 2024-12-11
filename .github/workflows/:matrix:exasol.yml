@@ -26,7 +26,7 @@ jobs:
 
       - id: set-matrix
         run: |
-          echo "::set-output name=matrix::$(poetry run nox -s matrix:exasol)"
+          echo "matrix=$(poetry run nox -s matrix:exasol)" >> $GITHUB_OUTPUT
 
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
