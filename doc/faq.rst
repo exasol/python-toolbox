@@ -54,7 +54,7 @@ Missing Version Selection Box in Multiversion Documentation
 
 I have run ``nox -s docs:multiversion``, but I still do not see any version selection box in the upper right corner before the GitHub symbol.
 
-This likely is likely due to :ref:`faq_multiversion_build_warnings`
+This is likely due to :ref:`faq_multiversion_build_warnings`
 
 
 .. _faq_multiversion_limited_versions:
