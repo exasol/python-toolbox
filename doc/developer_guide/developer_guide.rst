@@ -7,7 +7,7 @@
 .. toctree::
     :maxdepth: 2
 
-    ../design
+    ../design/index
     development
     plugins
     modules/modules
