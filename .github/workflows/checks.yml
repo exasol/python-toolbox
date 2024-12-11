@@ -40,14 +40,16 @@ jobs:
         run: |
           poetry run python -m nox -s docs:build
 
+  python_versions:
+    uses: ./.github/workflows/:matrix:python.yml
+
   Lint:
     name: Linting (Python-${{ matrix.python-version }})
-    needs: [ Version-Check ]
+    needs: [ Version-Check, python_versions ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
+      matrix: ${{ fromJson(needs.python_versions.outputs.matrix) }}
 
     steps:
       - name: SCM Checkout
@@ -70,12 +72,11 @@ jobs:
 
   Type-Check:
     name: Type Checking (Python-${{ matrix.python-version }})
-    needs: [ Version-Check ]
+    needs: [ Version-Check, python_versions ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
+      matrix: ${{ fromJson(needs.python_versions.outputs.matrix) }}
 
     steps:
       - name: SCM Checkout
@@ -91,12 +92,11 @@ jobs:
 
   Security:
     name: Security Checks (Python-${{ matrix.python-version }})
-    needs: [ Version-Check ]
+    needs: [ Version-Check, python_versions ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
+      matrix: ${{ fromJson(needs.python_versions.outputs.matrix) }}
 
     steps:
       - name: SCM Checkout
@@ -135,15 +135,13 @@ jobs:
 
   Tests:
     name: Unit-Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
-    needs: [ Documentation, Lint, Type-Check, Security, Format]
+    needs: [ Documentation, Lint, Type-Check, Security, Format, python_versions ]
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.ALTERNATIVE_GITHUB_TOKEN ||  secrets.GITHUB_TOKEN }}
     strategy:
       fail-fast: false
-      matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
-        exasol-version: [ "7.1.9" ]
+      matrix: ${{ fromJson(needs.python_versions.outputs.matrix) }}
 
     steps:
       - name: SCM Checkout
