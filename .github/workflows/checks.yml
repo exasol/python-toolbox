@@ -42,7 +42,7 @@ jobs:
 
   build-matrix:
     name: Generate Build Matrix
-    uses: ./.github/workflows/:matrix:python.yml
+    uses: ./.github/workflows/matrix-python.yml
 
   Lint:
     name: Linting (Python-${{ matrix.python-version }})

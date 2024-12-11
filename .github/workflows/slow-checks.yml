@@ -10,7 +10,7 @@ jobs:
 
   build-matrix:
     name: Generate Build Matrix
-    uses: ./.github/workflows/:matrix:all.yml
+    uses: ./.github/workflows/matrix-all.yml
 
   Tests:
     name: Integration-Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})

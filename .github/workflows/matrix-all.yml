@@ -1,5 +1,3 @@
-# Note: the filename has been chosen so it differentiates from the other workflow files. Generally, this file could have any regular filename.
-
 name: Build Matrix (All Versions)
 
 on:
