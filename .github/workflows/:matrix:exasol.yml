@@ -1,0 +1,32 @@
+# Note: the filename has been chosen so it differentiates from the other workflow files. Generally, this file could have any regular filename.
+
+name: Build Matrix (All Versions)
+
+on:
+  workflow_call:
+    outputs:
+      matrix:
+        description: "Generates the exasol version build matrix"
+        value: ${{ jobs.exasol_versions.outputs.matrix }}
+
+jobs:
+  exasol_versions:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python & Poetry Environment
+        uses: ./.github/actions/python-environment
+
+      - name: Generate matrix
+        run: poetry run nox -s matrix:exasol
+
+      - id: set-matrix
+        run: |
+          echo "::set-output name=matrix::$(poetry run nox -s matrix:exasol)"
+
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}

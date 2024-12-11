@@ -1,0 +1,32 @@
+# Note: the filename has been chosen so it differentiates from the other workflow files. Generally, this file could have any regular filename.
+
+name: Build Matrix (Python)
+
+on:
+  workflow_call:
+    outputs:
+      matrix:
+        description: "Generates the python version build matrix"
+        value: ${{ jobs.python_versions.outputs.matrix }}
+
+jobs:
+  python_versions:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python & Poetry Environment
+        uses: ./.github/actions/python-environment
+
+      - name: Generate matrix
+        run: poetry run nox -s matrix:python
+
+      - id: set-matrix
+        run: |
+          echo "::set-output name=matrix::$(poetry run nox -s matrix:python)"
+
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
