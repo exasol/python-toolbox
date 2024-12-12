@@ -1,8 +1,41 @@
 # Unreleased
 
+## 🚨 Breaking Changes
+* **Matrices in CI/CD workflows will be generated automatically now**
+
+    Make sure you have installed all the latest workflow files, especially the newly added ones:
+
+    - `matrix-all.yml`
+    - `matrix-python.yml`
+    - `matrix-exasol.yml`
+
+
+## ✨ Added
+* Added support for dynamically generated workflow matrices.
+
+    This feature allows you to easily change the test matrices in one place: `noxconfig.py`.
+
+    Note: As usual, there are different ways a user can adjust or change the behavior. In the case of the build matrices, there are three obvious ways:
+
+    - Set the appropriate fields in the `noxconfig.py` project configuration (`PROJECT_CONFIG`):
+        * `python_versions = [ ... ]`
+        * `exasol_versions = [ ... ]`
+    - Overwrite the nox tasks:
+        * `matrix:all`
+        * `matrix:python`
+        * `matrix:exasol`
+    - Overwrite/replace the matrix generation workflows:
+        * `matrix-all.yml`
+        * `matrix-python.yml`
+        * `matrix-exasol.yml`
+
+    Among all of the above, the safest way is to set the matrix-related fields in your project config object in `noxconfig.py`.
+    
+    
 ## 📚 Documentation
 
 * Added new entries to the frequently asked questions regarding `multiversion documentation`
+
 
 ## 🐞 Fixed
 
