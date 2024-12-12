@@ -1,6 +1,5 @@
 Create project directory
-  $ mkdir .github
-  $ mkdir .github/workflows
+  $ mkdir -p .github/workflows
 
 install workflow
   $ tbx workflow install pr-merge
