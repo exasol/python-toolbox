@@ -14,7 +14,7 @@ from noxconfig import PROJECT_CONFIG
 def check_artifacts(session: Session) -> None:
     """Validate that all project artifacts are available and consistent"""
     if not_available := _missing_files(
-            {".lint.json", ".lint.txt", ".security.json", ".coverage"}, PROJECT_CONFIG.root
+        {".lint.json", ".lint.txt", ".security.json", ".coverage"}, PROJECT_CONFIG.root
     ):
         print(f"not available: {not_available}")
         sys.exit(1)
@@ -64,9 +64,7 @@ def _validate_lint_json(file: Path) -> str:
         actual = set(issue.keys())
         missing = expected - actual
         if len(missing) > 0:
-            return (
-                f"Invalid format, issue {number} is missing the following attributes {missing}"
-            )
+            return f"Invalid format, issue {number} is missing the following attributes {missing}"
     return ""
 
 
@@ -82,9 +80,7 @@ def _validate_security_json(file: Path) -> str:
     expected = {"errors", "generated_at", "metrics", "results"}
     missing = expected - actual
     if len(missing) > 0:
-        return (
-            f"Invalid format, the file is missing the following attributes {missing}"
-        )
+        return f"Invalid format, the file is missing the following attributes {missing}"
     return ""
 
 
@@ -95,13 +91,16 @@ def _validate_coverage(path: Path) -> str:
         return f"database connection not possible, details: {ex}"
     cursor = conn.cursor()
     try:
-        actual_tables = set(cursor.execute("select name from sqlite_schema where type == 'table'"))
+        actual_tables = set(
+            cursor.execute("select name from sqlite_schema where type == 'table'")
+        )
     except sqlite3.Error as ex:
         return f"schema query not possible, details: {ex}"
     expected = {"coverage_schema", "meta", "file", "line_bits"}
     actual = {f[0] for f in actual_tables if (f[0] in expected)}
     missing = expected - actual
     if len(missing) > 0:
-        return f"Invalid database, the database is missing the following tables {missing}"
+        return (
+            f"Invalid database, the database is missing the following tables {missing}"
+        )
     return ""
-

@@ -252,25 +252,22 @@ def test_check_lint_json(attributes, expected, tmp_path):
 @pytest.mark.parametrize(
     "attributes,expected",
     [
-        (
-            ["errors", "generated_at", "metrics", "results"],
-            ""
-         ),
+        (["errors", "generated_at", "metrics", "results"], ""),
         (
             ["generated_at", "metrics", "results"],
-            "Invalid format, the file is missing the following attributes {'errors'}"
+            "Invalid format, the file is missing the following attributes {'errors'}",
         ),
         (
             ["errors", "metrics", "results"],
-            "Invalid format, the file is missing the following attributes {'generated_at'}"
+            "Invalid format, the file is missing the following attributes {'generated_at'}",
         ),
         (
             ["errors", "generated_at", "results"],
-            "Invalid format, the file is missing the following attributes {'metrics'}"
+            "Invalid format, the file is missing the following attributes {'metrics'}",
         ),
         (
             ["errors", "generated_at", "metrics"],
-            "Invalid format, the file is missing the following attributes {'results'}"
+            "Invalid format, the file is missing the following attributes {'results'}",
         ),
     ],
 )
@@ -289,20 +286,18 @@ def test_check_security_json(attributes, expected, tmp_path):
 @pytest.mark.parametrize(
     "tables, expected",
     [
-        (
-            ["coverage_schema", "meta", "file", "line_bits"], ""
-        ),
+        (["coverage_schema", "meta", "file", "line_bits"], ""),
         (
             ["meta", "file", "line_bits"],
-            "Invalid database, the database is missing the following tables {'coverage_schema'}"
+            "Invalid database, the database is missing the following tables {'coverage_schema'}",
         ),
         (
             ["coverage_schema", "file", "line_bits"],
-            "Invalid database, the database is missing the following tables {'meta'}"
+            "Invalid database, the database is missing the following tables {'meta'}",
         ),
         (
             ["coverage_schema", "meta", "line_bits"],
-            "Invalid database, the database is missing the following tables {'file'}"
+            "Invalid database, the database is missing the following tables {'file'}",
         ),
         (
             [
