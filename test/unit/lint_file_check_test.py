@@ -4,41 +4,41 @@ from pathlib import Path
 
 import pytest
 
-from exasol.toolbox.nox import _gh
+from exasol.toolbox.nox import _artifacts
 
 
 @pytest.mark.parametrize(
     "files,requested_files,expected",
     [
         (
-            [".lint.json", ".lint.txt", ".security.json", ".coverage"],
-            [".lint.json", ".lint.txt", ".security.json", ".coverage"],
-            [],
+            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
+            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
+            set(),
         ),
         (
-            [".lint.txt", ".security.json", ".coverage"],
-            [".lint.json", ".lint.txt", ".security.json", ".coverage"],
-            [".lint.json"],
+            {".lint.txt", ".security.json", ".coverage"},
+            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
+            {".lint.json"},
         ),
         (
-            [".lint.json", ".security.json", ".coverage"],
-            [".lint.json", ".lint.txt", ".security.json", ".coverage"],
-            [".lint.txt"],
+            {".lint.json", ".security.json", ".coverage"},
+            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
+            {".lint.txt"},
         ),
         (
-            [".lint.json", ".lint.txt", ".coverage"],
-            [".lint.json", ".lint.txt", ".security.json", ".coverage"],
-            [".security.json"],
+            {".lint.json", ".lint.txt", ".coverage"},
+            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
+            {".security.json"},
         ),
         (
-            [".lint.json", ".lint.txt", ".security.json"],
-            [".lint.json", ".lint.txt", ".security.json", ".coverage"],
-            [".coverage"],
+            {".lint.json", ".lint.txt", ".security.json"},
+            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
+            {".coverage"},
         ),
         (
-            [],
-            [".lint.json", ".lint.txt", ".security.json", ".coverage"],
-            [".lint.json", ".lint.txt", ".security.json", ".coverage"],
+            {","},
+            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
+            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
         ),
     ],
 )
@@ -47,7 +47,7 @@ def test_check_lint_files(files, requested_files, expected, tmp_path):
     for file in files:
         Path(path, file).touch()
 
-    actual = _gh.files_not_available(requested_files, path)
+    actual = _artifacts._missing_files(requested_files, path)
     assert actual == expected
 
 
@@ -83,7 +83,7 @@ def test_check_lint_files(files, requested_files, expected, tmp_path):
                 "message",
                 "message-id",
             ],
-            "incompatible format",
+            "Invalid format, issue 0 is missing the following attributes {'type'}",
         ),
         (
             [
@@ -98,7 +98,7 @@ def test_check_lint_files(files, requested_files, expected, tmp_path):
                 "message",
                 "message-id",
             ],
-            "incompatible format",
+            "Invalid format, issue 0 is missing the following attributes {'module'}",
         ),
         (
             [
@@ -113,7 +113,7 @@ def test_check_lint_files(files, requested_files, expected, tmp_path):
                 "message",
                 "message-id",
             ],
-            "incompatible format",
+            "Invalid format, issue 0 is missing the following attributes {'obj'}",
         ),
         (
             [
@@ -128,7 +128,7 @@ def test_check_lint_files(files, requested_files, expected, tmp_path):
                 "message",
                 "message-id",
             ],
-            "incompatible format",
+            "Invalid format, issue 0 is missing the following attributes {'line'}",
         ),
         (
             [
@@ -143,7 +143,7 @@ def test_check_lint_files(files, requested_files, expected, tmp_path):
                 "message",
                 "message-id",
             ],
-            "incompatible format",
+            "Invalid format, issue 0 is missing the following attributes {'column'}",
         ),
         (
             [
@@ -158,7 +158,7 @@ def test_check_lint_files(files, requested_files, expected, tmp_path):
                 "message",
                 "message-id",
             ],
-            "incompatible format",
+            "Invalid format, issue 0 is missing the following attributes {'endLine'}",
         ),
         (
             [
@@ -173,7 +173,7 @@ def test_check_lint_files(files, requested_files, expected, tmp_path):
                 "message",
                 "message-id",
             ],
-            "incompatible format",
+            "Invalid format, issue 0 is missing the following attributes {'endColumn'}",
         ),
         (
             [
@@ -188,7 +188,7 @@ def test_check_lint_files(files, requested_files, expected, tmp_path):
                 "message",
                 "message-id",
             ],
-            "incompatible format",
+            "Invalid format, issue 0 is missing the following attributes {'path'}",
         ),
         (
             [
@@ -203,7 +203,7 @@ def test_check_lint_files(files, requested_files, expected, tmp_path):
                 "message",
                 "message-id",
             ],
-            "incompatible format",
+            "Invalid format, issue 0 is missing the following attributes {'symbol'}",
         ),
         (
             [
@@ -218,7 +218,7 @@ def test_check_lint_files(files, requested_files, expected, tmp_path):
                 "symbol",
                 "message-id",
             ],
-            "incompatible format",
+            "Invalid format, issue 0 is missing the following attributes {'message'}",
         ),
         (
             [
@@ -233,7 +233,7 @@ def test_check_lint_files(files, requested_files, expected, tmp_path):
                 "symbol",
                 "message",
             ],
-            "incompatible format",
+            "Invalid format, issue 0 is missing the following attributes {'message-id'}",
         ),
     ],
 )
@@ -245,18 +245,33 @@ def test_check_lint_json(attributes, expected, tmp_path):
         attributes_dict[attribute] = None
     with path.open("w") as file:
         json.dump([attributes_dict], file)
-    actual = _gh.check_lint_json(path.parent)
+    actual = _artifacts._validate_lint_json(path)
     assert actual == expected
 
 
 @pytest.mark.parametrize(
     "attributes,expected",
     [
-        (["errors", "generated_at", "metrics", "results"], ""),
-        (["generated_at", "metrics", "results"], "incompatible format"),
-        (["errors", "metrics", "results"], "incompatible format"),
-        (["errors", "generated_at", "results"], "incompatible format"),
-        (["errors", "generated_at", "metrics"], "incompatible format"),
+        (
+            ["errors", "generated_at", "metrics", "results"],
+            ""
+         ),
+        (
+            ["generated_at", "metrics", "results"],
+            "Invalid format, the file is missing the following attributes {'errors'}"
+        ),
+        (
+            ["errors", "metrics", "results"],
+            "Invalid format, the file is missing the following attributes {'generated_at'}"
+        ),
+        (
+            ["errors", "generated_at", "results"],
+            "Invalid format, the file is missing the following attributes {'metrics'}"
+        ),
+        (
+            ["errors", "generated_at", "metrics"],
+            "Invalid format, the file is missing the following attributes {'results'}"
+        ),
     ],
 )
 def test_check_security_json(attributes, expected, tmp_path):
@@ -267,24 +282,35 @@ def test_check_security_json(attributes, expected, tmp_path):
         attributes_dict[attribute] = None
     with path.open("w") as file:
         json.dump(attributes_dict, file)
-    actual = _gh.check_security_json(path.parent)
+    actual = _artifacts._validate_security_json(path)
     assert actual == expected
 
 
 @pytest.mark.parametrize(
     "tables, expected",
     [
-        (["coverage_schema", "meta", "file", "line_bits"], ""),
-        (["meta", "file", "line_bits"], "not existing tables: ['coverage_schema']"),
-        (["coverage_schema", "file", "line_bits"], "not existing tables: ['meta']"),
-        (["coverage_schema", "meta", "line_bits"], "not existing tables: ['file']"),
+        (
+            ["coverage_schema", "meta", "file", "line_bits"], ""
+        ),
+        (
+            ["meta", "file", "line_bits"],
+            "Invalid database, the database is missing the following tables {'coverage_schema'}"
+        ),
+        (
+            ["coverage_schema", "file", "line_bits"],
+            "Invalid database, the database is missing the following tables {'meta'}"
+        ),
+        (
+            ["coverage_schema", "meta", "line_bits"],
+            "Invalid database, the database is missing the following tables {'file'}"
+        ),
         (
             [
                 "coverage_schema",
                 "meta",
                 "file",
             ],
-            "not existing tables: ['line_bits']",
+            "Invalid database, the database is missing the following tables {'line_bits'}",
         ),
     ],
 )
@@ -294,5 +320,5 @@ def test_check_coverage(tables, expected, tmp_path):
     cursor = connection.cursor()
     for table in tables:
         cursor.execute(f"CREATE TABLE IF NOT EXISTS {table} (test INTEGER)")
-    actual = _gh.check_coverage(path.parent)
+    actual = _artifacts._validate_coverage(path)
     assert actual == expected

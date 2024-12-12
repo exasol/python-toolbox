@@ -66,8 +66,8 @@ from exasol.toolbox.nox._shared import (
     _version,
     python_files,
 )
-from exasol.toolbox.nox._gh import (
-    check_lint_files
+from exasol.toolbox.nox._artifacts import (
+    check_artifacts
 )
 # isort: on
 # fmt: on
