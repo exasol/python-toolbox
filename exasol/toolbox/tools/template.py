@@ -120,7 +120,7 @@ def install_template(template: str, dest: Path, pkg: str, template_type: str) ->
     Attention: If there is an existing template with the same name it will be overwritten!
     """
     if not dest.exists():
-        dest.mkdir()
+        dest.mkdir(parents=True)
 
     try:
         templates = _select_templates(template, pkg, template_type)
@@ -139,7 +139,7 @@ def update_template(
 ) -> None:
     """Similar to install but checks for existing templates and shows diff"""
     if not dest.exists():
-        dest.mkdir()
+        dest.mkdir(parents=True)
 
     try:
         templates = _select_templates(template, pkg, template_type)
