@@ -52,7 +52,7 @@ jobs:
 
   Lint:
     name: Linting (Python-${{ matrix.python-version }})
-    needs: [ Version-Check ]
+    needs: [ Version-Check, build-matrix ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -79,7 +79,7 @@ jobs:
 
   Type-Check:
     name: Type Checking (Python-${{ matrix.python-version }})
-    needs: [ Version-Check ]
+    needs: [ Version-Check, build-matrix ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -99,7 +99,7 @@ jobs:
 
   Security:
     name: Security Checks (Python-${{ matrix.python-version }})
-    needs: [ Version-Check ]
+    needs: [ Version-Check, build-matrix ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -125,7 +125,7 @@ jobs:
           include-hidden-files: true
 
   Format:
-    name: Format Check (Python-${{ matrix.python-version }})
+    name: Format Check
     runs-on: ubuntu-latest
 
     steps:
@@ -142,7 +142,7 @@ jobs:
 
   Tests:
     name: Unit-Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
-    needs: [ Documentation, Lint, Type-Check, Security, Format ]
+    needs: [ Documentation, Lint, Type-Check, Security, Format, build-matrix ]
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.ALTERNATIVE_GITHUB_TOKEN ||  secrets.GITHUB_TOKEN }}
