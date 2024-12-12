@@ -8,8 +8,13 @@ on:
 
 jobs:
 
+  build-matrix:
+    name: Generate Build Matrix
+    uses: ./.github/workflows/matrix-all.yml
+
   Tests:
     name: Integration-Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
+    needs: [ build-matrix ]
     runs-on: ubuntu-latest
     # Even though the environment "manual-approval" will be created automatically,
     # it still needs to be configured to require interactive review.
@@ -19,9 +24,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.ALTERNATIVE_GITHUB_TOKEN ||  secrets.GITHUB_TOKEN }}
     strategy:
       fail-fast: false
-      matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
-        exasol-version: [ "7.1.9" ]
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
     steps:
       - name: SCM Checkout
