@@ -30,6 +30,12 @@
         * `matrix-exasol.yml`
 
     Among all of the above, the safest way is to set the matrix-related fields in your project config object in `noxconfig.py`.
+    
+    
+## 📚 Documentation
+
+* Added new entries to the frequently asked questions regarding `multiversion documentation`
+
 
 ## 🐞 Fixed
 
