@@ -1,5 +1,5 @@
 Documentation of  {{cookiecutter.project_name}}
-------------------{{ '-' * cookiecutter.package_name | length }}
+------------------{{ '-' * cookiecutter.project_name | length }}
 
 .. grid:: 1 1 3 2
     :gutter: 2
@@ -33,4 +33,3 @@ Documentation of  {{cookiecutter.project_name}}
    api
    faq
    changes/changelog
-
