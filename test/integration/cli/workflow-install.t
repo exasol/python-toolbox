@@ -11,6 +11,9 @@ Check if all workflows have been installed
   checks.yml
   ci.yml
   gh-pages.yml
+  matrix-all.yml
+  matrix-exasol.yml
+  matrix-python.yml
   merge-gate.yml
   pr-merge.yml
   report.yml

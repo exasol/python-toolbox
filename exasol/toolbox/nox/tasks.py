@@ -59,7 +59,6 @@ from exasol.toolbox.nox._documentation import (
     clean_docs,
     open_docs,
 )
-from exasol.toolbox.nox._release import prepare_release
 from exasol.toolbox.nox._shared import (
     Mode,
     _context,
@@ -67,6 +66,13 @@ from exasol.toolbox.nox._shared import (
     python_files,
 )
 
+from exasol.toolbox.nox._ci import (
+    python_matrix,
+    exasol_matrix,
+    full_matrix,
+)
+
+from exasol.toolbox.nox._release import prepare_release
 
 # isort: on
 # fmt: on
