@@ -46,14 +46,17 @@ jobs:
         run: |
           poetry run python -m nox -s docs:build
 
+  build-matrix:
+    name: Generate Build Matrix
+    uses: ./.github/workflows/matrix-python.yml
+
   Lint:
     name: Linting (Python-${{ matrix.python-version }})
-    needs: [ Version-Check ]
+    needs: [ Version-Check, build-matrix ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
     steps:
       - name: SCM Checkout
@@ -76,12 +79,11 @@ jobs:
 
   Type-Check:
     name: Type Checking (Python-${{ matrix.python-version }})
-    needs: [ Version-Check ]
+    needs: [ Version-Check, build-matrix ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
     steps:
       - name: SCM Checkout
@@ -97,12 +99,11 @@ jobs:
 
   Security:
     name: Security Checks (Python-${{ matrix.python-version }})
-    needs: [ Version-Check ]
+    needs: [ Version-Check, build-matrix ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
     steps:
       - name: SCM Checkout
@@ -135,20 +136,19 @@ jobs:
         uses: exasol/python-toolbox/.github/actions/python-environment@0.19.0
         with:
           python-version: "3.9"
+
       - name: Run format check
         run: poetry run nox -s project:format
 
   Tests:
     name: Unit-Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
-    needs: [ Documentation, Lint, Type-Check, Security, Format ]
+    needs: [ Documentation, Lint, Type-Check, Security, Format, build-matrix ]
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.ALTERNATIVE_GITHUB_TOKEN ||  secrets.GITHUB_TOKEN }}
     strategy:
       fail-fast: false
-      matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12" ]
-        exasol-version: ["7.1.9"]
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
     steps:
       - name: SCM Checkout
@@ -160,7 +160,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run Tests and Collect Coverage
-        run: poetry run nox -s test:unit -- -- --coverage --db-version ${{ matrix.exasol-version }}
+        run: poetry run nox -s test:unit -- -- --coverage
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4.4.0

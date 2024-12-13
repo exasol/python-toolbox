@@ -31,9 +31,12 @@ jobs:
         working-directory: ./artifacts
         run: |
           poetry run coverage combine --keep coverage-python3.9*/.coverage
-          cp .coverage ../
-          cp lint-python3.9/.lint.txt ../
-          cp security-python3.9/.security.json ../
+          cp .coverage ../ || true
+          cp lint-python3.9/.lint.txt ../ || true
+          cp security-python3.9/.security.json ../ || true
+
+      - name: Validate Artifacts
+        run: poetry run nox -s artifacts:validate
 
       - name: Generate Report
         run: poetry run nox -s project:report -- -- --format json | tee metrics.json
