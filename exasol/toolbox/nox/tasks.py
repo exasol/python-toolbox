@@ -66,6 +66,15 @@ from exasol.toolbox.nox._shared import (
     _version,
     python_files,
 )
+
+from exasol.toolbox.nox._ci import (
+    python_matrix,
+    exasol_matrix,
+    full_matrix,
+)
+
+from exasol.toolbox.nox._release import prepare_release
+
 from exasol.toolbox.nox._artifacts import (
     check_artifacts
 )
