@@ -1,12 +1,12 @@
-install issue
+install issue template
   $ tbx issue install feature
   Installed feature in .github/ISSUE_TEMPLATE/feature.md
 
-install another issue
+install another issue template
   $ tbx issue install bug
   Installed bug in .github/ISSUE_TEMPLATE/bug.md
 
-install another issue if this issue exists
+Install another issue template while an issue template with the same name already exists
   $ touch .github/ISSUE_TEMPLATE/refactoring.md
   $ tbx issue install refactoring
   Installed refactoring in .github/ISSUE_TEMPLATE/refactoring.md
