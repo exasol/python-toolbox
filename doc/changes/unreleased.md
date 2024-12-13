@@ -30,8 +30,10 @@
         * `matrix-exasol.yml`
 
     Among all of the above, the safest way is to set the matrix-related fields in your project config object in `noxconfig.py`.
-    
-    
+
+* Added a nox task to validate the build/test artifacts and use it in the github workflow report 
+
+
 ## 📚 Documentation
 
 * Added new entries to the frequently asked questions regarding `multiversion documentation`
@@ -39,5 +41,6 @@
 
 ## 🐞 Fixed
 
+* Fixed `index.rst` documentation template to provide the correct underlining length of the main heading
 * Added multi-version extension to Sphinx configuration of the project template
 * fixed bug in tbx worflow install error if directory exists[#298](https://github.com/exasol/python-toolbox/issues/298) also [#297](https://github.com/exasol/python-toolbox/issues/297)

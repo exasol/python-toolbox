@@ -59,6 +59,7 @@ from exasol.toolbox.nox._documentation import (
     clean_docs,
     open_docs,
 )
+from exasol.toolbox.nox._release import prepare_release
 from exasol.toolbox.nox._shared import (
     Mode,
     _context,
@@ -74,5 +75,8 @@ from exasol.toolbox.nox._ci import (
 
 from exasol.toolbox.nox._release import prepare_release
 
+from exasol.toolbox.nox._artifacts import (
+    check_artifacts
+)
 # isort: on
 # fmt: on
