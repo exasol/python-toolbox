@@ -7,6 +7,9 @@ List all available workflows
   checks
   ci
   gh-pages
+  matrix-all
+  matrix-exasol
+  matrix-python
   merge-gate
   pr-merge
   report
