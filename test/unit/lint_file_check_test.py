@@ -52,6 +52,26 @@ def test_check_lint_files(files, requested_files, expected, tmp_path):
 
 
 @pytest.mark.parametrize(
+    "file,expected",
+    [
+        ("Your code has been rated at 7.85/10 (previous run: 7.83/10, +0.02", ""),
+        (
+            "test_text\nYour code has been rated at 7.85/10 (previous run: 7.83/10, +0.02\ntest_text",
+            "",
+        ),
+        ("", "Could not find a rating"),
+        ("test_text", "Could not find a rating"),
+    ],
+)
+def test_check_lint_txt(file, expected, tmp_path):
+    path = Path(tmp_path, ".lint.txt")
+    path.touch()
+    path.write_text(file)
+    actual = _artifacts._validate_lint_txt(path)
+    assert actual == expected
+
+
+@pytest.mark.parametrize(
     "attributes,expected",
     [
         (

@@ -1,5 +1,6 @@
 import json
 import pathlib
+import re
 import sqlite3
 import sys
 from pathlib import Path
@@ -14,15 +15,14 @@ from noxconfig import PROJECT_CONFIG
 def check_artifacts(session: Session) -> None:
     """Validate that all project artifacts are available and consistent"""
     if not_available := _missing_files(
-        {".lint.json", ".lint.txt", ".security.json", ".coverage"}, PROJECT_CONFIG.root
+        {".lint.txt", ".security.json", ".coverage"}, PROJECT_CONFIG.root
     ):
         print(f"not available: {not_available}")
         sys.exit(1)
 
     error = False
-    if msg := _validate_lint_json(Path(PROJECT_CONFIG.root, ".lint.json")):
-        print(f"error in [.lint.json]: {msg}")
-        error = True
+    if msg := _validate_lint_txt(Path(PROJECT_CONFIG.root, ".lint.txt")):
+        print(f"error in [.lint.txt]: {msg}")
     if msg := _validate_security_json(Path(PROJECT_CONFIG.root, ".security.json")):
         print(f"error in [.security.json]: {msg}")
         error = True
@@ -36,6 +36,18 @@ def check_artifacts(session: Session) -> None:
 def _missing_files(expected_files: set, directory: Path) -> set:
     files = {f.name for f in directory.iterdir() if f.is_file()}
     return expected_files - files
+
+
+def _validate_lint_txt(file: Path) -> str:
+    try:
+        content = file.read_text()
+    except FileNotFoundError as ex:
+        return f"Could not find file {file}, details: {ex}"
+    expr = re.compile(r"^Your code has been rated at (\d+.\d+)/.*", re.MULTILINE)
+    matches = expr.search(content)
+    if not matches:
+        return f"Could not find a rating"
+    return ""
 
 
 def _validate_lint_json(file: Path) -> str:
