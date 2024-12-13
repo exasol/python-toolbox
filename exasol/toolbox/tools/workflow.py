@@ -56,7 +56,6 @@ def install_workflow(
 
     Attention: If there is an existing workflow with the same name it will be overwritten!
     """
-    dest.mkdir(parents=True)
     template.install_template(
         template=workflow, dest=dest, pkg=PKG, template_type=TEMPLATE_TYPE
     )
