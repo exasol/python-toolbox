@@ -1,0 +1,12 @@
+install workflow
+  $ tbx workflow install cd
+  Installed cd in .github/workflows/cd.yml
+
+install another workflow
+  $ tbx workflow install checks
+  Installed checks in .github/workflows/checks.yml
+
+install workflow while a workflow with this name already exists
+  $ touch .github/workflows/ci.yml
+  $ tbx workflow install ci
+  Installed ci in .github/workflows/ci.yml
