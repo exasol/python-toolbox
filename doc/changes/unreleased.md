@@ -43,7 +43,7 @@
 
 * Fixed `index.rst` documentation template to provide the correct underlining length of the main heading
 * Added multi-version extension to Sphinx configuration of the project template
-* fixed bug in tbx worflow install error if directory exists[#298](https://github.com/exasol/python-toolbox/issues/298) also [#297](https://github.com/exasol/python-toolbox/issues/297)
+* fixed bug in tbx worflow install error if directory exists [#298](https://github.com/exasol/python-toolbox/issues/298) also [#297](https://github.com/exasol/python-toolbox/issues/297)
 
 ## 🔩 Internal
 * Relocked dependencies
