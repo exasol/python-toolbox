@@ -119,7 +119,7 @@ jobs:
           include-hidden-files: true
 
   Format:
-    name: Format Check (Python-${{ matrix.python-version }})
+    name: Format Check
     runs-on: ubuntu-latest
 
     steps:
