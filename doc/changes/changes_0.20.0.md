@@ -1,4 +1,4 @@
-# 0.20.0 - 2024-12-16
+# 0.20.0 - 2024-12-17
 
 ## 🚨 Breaking Changes
 * **Matrices in CI/CD workflows will be generated automatically now**
