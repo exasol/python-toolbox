@@ -25,7 +25,7 @@ from exasol.toolbox.tools import lint
 )
 def test_lint_issue_from_json(data):
     actual = lint.lint_issue_from_json(json.dumps([data]))
-    expected = lint.LintIssue(
+    expected = lint.Finding(
         type=data["type"],
         module=data["module"],
         obj=data["obj"],
@@ -68,7 +68,7 @@ def test_lint_issue_from_json(data):
     ],
 )
 def test_lint_issue_to_markdown(data, expected):
-    issue = lint.LintIssue(
+    issue = lint.Finding(
         type=data["type"],
         module=data["module"],
         obj=data["obj"],

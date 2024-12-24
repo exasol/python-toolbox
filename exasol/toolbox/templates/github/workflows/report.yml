@@ -31,6 +31,7 @@ jobs:
         working-directory: ./artifacts
         run: |
           poetry run coverage combine --keep coverage-python3.9*/.coverage
+          # Errors during copying are ignored because they are checked in the next step
           cp .coverage ../ || true
           cp lint-python3.9/.lint.txt ../ || true
           cp lint-python3.9/.lint.txt ../ || true

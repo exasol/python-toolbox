@@ -10,7 +10,7 @@ CLI = typer.Typer()
 
 
 @dataclass(frozen=True)
-class LintIssue:
+class Finding:
     type: str
     module: str
     obj: str
@@ -24,10 +24,10 @@ class LintIssue:
     message_id: str
 
 
-def lint_issue_from_json(data: str) -> Iterable[LintIssue]:
+def lint_issue_from_json(data: str) -> Iterable[Finding]:
     issues = json.loads(data)
     for issue in issues:
-        yield LintIssue(
+        yield Finding(
             type=issue["type"],
             module=issue["module"],
             obj=issue["obj"],
@@ -42,20 +42,20 @@ def lint_issue_from_json(data: str) -> Iterable[LintIssue]:
         )
 
 
-def lint_issue_to_markdown(lint_issues: Iterable[LintIssue]) -> str:
+def lint_issue_to_markdown(lint_issues: Iterable[Finding]) -> str:
     def _header() -> str:
         header = "# Static Code Analysis\n\n"
         header += "|File|line/<br>column|id|message|\n"
         header += "|---|:-:|:-:|---|\n"
         return header
 
-    def _rows(issues: Iterable[LintIssue]) -> str:
+    def _rows(findings: Iterable[Finding]) -> str:
         rows = ""
-        for issue in issues:
-            rows += f"|{issue.path}"
-            rows += f"|line: {issue.line}/<br>column: {issue.column}"
-            rows += f"|{issue.message_id}"
-            rows += f"|{issue.message}|\n"
+        for finding in findings:
+            rows += f"|{finding.path}"
+            rows += f"|line: {finding.line}/<br>column: {finding.column}"
+            rows += f"|{finding.message_id}"
+            rows += f"|{finding.message}|\n"
         return rows
 
     template = cleandoc(
