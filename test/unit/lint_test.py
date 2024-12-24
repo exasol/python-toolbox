@@ -1,7 +1,9 @@
+import json
+
 import pytest
 
 from exasol.toolbox.tools import lint
-import json
+
 
 @pytest.mark.parametrize(
     "data",
@@ -17,9 +19,9 @@ import json
             "path": "test_path",
             "symbol": "test_symbol",
             "message": "test_message",
-            "message-id": "test_message_id"
+            "message-id": "test_message_id",
         },
-    ]
+    ],
 )
 def test_lint_issue_from_json(data):
     actual = lint.lint_issue_from_json(json.dumps([data]))
@@ -38,6 +40,7 @@ def test_lint_issue_from_json(data):
     )
     assert list(actual) == [expected]
 
+
 @pytest.mark.parametrize(
     "data,expected",
     [
@@ -53,18 +56,18 @@ def test_lint_issue_from_json(data):
                 "path": "test_path",
                 "symbol": "test_symbol",
                 "message": "test_message",
-                "message-id": "test_message_id"
+                "message-id": "test_message_id",
             },
             """# Static Code Analysis
 
 |File|line<br>column|id|message|
 |---|:-:|:-:|---|
 |test_path|line: 0<br>column: 1|test_message_id|test_message|
-"""
+""",
         )
-    ]
+    ],
 )
-def test_lint_issue_to_markdown(data,expected):
+def test_lint_issue_to_markdown(data, expected):
     issue = lint.LintIssue(
         type=data["type"],
         module=data["module"],

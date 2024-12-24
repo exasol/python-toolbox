@@ -1,9 +1,10 @@
-import typer
 import json
-from pathlib import Path
-from inspect import cleandoc
-from dataclasses import dataclass
 from collections.abc import Iterable
+from dataclasses import dataclass
+from inspect import cleandoc
+from pathlib import Path
+
+import typer
 
 CLI = typer.Typer()
 
@@ -56,15 +57,13 @@ def lint_issue_to_markdown(lint_issues: Iterable[LintIssue]) -> str:
             rows += f"|{issue.message_id}"
             rows += f"|{issue.message}|\n"
         return rows
+
     template = cleandoc(
         """
         {header}{rows}
         """
     )
-    lint_issues = sorted(
-        lint_issues,
-        key=lambda i: (i.path, i.message_id, i.line)
-    )
+    lint_issues = sorted(lint_issues, key=lambda i: (i.path, i.message_id, i.line))
     return template.format(header=_header(), rows=_rows(lint_issues))
 
 
