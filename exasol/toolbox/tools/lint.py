@@ -45,7 +45,7 @@ def lint_issue_from_json(data: str) -> Iterable[LintIssue]:
 def lint_issue_to_markdown(lint_issues: Iterable[LintIssue]) -> str:
     def _header() -> str:
         header = "# Static Code Analysis\n\n"
-        header += "|File|line/ column|id|message|\n"
+        header += "|File|line/<br>column|id|message|\n"
         header += "|---|:-:|:-:|---|\n"
         return header
 
@@ -53,7 +53,7 @@ def lint_issue_to_markdown(lint_issues: Iterable[LintIssue]) -> str:
         rows = ""
         for issue in issues:
             rows += f"|{issue.path}"
-            rows += f"|line: {issue.line}/<br>column: {issue.column}/"
+            rows += f"|line: {issue.line}/<br>column: {issue.column}"
             rows += f"|{issue.message_id}"
             rows += f"|{issue.message}|\n"
         return rows

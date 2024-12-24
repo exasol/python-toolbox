@@ -60,9 +60,9 @@ def test_lint_issue_from_json(data):
             },
             """# Static Code Analysis
 
-|File|line<br>column|id|message|
+|File|line/<br>column|id|message|
 |---|:-:|:-:|---|
-|test_path|line: 0<br>column: 1|test_message_id|test_message|
+|test_path|line: 0/<br>column: 1|test_message_id|test_message|
 """,
         )
     ],
