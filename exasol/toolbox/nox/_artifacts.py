@@ -23,6 +23,8 @@ def check_artifacts(session: Session) -> None:
     error = False
     if msg := _validate_lint_txt(Path(PROJECT_CONFIG.root, ".lint.txt")):
         print(f"error in [.lint.txt]: {msg}")
+    if msg := _validate_lint_json(Path(PROJECT_CONFIG.root, ".lint.json")):
+        print(f"error in [.lint.json]: {msg}")
     if msg := _validate_security_json(Path(PROJECT_CONFIG.root, ".security.json")):
         print(f"error in [.security.json]: {msg}")
         error = True
