@@ -1,5 +1,9 @@
 # Unreleased
 
+## ✨ Added
+
+* added tbx task for markdown formating of .lint.json
+
 ## 🐞 Fixed
 * Fixed an issue in the CI workflow that caused it to be executed twice on the initial push of a PR if the PR branch was on the repo itself.
 

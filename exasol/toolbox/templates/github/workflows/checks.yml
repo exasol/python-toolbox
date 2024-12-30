@@ -74,7 +74,9 @@ jobs:
         uses: actions/upload-artifact@v4.5.0
         with:
           name: lint-python${{ matrix.python-version }}
-          path: .lint.txt
+          path: |
+            .lint.txt
+            .lint.json
           include-hidden-files: true
 
   Type-Check:

@@ -31,9 +31,14 @@ jobs:
         working-directory: ./artifacts
         run: |
           poetry run coverage combine --keep coverage-python3.9*/.coverage
-          cp .coverage ../
-          cp lint-python3.9/.lint.txt ../
-          cp security-python3.9/.security.json ../
+          # Errors during copying are ignored because they are checked in the next step
+          cp .coverage ../ || true
+          cp lint-python3.9/.lint.txt ../ || true
+          cp lint-python3.9/.lint.txt ../ || true
+          cp security-python3.9/.security.json ../ || true
+
+      - name: Validate Artifacts
+        run: poetry run nox -s artifacts:validate
 
       - name: Generate Report
         run: poetry run nox -s project:report -- -- --format json | tee metrics.json
@@ -50,6 +55,5 @@ jobs:
           poetry run nox -s project:report -- -- --format markdown >> $GITHUB_STEP_SUMMARY
           echo -e "\n\n# Coverage\n" >> $GITHUB_STEP_SUMMARY
           poetry run coverage report -- --format markdown >> $GITHUB_STEP_SUMMARY
-          echo  -e "\n\n# Static Code Analysis\n" >> $GITHUB_STEP_SUMMARY
-          cat .lint.txt >> $GITHUB_STEP_SUMMARY
+          poetry run tbx security pretty-print >> $GITHUB_STEP_SUMMARY
           poetry run tbx security pretty-print .security.json >> $GITHUB_STEP_SUMMARY
