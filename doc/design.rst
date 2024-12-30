@@ -209,3 +209,194 @@ _________________
       - Description
     * - python-environment
       - Sets up an appropriate poetry based python environment
+
+
+Known Issues
+------------
+
+This section documents flaws, sins, and known issues with the current design and/or its current implementation that were either known upfront or surfaced through the course of implementing it. Additionally, it attempts to explain why certain choices were made at the time, so one can better understand whether it may be reasonable to make changes now or in the future.
+
+Passing files as individual arguments on the CLI
+++++++++++++++++++++++++++++++++++++++++++++++++
+
+**Description:**
+
+As of today selection of python files for litting formatting etc. is done by passing all relevant python files as individual argument(s)
+to the tools used/invoked by the python toolbox.
+
+**Downsides:**
+
+- Most shells have limitations on the number of arguments and their length.
+- Noisey output, making it hard to decipher the actual command.
+- Not ideal for all use cases.
+
+**Rationale/History:**
+
+- The current method of passing files as individual arguments by default offers ease in collection and filtering. It also allows users to simply provide or replace the selection mechanism fairly easily.
+
+- Every tool used by the toolbox (e.g., `black`, `isort`) used to support passing files by argument. However, not all of them provided the same mechanism for selection or deselection patterns (e.g., "glob").
+
+**Ideas/Solutions:**
+
+- Develop a wrapper that allows for different selection mechanisms
+
+
+Inconsistent Naming
++++++++++++++++++++
+
+**Description:**
+
+The naming is not consistent across the project name (python-toolbox) and the PyPI package name (exasol-toolbox).
+
+**Downsides:**
+
+- Misalignment between the PyPI package name and the project name causes confusion when discussing or referring to the project/package.
+
+**Rationale/History:**
+
+- Initially, this was a proof of concept (POC) to verify a few ideas, and the naming was not well thought out at the time.
+- Later, when publishing the first package for distribution, the project name was unavailable on PyPI, resulting in a different name being used on PyPI.
+
+**Ideas/Solutions:**
+
+- `Issue-325 <https://github.com/exasol/python-toolbox/issues/325>`_
+
+Cluttered Configuration
++++++++++++++++++++++++
+
+**Description:**
+
+**Downsides:**
+
+- Multiple and scattered configuration points make management difficult.
+- Tool leakage where configurations overlap or conflict.
+
+**Rationale/History:**
+
+- Initial decisions aimed to simplify individual adjustments in the projects until a better understanding of what is needed could be achieved.
+- Configuration scattered across various files and tools was a quick decision to expedite development and accommodate various tools.
+
+while we needed to commonolize code we also needed to be somewhat flexible in the individual projects while also there was only one person
+working on the toolbox on the side at the time it also wasn't possible to imidealty act on a need of the individual project(s).
+THerfore the it was built with less restrictions to provide various kinds of flexibliity
+
+**Ideas/Possible Solutions:**
+
+Over time the flexibility should  to be reduced to:
+
+- Centralize all configurations in the toolbox config file (`noxconfig.py`), considering renaming it to reflect its purpose better.
+- Implement layered configurations:
+  1. Config file
+  2. Plugin/extension points
+  3. Custom overloads (properly documented inputs and outputs)
+
+Note:
+Already today there is prefered ways to do things but nothing is enforced yet.
+
+
+Nox Task Runner
++++++++++++++++
+
+**Downsides:**
+
+- Imports over top-level modules are problematic as all are imported.
+
+**Rationale:**
+
+- Nox serves as a task runner or means to define tasks.
+
+**History:**
+
+- Use of Nox needed for task assignment. However, it presented issues with handling module imports at the top level.
+
+**Ideas/Possible Solutions:**
+
+- Investigate other task runners that might address these import issues more efficiently.
+- Consider modularization of tasks to handle top-level imports better.
+
+
+Poetry for Project Management
++++++++++++++++++++++++++++++
+
+**Downsides:**
+
+- There's a potential for another tool that addresses the issues better in the future.
+
+**Rationale:**
+
+- Poetry was chosen for project management; however, adjustments and reevaluations might be necessary.
+
+**History:**
+
+- Initial choice for ease of dependency management and project configuration.
+
+**Ideas/Possible Solutions:**
+
+- Continuously evaluate alternative tools that might better serve the project's needs.
+- Stay updated on the development and new features of Poetry and its competitors.
+
+
+Black & Isort for Code Formatting
++++++++++++++++++++++++++++++++++
+
+**Downsides:**
+
+- Potential for performance enhancements and consolidation under one tool.
+
+**Rationale:**
+
+- Black and Isort are currently used but may be supplanted by a more efficient tool.
+
+**History:**
+
+- Initially chosen for their effectiveness and simplicity.
+
+**Ideas/Possible Solutions:**
+
+- Transition to Ruff for performance improvements:
+  - One tool does it all
+  - More widely adopted and has better performance metrics.
+
+
+Pylint Instead of Ruff
++++++++++++++++++++++++
+
+**Downsides:**
+
+- Pylint slower and less usable in pre-commit hooks.
+
+**Rationale:**
+
+- Transitioning to Ruff provides better usability and speed for linting processes.
+
+**History:**
+
+- Pylint was used, but Ruff's emergence offers superior performance in many areas.
+
+**Ideas/Possible Solutions:**
+
+- Tentatively use Ruff for linting:
+  - Evaluate impacts on scoring and migration strategy adjustments.
+  - Continue using Pylint for evaluation/rating while Ruff is integrated for linting.
+
+
+Workflows Dependency Structure
+++++++++++++++++++++++++++++++
+
+**Downsides:**
+
+- Lack of clear documentation and structure for workflow dependencies.
+
+**Rationale:**
+
+- Proper documentation will streamline workflow management and dependency tracing.
+
+**History:**
+
+- Workflow dependencies were initially structured without thorough documentation.
+
+**Ideas/Possible Solutions:**
+
+- Work out and document dependencies and structure thoroughly.
+- Develop a visual or diagrammatic representation to aid comprehension.
+- Regularly review and update the documentation to stay current with project evolution.
