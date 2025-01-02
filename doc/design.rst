@@ -211,8 +211,8 @@ _________________
       - Sets up an appropriate poetry based python environment
 
 
-Known Issues (Sins)
---------------------
+Known Issues
+------------
 
 This section documents flaws, sins, and known issues with the current design and/or its current implementation that were either known upfront or surfaced through the course of implementing it. Additionally, it attempts to explain why certain choices were made at the time, so one can better understand whether it may be reasonable to make changes now or in the future.
 
@@ -299,22 +299,41 @@ Refinement:
 Nox Task Runner
 +++++++++++++++
 
+**Description:**
+While Nox isn't a perfect fit, it still meets most of our requirements for a task runner.
+
 **Downsides:**
 
-- Imports over top-level modules are problematic as all are imported.
+- Imports over top-level modules are problematic as all contained tasks are imported.
+- Passing and receiving additional arguments to a task is clunky.
+- The default behavior of creating a venv for tasks is undesirable.
+- Nox does not support grouping.
 
-**Rationale:**
+**Rationale/History:**
 
-- Nox serves as a task runner or means to define tasks.
+Why Nox was choosen:
 
-**History:**
+- No Additional Language(s) Required: There was no need to introduce extra programming languages or binaries, simplifying the development process.
+- Python-based: Being Python-based, Nox can be extended and understood by Python developers.
+- Python code: As Nox tasks are defined via Python code, existing scripts can be reused and code can be shared easily.
+- Simplicity: Nox is relatively "small" in functionality, making it somewhat simple to use and understand.
 
-- Use of Nox needed for task assignment. However, it presented issues with handling module imports at the top level.
+**Ideas/Solutions:**
 
-**Ideas/Possible Solutions:**
+Grouping:
 
-- Investigate other task runners that might address these import issues more efficiently.
-- Consider modularization of tasks to handle top-level imports better.
+Since Nox doesn't natively support task grouping, we need a strategy to group commands.
+Therefore, a naming convention to indicate grouping should be adopted.
+
+    Suggestion: Groups will be separated using a :code:`:` (colon) because :code:`-` (dash) might already be used within task names.
+
+Imports:
+
+Consider modularizing tasks to handle top-level imports better.
+
+Others Issues:
+
+Generally, one may consider addressing the other issues by choosing another task runner or creating a small set of CLI tools and extension points manually provided by the toolbox.
 
 
 Poetry for Project Management
