@@ -339,59 +339,72 @@ Generally, one may consider addressing the other issues by choosing another task
 Poetry for Project Management
 +++++++++++++++++++++++++++++
 
+**Description:**
+The commonly used
+
 **Downsides:**
 
 - There's a potential for another tool that addresses the issues better in the future.
+- poetry slightly diverges from stardanrd poetproject.toml e.g. [popetry...]
+- no workspaces support
 
-**Rationale:**
+**Rationale/History:**
 
 - Poetry was chosen for project management; however, adjustments and reevaluations might be necessary.
-
-**History:**
-
 - Initial choice for ease of dependency management and project configuration.
 
 **Ideas/Possible Solutions:**
 
+- uv, workspaces,  scripts ...
 - Continuously evaluate alternative tools that might better serve the project's needs.
 - Stay updated on the development and new features of Poetry and its competitors.
 
 
-Black & Isort for Code Formatting
-+++++++++++++++++++++++++++++++++
+Code Formatting
++++++++++++++++
+
+**Description:**
+
+Currently we use Black and Isort for code formatting, though running them on a larger code base as pre-commit hooks or such can take quite a bit of time.
 
 **Downsides:**
 
-- Potential for performance enhancements and consolidation under one tool.
+- Two tools and an aligned configuration of them are required to cleanly and correctly format the codebase.
+- Code needs to be processed at least twice as we apply two individual tools.
+- The performance of Black and Isort is okay but not great compared to other tools.
 
-**Rationale:**
+**Rationale/History:**
 
-- Black and Isort are currently used but may be supplanted by a more efficient tool.
+- Black and Isort have been used because they are battle-tested and widely used
+- When we opted for Black and Isort, ``ruff`` wasn't "a thing" yet and at best in its early stages.
+- Black and Isort already have been known by most python devs when we where selecting the tools
 
-**History:**
+**Ideas/Solutions:**
 
-- Initially chosen for their effectiveness and simplicity.
+As `Ruff <https://docs.astral.sh/ruff/>`_ is fairly stable and also tested and used by many Python projects
+we should consider transitioning to it.
 
-**Ideas/Possible Solutions:**
+Advantages:
 
-- Transition to Ruff for performance improvements:
-  - One tool does it all
-  - More widely adopted and has better performance metrics.
+- Well-tested
+- Widely used
+- Excellent performance
+- Single tool for imports and formatting the codebase
+- Simplifies adopting ruff for linting
 
 
 Pylint Instead of Ruff
 +++++++++++++++++++++++
 
+**Description:**
+
 **Downsides:**
 
 - Pylint slower and less usable in pre-commit hooks.
 
-**Rationale:**
+**Rationale/History:**
 
 - Transitioning to Ruff provides better usability and speed for linting processes.
-
-**History:**
-
 - Pylint was used, but Ruff's emergence offers superior performance in many areas.
 
 **Ideas/Possible Solutions:**
@@ -404,16 +417,15 @@ Pylint Instead of Ruff
 Workflows Dependency Structure
 ++++++++++++++++++++++++++++++
 
+**Description:**
+
 **Downsides:**
 
 - Lack of clear documentation and structure for workflow dependencies.
 
-**Rationale:**
+**Rationale/History:**
 
 - Proper documentation will streamline workflow management and dependency tracing.
-
-**History:**
-
 - Workflow dependencies were initially structured without thorough documentation.
 
 **Ideas/Possible Solutions:**
