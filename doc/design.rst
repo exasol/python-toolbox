@@ -211,8 +211,8 @@ _________________
       - Sets up an appropriate poetry based python environment
 
 
-Known Issues
-------------
+Known Issues (Sins)
+--------------------
 
 This section documents flaws, sins, and known issues with the current design and/or its current implementation that were either known upfront or surfaced through the course of implementing it. Additionally, it attempts to explain why certain choices were made at the time, so one can better understand whether it may be reasonable to make changes now or in the future.
 
@@ -261,37 +261,39 @@ The naming is not consistent across the project name (python-toolbox) and the Py
 
 - `Issue-325 <https://github.com/exasol/python-toolbox/issues/325>`_
 
-Cluttered Configuration
-+++++++++++++++++++++++
+Project Configuration
++++++++++++++++++++++
 
 **Description:**
+Currently, the documentation regarding the configuration of projects using the toolbox has various gaps and does not follow a clear configuration hierarchy or structure.
 
 **Downsides:**
 
-- Multiple and scattered configuration points make management difficult.
-- Tool leakage where configurations overlap or conflict.
+- Multiple scattered configuration points make management and understanding difficult.
+- Configurations overlap or conflict with unclear priorities.
+- Tool leakage (e.g., the ``[isort]`` section in ``pyproject.toml``).
+  (If everything were done via toolbox config file(s), backing tools could be swapped more easily).
 
 **Rationale/History:**
 
-- Initial decisions aimed to simplify individual adjustments in the projects until a better understanding of what is needed could be achieved.
-- Configuration scattered across various files and tools was a quick decision to expedite development and accommodate various tools.
+- Initial decisions aimed to simplify individual adjustments in the projects until we had a better understanding of what needed to be configured.
+- Scattering configuration across various files and tools was a hasty decision to expedite development and accommodate various tools.
 
-while we needed to commonolize code we also needed to be somewhat flexible in the individual projects while also there was only one person
-working on the toolbox on the side at the time it also wasn't possible to imidealty act on a need of the individual project(s).
-THerfore the it was built with less restrictions to provide various kinds of flexibliity
+**Ideas/Solutions:**
 
-**Ideas/Possible Solutions:**
+Currently used methods to configure toolbox-based projects:
 
-Over time the flexibility should  to be reduced to:
+#. Project configuration: ``noxconfig.py``
+#. Tool-specific configuration files or sections in ``pyproject.toml``
+#. Implementing plugin extension points
+#. Overwriting nox tasks with custom implementations
+#. Replacing with customized workflows of the same name (only applicable for action/workflows)
 
-- Centralize all configurations in the toolbox config file (`noxconfig.py`), considering renaming it to reflect its purpose better.
-- Implement layered configurations:
-  1. Config file
-  2. Plugin/extension points
-  3. Custom overloads (properly documented inputs and outputs)
+Refinement:
 
-Note:
-Already today there is prefered ways to do things but nothing is enforced yet.
+- Centralize all toolbox based configurations in a toolbox config file (``noxconfig.py``).
+- Rename the toolbox config file from ``noxconfig.py`` to a more appropriate name that reflects its purpose.
+- Document configuration hierarchy and usage.
 
 
 Nox Task Runner
