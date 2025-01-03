@@ -339,25 +339,10 @@ Generally, one may consider addressing the other issues by choosing another task
 Poetry for Project Management
 +++++++++++++++++++++++++++++
 
-**Description:**
-The commonly used
-
-**Downsides:**
-
-- There's a potential for another tool that addresses the issues better in the future.
-- poetry slightly diverges from stardanrd poetproject.toml e.g. [popetry...]
-- no workspaces support
-
-**Rationale/History:**
-
-- Poetry was chosen for project management; however, adjustments and reevaluations might be necessary.
-- Initial choice for ease of dependency management and project configuration.
-
-**Ideas/Possible Solutions:**
-
-- uv, workspaces,  scripts ...
-- Continuously evaluate alternative tools that might better serve the project's needs.
-- Stay updated on the development and new features of Poetry and its competitors.
+While poetry was and is a good choice for exasol project, dependency, build tool etc. "most recently"
+`uv <https://docs.astral.sh/uv/>`_ has surffeced and made big advanced. Looking at uv it addresses additional itches with
+our projects and therefore in the long run it may be a good idea to migrate our project setups to it.
+Use poetry for project, build and depenency management.
 
 
 Code Formatting
