@@ -430,23 +430,16 @@ Workflows Dependency Structure
 ++++++++++++++++++++++++++++++
 
 **Description:**
-The common Workflows have been undergooging common and frequent changes, as their full
-required features are still discovered. Therfore no clear interface and reqruirements
-on the workflow "interfaces" have been documented. Currently it is with most workflows
-either get all of them or understand what they do and exchange before one can easily
-customize the workflows.
+Undocumented workflow interdependencies and structure
 
 **Downsides:**
-
-- Lack of clear documentation and structure for workflow dependencies.
+- Hard to customize if one does not understand the overall setup and dependencies
 
 **Rationale/History:**
-
-- Proper documentation will streamline workflow management and dependency tracing.
-- Workflow dependencies were initially structured without thorough documentation.
+- Simplify development during the discovery phase (what is needed, how to implement, adjust to discovered needs)
+- Ideally, all workflows will be integrated and use a standard setup (part of the customization can also be done in the called nox tasks)
 
 **Ideas/Possible Solutions:**
 
-- Work out and document dependencies and structure thoroughly.
-- Develop a visual or diagrammatic representation to aid comprehension.
-- Regularly review and update the documentation to stay current with project evolution.
+- Define clear requirements and interfaces
+- Document those requirements and interfaces
