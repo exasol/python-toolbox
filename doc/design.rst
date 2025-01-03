@@ -216,6 +216,7 @@ Known Issues
 
 This section documents flaws, sins, and known issues with the current design and/or its current implementation that were either known upfront or surfaced through the course of implementing it. Additionally, it attempts to explain why certain choices were made at the time, so one can better understand whether it may be reasonable to make changes now or in the future.
 
+
 Passing files as individual arguments on the CLI
 ++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -378,31 +379,56 @@ Advantages:
 - Simplifies adopting ruff for linting
 
 
-Pylint Instead of Ruff
-+++++++++++++++++++++++
+Pylint
+++++++
 
 **Description:**
+We are currently using Pylint instead of Ruff.
 
 **Downsides:**
 
-- Pylint slower and less usable in pre-commit hooks.
+- Pylint is slower and less usable in pre-commit hooks
+- It is an additional tool, therefore at leas one more processing run of the code is required
+- No LSP (e.g. compare to `ruff lsp`)
 
 **Rationale/History:**
 
-- Transitioning to Ruff provides better usability and speed for linting processes.
-- Pylint was used, but Ruff's emergence offers superior performance in many areas.
+- Well known
+- Pylint provides built-in project score/rating
+- Project score is good for improving legacy code bases which haven't been linted previously
+- Plugin support
 
 **Ideas/Possible Solutions:**
 
-- Tentatively use Ruff for linting:
-  - Evaluate impacts on scoring and migration strategy adjustments.
-  - Continue using Pylint for evaluation/rating while Ruff is integrated for linting.
+Replacing Pylint with Ruff for linting would provide significant performance improvement. Additionally, Ruff offers an LSP and IDE integrations and is widely used these days. Additionaly there would be an additional synergy if we adopt ruff for formatting the code base.
+
+Transitioning to Ruff requires us to adjust the migration and improvement strategies for our projects:
+
+- Currently, our codebase improvements are guided by scores. However, with Ruff, a new approach is necessary. For example, we could incrementally introduce specific linting rules, fix the related issues, and then enforce these rules.
+
+- The project rating and scoring system will also need modification. One possiblity would be to run Ruff and Pylint in parallel, utilizing Pylint solely for rating and issue resolution while Ruff is incorporated for linting tasks.
+
+
+Security Linter
++++++++++++++++
+Currently the secuexit zero
+
+
+Rationale:
+- simplify adaption into projects
+- rating makes it still visiable
+-
 
 
 Workflows Dependency Structure
 ++++++++++++++++++++++++++++++
 
 **Description:**
+The common Workflows have been undergooging common and frequent changes, as their full
+required features are still discovered. Therfore no clear interface and reqruirements
+on the workflow "interfaces" have been documented. Currently it is with most workflows
+either get all of them or understand what they do and exchange before one can easily
+customize the workflows.
 
 **Downsides:**
 
