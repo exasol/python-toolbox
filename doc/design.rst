@@ -411,13 +411,19 @@ Transitioning to Ruff requires us to adjust the migration and improvement strate
 
 Security Linter
 +++++++++++++++
-Currently the secuexit zero
 
+**Description:**
+As of today, the security linter does not fail if it has findings. This was intentionally done to simplify integration and adoption of the tool. Developers can still use the results to improve and find issues within the codebase, and additionally, a rating will be generated to provide some guidance on which projects need attention.
 
-Rationale:
-- simplify adaption into projects
-- rating makes it still visiable
--
+**Downsides:**
+- No enforced safeguard on introducing potential security issues
+
+**Rationale/History:**
+- Simplify adoption into projects
+- First step to introduce tooling and make the current state/rating visible
+
+**Ideas/Possible Solutions:**
+Define a strategy to address potential security issues in projects. Once this has been done, enforce the immediate addressing of potential security issues in the codebase upon introduction.
 
 
 Workflows Dependency Structure
