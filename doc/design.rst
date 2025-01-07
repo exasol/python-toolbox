@@ -389,7 +389,7 @@ We are currently using Pylint instead of Ruff.
 
 - Pylint is slower and less usable in pre-commit hooks
 - It is an additional tool, therefore at least one more processing run of the code is required
-- No LSP (e.g. compare to `ruff lsp`)
+- No support for Language Server Protocol (LSP, e.g. compare to `ruff lsp`)
 
 **Rationale/History:**
 
