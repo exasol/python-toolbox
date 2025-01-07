@@ -235,7 +235,7 @@ to the tools used/invoked by the python toolbox.
 
 - The current method of passing files as individual arguments by default offers ease in collection and filtering. It also allows users to simply provide or replace the selection mechanism fairly easily.
 
-- Every tool used by the toolbox (e.g., `black`, `isort`) used to support passing files by argument. However, not all of them provided the same mechanism for selection or deselection patterns (e.g., "glob").
+- Every tool used by the toolbox (e.g., `black`, `isort`) used to support passing files by argument. However, not all of them provided the same mechanism for selection or deselection patterns (e.g. "glob").
 
 **Ideas/Solutions:**
 
