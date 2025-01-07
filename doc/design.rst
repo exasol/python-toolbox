@@ -222,7 +222,7 @@ Passing files as individual arguments on the CLI
 
 **Description:**
 
-As of today selection of python files for litting formatting etc. is done by passing all relevant python files as individual argument(s)
+As of today selection of python files for linting, formatting etc. is done by passing all relevant python files as individual argument(s)
 to the tools used/invoked by the python toolbox.
 
 **Downsides:**
