@@ -228,7 +228,7 @@ to the tools used/invoked by the python toolbox.
 **Downsides:**
 
 - Most shells have limitations on the number of arguments and their length.
-- Noisey output, making it hard to decipher the actual command.
+- Noisy output, making it hard to decipher the actual command.
 - Not ideal for all use cases.
 
 **Rationale/History:**
