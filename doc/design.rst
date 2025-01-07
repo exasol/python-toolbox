@@ -423,7 +423,8 @@ As of today, the security linter does not fail if it has findings. This was inte
 - First step to introduce tooling and make the current state/rating visible
 
 **Ideas/Possible Solutions:**
-Define a strategy to address potential security issues in projects. Once this has been done, enforce the immediate addressing of potential security issues in the codebase upon introduction.
+* Define a strategy to address potential security issues in projects. Once this has been done, enforce the immediate addressing of potential security issues in the codebase upon introduction.
+* Allow excluding individual findings in projects until they are fixed.
 
 
 Workflows Dependency Structure
