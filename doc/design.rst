@@ -340,10 +340,10 @@ Generally, one may consider addressing the other issues by choosing another task
 Poetry for Project Management
 +++++++++++++++++++++++++++++
 
-While poetry was and is a good choice for exasol project, dependency, build tool etc. "most recently"
-`uv <https://docs.astral.sh/uv/>`_ has surffeced and made big advanced. Looking at uv it addresses additional itches with
+While poetry was and is a good choice for Exasol project, dependency, build tool etc. "most recently"
+`uv <https://docs.astral.sh/uv/>`_ has surfaced and made big advanced. Looking at uv it addresses additional itches with
 our projects and therefore in the long run it may be a good idea to migrate our project setups to it.
-Use poetry for project, build and depenency management.
+Use poetry for project, build and dependency management.
 
 
 Code Formatting
