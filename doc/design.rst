@@ -260,7 +260,7 @@ The naming is not consistent across the project name (python-toolbox) and the Py
 
 **Ideas/Solutions:**
 
-- `Issue-325 <https://github.com/exasol/python-toolbox/issues/325>`_
+- Consistently rename project to ``exasol-python-toolbox``: `Issue-325 <https://github.com/exasol/python-toolbox/issues/325>`_
 
 Project Configuration
 +++++++++++++++++++++
