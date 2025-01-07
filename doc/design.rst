@@ -314,7 +314,7 @@ While Nox isn't a perfect fit, it still meets most of our requirements for a tas
 
 Why Nox was choosen:
 
-- No Additional Language(s) Required: There was no need to introduce extra programming languages or binaries, simplifying the development process.
+- No additional language(s) required: There was no need to introduce extra programming languages or binaries, simplifying the development process.
 - Python-based: Being Python-based, Nox can be extended and understood by Python developers.
 - Python code: As Nox tasks are defined via Python code, existing scripts can be reused and code can be shared easily.
 - Simplicity: Nox is relatively "small" in functionality, making it somewhat simple to use and understand.
