@@ -9,7 +9,10 @@
 
     🚨 Attention: Due to these changes, the workflows will no longer be executed if the PR comes from a branch not located in this repository.
                   As third-party contributions from outside forks are rare to nearly non-existent, this downside was considered a reasonable trade-off at this time.
-                  
+
+## 📚 Documentation
+* Updated design doc (Added known Issues)
+
 ## 🔩 Internal
 * Relocked dependencies
 * Update referenced github actions
