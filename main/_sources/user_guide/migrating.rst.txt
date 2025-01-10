@@ -199,10 +199,10 @@ Could be tracked in a format and based on the information listed in the real lif
       - ✓
       - ✓
       - ✓
-      - ✗
       - ✓
-      - ✗
-      - ✗
+      - ✓
+      - ✓
+      - ✓
     * - `sqlalchemy-exasol <https://github.com/exasol/sqlalchemy-exasol>`_
       - ✓
       - ✓
