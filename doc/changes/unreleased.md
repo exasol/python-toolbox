@@ -12,6 +12,7 @@
 
 ## 📚 Documentation
 * Updated design doc (Added known Issues)
+* Updated migration progress table
 
 ## 🔩 Internal
 * Relocked dependencies
