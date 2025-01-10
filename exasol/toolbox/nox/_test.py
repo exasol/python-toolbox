@@ -46,7 +46,10 @@ def _integration_tests(
     # run pre integration test plugins
     pm.hook.pre_integration_tests_hook(session=session, config=config, context=context)
 
-    # run
+    # Notes:
+    # - Catch exceptions and ensure post-hooks run before exiting
+    # - Consider making the executed command(s) configurable via a plugin hook
+    #   (The default implementation of the hook could provide the current implementation)
     command = _test_command(config.root / "test" / "integration", config, context)
     session.run(*command)
 
