@@ -303,14 +303,14 @@ data-aria-dark="Switch to auto color mode">
 <div><p><a class="reference external" href="https://github.com/Textualize/textual/blob/d2ba22b86f48f4ce5b0f55767efdcf1a5478b180/src/textual/_loop.py">Adapter’s used in textual</a></p>
 <div class="tab-set docutils">
 <input checked="True" class="tab-input" id="tab-set--2-input--1" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--1">loop_first</label><div class="tab-content docutils">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span data-line="2">
-</span><span data-line="3"><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">TypeVar</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">TypeVar</span>
 </span><span data-line="4">
 </span><span data-line="5"><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
 </span><span data-line="6">
 </span><span data-line="7">
-</span><span data-line="8"><span class="k">def</span> <span class="nf">loop_first</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">T</span><span class="p">]]:</span>
+</span><span data-line="8"><span class="k">def</span><span class="w"> </span><span class="nf">loop_first</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">T</span><span class="p">]]:</span>
 </span><span data-line="9"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Iterate and generate a tuple with a flag for first value.&quot;&quot;&quot;</span>
 </span><span data-line="10">    <span class="n">iter_values</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
 </span><span data-line="11">    <span class="k">try</span><span class="p">:</span>
@@ -324,14 +324,14 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </div>
 <input class="tab-input" id="tab-set--2-input--2" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--2">loop_last</label><div class="tab-content docutils">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span data-line="2">
-</span><span data-line="3"><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">TypeVar</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">TypeVar</span>
 </span><span data-line="4">
 </span><span data-line="5"><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
 </span><span data-line="6">
 </span><span data-line="7">
-</span><span data-line="8"><span class="k">def</span> <span class="nf">loop_last</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">T</span><span class="p">]]:</span>
+</span><span data-line="8"><span class="k">def</span><span class="w"> </span><span class="nf">loop_last</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">T</span><span class="p">]]:</span>
 </span><span data-line="9"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Iterate and generate a tuple with a flag for last value.&quot;&quot;&quot;</span>
 </span><span data-line="10">    <span class="n">iter_values</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
 </span><span data-line="11">    <span class="k">try</span><span class="p">:</span>
@@ -346,14 +346,14 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </div>
 <input class="tab-input" id="tab-set--2-input--3" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--3">loop_first_last</label><div class="tab-content docutils">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span data-line="2">
-</span><span data-line="3"><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">TypeVar</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">TypeVar</span>
 </span><span data-line="4">
 </span><span data-line="5"><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
 </span><span data-line="6">
 </span><span data-line="7">
-</span><span data-line="8"><span class="k">def</span> <span class="nf">loop_first_last</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">T</span><span class="p">]]:</span>
+</span><span data-line="8"><span class="k">def</span><span class="w"> </span><span class="nf">loop_first_last</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">T</span><span class="p">]]:</span>
 </span><span data-line="9"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Iterate and generate a tuple with a flag for first and last value.&quot;&quot;&quot;</span>
 </span><span data-line="10">    <span class="n">iter_values</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
 </span><span data-line="11">    <span class="k">try</span><span class="p">:</span>
@@ -381,7 +381,7 @@ data-aria-dark="Switch to auto color mode">
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
 </span><span data-line="2">
 </span><span data-line="3">
-</span><span data-line="4"><span class="k">def</span> <span class="nf">find_number</span><span class="p">(</span><span class="n">numbers</span><span class="p">):</span>
+</span><span data-line="4"><span class="k">def</span><span class="w"> </span><span class="nf">find_number</span><span class="p">(</span><span class="n">numbers</span><span class="p">):</span>
 </span><span data-line="5">    <span class="n">numbers</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">numbers</span> <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
 </span><span data-line="6">    <span class="k">try</span><span class="p">:</span>
 </span><span data-line="7">        <span class="n">number</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span>
@@ -399,7 +399,7 @@ data-aria-dark="Switch to auto color mode">
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
 </span><span data-line="2">
 </span><span data-line="3">
-</span><span data-line="4"><span class="k">def</span> <span class="nf">find_number</span><span class="p">(</span><span class="n">numbers</span><span class="p">):</span>
+</span><span data-line="4"><span class="k">def</span><span class="w"> </span><span class="nf">find_number</span><span class="p">(</span><span class="n">numbers</span><span class="p">):</span>
 </span><span data-line="5">    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">:</span>
 </span><span data-line="6">        <span class="c1"># concerns are not seperated</span>
 </span><span data-line="7">        <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -416,7 +416,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="2"><span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
 </span><span data-line="3">
 </span><span data-line="4">
-</span><span data-line="5"><span class="k">def</span> <span class="nf">find_number</span><span class="p">(</span><span class="n">numbers</span><span class="p">):</span>
+</span><span data-line="5"><span class="k">def</span><span class="w"> </span><span class="nf">find_number</span><span class="p">(</span><span class="n">numbers</span><span class="p">):</span>
 </span><span data-line="6">    <span class="n">numbers</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">numbers</span> <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
 </span><span data-line="7">    <span class="k">try</span><span class="p">:</span>
 </span><span data-line="8">        <span class="n">number</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span>
@@ -431,7 +431,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="17"><span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
 </span><span data-line="18">
 </span><span data-line="19">
-</span><span data-line="20"><span class="k">def</span> <span class="nf">find_number</span><span class="p">(</span><span class="n">numbers</span><span class="p">):</span>
+</span><span data-line="20"><span class="k">def</span><span class="w"> </span><span class="nf">find_number</span><span class="p">(</span><span class="n">numbers</span><span class="p">):</span>
 </span><span data-line="21">    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">:</span>
 </span><span data-line="22">        <span class="c1"># concerns are not seperated</span>
 </span><span data-line="23">        <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -446,12 +446,12 @@ data-aria-dark="Switch to auto color mode">
 </div>
 <section id="generic-solution">
 <h3>Generic Solution<a class="headerlink" href="#generic-solution" title="Link to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TypeVar</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TypeVar</span>
 </span><span data-line="2">
 </span><span data-line="3"><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
 </span><span data-line="4">
 </span><span data-line="5">
-</span><span data-line="6"><span class="k">def</span> <span class="nf">find_first</span><span class="p">(</span>
+</span><span data-line="6"><span class="k">def</span><span class="w"> </span><span class="nf">find_first</span><span class="p">(</span>
 </span><span data-line="7">        <span class="n">iterable</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
 </span><span data-line="8">        <span class="n">condition</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="nb">bool</span><span class="p">],</span>
 </span><span data-line="9">        <span class="n">terminal</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
@@ -510,19 +510,19 @@ data-aria-dark="Switch to auto color mode">
 <input checked="True" class="tab-input" id="tab-set--5-input--1" name="tab-set--5" type="radio"><label class="tab-label" for="tab-set--5-input--1">✅ With Context Manager</label><div class="tab-content docutils">
 <div class="tab-set docutils">
 <input checked="True" class="tab-input" id="tab-set--4-input--1" name="tab-set--4" type="radio"><label class="tab-label" for="tab-set--4-input--1">Python 3.8 - 3.10</label><div class="tab-content docutils">
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span> <span class="nn">os</span>
-</span><span data-line="2"><span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
 </span><span data-line="3">
 </span><span data-line="4">
 </span><span data-line="5"><span class="nd">@contextmanager</span>
-</span><span data-line="6"><span class="k">def</span> <span class="nf">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+</span><span data-line="6"><span class="k">def</span><span class="w"> </span><span class="nf">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 </span><span data-line="7">    <span class="n">old_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 </span><span data-line="8">    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </span><span data-line="9">    <span class="k">yield</span> <span class="n">path</span>
 </span><span data-line="10">    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">old_dir</span><span class="p">)</span>
 </span><span data-line="11">
 </span><span data-line="12">
-</span><span data-line="13"><span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+</span><span data-line="13"><span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
 </span><span data-line="14">    <span class="k">with</span> <span class="n">chdir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> <span class="k">as</span> <span class="n">_working_dir</span><span class="p">:</span>
 </span><span data-line="15">        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;some-file.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 </span><span data-line="16">            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Some content&quot;</span><span class="p">)</span>
@@ -532,10 +532,10 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </div>
 <input class="tab-input" id="tab-set--4-input--2" name="tab-set--4" type="radio"><label class="tab-label" for="tab-set--4-input--2">Python 3.11</label><div class="tab-content docutils">
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">chdir</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">chdir</span>
 </span><span data-line="2">
 </span><span data-line="3">
-</span><span data-line="4"><span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+</span><span data-line="4"><span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
 </span><span data-line="5">    <span class="k">with</span> <span class="n">chdir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> <span class="k">as</span> <span class="n">_working_dir</span><span class="p">:</span>
 </span><span data-line="6">        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;some-file.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 </span><span data-line="7">            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Some content&quot;</span><span class="p">)</span>
@@ -547,10 +547,10 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </div>
 <input class="tab-input" id="tab-set--5-input--2" name="tab-set--5" type="radio"><label class="tab-label" for="tab-set--5-input--2">❌ Naive Approach</label><div class="tab-content docutils">
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span> <span class="nn">os</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 </span><span data-line="2">
 </span><span data-line="3">
-</span><span data-line="4"><span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+</span><span data-line="4"><span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
 </span><span data-line="5">    <span class="n">old_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 </span><span data-line="6">    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
 </span><span data-line="7">    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">old_dir</span><span class="p">)</span>
@@ -562,39 +562,39 @@ data-aria-dark="Switch to auto color mode">
 </div>
 <input class="tab-input" id="tab-set--5-input--3" name="tab-set--5" type="radio"><label class="tab-label" for="tab-set--5-input--3">🎭 Compare</label><div class="tab-content docutils">
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># With Context Manager</span>
-</span><span data-line="2"><span class="kn">import</span> <span class="nn">os</span>
-</span><span data-line="3"><span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+</span><span data-line="2"><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
 </span><span data-line="4">
 </span><span data-line="5">
 </span><span data-line="6"><span class="nd">@contextmanager</span>
-</span><span data-line="7"><span class="k">def</span> <span class="nf">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+</span><span data-line="7"><span class="k">def</span><span class="w"> </span><span class="nf">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 </span><span data-line="8">    <span class="n">old_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 </span><span data-line="9">    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </span><span data-line="10">    <span class="k">yield</span> <span class="n">path</span>
 </span><span data-line="11">    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">old_dir</span><span class="p">)</span>
 </span><span data-line="12">
 </span><span data-line="13">
-</span><span data-line="14"><span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+</span><span data-line="14"><span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
 </span><span data-line="15">    <span class="k">with</span> <span class="n">chdir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> <span class="k">as</span> <span class="n">_working_dir</span><span class="p">:</span>
 </span><span data-line="16">        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;some-file.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 </span><span data-line="17">            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Some content&quot;</span><span class="p">)</span>
 </span><span data-line="18">
 </span><span data-line="19">
 </span><span data-line="20"><span class="c1"># With Python 3.11</span>
-</span><span data-line="21"><span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">chdir</span>
+</span><span data-line="21"><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">chdir</span>
 </span><span data-line="22">
 </span><span data-line="23">
-</span><span data-line="24"><span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+</span><span data-line="24"><span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
 </span><span data-line="25">    <span class="k">with</span> <span class="n">chdir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> <span class="k">as</span> <span class="n">_working_dir</span><span class="p">:</span>
 </span><span data-line="26">        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;some-file.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 </span><span data-line="27">            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Some content&quot;</span><span class="p">)</span>
 </span><span data-line="28">
 </span><span data-line="29">
 </span><span data-line="30"><span class="c1"># Naive Approach</span>
-</span><span data-line="31"><span class="kn">import</span> <span class="nn">os</span>
+</span><span data-line="31"><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 </span><span data-line="32">
 </span><span data-line="33">
-</span><span data-line="34"><span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+</span><span data-line="34"><span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
 </span><span data-line="35">    <span class="n">old_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 </span><span data-line="36">    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
 </span><span data-line="37">    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">old_dir</span><span class="p">)</span>
@@ -616,13 +616,13 @@ data-aria-dark="Switch to auto color mode">
 <p>Factor out unrelated repetitive work into a decorator.</p>
 <div class="tab-set docutils">
 <input checked="True" class="tab-input" id="tab-set--6-input--1" name="tab-set--6" type="radio"><label class="tab-label" for="tab-set--6-input--1">✅ With Decorator</label><div class="tab-content docutils">
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span> <span class="nn">logging</span>
-</span><span data-line="2"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
 </span><span data-line="3">
 </span><span data-line="4">
-</span><span data-line="5"><span class="k">def</span> <span class="nf">log_execution</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+</span><span data-line="5"><span class="k">def</span><span class="w"> </span><span class="nf">log_execution</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
 </span><span data-line="6">    <span class="nd">@wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-</span><span data-line="7">    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="7">    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span data-line="8">        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Entering: </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span data-line="9">        <span class="n">result</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span><span data-line="10">        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Leaving: </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -632,12 +632,12 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="14">
 </span><span data-line="15">
 </span><span data-line="16"><span class="nd">@log_execution</span>
-</span><span data-line="17"><span class="k">def</span> <span class="nf">some_function</span><span class="p">():</span>
+</span><span data-line="17"><span class="k">def</span><span class="w"> </span><span class="nf">some_function</span><span class="p">():</span>
 </span><span data-line="18">    <span class="k">return</span> <span class="s2">&quot;Some Result&quot;</span>
 </span><span data-line="19">
 </span><span data-line="20">
 </span><span data-line="21"><span class="nd">@log_execution</span>
-</span><span data-line="22"><span class="k">def</span> <span class="nf">other_function</span><span class="p">():</span>
+</span><span data-line="22"><span class="k">def</span><span class="w"> </span><span class="nf">other_function</span><span class="p">():</span>
 </span><span data-line="23">    <span class="k">return</span> <span class="s2">&quot;Other Result&quot;</span>
 </span><span data-line="24">
 </span><span data-line="25">
@@ -645,17 +645,17 @@ data-aria-dark="Switch to auto color mode">
 </div>
 </div>
 <input class="tab-input" id="tab-set--6-input--2" name="tab-set--6" type="radio"><label class="tab-label" for="tab-set--6-input--2">❌ Naive Approach</label><div class="tab-content docutils">
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span> <span class="nn">logging</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 </span><span data-line="2">
 </span><span data-line="3">
-</span><span data-line="4"><span class="k">def</span> <span class="nf">some_function</span><span class="p">():</span>
+</span><span data-line="4"><span class="k">def</span><span class="w"> </span><span class="nf">some_function</span><span class="p">():</span>
 </span><span data-line="5">    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Entering: some_function&quot;</span><span class="p">)</span>
 </span><span data-line="6">    <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Some Result&quot;</span>
 </span><span data-line="7">    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Leaving: some_function&quot;</span><span class="p">)</span>
 </span><span data-line="8">    <span class="k">return</span> <span class="n">result</span>
 </span><span data-line="9">
 </span><span data-line="10">
-</span><span data-line="11"><span class="k">def</span> <span class="nf">other_function</span><span class="p">():</span>
+</span><span data-line="11"><span class="k">def</span><span class="w"> </span><span class="nf">other_function</span><span class="p">():</span>
 </span><span data-line="12">    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Entering: other_function&quot;</span><span class="p">)</span>
 </span><span data-line="13">    <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Some Result&quot;</span>
 </span><span data-line="14">    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Leaving: other_function&quot;</span><span class="p">)</span>
@@ -665,13 +665,13 @@ data-aria-dark="Switch to auto color mode">
 </div>
 <input class="tab-input" id="tab-set--6-input--3" name="tab-set--6" type="radio"><label class="tab-label" for="tab-set--6-input--3">🎭 Compare</label><div class="tab-content docutils">
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># With Decorator</span>
-</span><span data-line="2"><span class="kn">import</span> <span class="nn">logging</span>
-</span><span data-line="3"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+</span><span data-line="2"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
 </span><span data-line="4">
 </span><span data-line="5">
-</span><span data-line="6"><span class="k">def</span> <span class="nf">log_execution</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+</span><span data-line="6"><span class="k">def</span><span class="w"> </span><span class="nf">log_execution</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
 </span><span data-line="7">    <span class="nd">@wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-</span><span data-line="8">    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="8">    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span data-line="9">        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Entering: </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span data-line="10">        <span class="n">result</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span><span data-line="11">        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Leaving: </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -681,27 +681,27 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="15">
 </span><span data-line="16">
 </span><span data-line="17"><span class="nd">@log_execution</span>
-</span><span data-line="18"><span class="k">def</span> <span class="nf">some_function</span><span class="p">():</span>
+</span><span data-line="18"><span class="k">def</span><span class="w"> </span><span class="nf">some_function</span><span class="p">():</span>
 </span><span data-line="19">    <span class="k">return</span> <span class="s2">&quot;Some Result&quot;</span>
 </span><span data-line="20">
 </span><span data-line="21">
 </span><span data-line="22"><span class="nd">@log_execution</span>
-</span><span data-line="23"><span class="k">def</span> <span class="nf">other_function</span><span class="p">():</span>
+</span><span data-line="23"><span class="k">def</span><span class="w"> </span><span class="nf">other_function</span><span class="p">():</span>
 </span><span data-line="24">    <span class="k">return</span> <span class="s2">&quot;Other Result&quot;</span>
 </span><span data-line="25">
 </span><span data-line="26">
 </span><span data-line="27"><span class="c1"># Naive Approach</span>
-</span><span data-line="28"><span class="kn">import</span> <span class="nn">logging</span>
+</span><span data-line="28"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 </span><span data-line="29">
 </span><span data-line="30">
-</span><span data-line="31"><span class="k">def</span> <span class="nf">some_function</span><span class="p">():</span>
+</span><span data-line="31"><span class="k">def</span><span class="w"> </span><span class="nf">some_function</span><span class="p">():</span>
 </span><span data-line="32">    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Entering: some_function&quot;</span><span class="p">)</span>
 </span><span data-line="33">    <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Some Result&quot;</span>
 </span><span data-line="34">    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Leaving: some_function&quot;</span><span class="p">)</span>
 </span><span data-line="35">    <span class="k">return</span> <span class="n">result</span>
 </span><span data-line="36">
 </span><span data-line="37">
-</span><span data-line="38"><span class="k">def</span> <span class="nf">other_function</span><span class="p">():</span>
+</span><span data-line="38"><span class="k">def</span><span class="w"> </span><span class="nf">other_function</span><span class="p">():</span>
 </span><span data-line="39">    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Entering: other_function&quot;</span><span class="p">)</span>
 </span><span data-line="40">    <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Some Result&quot;</span>
 </span><span data-line="41">    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Leaving: other_function&quot;</span><span class="p">)</span>

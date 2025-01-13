@@ -14,6 +14,9 @@
 * Updated design doc (Added known Issues)
 * Updated migration progress table
 
+## 🔧 Changed
+* Updated `actions/upload-artifacts` version to `4.6.0`
+
 ## 🔩 Internal
 * Relocked dependencies
 * Update referenced github actions

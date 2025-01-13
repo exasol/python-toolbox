@@ -296,37 +296,37 @@ which is required to to provide the following attributes:</p>
 </div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;Configuration for nox based task runner&quot;&quot;&quot;</span>
 </span><span data-line="2">
-</span><span data-line="3"><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span data-line="4">
-</span><span data-line="5"><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-</span><span data-line="6"><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-</span><span data-line="7"><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
 </span><span data-line="8">
-</span><span data-line="9"><span class="kn">from</span> <span class="nn">exasol.toolbox.nox.plugin</span> <span class="kn">import</span> <span class="n">hookimpl</span>
-</span><span data-line="10"><span class="kn">from</span> <span class="nn">exasol.toolbox.tools.replace_version</span> <span class="kn">import</span> <span class="n">update_workflow</span>
+</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">exasol.toolbox.nox.plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">hookimpl</span>
+</span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">exasol.toolbox.tools.replace_version</span><span class="w"> </span><span class="kn">import</span> <span class="n">update_workflow</span>
 </span><span data-line="11">
 </span><span data-line="12">
-</span><span data-line="13"><span class="k">class</span> <span class="nc">UpdateTemplates</span><span class="p">:</span>
+</span><span data-line="13"><span class="k">class</span><span class="w"> </span><span class="nc">UpdateTemplates</span><span class="p">:</span>
 </span><span data-line="14">    <span class="n">TEMPLATE_PATH</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;exasol&quot;</span> <span class="o">/</span> <span class="s2">&quot;toolbox&quot;</span> <span class="o">/</span> <span class="s2">&quot;templates&quot;</span>
 </span><span data-line="15">
 </span><span data-line="16">    <span class="nd">@property</span>
-</span><span data-line="17">    <span class="k">def</span> <span class="nf">workflows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="17">    <span class="k">def</span><span class="w"> </span><span class="nf">workflows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="18">        <span class="n">gh_workflows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TEMPLATE_PATH</span> <span class="o">/</span> <span class="s2">&quot;github&quot;</span> <span class="o">/</span> <span class="s2">&quot;workflows&quot;</span>
 </span><span data-line="19">        <span class="n">gh_workflows</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">gh_workflows</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()]</span>
 </span><span data-line="20">        <span class="k">return</span> <span class="n">gh_workflows</span>
 </span><span data-line="21">
 </span><span data-line="22">    <span class="nd">@hookimpl</span>
-</span><span data-line="23">    <span class="k">def</span> <span class="nf">prepare_release_update_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
+</span><span data-line="23">    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_release_update_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
 </span><span data-line="24">        <span class="k">for</span> <span class="n">workflow</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflows</span><span class="p">:</span>
 </span><span data-line="25">            <span class="n">update_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
 </span><span data-line="26">
 </span><span data-line="27">    <span class="nd">@hookimpl</span>
-</span><span data-line="28">    <span class="k">def</span> <span class="nf">prepare_release_add_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+</span><span data-line="28">    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_release_add_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
 </span><span data-line="29">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflows</span>
 </span><span data-line="30">
 </span><span data-line="31">
 </span><span data-line="32"><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="33"><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+</span><span data-line="33"><span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">:</span>
 </span><span data-line="34"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Project specific configuration used by nox infrastructure&quot;&quot;&quot;</span>
 </span><span data-line="35">
 </span><span data-line="36">    <span class="n">root</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
@@ -429,10 +429,10 @@ If you only need the standard tasks provided by the toolbox your <em>noxfile.py<
 forward and you just can use the example <em>noxfile.py</em> bellow.</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;defines nox tasks/targets for this project&quot;&quot;&quot;</span>
 </span><span data-line="2">
-</span><span data-line="3"><span class="kn">import</span> <span class="nn">nox</span>
+</span><span data-line="3"><span class="kn">import</span><span class="w"> </span><span class="nn">nox</span>
 </span><span data-line="4">
 </span><span data-line="5"><span class="c1"># imports all nox task provided by the toolbox</span>
-</span><span data-line="6"><span class="kn">from</span> <span class="nn">exasol.toolbox.nox.tasks</span> <span class="kn">import</span> <span class="o">*</span>  <span class="c1"># pylint: disable=wildcard-import disable=unused-wildcard-import</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">exasol.toolbox.nox.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>  <span class="c1"># pylint: disable=wildcard-import disable=unused-wildcard-import</span>
 </span><span data-line="7">
 </span><span data-line="8"><span class="c1"># default actions to be run if nothing is explicitly specified with the -s option</span>
 </span><span data-line="9"><span class="n">nox</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">sessions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;project:fix&quot;</span><span class="p">]</span>

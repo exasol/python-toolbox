@@ -237,22 +237,22 @@ For more details on the current tasks and groups, refer to: <a class="reference 
 <li><p><code class="code docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">plugins</span></code> can take care of a specific test preparation need, e.g., <a class="reference external" href="https://github.com/exasol/pytest-plugins/tree/main/pytest-backend">pytest-backend</a></p></li>
 </ul>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span> <span class="nn">nox</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">nox</span>
 </span><span data-line="2">
 </span><span data-line="3"><span class="c1"># imports all nox task provided by the toolbox</span>
-</span><span data-line="4"><span class="kn">from</span> <span class="nn">exasol.toolbox.nox.tasks</span> <span class="kn">import</span> <span class="o">*</span>  <span class="c1"># pylint: disable=wildcard-import disable=unused-wildcard-import</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">exasol.toolbox.nox.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>  <span class="c1"># pylint: disable=wildcard-import disable=unused-wildcard-import</span>
 </span><span data-line="5">
 </span><span data-line="6"><span class="c1"># default actions to be run if nothing is explicitly specified with the -s option</span>
 </span><span data-line="7"><span class="n">nox</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">sessions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;project:fix&quot;</span><span class="p">]</span>
 </span><span data-line="8">
 </span><span data-line="9"><span class="nd">@nox</span><span class="o">.</span><span class="n">session</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;project:fix&quot;</span><span class="p">,</span> <span class="n">python</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span data-line="10"><span class="k">def</span> <span class="nf">my_project_fix_overwrite</span><span class="p">(</span><span class="n">session</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="10"><span class="k">def</span><span class="w"> </span><span class="nf">my_project_fix_overwrite</span><span class="p">(</span><span class="n">session</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span data-line="11"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Runs all automated fixes on the code base&quot;&quot;&quot;</span>
 </span><span data-line="12">
 </span><span data-line="13">    <span class="c1"># ATTENTION:</span>
 </span><span data-line="14">    <span class="c1"># In cases where it is reasonable to use &quot;internal&quot; functions, please do those imports</span>
 </span><span data-line="15">    <span class="c1"># within the function to keep them isolated and simplify future removal or replacement.</span>
-</span><span data-line="16">    <span class="kn">from</span> <span class="nn">exasol.toolbox.nox._shared</span> <span class="kn">import</span> <span class="n">python_files</span>
+</span><span data-line="16">    <span class="kn">from</span><span class="w"> </span><span class="nn">exasol.toolbox.nox._shared</span><span class="w"> </span><span class="kn">import</span> <span class="n">python_files</span>
 </span><span data-line="17">
 </span><span data-line="18">    <span class="n">py_files</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">python_files</span><span class="p">(</span><span class="n">PROJECT_CONFIG</span><span class="o">.</span><span class="n">root</span><span class="p">)]</span>
 </span><span data-line="19">    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The original &#39;project:fix&#39; task has been taken hostage by this overwrite&quot;</span><span class="p">)</span>

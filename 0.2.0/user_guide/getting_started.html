@@ -168,33 +168,33 @@ which is required to to provide the following attributes:</p>
 </li>
 </ul>
 <p>Alternatively you can use the <em>noxconfig.py</em> file bellow and adjust the value of the attributes if needed:</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span data-line="2">
-</span><span data-line="3"><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-</span><span data-line="4"><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-</span><span data-line="5"><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
 </span><span data-line="6">    <span class="n">Any</span><span class="p">,</span>
 </span><span data-line="7">    <span class="n">MutableMapping</span><span class="p">,</span>
 </span><span data-line="8"><span class="p">)</span>
 </span><span data-line="9">
-</span><span data-line="10"><span class="kn">from</span> <span class="nn">nox</span> <span class="kn">import</span> <span class="n">Session</span>
+</span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">nox</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
 </span><span data-line="11">
 </span><span data-line="12">
 </span><span data-line="13"><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="14"><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+</span><span data-line="14"><span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">:</span>
 </span><span data-line="15">    <span class="n">root</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
 </span><span data-line="16">    <span class="n">doc</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;doc&quot;</span>
 </span><span data-line="17">    <span class="n">version_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;exasol&quot;</span> <span class="o">/</span> <span class="s2">&quot;toolbox&quot;</span> <span class="o">/</span> <span class="s2">&quot;version.py&quot;</span>
 </span><span data-line="18">
 </span><span data-line="19">    <span class="nd">@staticmethod</span>
-</span><span data-line="20">    <span class="k">def</span> <span class="nf">pre_integration_tests_hook</span><span class="p">(</span>
+</span><span data-line="20">    <span class="k">def</span><span class="w"> </span><span class="nf">pre_integration_tests_hook</span><span class="p">(</span>
 </span><span data-line="21">        <span class="n">_session</span><span class="p">:</span> <span class="n">Session</span><span class="p">,</span> <span class="n">_config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">_context</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
 </span><span data-line="22">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span data-line="23"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Implement if project specific behaviour is required&quot;&quot;&quot;</span>
 </span><span data-line="24">        <span class="k">return</span> <span class="kc">True</span>
 </span><span data-line="25">
 </span><span data-line="26">    <span class="nd">@staticmethod</span>
-</span><span data-line="27">    <span class="k">def</span> <span class="nf">post_integration_tests_hook</span><span class="p">(</span>
+</span><span data-line="27">    <span class="k">def</span><span class="w"> </span><span class="nf">post_integration_tests_hook</span><span class="p">(</span>
 </span><span data-line="28">        <span class="n">_session</span><span class="p">:</span> <span class="n">Session</span><span class="p">,</span> <span class="n">_config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">_context</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
 </span><span data-line="29">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span data-line="30"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Implement if project specific behaviour is required&quot;&quot;&quot;</span>
@@ -281,10 +281,10 @@ and adjust the following settings to your project needs:</p>
 <p>In order to use the standard toolbox task via nox, just import them in your <em>noxfile.py</em>.
 If you only need the standard tasks provided by the toolbox your <em>noxfile.py</em> is straight
 forward and you just can use the example <em>noxfile.py</em> bellow.</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span> <span class="nn">nox</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">nox</span>
 </span><span data-line="2">
 </span><span data-line="3"><span class="c1"># imports all nox task provided by the toolbox</span>
-</span><span data-line="4"><span class="kn">from</span> <span class="nn">exasol.toolbox.nox.tasks</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">exasol.toolbox.nox.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 </span><span data-line="5">
 </span><span data-line="6"><span class="c1"># default actions to be run if nothing is explicitly specified with the -s option</span>
 </span><span data-line="7"><span class="n">nox</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">sessions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;fix&quot;</span><span class="p">]</span>

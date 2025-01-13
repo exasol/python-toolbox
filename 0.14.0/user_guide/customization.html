@@ -140,29 +140,29 @@ can definitely enhance understanding of the hook mechanism.</p>
 <section id="implementing-plugins">
 <h3>Implementing Plugins<a class="headerlink" href="#implementing-plugins" title="Link to this heading">¶</a></h3>
 <p>To create a Nox plugin, the hooksimpl decorator must be imported from the Nox plugin infrastructure:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span> <span class="nn">exasol.toolbox.nox.plugin</span> <span class="kn">import</span> <span class="n">hookimpl</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">exasol.toolbox.nox.plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">hookimpl</span>
 </span></pre></div>
 </div>
 <p>You can then define a class with methods decorated with <code class="docutils literal notranslate"><span class="pre">&#64;hookimpl</span></code> to specify the hooks that the plugin implements.
 The class should be instantiable without any arguments, however, you may include class attributes and provide alternative means for customization.</p>
 <p>Here is an example plugin that updates templates as part of release preparation:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span> <span class="nn">exasol.toolbox.nox.plugin</span> <span class="kn">import</span> <span class="n">hookimpl</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">exasol.toolbox.nox.plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">hookimpl</span>
 </span><span data-line="2">
-</span><span data-line="3"><span class="k">class</span> <span class="nc">UpdateTemplates</span><span class="p">:</span>
+</span><span data-line="3"><span class="k">class</span><span class="w"> </span><span class="nc">UpdateTemplates</span><span class="p">:</span>
 </span><span data-line="4">
-</span><span data-line="5">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="5">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="6">        <span class="bp">self</span><span class="o">.</span><span class="n">workflows</span> <span class="o">=</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span>
 </span><span data-line="7">
 </span><span data-line="8">    <span class="nd">@hookimpl</span>
-</span><span data-line="9">    <span class="k">def</span> <span class="nf">prepare_release_update_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
+</span><span data-line="9">    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_release_update_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
 </span><span data-line="10">        <span class="k">for</span> <span class="n">workflow</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflows</span><span class="p">:</span>
 </span><span data-line="11">            <span class="bp">self</span><span class="o">.</span><span class="n">update_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
 </span><span data-line="12">
 </span><span data-line="13">    <span class="nd">@hookimpl</span>
-</span><span data-line="14">    <span class="k">def</span> <span class="nf">prepare_release_add_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+</span><span data-line="14">    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_release_add_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
 </span><span data-line="15">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflows</span>
 </span><span data-line="16">
-</span><span data-line="17">    <span class="k">def</span> <span class="nf">update_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
+</span><span data-line="17">    <span class="k">def</span><span class="w"> </span><span class="nf">update_workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
 </span><span data-line="18">        <span class="c1"># update the workflow with the new version</span>
 </span><span data-line="19">        <span class="k">pass</span>
 </span></pre></div>
@@ -177,7 +177,7 @@ The class should be instantiable without any arguments, however, you may include
 <p>Once the plugin class has been defined, it must be registered in the Nox configuration. This is done by adding the class to the <cite>plugins</cite> list within the <cite>Config</cite> data class.</p>
 <p>In the Nox <cite>Config</cite> data class, you should amend the <cite>plugins</cite> list to include the new plugin:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="2"><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+</span><span data-line="2"><span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">:</span>
 </span><span data-line="3"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Project-specific configuration used by Nox infrastructure.&quot;&quot;&quot;</span>
 </span><span data-line="4">    <span class="c1"># ... other configuration attributes ...</span>
 </span><span data-line="5">
