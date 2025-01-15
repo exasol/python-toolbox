@@ -148,6 +148,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#warning-while-building-multiversion-documentation">Warning while building multiversion documentation</a></li>
 <li><a class="reference internal" href="#missing-version-selection-box-in-multiversion-documentation">Missing Version Selection Box in Multiversion Documentation</a></li>
 <li><a class="reference internal" href="#limited-previous-versions-in-multiversion-documentation">Limited Previous Versions in Multiversion Documentation</a></li>
+<li><a class="reference internal" href="#format-still-fails-after-running-project-fix">Format Still Fails After Running <code class="docutils literal notranslate"><span class="pre">project:fix</span></code></a></li>
 </ul>
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
@@ -219,6 +220,28 @@ data-aria-dark="Switch to auto color mode">
 <section id="limited-previous-versions-in-multiversion-documentation">
 <span id="faq-multiversion-limited-versions"></span><h2>Limited Previous Versions in Multiversion Documentation<a class="headerlink" href="#limited-previous-versions-in-multiversion-documentation" title="Link to this heading">¶</a></h2>
 <p>If not all previous versions of the project are available via the version selection box of the multiversion documentation, it is likely due to the fact that the unavailable documentation for those versions was not in a compatible format (there hasn’t been a compatible setup of a Sphinx-based documentation).</p>
+</section>
+<section id="format-still-fails-after-running-project-fix">
+<span id="faq-failing-format-check"></span><h2>Format Still Fails After Running <code class="docutils literal notranslate"><span class="pre">project:fix</span></code><a class="headerlink" href="#format-still-fails-after-running-project-fix" title="Link to this heading">¶</a></h2>
+<p>If running the following sequence of commands results in <code class="docutils literal notranslate"><span class="pre">project:format</span></code> failing with an error during the execution of <code class="docutils literal notranslate"><span class="pre">isort</span></code>:</p>
+<ol class="arabic simple">
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">project:fix</span></code></p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">project:format</span></code></p></li>
+</ol>
+<p>It is very likely that you did not configure <code class="docutils literal notranslate"><span class="pre">isort</span></code> and/or <code class="docutils literal notranslate"><span class="pre">black</span></code> appropriately in your <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file.</p>
+<p>Ensure <code class="docutils literal notranslate"><span class="pre">isort</span></code> is configured with compatibility for <code class="docutils literal notranslate"><span class="pre">black</span></code>:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">[tool.isort]</span>
+</span><span data-line="2"><span class="n">profile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;black&quot;</span>
+</span><span data-line="3"><span class="n">force_grid_wrap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+</span></pre></div>
+</div>
+<p>Additionally, your black configuration should look similar to this:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">[tool.black]</span>
+</span><span data-line="2"><span class="n">line-length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">88</span>
+</span><span data-line="3"><span class="n">verbose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+</span><span data-line="4"><span class="n">include</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">.pyi?$&quot;</span>
+</span></pre></div>
+</div>
 </section>
 </section>
 
