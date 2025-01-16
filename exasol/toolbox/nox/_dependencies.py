@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import subprocess
+import tempfile
 from collections import defaultdict
 from dataclasses import dataclass
 from inspect import cleandoc
@@ -47,23 +49,11 @@ def _dependencies(toml_str: str) -> dict[str, list]:
     return dependencies
 
 
-def _licenses(session: Session, filename: str) -> None:
-    session.run(
-        "poetry",
-        "run",
-        "pip-licenses",
-        "--format=json",
-        "--output-file=" + filename,
-        "--with-system",
-        "--with-urls",
-    )
-
-
 def _normalize(_license: str) -> str:
     def is_multi_license(l):
         return ";" in l
 
-    def select_most_permissive(l: str) -> str:
+    def select_most_restrictive(l: str) -> str:
         licenses = [_normalize(l.strip()) for l in l.split(";")]
         priority = defaultdict(
             lambda: 9999,
@@ -74,12 +64,13 @@ def _normalize(_license: str) -> str:
                 "MPLv2": 3,
                 "LGPLv2": 4,
                 "GPLv2": 5,
+                "GPLv3": 6,
             },
         )
         priority_to_license = defaultdict(
             lambda: "Unknown", {v: k for k, v in priority.items()}
         )
-        selected = min(*[priority[lic] for lic in licenses])
+        selected = max(*[priority[lic] for lic in licenses])
         return priority_to_license[int(selected)]
 
     mapping = {
@@ -93,7 +84,7 @@ def _normalize(_license: str) -> str:
     }
 
     if is_multi_license(_license):
-        return select_most_permissive(_license)
+        return select_most_restrictive(_license)
 
     if _license not in mapping:
         return _license
@@ -115,6 +106,23 @@ def _packages_from_json(json: str) -> list[Package]:
             )
         )
     return packages_list
+
+
+def _licenses() -> list[Package]:
+    file = tempfile.NamedTemporaryFile()
+    subprocess.run(
+        [
+            "poetry",
+            "run",
+            "pip-licenses",
+            "--format=json",
+            "--output-file=" + file.name,
+            "--with-system",
+            "--with-urls",
+        ],
+        capture_output=True,
+    )
+    return _packages_from_json(file.read().decode())
 
 
 def _packages_to_markdown(
@@ -183,7 +191,5 @@ def dependency_licenses(session: Session) -> None:
     """returns the packages and their licenses"""
     toml = Path("pyproject.toml")
     dependencies = _dependencies(toml.read_text())
-    _licenses(session=session, filename=".packages.json")
-    json = Path(".packages.json").read_text()
-    package_infos = _packages_from_json(json)
+    package_infos = _licenses()
     print(_packages_to_markdown(dependencies=dependencies, packages=package_infos))

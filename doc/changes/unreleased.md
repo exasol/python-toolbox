@@ -9,3 +9,6 @@
 ## 🔩 Internal
 * Relocked dependencies
 * Update referenced github actions
+
+## ✨ Added
+* Added a Nox task for dependencies packages and their licenses with Markdown output

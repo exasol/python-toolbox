@@ -44,19 +44,20 @@ def test_dependencies(toml, expected):
 @pytest.mark.parametrize(
     "licenses,expected",
     [
-        ("BSD License; MIT License;", "BSD"),
-        ("MIT License; Mozilla Public License 2.0 (MPL 2.0)", "MIT"),
+        ("The Unlicensed (Unlicensed); BSD License", "BSD"),
+        ("BSD License; MIT License", "MIT"),
+        ("MIT License; Mozilla Public License 2.0 (MPL 2.0)", "MPLv2"),
         (
             "Mozilla Public License 2.0 (MPL 2.0); GNU Lesser General Public License v2 (LGPLv2)",
-            "MPLv2",
-        ),
-        (
-            "GNU Lesser General Public License v2 (LGPLv2); GNU General Public License v2 (GPLv2)",
             "LGPLv2",
         ),
         (
-            "GNU General Public License v2 (GPLv2); GNU General Public License v3 (GPLv3)",
+            "GNU Lesser General Public License v2 (LGPLv2); GNU General Public License v2 (GPLv2)",
             "GPLv2",
+        ),
+        (
+            "GNU General Public License v2 (GPLv2); GNU General Public License v3 (GPLv3)",
+            "GPLv3",
         ),
     ],
 )
