@@ -74,7 +74,6 @@ def _normalize(_license: str) -> str:
                 "MPLv2": 3,
                 "LGPLv2": 4,
                 "GPLv2": 5,
-                "GPLv3": 6,
             },
         )
         priority_to_license = defaultdict(
