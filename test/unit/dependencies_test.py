@@ -73,32 +73,32 @@ def test_normalize(licenses, expected):
             """
 [
     {
-        "License": "MIT License",
-        "Name": "pip",
-        "URL": "https://pip.pypa.io/",
-        "Version": "24.3.1"
+        "License": "license1",
+        "Name": "name1",
+        "URL": "link1",
+        "Version": "version1"
     },
     {
-        "License": "MIT License",
-        "Name": "pip-licenses",
-        "URL": "https://github.com/raimon49/pip-licenses",
-        "Version": "5.0.0"
+        "License": "license2",
+        "Name": "name2",
+        "URL": "UNKNOWN",
+        "Version": "version2"
     }
 ]
             """,
             [
                 Package(
-                    name="pip",
-                    version="24.3.1",
-                    package_link="https://pip.pypa.io/",
-                    license="MIT",
+                    name="name1",
+                    version="version1",
+                    package_link="link1",
+                    license="license1",
                     license_link="",
                 ),
                 Package(
-                    name="pip-licenses",
-                    version="5.0.0",
-                    package_link="https://github.com/raimon49/pip-licenses",
-                    license="MIT",
+                    name="name2",
+                    version="version2",
+                    package_link="",
+                    license="license2",
                     license_link="",
                 ),
             ],

@@ -80,7 +80,9 @@ def _normalize(_license: str) -> str:
         "Mozilla Public License 2.0 (MPL 2.0)": "MPLv2",
         "GNU Lesser General Public License v2 (LGPLv2)": "LGPLv2",
         "GNU General Public License v2 (GPLv2)": "GPLv2",
+        "GNU General Public License v2 or later(GPLv2+)": "GPLv2+",
         "GNU General Public License v3 (GPLv3)": "GPLv3",
+        "Apache Software License": "Apache",
     }
 
     if is_multi_license(_license):
@@ -95,34 +97,48 @@ def _normalize(_license: str) -> str:
 def _packages_from_json(json: str) -> list[Package]:
     packages = loads(json)
     packages_list = []
+    mapping = {
+        "GPLv1": "https://www.gnu.org/licenses/old-licenses/gpl-1.0.html",
+        "GPLv2": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
+        "LGPLv2": "https://www.gnu.org/licenses/old-licenses/lgpl-2.0.html",
+        "GPLv3": "https://www.gnu.org/licenses/gpl-3.0.html",
+        "LGPLv3": "https://www.gnu.org/licenses/lgpl-3.0.html",
+        "Apache": "https://www.apache.org/licenses/LICENSE-2.0",
+        "MIT": "https://mit-license.org/",
+        "BSD": "https://opensource.org/license/bsd-3-clause",
+    }
     for package in packages:
+        package_license = _normalize(package["License"])
         packages_list.append(
             Package(
                 name=package["Name"],
-                package_link=package["URL"],
+                package_link="" if package["URL"] == "UNKNOWN" else package["URL"],
                 version=package["Version"],
-                license=_normalize(package["License"]),
-                license_link="",
+                license=package_license,
+                license_link=(
+                    "" if package_license not in mapping else mapping[package_license]
+                ),
             )
         )
     return packages_list
 
 
 def _licenses() -> list[Package]:
-    file = tempfile.NamedTemporaryFile()
-    subprocess.run(
-        [
-            "poetry",
-            "run",
-            "pip-licenses",
-            "--format=json",
-            "--output-file=" + file.name,
-            "--with-system",
-            "--with-urls",
-        ],
-        capture_output=True,
-    )
-    return _packages_from_json(file.read().decode())
+    with tempfile.NamedTemporaryFile() as file:
+        subprocess.run(
+            [
+                "poetry",
+                "run",
+                "pip-licenses",
+                "--format=json",
+                "--output-file=" + file.name,
+                "--with-system",
+                "--with-urls",
+            ],
+            capture_output=True,
+        )
+        result = _packages_from_json(file.read().decode())
+    return result
 
 
 def _packages_to_markdown(
@@ -154,7 +170,10 @@ def _packages_to_markdown(
                     _packages,
                 )
                 for content in consistent:
-                    text += f"|[{content.name}]({content.package_link})"
+                    if content.package_link:
+                        text += f"|[{content.name}]({content.package_link})"
+                    else:
+                        text += f"|{content.name}"
                     text += f"|{content.version}"
                     if content.license_link:
                         text += f"|[{content.license}]({content.license_link})|\n"
