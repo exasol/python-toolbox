@@ -139,17 +139,13 @@ def test_packages_from_json(json, expected):
                 ),
             ],
             """# Dependecies
----
-
 ## Project Dependencies
----
 |Package|version|Licence|
 |---|---|---|
 |[package1](package_link1)|version1|[license1](license_link1)|
 |[package3](package_link3)|version3|license3|
 
 ## Dev Dependencies
----
 |Package|version|Licence|
 |---|---|---|
 |[package2](package_link2)|version2|[license2](license_link2)|

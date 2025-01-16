@@ -130,14 +130,12 @@ def _packages_to_markdown(
 ) -> str:
     def heading():
         text = "# Dependecies\n"
-        text += "---\n\n"
         return text
 
     def dependency(group: str, group_packages: list, packages: list[Package]) -> str:
         def _header(_group: str):
             _group = "".join([word.capitalize() for word in _group.strip().split()])
             text = f"## {_group} Dependencies\n"
-            text += "---\n"
             text += "|Package|version|Licence|\n"
             text += "|---|---|---|\n"
             return text
