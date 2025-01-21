@@ -55,7 +55,9 @@ def _normalize(_license: str) -> str:
 
     def select_most_restrictive(licenses: list) -> str:
         _max = 0
+        lic = "Unknown"
         _mapping = {
+            "Unknown": -1,
             "Unlicensed": 0,
             "BSD": 1,
             "MIT": 2,
@@ -66,11 +68,11 @@ def _normalize(_license: str) -> str:
         }
         for l in licenses:
             if l in _mapping:
-                if _mapping[l] > _max:
-                    _max = _mapping[l]
+                if _mapping[l] > _mapping[lic]:
+                    lic = l
             else:
                 return "<br>".join(licenses)
-        return _mapping[_max]
+        return lic
 
     mapping = {
         "BSD License": "BSD",
