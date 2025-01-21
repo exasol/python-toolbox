@@ -53,40 +53,47 @@ def _normalize(_license: str) -> str:
     def is_multi_license(l):
         return ";" in l
 
-    def select_most_restrictive(l: str) -> str:
-        licenses = [_normalize(l.strip()) for l in l.split(";")]
-        priority = defaultdict(
-            lambda: 9999,
-            {
-                "Unlicensed": 0,
-                "BSD": 1,
-                "MIT": 2,
-                "MPLv2": 3,
-                "LGPLv2": 4,
-                "GPLv2": 5,
-                "GPLv3": 6,
-            },
-        )
-        priority_to_license = defaultdict(
-            lambda: "Unknown", {v: k for k, v in priority.items()}
-        )
-        selected = max(*[priority[lic] for lic in licenses])
-        return priority_to_license[int(selected)]
+    def select_most_restrictive(licenses: list) -> str:
+        _max = 0
+        _mapping = {
+            "Unlicensed": 0,
+            "BSD": 1,
+            "MIT": 2,
+            "MPLv2": 3,
+            "LGPLv2": 4,
+            "GPLv2": 5,
+            "GPLv3": 6,
+        }
+        for l in licenses:
+            if l in _mapping:
+                if _mapping[l] > _max:
+                    _max = _mapping[l]
+            else:
+                return "<br>".join(licenses)
+        return _mapping[_max]
 
     mapping = {
         "BSD License": "BSD",
         "MIT License": "MIT",
         "The Unlicensed (Unlicensed)": "Unlicensed",
         "Mozilla Public License 2.0 (MPL 2.0)": "MPLv2",
+        "GNU General Public License (GPL)": "GPL",
         "GNU Lesser General Public License v2 (LGPLv2)": "LGPLv2",
         "GNU General Public License v2 (GPLv2)": "GPLv2",
-        "GNU General Public License v2 or later(GPLv2+)": "GPLv2+",
+        "GNU General Public License v2 or later (GPLv2+)": "GPLv2+",
         "GNU General Public License v3 (GPLv3)": "GPLv3",
         "Apache Software License": "Apache",
     }
 
     if is_multi_license(_license):
-        return select_most_restrictive(_license)
+        items = []
+        for item in _license.split(";"):
+            item = str(item).strip()
+            if item in mapping:
+                items.append(mapping[item])
+            else:
+                items.append(item)
+        return select_most_restrictive(items)
 
     if _license not in mapping:
         return _license
