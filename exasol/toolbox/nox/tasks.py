@@ -78,5 +78,10 @@ from exasol.toolbox.nox._release import prepare_release
 from exasol.toolbox.nox._artifacts import (
     check_artifacts
 )
+
+from exasol.toolbox.nox._dependencies import (
+    dependency_licenses,
+)
+
 # isort: on
 # fmt: on
