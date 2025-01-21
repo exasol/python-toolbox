@@ -209,3 +209,238 @@ _________________
       - Description
     * - python-environment
       - Sets up an appropriate poetry based python environment
+
+
+Known Issues
+------------
+
+This section documents flaws, sins, and known issues with the current design and/or its current implementation that were either known upfront or surfaced through the course of implementing it. Additionally, it attempts to explain why certain choices were made at the time, so one can better understand whether it may be reasonable to make changes now or in the future.
+
+
+Passing files as individual arguments on the CLI
+++++++++++++++++++++++++++++++++++++++++++++++++
+
+**Description:**
+
+As of today selection of python files for linting, formatting etc. is done by passing all relevant python files as individual argument(s)
+to the tools used/invoked by the python toolbox.
+
+**Downsides:**
+
+- Most shells have limitations on the number of arguments and their length.
+- Noisy output, making it hard to decipher the actual command.
+- Not ideal for all use cases.
+
+**Rationale/History:**
+
+- The current method of passing files as individual arguments by default offers ease in collection and filtering. It also allows users to simply provide or replace the selection mechanism fairly easily.
+
+- Every tool used by the toolbox (e.g., `black`, `isort`) used to support passing files by argument. However, not all of them provided the same mechanism for selection or deselection patterns (e.g. "glob").
+
+**Ideas/Solutions:**
+
+- Develop a wrapper that allows for different selection mechanisms
+
+
+Inconsistent Naming
++++++++++++++++++++
+
+**Description:**
+
+The naming is not consistent across the project name (python-toolbox) and the PyPI package name (exasol-toolbox).
+
+**Downsides:**
+
+- Misalignment between the PyPI package name and the project name causes confusion when discussing or referring to the project/package.
+
+**Rationale/History:**
+
+- Initially, this was a proof of concept (POC) to verify a few ideas, and the naming was not well thought out at the time.
+- Later, when publishing the first package for distribution, the project name was unavailable on PyPI, resulting in a different name being used on PyPI.
+
+**Ideas/Solutions:**
+
+- Consistently rename project to ``exasol-python-toolbox``: `Issue-325 <https://github.com/exasol/python-toolbox/issues/325>`_
+
+Project Configuration
++++++++++++++++++++++
+
+**Description:**
+Currently, the documentation regarding the configuration of projects using the toolbox has various gaps and does not follow a clear configuration hierarchy or structure.
+
+**Downsides:**
+
+- Multiple scattered configuration points make management and understanding difficult.
+- Configurations overlap or conflict with unclear priorities.
+- Tool leakage (e.g., the ``[isort]`` section in ``pyproject.toml``).
+  (If everything were done via toolbox config file(s), backing tools could be swapped more easily).
+
+**Rationale/History:**
+
+- Initial decisions aimed to simplify individual adjustments in the projects until we had a better understanding of what needed to be configured.
+- Scattering configuration across various files and tools was a hasty decision to expedite development and accommodate various tools.
+
+**Ideas/Solutions:**
+
+Currently used methods to configure toolbox-based projects:
+
+#. Project configuration: ``noxconfig.py``
+#. Tool-specific configuration files or sections in ``pyproject.toml``
+#. Implementing plugin extension points
+#. Overwriting nox tasks with custom implementations
+#. Replacing with customized workflows of the same name (only applicable for action/workflows)
+
+Refinement:
+
+- Centralize all toolbox based configurations in a toolbox config file (``noxconfig.py``).
+- Rename the toolbox config file from ``noxconfig.py`` to a more appropriate name that reflects its purpose.
+- Document configuration hierarchy and usage.
+
+
+Nox Task Runner
++++++++++++++++
+
+**Description:**
+While Nox isn't a perfect fit, it still meets most of our requirements for a task runner.
+
+**Downsides:**
+
+- Imports over top-level modules are problematic as all contained tasks are imported.
+- Passing and receiving additional arguments to a task is clunky.
+- The default behavior of creating a venv for tasks is undesirable.
+- Nox does not support grouping.
+
+**Rationale/History:**
+
+Why Nox was choosen:
+
+- No additional language(s) required: There was no need to introduce extra programming languages or binaries, simplifying the development process.
+- Python-based: Being Python-based, Nox can be extended and understood by Python developers.
+- Python code: As Nox tasks are defined via Python code, existing scripts can be reused and code can be shared easily.
+- Simplicity: Nox is relatively "small" in functionality, making it somewhat simple to use and understand.
+
+**Ideas/Solutions:**
+
+Grouping:
+
+Since Nox doesn't natively support task grouping, we need a strategy to group commands.
+Therefore, a naming convention to indicate grouping should be adopted.
+
+    Suggestion: Groups will be separated using a :code:`:` (colon) because :code:`-` (dash) might already be used within task names.
+
+Imports:
+
+Consider modularizing tasks to handle top-level imports better.
+
+Others Issues:
+
+Generally, one may consider addressing the other issues by choosing another task runner or creating a small set of CLI tools and extension points manually provided by the toolbox.
+
+
+Poetry for Project Management
++++++++++++++++++++++++++++++
+
+While poetry was and is a good choice for Exasol project, dependency, build tool etc. "most recently"
+`uv <https://docs.astral.sh/uv/>`_ has surfaced and made big advanced. Looking at uv it addresses additional itches with
+our projects and therefore in the long run it may be a good idea to migrate our project setups to it.
+Use poetry for project, build and dependency management.
+
+
+Code Formatting
++++++++++++++++
+
+**Description:**
+
+Currently we use Black and Isort for code formatting, though running them on a larger code base as pre-commit hooks or such can take quite a bit of time.
+
+**Downsides:**
+
+- Two tools and an aligned configuration of them are required to cleanly and correctly format the codebase.
+- Code needs to be processed at least twice as we apply two individual tools.
+- The performance of Black and Isort is okay but not great compared to other tools.
+
+**Rationale/History:**
+
+- Black and Isort have been used because they are battle-tested and widely used
+- When we opted for Black and Isort, ``ruff`` wasn't "a thing" yet and at best in its early stages.
+- Black and Isort already have been known by most python devs when we where selecting the tools
+
+**Ideas/Solutions:**
+
+As `Ruff <https://docs.astral.sh/ruff/>`_ is fairly stable and also tested and used by many Python projects
+we should consider transitioning to it.
+
+Advantages:
+
+- Well-tested
+- Widely used
+- Excellent performance
+- Single tool for imports and formatting the codebase
+- Simplifies adopting ruff for linting
+
+
+Pylint
+++++++
+
+**Description:**
+We are currently using Pylint instead of Ruff.
+
+**Downsides:**
+
+- Pylint is slower and less usable in pre-commit hooks
+- It is an additional tool, therefore at least one more processing run of the code is required
+- No support for Language Server Protocol (LSP, e.g. compare to `ruff lsp`)
+
+**Rationale/History:**
+
+- Well known
+- Pylint provides built-in project score/rating
+- Project score is good for improving legacy code bases which haven't been linted previously
+- Plugin support
+
+**Ideas/Possible Solutions:**
+
+Replacing Pylint with Ruff for linting would provide significant performance improvement. Additionally, Ruff offers an LSP and IDE integrations and is widely used these days. Additionaly there would be an additional synergy if we adopt ruff for formatting the code base.
+
+Transitioning to Ruff requires us to adjust the migration and improvement strategies for our projects:
+
+- Currently, our codebase improvements are guided by scores. However, with Ruff, a new approach is necessary. For example, we could incrementally introduce specific linting rules, fix the related issues, and then enforce these rules.
+
+- The project rating and scoring system will also need modification. One possiblity would be to run Ruff and Pylint in parallel, utilizing Pylint solely for rating and issue resolution while Ruff is incorporated for linting tasks.
+
+
+Security Linter
++++++++++++++++
+
+**Description:**
+As of today, the security linter does not fail if it has findings. This was intentionally done to simplify integration and adoption of the tool. Developers can still use the results to improve and find issues within the codebase, and additionally, a rating will be generated to provide some guidance on which projects need attention.
+
+**Downsides:**
+- No enforced safeguard on introducing potential security issues
+
+**Rationale/History:**
+- Simplify adoption into projects
+- First step to introduce tooling and make the current state/rating visible
+
+**Ideas/Possible Solutions:**
+* Define a strategy to address potential security issues in projects. Once this has been done, enforce the immediate addressing of potential security issues in the codebase upon introduction.
+* Allow excluding individual findings in projects until they are fixed.
+
+
+Workflows Dependency Structure
+++++++++++++++++++++++++++++++
+
+**Description:**
+Undocumented workflow interdependencies and structure
+
+**Downsides:**
+- Hard to customize if one does not understand the overall setup and dependencies
+
+**Rationale/History:**
+- Simplify development during the discovery phase (what is needed, how to implement, adjust to discovered needs)
+- Ideally, all workflows will be integrated and use a standard setup (part of the customization can also be done in the called nox tasks)
+
+**Ideas/Possible Solutions:**
+
+- Define clear requirements and interfaces
+- Document those requirements and interfaces
