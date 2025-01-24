@@ -21,3 +21,6 @@
 ## 🔩 Internal
 * Relocked dependencies
 * Update referenced github actions
+
+## ⚒️ Refactorings
+* [#339](https://github.com/exasol/python-toolbox/issues/339): Secret ALTERNATIVE_GITHUB_TOKEN removed from GitHub workflows
