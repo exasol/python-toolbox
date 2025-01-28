@@ -40,6 +40,22 @@ jobs:
         run: |
           poetry run python -m nox -s docs:build
 
+  Changelog:
+    name: Changelog Update Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python & Poetry Environment
+        uses: ./.github/actions/python-environment
+        with:
+          python-version: "3.9"
+
+      - name: Run changelog update check
+        run: poetry run nox -s changelog:updated
+
   build-matrix:
     name: Generate Build Matrix
     uses: ./.github/workflows/matrix-python.yml

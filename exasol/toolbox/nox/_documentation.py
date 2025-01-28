@@ -11,6 +11,9 @@ from noxconfig import (
     PROJECT_CONFIG,
     Config,
 )
+import subprocess
+from pathlib import Path
+import sys
 
 
 def _build_docs(session: nox.Session, config: Config) -> None:
@@ -35,6 +38,19 @@ def _build_multiversion_docs(session: nox.Session, config: Config) -> None:
         DOCS_OUTPUT_DIR,
     )
 
+
+def _git_diff_changes_main() -> bool:
+    p = subprocess.run(
+        [
+            "git",
+            "diff",
+            "main",
+            "--quiet",
+            Path(PROJECT_CONFIG.root, "doc/changes")
+        ],
+        capture_output=True,
+    )
+    return bool(p.returncode)
 
 @nox.session(name="docs:multiversion", python=False)
 def build_multiversion(session: Session) -> None:
@@ -64,3 +80,11 @@ def clean_docs(_session: Session) -> None:
     docs_folder = PROJECT_CONFIG.root / DOCS_OUTPUT_DIR
     if docs_folder.exists():
         shutil.rmtree(docs_folder)
+
+
+@nox.session(name="changelog:updated", python=False)
+def updated(_session: Session) -> None:
+    """Checks if the change log has been updated"""
+    if not _git_diff_changes_main():
+        print("Changelog have to be updated")
+        sys.exit(1)
