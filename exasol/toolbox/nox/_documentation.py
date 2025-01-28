@@ -40,11 +40,12 @@ def _build_multiversion_docs(session: nox.Session, config: Config) -> None:
 
 
 def _git_diff_changes_main() -> bool:
+    """return True if doc/changes is unchanged"""
     p = subprocess.run(
         ["git", "diff", "main", "--quiet", Path(PROJECT_CONFIG.root, "doc/changes")],
-        capture_output=True,
+        #capture_output=True,
     )
-    return bool(p.returncode)
+    return p.returncode != 0
 
 
 @nox.session(name="docs:multiversion", python=False)
@@ -81,5 +82,8 @@ def clean_docs(_session: Session) -> None:
 def updated(_session: Session) -> None:
     """Checks if the change log has been updated"""
     if not _git_diff_changes_main():
-        print("Changelog have to be updated")
+        print(
+            "Changelog is not updated.\n"
+            "Please describe your changes in the changelog!"
+        )
         sys.exit(1)
