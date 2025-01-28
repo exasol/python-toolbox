@@ -48,7 +48,7 @@ jobs:
       - name: SCM Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-tags: 'origin/main'
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
@@ -57,8 +57,8 @@ jobs:
 
       - name: Run changelog update check
         run: |
-          #git diff --quiet origin/main -- exasol/toolbox/nox
-          #echo "status: $?"
+          git diff --quiet origin/main -- doc/changes
+          echo "status: $?"
           poetry run nox -s changelog:updated
 
   build-matrix:
