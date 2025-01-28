@@ -55,7 +55,7 @@ jobs:
 
       - name: Run changelog update check
         run: |
-          git diff main doc/changes
+          git diff main -- doc/changes
           echo "status: $?"
           poetry run nox -s changelog:updated
 
