@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import shutil
+import subprocess
+import sys
 import webbrowser
+from pathlib import Path
 
 import nox
 from nox import Session
@@ -11,9 +14,6 @@ from noxconfig import (
     PROJECT_CONFIG,
     Config,
 )
-import subprocess
-from pathlib import Path
-import sys
 
 
 def _build_docs(session: nox.Session, config: Config) -> None:
@@ -41,16 +41,11 @@ def _build_multiversion_docs(session: nox.Session, config: Config) -> None:
 
 def _git_diff_changes_main() -> bool:
     p = subprocess.run(
-        [
-            "git",
-            "diff",
-            "main",
-            "--quiet",
-            Path(PROJECT_CONFIG.root, "doc/changes")
-        ],
+        ["git", "diff", "main", "--quiet", Path(PROJECT_CONFIG.root, "doc/changes")],
         capture_output=True,
     )
     return bool(p.returncode)
+
 
 @nox.session(name="docs:multiversion", python=False)
 def build_multiversion(session: Session) -> None:
