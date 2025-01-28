@@ -58,6 +58,7 @@ from exasol.toolbox.nox._documentation import (
     build_docs,
     clean_docs,
     open_docs,
+    updated,
 )
 from exasol.toolbox.nox._release import prepare_release
 from exasol.toolbox.nox._shared import (
