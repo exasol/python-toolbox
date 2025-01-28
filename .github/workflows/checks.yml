@@ -48,6 +48,7 @@ jobs:
       - name: SCM Checkout
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           fetch-tags: 'origin/main'
 
       - name: Setup Python & Poetry Environment
