@@ -45,11 +45,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: SCM Checkout
+      - name: Checkout main branch
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          fetch-tags: 'origin/main'
+          ref: main
+
+      - name: SCM Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
@@ -58,7 +60,7 @@ jobs:
 
       - name: Run changelog update check
         run: |
-          git diff --quiet origin/main -- doc/changes
+          git diff --quiet main -- doc/changes
           echo "status: $?"
           poetry run nox -s changelog:updated
 
