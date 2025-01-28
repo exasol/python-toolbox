@@ -42,8 +42,8 @@ def _build_multiversion_docs(session: nox.Session, config: Config) -> None:
 def _git_diff_changes_main() -> bool:
     """return True if doc/changes is unchanged"""
     p = subprocess.run(
-        ["git", "diff", "--quiet", "main", "--", PROJECT_CONFIG.root / "doc/changes"],
-        capture_output=True,
+        ["git", "diff", "--quiet", "origin/main", "--", PROJECT_CONFIG.root / "doc/changes"],
+        #capture_output=True,
     )
     return p.returncode != 0
 
