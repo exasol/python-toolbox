@@ -59,6 +59,7 @@ typer = {extras = ["all"], version = ">=0.7.0"}
 bandit = {extras = ["toml"], version = "^1.7.9"}
 jinja2 = "^3.1.4"
 pip-licenses = "^5.0.0"
+pip-audit = "^2.7.3"
 
 [tool.poetry.group.dev.dependencies]
 autoimport = "^1.4.0"
