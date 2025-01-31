@@ -53,6 +53,7 @@ from exasol.toolbox.nox._lint import (
     _type_check,
     lint,
     type_check,
+    audit
 )
 from exasol.toolbox.nox._documentation import (
     build_docs,
