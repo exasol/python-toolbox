@@ -4,6 +4,7 @@
 
 * added tbx task for markdown formating of .lint.json
 * Added a Nox task for dependencies packages and their licenses with Markdown output
+* [#73](https://github.com/exasol/python-toolbox/issues/73): Add nox target for auditing work spaces in regard to known vulnerabilities
 
 ## 🐞 Fixed
 * Fixed an issue in the CI workflow that caused it to be executed twice on the initial push of a PR if the PR branch was on the repo itself.

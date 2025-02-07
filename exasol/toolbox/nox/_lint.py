@@ -199,5 +199,5 @@ def import_lint(session: Session) -> None:
 
 @nox.session(name="project:audit", python=False)
 def audit(session: Session) -> None:
-    """audit the project"""
+    """Runs the audit for packages regard known vulnerabilities"""
     _audit(session)
