@@ -15,6 +15,7 @@
 * Updated design doc (Added known Issues)
 * Updated migration progress table
 * Updated the FAQ with an entry about the ``isort`` compatibility issue
+* [#351](https://github.com/exasol/python-toolbox/issues/351), [#352](https://github.com/exasol/python-toolbox/issues/352): updated user guide
 
 ## 🔧 Changed
 * Updated `actions/upload-artifacts` version to `4.6.0`
