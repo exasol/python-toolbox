@@ -125,6 +125,7 @@ jobs:
 
   Vulnerabilities:
     name: Package Vulnerabilities Checks (Python-${{ matrix.python-version }})
+    needs: [ Version-Check, build-matrix ]
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
