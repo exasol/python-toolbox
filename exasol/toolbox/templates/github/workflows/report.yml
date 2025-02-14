@@ -2,16 +2,13 @@ name: Status Report
 
 on:
   workflow_call:
-    secrets:
-      ALTERNATIVE_GITHUB_TOKEN:
-        required: false
 
 jobs:
 
   report:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.ALTERNATIVE_GITHUB_TOKEN ||  secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: SCM Checkout
