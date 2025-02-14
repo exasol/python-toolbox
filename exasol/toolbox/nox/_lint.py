@@ -130,10 +130,6 @@ def report_illegal(illegal: dict[str, list[str]], console: rich.console.Console)
         console.print("")
 
 
-def _audit(session: Session) -> None:
-    session.run("poetry", "run", "pip-audit")
-
-
 @nox.session(name="lint:code", python=False)
 def lint(session: Session) -> None:
     "Runs the static code analyzer on the project"
@@ -195,9 +191,3 @@ def import_lint(session: Session) -> None:
             "Please make sure you have a configuration file for the importlinter"
         )
     _import_lint(session=session, path=path)
-
-
-@nox.session(name="project:audit", python=False)
-def audit(session: Session) -> None:
-    """Runs the audit for packages regard known vulnerabilities"""
-    _audit(session)
