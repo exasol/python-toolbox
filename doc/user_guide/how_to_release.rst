@@ -1,5 +1,5 @@
-How to Release
-==============
+How to Release?
+===============
 
 #.  Use :code:`nox -s release:prepare` to prepare the project for a new release.
 #.  Merge your **Pull Request** to the **default branch**
