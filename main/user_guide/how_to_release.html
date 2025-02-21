@@ -2,7 +2,7 @@
 <html lang="en" data-accent-color="grass" data-content_root="../">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Overview - Toolbox</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Getting Started" href="getting_started.html" /><link rel="prev" title="User Guide" href="user_guide.html" /><script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>How to Release? - Toolbox</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Developer Guide" href="../developer_guide/developer_guide.html" /><link rel="prev" title="Migrating Legacy Projects" href="migrating.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
     
-    <meta property="og:type" content="website"/><meta property="og:title" content="Overview"/>
+    <meta property="og:type" content="website"/><meta property="og:title" content="How to Release?"/>
 <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
@@ -34,7 +34,7 @@
       <span class="hidden md:inline">main</span>
       <i class="i-lucide chevron-down"></i>
     </button>
-    <div class="nav-versions-choices"><ul><li><a href="overview.html">main</a></li><li><a href="../../0.20.0/user_guide/overview.html">0.20.0</a></li><li><a href="../../0.19.0/user_guide/overview.html">0.19.0</a></li><li><a href="../../0.18.0/user_guide/overview.html">0.18.0</a></li><li><a href="../../0.17.0/user_guide/overview.html">0.17.0</a></li><li><a href="../../0.16.0/user_guide/overview.html">0.16.0</a></li><li><a href="../../0.15.0/user_guide/overview.html">0.15.0</a></li><li><a href="../../0.14.0/index.html">0.14.0</a></li><li><a href="../../0.13.0/index.html">0.13.0</a></li><li><a href="../../0.12.0/index.html">0.12.0</a></li><li><a href="../../0.11.0/index.html">0.11.0</a></li><li><a href="../../0.10.0/index.html">0.10.0</a></li><li><a href="../../0.9.0/index.html">0.9.0</a></li><li><a href="../../0.8.0/index.html">0.8.0</a></li><li><a href="../../0.7.0/index.html">0.7.0</a></li><li><a href="../../0.6.2/index.html">0.6.2</a></li><li><a href="../../0.6.1/index.html">0.6.1</a></li><li><a href="../../0.6.0/index.html">0.6.0</a></li><li><a href="../../0.5.0/index.html">0.5.0</a></li><li><a href="../../0.4.0/index.html">0.4.0</a></li><li><a href="../../0.3.0/index.html">0.3.0</a></li><li><a href="../../0.2.0/index.html">0.2.0</a></li><li><a href="../../0.1.0/index.html">0.1.0</a></li></ul></div>
+    <div class="nav-versions-choices"><ul><li><a href="how_to_release.html">main</a></li><li><a href="../../0.20.0/index.html">0.20.0</a></li><li><a href="../../0.19.0/index.html">0.19.0</a></li><li><a href="../../0.18.0/index.html">0.18.0</a></li><li><a href="../../0.17.0/index.html">0.17.0</a></li><li><a href="../../0.16.0/index.html">0.16.0</a></li><li><a href="../../0.15.0/index.html">0.15.0</a></li><li><a href="../../0.14.0/index.html">0.14.0</a></li><li><a href="../../0.13.0/index.html">0.13.0</a></li><li><a href="../../0.12.0/index.html">0.12.0</a></li><li><a href="../../0.11.0/index.html">0.11.0</a></li><li><a href="../../0.10.0/index.html">0.10.0</a></li><li><a href="../../0.9.0/index.html">0.9.0</a></li><li><a href="../../0.8.0/index.html">0.8.0</a></li><li><a href="../../0.7.0/index.html">0.7.0</a></li><li><a href="../../0.6.2/index.html">0.6.2</a></li><li><a href="../../0.6.1/index.html">0.6.1</a></li><li><a href="../../0.6.0/index.html">0.6.0</a></li><li><a href="../../0.5.0/index.html">0.5.0</a></li><li><a href="../../0.4.0/index.html">0.4.0</a></li><li><a href="../../0.3.0/index.html">0.3.0</a></li><li><a href="../../0.2.0/index.html">0.2.0</a></li><li><a href="../../0.1.0/index.html">0.1.0</a></li></ul></div>
   </div><div class="sy-head-socials">
   <a href="https://github.com/exasol/python-toolbox" aria-label="GitHub">
     <iconify-icon icon="simple-icons:github"></iconify-icon>
@@ -61,11 +61,12 @@ data-aria-dark="Switch to auto color mode">
       <div class="sy-scrollbar p-6">
         <div class="globaltoc" data-expand-depth="0"><ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="user_guide.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-person" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path></svg> User Guide</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html">Features</a></li>
 <li class="toctree-l2"><a class="reference internal" href="workflows.html">GitHub Workflows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="customization.html">Customization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="migrating.html">Migrating Legacy Projects</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">How to Release?</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../developer_guide/developer_guide.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-tools" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.433 2.304A4.492 4.492 0 0 0 3.5 6c0 1.598.832 3.002 2.09 3.802.518.328.929.923.902 1.64v.008l-.164 3.337a.75.75 0 1 1-1.498-.073l.163-3.33c.002-.085-.05-.216-.207-.316A5.996 5.996 0 0 1 2 6a5.993 5.993 0 0 1 2.567-4.92 1.482 1.482 0 0 1 1.673-.04c.462.296.76.827.76 1.423v2.82c0 .082.041.16.11.206l.75.51a.25.25 0 0 0 .28 0l.75-.51A.249.249 0 0 0 9 5.282V2.463c0-.596.298-1.127.76-1.423a1.482 1.482 0 0 1 1.673.04A5.993 5.993 0 0 1 14 6a5.996 5.996 0 0 1-2.786 5.068c-.157.1-.209.23-.207.315l.163 3.33a.752.752 0 0 1-1.094.714.75.75 0 0 1-.404-.64l-.164-3.345c-.027-.717.384-1.312.902-1.64A4.495 4.495 0 0 0 12.5 6a4.492 4.492 0 0 0-1.933-3.696c-.024.017-.067.067-.067.16v2.818a1.75 1.75 0 0 1-.767 1.448l-.75.51a1.75 1.75 0 0 1-1.966 0l-.75-.51A1.75 1.75 0 0 1 5.5 5.282V2.463c0-.092-.043-.142-.067-.159Z"></path></svg> Developer Guide</a><ul>
@@ -142,11 +143,7 @@ data-aria-dark="Switch to auto color mode">
     <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
       <i class="i-lucide close"></i>
     </button>
-    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
-<li><a class="reference internal" href="#project-layout">Project Layout</a></li>
-<li><a class="reference internal" href="#nox">Nox</a></li>
-</ul>
-</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
   <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
   <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
@@ -165,7 +162,7 @@ data-aria-dark="Switch to auto color mode">
         <span>/</span>
         <meta itemprop="position" content="2" />
       </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-        <strong itemprop="name">Overview</strong>
+        <strong itemprop="name">How to Release?</strong>
         <meta itemprop="position" content="3" />
       </li></ol>
     <div class="xl:hidden ml-1">
@@ -178,22 +175,19 @@ data-aria-dark="Switch to auto color mode">
 </div><div class="flex flex-col break-words justify-between">
       <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
         <article class="yue" role="main">
-          <section id="overview">
-<h1>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h1>
-<section id="project-layout">
-<h2>Project Layout<a class="headerlink" href="#project-layout" title="Link to this heading">¶</a></h2>
-<p>Overall, the toolbox generally expects a certain project layout because it tries to follow the credo “convention over configuration” when possible and reasonable. This expected structure can be better understood by looking at the cookie-cutter project template, which is part of the python-toolbox workspace and can be found in <cite>project-template</cite>. One can also generate a project from the template to explore the default structure. For more details on this, please check out the getting started section.</p>
-</section>
-<section id="nox">
-<h2>Nox<a class="headerlink" href="#nox" title="Link to this heading">¶</a></h2>
-<p>The most central tool when interacting with the toolbox is <code class="code docutils literal notranslate"><span class="pre">nox</span></code>, which is the task runner used across all of Exasol’s Python-based projects.
-The toolbox itself provides various standard tasks and a plugin mechanism to extend these tasks if needed. For more information regarding nox, please visit the <a class="reference external" href="http://nox.thea.codes/en/stable/">nox homepage</a>.</p>
-<p>Central files in regards to nox and the toolbox are:</p>
-<ul class="simple">
-<li><p>noxfile.py: Standard nox configuration/setup file</p></li>
-<li><p>noxconfig.py: Exasol-specific file containing additional information needed by the standard tasks of the toolbox</p></li>
-</ul>
-</section>
+          <section id="how-to-release">
+<h1>How to Release?<a class="headerlink" href="#how-to-release" title="Link to this heading">¶</a></h1>
+<ol class="arabic simple">
+<li><p>Use <code class="code docutils literal notranslate"><span class="pre">nox</span> <span class="pre">-s</span> <span class="pre">release:prepare</span></code> to prepare the project for a new release.</p></li>
+<li><p>Merge your <strong>Pull Request</strong> to the <strong>default branch</strong></p></li>
+<li><p>Use <code class="code docutils literal notranslate"><span class="pre">git</span> <span class="pre">remote</span> <span class="pre">show</span> <span class="pre">origin</span> <span class="pre">|</span> <span class="pre">sed</span> <span class="pre">-n</span> <span class="pre">'/HEAD</span> <span class="pre">branch/s/.*:</span> <span class="pre">//p'</span></code> to output the <strong>default branch</strong></p></li>
+<li><p>Use <code class="code docutils literal notranslate"><span class="pre">git</span> <span class="pre">checkout</span> <span class="pre">&lt;default</span> <span class="pre">branch&gt;</span></code> Switch to the <strong>default branch</strong></p></li>
+<li><p>Use <code class="code docutils literal notranslate"><span class="pre">git</span> <span class="pre">pull</span></code> to update branch</p></li>
+<li><p>Use <code class="code docutils literal notranslate"><span class="pre">TAG=&lt;name&gt;</span></code> to set a variable named <strong>“TAG”</strong></p></li>
+<li><p>Use <code class="code docutils literal notranslate"><span class="pre">git</span> <span class="pre">tag</span> <span class="pre">&quot;${TAG}&quot;</span></code> to create a new tag in your repo</p></li>
+<li><p>Use <code class="code docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">origin</span> <span class="pre">&quot;${TAG}&quot;</span></code> to push it to remote</p></li>
+<li><p>GitHub workflow <strong>CD</strong> reacts on this tag and starts the release process</p></li>
+</ol>
 </section>
 
         </article><button class="back-to-top" type="button">
@@ -202,16 +196,16 @@ The toolbox itself provides various standard tasks and a plugin mechanism to ext
   </svg>
   <span>Back to top</span>
 </button><div class="navigation flex print:hidden"><div class="navigation-prev">
-    <a href="user_guide.html">
+    <a href="migrating.html">
       <i class="i-lucide chevron-left"></i>
       <div class="page-info">
-        <span>Previous</span><div class="title"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-person" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path></svg> User Guide</div></div>
+        <span>Previous</span><div class="title">Migrating Legacy Projects</div></div>
     </a>
   </div><div class="navigation-next">
-    <a href="getting_started.html">
+    <a href="../developer_guide/developer_guide.html">
       <div class="page-info">
         <span>Next</span>
-        <div class="title">Getting Started</div>
+        <div class="title"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-tools" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.433 2.304A4.492 4.492 0 0 0 3.5 6c0 1.598.832 3.002 2.09 3.802.518.328.929.923.902 1.64v.008l-.164 3.337a.75.75 0 1 1-1.498-.073l.163-3.33c.002-.085-.05-.216-.207-.316A5.996 5.996 0 0 1 2 6a5.993 5.993 0 0 1 2.567-4.92 1.482 1.482 0 0 1 1.673-.04c.462.296.76.827.76 1.423v2.82c0 .082.041.16.11.206l.75.51a.25.25 0 0 0 .28 0l.75-.51A.249.249 0 0 0 9 5.282V2.463c0-.596.298-1.127.76-1.423a1.482 1.482 0 0 1 1.673.04A5.993 5.993 0 0 1 14 6a5.996 5.996 0 0 1-2.786 5.068c-.157.1-.209.23-.207.315l.163 3.33a.752.752 0 0 1-1.094.714.75.75 0 0 1-.404-.64l-.164-3.345c-.027-.717.384-1.312.902-1.64A4.495 4.495 0 0 0 12.5 6a4.492 4.492 0 0 0-1.933-3.696c-.024.017-.067.067-.067.16v2.818a1.75 1.75 0 0 1-.767 1.448l-.75.51a1.75 1.75 0 0 1-1.966 0l-.75-.51A1.75 1.75 0 0 1 5.5 5.282V2.463c0-.092-.043-.142-.067-.159Z"></path></svg> Developer Guide</div>
       </div>
       <i class="i-lucide chevron-right"></i>
     </a>
