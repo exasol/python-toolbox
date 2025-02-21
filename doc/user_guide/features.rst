@@ -31,4 +31,4 @@ Important Nox Commands
         #. second one builds the documentation
         #. last one opens the documentation in the web browser
 * :code:`nox` without :code:`-s` runs the default task which is
-    * :code:`nox -s fix` this command runs automated fixes on the code
+    * :code:`nox -s project:fix` this command runs automated fixes on the code
