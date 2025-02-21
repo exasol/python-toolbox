@@ -1,10 +1,13 @@
 Features
 ========
 
-Uniformed Project Layout
-------------------------
+Uniform Project Layout
+----------------------
 
-Overall, the toolbox generally expects a certain project layout because it tries to follow the credo "convention over configuration" when possible and reasonable. This expected structure can be better understood by looking at the cookie-cutter project template, which is part of the python-toolbox workspace and can be found in `project-template`. One can also generate a project from the template to explore the default structure. For more details on this, please check out the getting started section.
+PTB expects a default project layout following "convention over configuration" when possible and reasonable.
+See the cookie-cutter project template for details, which is part of the python-toolbox workspace and can be found in directory `project-template`.
+You can also generate a project from the template to explore the default structure.
+For more details on this, please check out section `"getting started" <getting_started.html>`_ section.
 
 Nox
 ---
@@ -20,9 +23,9 @@ Central files in regards to nox and the toolbox are:
 Important Nox Commands
 ^^^^^^^^^^^^^^^^^^^^^^
 
-* :code:`nox -l` this command shows a list of all available nox tasks
-* :code:`nox -s <tasks>` to run the specified task(s)
-    * :code:`nox -s test:typing` which runs the type checker on the project
+* :code:`nox -l` shows a list of all available nox tasks
+* :code:`nox -s <tasks>` run the specified task(s)
+    * :code:`nox -s test:typing` runs the type checker on the project
     * :code:`nox -s docs:clean docs:build docs:open`
         #. first task removes the documentation folder
         #. second one builds the documentation
