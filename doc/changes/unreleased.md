@@ -1,9 +1,10 @@
 # Unreleased
 
-## ✨ Added
+## ✨ Features
 
-* added tbx task for markdown formating of .lint.json
+* Added tbx task for markdown formating of .lint.json
 * Added a Nox task for dependencies packages and their licenses with Markdown output
+* [#293](https://github.com/exasol/python-toolbox/issues/293): Added `py.typed` file
 
 ## 🐞 Fixed
 * Fixed an issue in the CI workflow that caused it to be executed twice on the initial push of a PR if the PR branch was on the repo itself.
