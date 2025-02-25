@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="grass" data-content_root="./">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Issue Tracking Guide - Toolbox</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Tools" href="tools.html" /><link rel="prev" title="Separation of Concerns" href="styleguide/guides/idioms/seperation_of_concerns.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=10d1008b" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    
+    <meta property="og:type" content="website"/><meta property="og:title" content="Issue Tracking Guide"/>
+<meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="index.html">
+      <img class="light-logo" src="_static/light-exasol-logo.svg" alt="Exasol Toolbox" height="28" loading="lazy" />
+      <img class="dark-logo" src="_static/dark-exasol-logo.svg" alt="Exasol Toolbox" height="28" loading="lazy" />
+      <strong>Exasol Toolbox</strong>
+    </a>
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="nav-versions">
+    <button type="button" aria-label="Versions">
+      <span class="md:hidden">Versions</span>
+      <span class="hidden md:inline">0.21.0</span>
+      <i class="i-lucide chevron-down"></i>
+    </button>
+    <div class="nav-versions-choices"><ul><li><a href="issues.html">0.21.0</a></li><li><a href="../0.20.0/issues.html">0.20.0</a></li><li><a href="../0.19.0/issues.html">0.19.0</a></li><li><a href="../0.18.0/issues.html">0.18.0</a></li><li><a href="../0.17.0/issues.html">0.17.0</a></li><li><a href="../0.16.0/issues.html">0.16.0</a></li><li><a href="../0.15.0/issues.html">0.15.0</a></li><li><a href="../0.14.0/index.html">0.14.0</a></li><li><a href="../0.13.0/index.html">0.13.0</a></li><li><a href="../0.12.0/index.html">0.12.0</a></li><li><a href="../0.11.0/index.html">0.11.0</a></li><li><a href="../0.10.0/index.html">0.10.0</a></li><li><a href="../0.9.0/index.html">0.9.0</a></li><li><a href="../0.8.0/index.html">0.8.0</a></li><li><a href="../0.7.0/index.html">0.7.0</a></li><li><a href="../0.6.2/index.html">0.6.2</a></li><li><a href="../0.6.1/index.html">0.6.1</a></li><li><a href="../0.6.0/index.html">0.6.0</a></li><li><a href="../0.5.0/index.html">0.5.0</a></li><li><a href="../0.4.0/index.html">0.4.0</a></li><li><a href="../0.3.0/index.html">0.3.0</a></li><li><a href="../0.2.0/index.html">0.2.0</a></li><li><a href="../0.1.0/index.html">0.1.0</a></li></ul></div>
+  </div><div class="sy-head-socials">
+  <a href="https://github.com/exasol/python-toolbox" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="user_guide/user_guide.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-person" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path></svg> User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/getting_started.html">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/features.html">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/workflows.html">GitHub Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/customization.html">Customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/migrating.html">Migrating Legacy Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/how_to_release.html">How to Release?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide/developer_guide.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-tools" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.433 2.304A4.492 4.492 0 0 0 3.5 6c0 1.598.832 3.002 2.09 3.802.518.328.929.923.902 1.64v.008l-.164 3.337a.75.75 0 1 1-1.498-.073l.163-3.33c.002-.085-.05-.216-.207-.316A5.996 5.996 0 0 1 2 6a5.993 5.993 0 0 1 2.567-4.92 1.482 1.482 0 0 1 1.673-.04c.462.296.76.827.76 1.423v2.82c0 .082.041.16.11.206l.75.51a.25.25 0 0 0 .28 0l.75-.51A.249.249 0 0 0 9 5.282V2.463c0-.596.298-1.127.76-1.423a1.482 1.482 0 0 1 1.673.04A5.993 5.993 0 0 1 14 6a5.996 5.996 0 0 1-2.786 5.068c-.157.1-.209.23-.207.315l.163 3.33a.752.752 0 0 1-1.094.714.75.75 0 0 1-.404-.64l-.164-3.345c-.027-.717.384-1.312.902-1.64A4.495 4.495 0 0 0 12.5 6a4.492 4.492 0 0 0-1.933-3.696c-.024.017-.067.067-.067.16v2.818a1.75 1.75 0 0 1-.767 1.448l-.75.51a1.75 1.75 0 0 1-1.966 0l-.75-.51A1.75 1.75 0 0 1 5.5 5.282V2.463c0-.092-.043-.142-.067-.159Z"></path></svg> Developer Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design.html">Design Document</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/development.html">Development - Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/plugins.html">Plugin Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/modules/modules.html">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/modules/sphinx/sphinx.html">sphinx</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/modules/nox.html">nox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/modules/nox_tasks.html">nox_tasks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="developer_guide/modules/pre_commit_hooks.html">pre_commit_hooks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="styleguide/index.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-paintbrush" viewBox="0 0 16 16" aria-hidden="true"><path d="M11.134 1.535c.7-.509 1.416-.942 2.076-1.155.649-.21 1.463-.267 2.069.34.603.601.568 1.411.368 2.07-.202.668-.624 1.39-1.125 2.096-1.011 1.424-2.496 2.987-3.775 4.249-1.098 1.084-2.132 1.839-3.04 2.3a3.744 3.744 0 0 1-1.055 3.217c-.431.431-1.065.691-1.657.861-.614.177-1.294.287-1.914.357A21.151 21.151 0 0 1 .797 16H.743l.007-.75H.749L.742 16a.75.75 0 0 1-.743-.742l.743-.008-.742.007v-.054a21.25 21.25 0 0 1 .13-2.284c.067-.647.187-1.287.358-1.914.17-.591.43-1.226.86-1.657a3.746 3.746 0 0 1 3.227-1.054c.466-.893 1.225-1.907 2.314-2.982 1.271-1.255 2.833-2.75 4.245-3.777ZM1.62 13.089c-.051.464-.086.929-.104 1.395.466-.018.932-.053 1.396-.104a10.511 10.511 0 0 0 1.668-.309c.526-.151.856-.325 1.011-.48a2.25 2.25 0 1 0-3.182-3.182c-.155.155-.329.485-.48 1.01a10.515 10.515 0 0 0-.309 1.67Zm10.396-10.34c-1.224.89-2.605 2.189-3.822 3.384l1.718 1.718c1.21-1.205 2.51-2.597 3.387-3.833.47-.662.78-1.227.912-1.662.134-.444.032-.551.009-.575h-.001V1.78c-.014-.014-.113-.113-.548.027-.432.14-.995.462-1.655.942Zm-4.832 7.266-.001.001a9.859 9.859 0 0 0 1.63-1.142L7.155 7.216a9.7 9.7 0 0 0-1.161 1.607c.482.302.889.71 1.19 1.192Z"></path></svg> Python Styleguide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="styleguide/guides/style.html">Styleguide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="styleguide/guides/idioms/idioms.html">Idioms</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="styleguide/guides/idioms/general.html">General</a></li>
+<li class="toctree-l4"><a class="reference internal" href="styleguide/guides/idioms/strings.html">Strings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="styleguide/guides/idioms/looping.html">Looping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="styleguide/guides/idioms/dictionaries.html">Dictionaries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="styleguide/guides/idioms/seperation_of_concerns.html">Separation of Concerns</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-list-unordered" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.75 2.5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg> Issue Tracking Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-terminal" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 2.75C0 1.784.784 1 1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25Zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25ZM7.25 8a.749.749 0 0 1-.22.53l-2.25 2.25a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L5.44 8 3.72 6.28a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215l2.25 2.25c.141.14.22.331.22.53Zm1.5 1.5h3a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1 0-1.5Z"></path></svg> Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="github_actions/github_actions.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm4.879-2.773 4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215Z"></path></svg> Github Actions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="github_actions/python_environment.html">python-environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="github_actions/security_issues.html">security-issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-cpu" viewBox="0 0 16 16" aria-hidden="true"><path d="M6.5.75V2h3V.75a.75.75 0 0 1 1.5 0V2h1.25c.966 0 1.75.784 1.75 1.75V5h1.25a.75.75 0 0 1 0 1.5H14v3h1.25a.75.75 0 0 1 0 1.5H14v1.25A1.75 1.75 0 0 1 12.25 14H11v1.25a.75.75 0 0 1-1.5 0V14h-3v1.25a.75.75 0 0 1-1.5 0V14H3.75A1.75 1.75 0 0 1 2 12.25V11H.75a.75.75 0 0 1 0-1.5H2v-3H.75a.75.75 0 0 1 0-1.5H2V3.75C2 2.784 2.784 2 3.75 2H5V.75a.75.75 0 0 1 1.5 0Zm5.75 11.75a.25.25 0 0 0 .25-.25v-8.5a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25ZM5.75 5h4.5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-.75.75h-4.5a.75.75 0 0 1-.75-.75v-4.5A.75.75 0 0 1 5.75 5Zm.75 4.5h3v-3h-3Z"></path></svg> API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-graph" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 1.75V13.5h13.75a.75.75 0 0 1 0 1.5H.75a.75.75 0 0 1-.75-.75V1.75a.75.75 0 0 1 1.5 0Zm14.28 2.53-5.25 5.25a.75.75 0 0 1-1.06 0L7 7.06 4.28 9.78a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l3.25-3.25a.75.75 0 0 1 1.06 0L10 7.94l4.72-4.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042Z"></path></svg> Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-question" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.756 2.756 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6.24 6.24 0 0 0-.26.16.952.952 0 0 0-.276.245.75.75 0 0 1-1.248-.832c.184-.264.42-.489.692-.661.103-.067.207-.132.313-.195l.007-.004c.1-.061.182-.11.258-.161a.969.969 0 0 0 .277-.245C8.96 6.514 9 6.427 9 6.25a.612.612 0 0 0-.262-.525A1.27 1.27 0 0 0 8 5.5c-.369 0-.595.09-.74.187a1.01 1.01 0 0 0-.34.398ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg> FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes/changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changes/unreleased.html">Unreleased</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.21.0.html">0.21.0 - 2025-02-25</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.20.0.html">0.20.0 - 2024-12-17</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.19.0.html">0.19.0 - 2024-12-05</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.18.0.html">0.18.0 - 2024-11-19</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.17.0.html">0.17.0 - 2024-11-18</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.16.0.html">0.16.0 - 2024-11-15</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.15.0.html">0.15.0 - 2024-09-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.14.0.html">0.14.0 - 2024-07-02</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.13.0.html">0.13.0 - 2024-06-06</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.12.0.html">0.12.0 - 2024-05-17</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.11.0.html">0.11.0 - 2024-05-17</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.10.0.html">0.10.0 - 2024-05-15</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.9.0.html">0.9.0 - 2024-05-08</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.8.0.html">0.8.0 - 2024-02-07</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.7.0.html">0.7.0 - 2024-01-26</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.6.2.html">0.6.2 - 2023-11-20</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.6.1.html">0.6.1 - 2023-10-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.6.0.html">0.6.0 - 2023-10-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.5.0.html">0.5.0 - 2023-10-12</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.4.0.html">0.4.0 - 2023-04-19</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.3.0.html">0.3.0 - 2022-12-21</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.2.0.html">0.2.0 - 2022-12-20</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes/changes_0.1.0.html">0.1.0 - 2022-11-25</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#summary">Summary</a></li>
+<li><a class="reference internal" href="#when-to-create-an-issue">When to create an issue?</a><ul>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#fixing-a-couple-of-typos">Fixing a couple of typos</a><ul>
+<li><a class="reference internal" href="#possible-action-s">Possible Action(s)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#suspicious-amount-of-typos">Suspicious amount of typos</a><ul>
+<li><a class="reference internal" href="#id1">Possible Action(s)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#what-makes-a-good-issue">What makes a good issue</a></li>
+<li><a class="reference internal" href="#how-to-maintain-an-issue">How to maintain an issue</a><ul>
+<li><a class="reference internal" href="#tl-dr">TL;DR</a></li>
+<li><a class="reference internal" href="#scenarios">Scenarios</a><ul>
+<li><a class="reference internal" href="#a-developer-picks-up-the-issue-from-the-backlog-and-starts-working-on-it">A developer picks up the issue from the backlog and starts working on it</a></li>
+<li><a class="reference internal" href="#the-issue-receives-a-comment">The Issue Receives a comment</a></li>
+<li><a class="reference internal" href="#the-developer-stop-s-postpones-working-on-the-issue-e-g-due-to-re-prioritization">The Developer stop&#8217;s/postpones working on the issue, e.g. due to re prioritization</a></li>
+<li><a class="reference internal" href="#stalled-issue-e-g-root-cause-of-bug-is-hard-to-find">Stalled issue (e.g. root cause of bug is hard to find)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">Exasol Toolbox</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-list-unordered" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.75 2.5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg> Issue Tracking Guide</strong>
+        <meta itemprop="position" content="2" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <section id="svg-version-1-1-width-1-0em-height-1-0em-class-sd-octicon-sd-octicon-list-unordered-viewbox-0-0-16-16-aria-hidden-true-path-d-m5-75-2-5h8-5a-75-75-0-0-1-0-1-5h-8-5a-75-75-0-0-1-0-1-5zm0-5h8-5a-75-75-0-0-1-0-1-5h-8-5a-75-75-0-0-1-0-1-5zm0-5h8-5a-75-75-0-0-1-0-1-5h-8-5a-75-75-0-0-1-0-1-5zm2-14a1-1-0-1-1-0-2-1-1-0-0-1-0-2zm1-6a1-1-0-1-1-2-0-1-1-0-0-1-2-0zm2-4a1-1-0-1-1-0-2-1-1-0-0-1-0-2z-path-svg-issue-tracking-guide">
+<span id="issue-tracking"></span><h1><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-list-unordered" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.75 2.5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg> Issue Tracking Guide<a class="headerlink" href="#svg-version-1-1-width-1-0em-height-1-0em-class-sd-octicon-sd-octicon-list-unordered-viewbox-0-0-16-16-aria-hidden-true-path-d-m5-75-2-5h8-5a-75-75-0-0-1-0-1-5h-8-5a-75-75-0-0-1-0-1-5zm0-5h8-5a-75-75-0-0-1-0-1-5h-8-5a-75-75-0-0-1-0-1-5zm0-5h8-5a-75-75-0-0-1-0-1-5h-8-5a-75-75-0-0-1-0-1-5zm2-14a1-1-0-1-1-0-2-1-1-0-0-1-0-2zm1-6a1-1-0-1-1-2-0-1-1-0-0-1-2-0zm2-4a1-1-0-1-1-0-2-1-1-0-0-1-0-2z-path-svg-issue-tracking-guide" title="Link to this heading">¶</a></h1>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">¶</a></h2>
+<p>Issue tracking is a great tool to track pending work and improve the overall communication within a project.
+But similar to every other tool, it needs to be used with care.</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">“A fool with a tool is still a fool”</div>
+<div class="line">– Grady Booch</div>
+</div>
+</div></blockquote>
+<p>This guide will try to help you to get the best out of the issue tracking for you, your teammates and the project(s)
+you are working on, by answering the following questions:</p>
+<ul class="simple">
+<li><p>When to create an issue?</p></li>
+<li><p>What makes a good issue?</p></li>
+<li><p>How to maintain an issue?</p></li>
+</ul>
+</section>
+<section id="when-to-create-an-issue">
+<h2>When to create an issue?<a class="headerlink" href="#when-to-create-an-issue" title="Link to this heading">¶</a></h2>
+<p>Let me start by saying there is no perfect and one size fits all ruleset to decide this question, otherwise there would be some code doing that for us.
+The good thing though is, humans are great in dealing with fuzzy problems. Still most people want to have something to orient themselves.
+Asking more specific questions often helps in this situation.</p>
+<p>The following question(s), helped us in the past, to get a better handle on this:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>What is the cost/benefit ratio of creating an issue?</dt><dd><ul>
+<li><p>cost being mainly time and effort</p></li>
+<li><p>benefit being the upsides we gain from having an issue</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>What is the signal to noise ratio?</dt><dd><ul>
+<li><p>signal being the actual code/change bringing some benefit/value to the project</p></li>
+<li><p>noises being the overhead</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Is the user (api or product) impacted by this change?</dt><dd><ul>
+<li><p>Is it an “internal improvement” quality of life and/or code quality</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h3>
+<section id="fixing-a-couple-of-typos">
+<h4>Fixing a couple of typos<a class="headerlink" href="#fixing-a-couple-of-typos" title="Link to this heading">¶</a></h4>
+<p>You stumble upon a couple of typos in a Project.</p>
+<section id="possible-action-s">
+<h5>Possible Action(s)<a class="headerlink" href="#possible-action-s" title="Link to this heading">¶</a></h5>
+<ul class="simple">
+<li><p>You fix the typos without creating an issue</p></li>
+</ul>
+</section>
+</section>
+<section id="suspicious-amount-of-typos">
+<h4>Suspicious amount of typos<a class="headerlink" href="#suspicious-amount-of-typos" title="Link to this heading">¶</a></h4>
+<p>You stumble upon a various typos within a piece of documentation you are reading. Because of the vast amount
+of typos and the overall structure you expect the whole documentation to contain a substantial amount of typos.</p>
+<section id="id1">
+<h5>Possible Action(s)<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h5>
+<ul class="simple">
+<li><p>If the documentation is not to big and you can make the time to fix the typos right away without creating an issue.</p></li>
+<li><p>If the documentation is quite big, and fixing this e.g. would take you more than 1/2 a day you definitely should create an issue.</p></li>
+<li><p>You are unsure how long it will take to address and check the documentation and you currently can’t spent time for detours create an issue.</p></li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+<section id="what-makes-a-good-issue">
+<h2>What makes a good issue<a class="headerlink" href="#what-makes-a-good-issue" title="Link to this heading">¶</a></h2>
+<blockquote>
+<div><p><strong>TL;DR:</strong> An good issue describes a piece of work, it’s context and it’s assumption in a way, any person capable of working
+on the project, can understand it, based on the information referenced and within the issue.</p>
+</div></blockquote>
+<p>To begin with, we want to make sure you understand that creating good a issue is not a zero effort action. Various things
+like issue templates, can remove tedious boilerplate work, but still creating a good issue is some actual work.
+It is crucial to have well crafted issues, because bad issues do way more harm than good. So let’s take a step
+back and let’s think about why we need to have good issues, in order to better understand what actually makes a good issue.</p>
+<p>Boiled down to it’s core issue tracking is just a list of pieces of work which are needed to be done.
+This list in turn, then can be used to plan, organize and track “progress/work”.</p>
+<p>Broken down to an individual issue, this means an issue should provide all relevant information about
+a “single” piece/unit of work.</p>
+<p>Even though the part what an issue is about is well understood, by most people, this is also where it goes wrong.</p>
+<p><strong>Why?</strong> Because we as humans tend to use and assume context implicitly. Assuming context implicitly already can be a problem
+when communicating with people we meet on a regular basis, but is a huge problem when you communicate with people which
+we meet rarely or even never.</p>
+<p>This is somewhat obvious when you think about the fact that 60-70 % of human communication is non verbal communication.
+This most likely also part of the reason so many people use emojies, a picture says more than a 1000 words
+and therefore can help transport context more easily 😉. But even those helpers aren’t perfect and it very
+often depends on the mood and the other persons perception (context) of you how they interpret a specific emoji you have sent.</p>
+<p>To take on a more computer science specific example:</p>
+<div class="table-wrapper docutils container" id="id2">
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text"><strong>TL;DR: Context matters</strong></span><a class="headerlink" href="#id2" title="Link to this table">¶</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Information</p></th>
+<th class="head"><p>Context</p></th>
+<th class="head"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>65</p></td>
+<td><p>ASCII</p></td>
+<td><p>‘A’</p></td>
+</tr>
+<tr class="row-odd"><td><p>65</p></td>
+<td><p>Hex</p></td>
+<td><p>101</p></td>
+</tr>
+<tr class="row-even"><td><p>65</p></td>
+<td><p>Decimal</p></td>
+<td><p>65</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>As you may have realized by know our point being how information is understood and processed highly depends on the context.</p>
+<p>To come back now to the topic of <strong>“What makes a good issue”</strong>, a major part of it is to make context and assumptions
+an explicit part of your information you are providing. Write the issue in such a way, that a person
+working on the project, now or in the future can precisely understand the task, the context and assumptions
+of it.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>You may inclined to think, you gonna address this task anyway or it is just for “your” book keeping,
+but then this is nothing for the issue tracker rather something for your personal todo list.
+If you decide it is important enough for the issue tracker than treat it as such.</p>
+</div>
+<p><strong>So what does this mean in more practical actionable terms?</strong></p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Make your context explicit</dt><dd><ul>
+<li><p>Add links and references to spec you may already know</p></li>
+<li><p>Add information e.g. from discussion, meetings, mails …</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Make your assumptions explicit</dt><dd><ul>
+<li><p>Write them down also note e.g. if you are not sure if it is the right decision but what you have taken into account at the point in time when you wrote it down</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Add SubTasks regarding “standard” processes which people may not necessarily know about</dt><dd><ul>
+<li><p>This can be simplified e.g. by providing issue templates</p></li>
+<li><p>update documentation</p></li>
+<li><p>update changelog</p></li>
+<li><p>…</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Make it easy to answer the following questions for the person working/reading the issue</dt><dd><ul>
+<li><p>Is this issue still relevant, or is it obsolete by now?</p></li>
+<li><p>Are the assumptions still valid today?</p></li>
+<li><p>Did they have more or less context than we have today?</p></li>
+<li><p>Did I consider the assumptions and context of the one writing the issue?</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>More details on a specific issue type you will find in the corresponding subsection(s) of this guide.</p>
+</div>
+</section>
+<section id="how-to-maintain-an-issue">
+<h2>How to maintain an issue<a class="headerlink" href="#how-to-maintain-an-issue" title="Link to this heading">¶</a></h2>
+<p>As you already know an issue does not only keep track of what needs to be done, but also about it’s context (how, why, etc.).
+This context can be a quite dynamic though, especially for tasks which bare a larger amount of uncertainty (e.g. bugs).
+So a huge part of keeping an issue up to date, is keep updating it’s context. The following scenarios will
+try to give you an idea on how to update and maintain an issue in various scenarios.</p>
+<section id="tl-dr">
+<h3>TL;DR<a class="headerlink" href="#tl-dr" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Keep the issue and it’s context up to date</dt><dd><ul>
+<li><p>Keep the status up to date [Backlog, In Progress, …]</p></li>
+<li><p>Update tickets which are actively worked on regularly (at least every 2-3 days)</p></li>
+<li><p>Try to communicate new information via comments (e.g. status update’s)</p></li>
+<li><p>Report important changes because of internal and external events</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Comments</dt><dd><ul>
+<li><p>Respond to comments in a timely manner</p></li>
+<li><p>Stay friendly and focused on the issue when responding to comments</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="scenarios">
+<h3>Scenarios<a class="headerlink" href="#scenarios" title="Link to this heading">¶</a></h3>
+<section id="a-developer-picks-up-the-issue-from-the-backlog-and-starts-working-on-it">
+<h4>A developer picks up the issue from the backlog and starts working on it<a class="headerlink" href="#a-developer-picks-up-the-issue-from-the-backlog-and-starts-working-on-it" title="Link to this heading">¶</a></h4>
+<ul>
+<li><p>Assign the ticket to the developer working on it</p></li>
+<li><p>Change the state of the issue to “In Progress”</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Most issue tracking system already take care of this if you move it
+to the appropriate category in the issue(s) overview.</p>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="the-issue-receives-a-comment">
+<h4>The Issue Receives a comment<a class="headerlink" href="#the-issue-receives-a-comment" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p>Make sure to reply to a comment in a timely manner</p></li>
+<li><dl class="simple">
+<dt>If it is the first contribution/comment of the contributor on this issue, show appreciation for the contribution.</dt><dd><ul>
+<li><p>If the comment can’t be addressed right away, at least acknowledge the comment and communicate some timeframe</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Make sure the comment can be understood in the context of the issue</dt><dd><ul>
+<li><p>If needed ask for clarification</p></li>
+<li><p>If needed ask follow up questions</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Be clear in your response(s)</dt><dd><ul>
+<li><p>Make sure relevance, importance, course of action and timeframe are communicated if necessary</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="the-developer-stop-s-postpones-working-on-the-issue-e-g-due-to-re-prioritization">
+<h4>The Developer stop’s/postpones working on the issue, e.g. due to re prioritization<a class="headerlink" href="#the-developer-stop-s-postpones-working-on-the-issue-e-g-due-to-re-prioritization" title="Link to this heading">¶</a></h4>
+<ul>
+<li><p>Remove assignee on the ticket</p></li>
+<li><p>Change the state of the issue to “Backlog”</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Most issue tracking system already take care of this if you move it
+to the appropriate category in the issue(s) overview.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p>Make sure all current context information is updated or added as status comment to the issue</p></li>
+<li><dl class="simple">
+<dt>Add information about why working on the issue have been postponed/stopped (e.g. blocked)</dt><dd><ul class="simple">
+<li><p>Except if this would disclose information to the wrong audience</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Communicate when work on the issue will be picked up again</dt><dd><ul class="simple">
+<li><p>Communicating that it is unclear when the work will be continued, is also fine</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="stalled-issue-e-g-root-cause-of-bug-is-hard-to-find">
+<h4>Stalled issue (e.g. root cause of bug is hard to find)<a class="headerlink" href="#stalled-issue-e-g-root-cause-of-bug-is-hard-to-find" title="Link to this heading">¶</a></h4>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Very rarely the issue (work) is really stalled, often it just feels like this.
+When you can’t report on explicitly achieved task(s), provide context information
+about your work (journey). This can help you and others to pickup on it latter
+or at least it help to understand the current state more clearly.</p>
+</div>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Regularly post a status update on the issue (every 2-3 days)</dt><dd><ul>
+<li><p>What issues/problems already have been ruled out and why?</p></li>
+<li><p>What is the current strategy to find the culprit?</p></li>
+<li><p>What is the current strategy to resolve roadblocks?</p></li>
+<li><p>What are the current assumptions and hunches?</p></li>
+<li><p>Are there any further leads to be investigated in the future?</p></li>
+<li><p>Describe the current roadblocks</p></li>
+<li><p>Report sub partial successes</p></li>
+<li><p>Add script’s and context information which helps to reproduce and/or trigger the bug</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p><strong>Example:</strong> Status Update on Bug Issue</p>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gh"># Status Update</span>
+</span><span data-line="2">Further investigation&#39;s have shown that the basic SQLA test suite mostly is intact after the upgrade to <span class="sb">`1.4`</span> (14 failures), when run in &quot;isolation&quot;. Various exasol specific test suites:
+</span><span data-line="3">
+</span><span data-line="4"><span class="w">   </span><span class="k">*</span><span class="w"> </span>test/test_get_metadata_functions.py
+</span><span data-line="5"><span class="w">   </span><span class="k">*</span><span class="w"> </span>test/test_large_metadata.py
+</span><span data-line="6"><span class="w">   </span><span class="k">*</span><span class="w"> </span>test/test_regression.py (TranslateMap)
+</span><span data-line="7">
+</span><span data-line="8">seem to have negative side effects which cause 100+ tests to  :boom: fail/crash, if run after those test suites.
+</span><span data-line="9">This further strengthens the case for the <span class="gs">**assumptions**</span> mentioned in the previous update:
+</span><span data-line="10">
+</span><span data-line="11"><span class="w">   </span><span class="k">*</span><span class="w"> </span>Setup/Teardown mechanic of <span class="sb">`testing.fixtures.TablesTest`</span> has changed
+</span><span data-line="12"><span class="w">   </span><span class="k">*</span><span class="w"> </span>Setup/Teardown mechanic fails due to leftovers in tests DB
+</span><span data-line="13">
+</span><span data-line="14">Also, this narrows down the potential root cause(s).
+</span><span data-line="15">
+</span><span data-line="16"><span class="gu">## Remark(s)</span>
+</span><span data-line="17">Common to all those test suites to be that they add/remove schemas.
+</span><span data-line="18">For <span class="sb">`test/test_regression.py`</span> it have been proven that the schema manipulating test (<span class="sb">`TranslateMap`</span>) causes some negative side effect on following test suits.
+</span><span data-line="19">
+</span><span data-line="20"><span class="gu">## Notes &amp; Ideas (from discussion with @tkilias )</span>
+</span><span data-line="21"><span class="k">*</span><span class="w"> </span>Is schema inference still working correctly?
+</span><span data-line="22"><span class="k">*</span><span class="w"> </span>Does the &quot;disabled&quot; caching cause side effects?
+</span><span data-line="23"><span class="k">*</span><span class="w"> </span>Do implicit schema open and closes affect the current schema for follow up tests?
+</span><span data-line="24">
+</span><span data-line="25"><span class="gu">## Next Steps</span>
+</span><span data-line="26"><span class="k">*</span><span class="w"> </span>Analyze effects of implicit open/close of schema(s)
+</span><span data-line="27"><span class="k">*</span><span class="w"> </span>A more in depth analysis regarding side effects and cleanup of the mentioned test suites will be done
+</span></pre></div>
+</div>
+<p>To see the example update in it’s full context look <a class="reference external" href="https://github.com/exasol/sqlalchemy-exasol/issues/106#issuecomment-1245305351">here</a>.</p>
+</section>
+</section>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="styleguide/guides/idioms/seperation_of_concerns.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">Separation of Concerns</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="tools.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-terminal" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 2.75C0 1.784.784 1 1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25Zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25ZM7.25 8a.749.749 0 0 1-.22.53l-2.25 2.25a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L5.44 8 3.72 6.28a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215l2.25 2.25c.141.14.22.331.22.53Zm1.5 1.5h3a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1 0-1.5Z"></path></svg> Tools</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2022, Exasol</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/exasol/python-toolbox" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/tabs.js?v=3ee01567"></script>
+      <script src="_static/design-tabs.js?v=f930bc37"></script>
+      <script src="_static/shibuya.js?v=55e26b35"></script></body>
+</html>
