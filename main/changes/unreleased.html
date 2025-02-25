@@ -2,7 +2,7 @@
 <html lang="en" data-accent-color="grass" data-content_root="../">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Unreleased - Toolbox</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="0.20.0 - 2024-12-17" href="changes_0.20.0.html" /><link rel="prev" title="Changelog" href="changelog.html" /><script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Unreleased - Toolbox</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="0.21.0 - 2025-02-25" href="changes_0.21.0.html" /><link rel="prev" title="Changelog" href="changelog.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
@@ -108,6 +108,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="../faq.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-question" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.756 2.756 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6.24 6.24 0 0 0-.26.16.952.952 0 0 0-.276.245.75.75 0 0 1-1.248-.832c.184-.264.42-.489.692-.661.103-.067.207-.132.313-.195l.007-.004c.1-.061.182-.11.258-.161a.969.969 0 0 0 .277-.245C8.96 6.514 9 6.427 9 6.25a.612.612 0 0 0-.262-.525A1.27 1.27 0 0 0 8 5.5c-.369 0-.595.09-.74.187a1.01 1.01 0 0 0-.34.398ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg> FAQ</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="changelog.html">Changelog</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Unreleased</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.21.0.html">0.21.0 - 2025-02-25</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changes_0.20.0.html">0.20.0 - 2024-12-17</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changes_0.19.0.html">0.19.0 - 2024-12-05</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changes_0.18.0.html">0.18.0 - 2024-11-19</a></li>
@@ -143,15 +144,7 @@ data-aria-dark="Switch to auto color mode">
     <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
       <i class="i-lucide close"></i>
     </button>
-    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
-<li><a class="reference internal" href="#features">&#10024; Features</a></li>
-<li><a class="reference internal" href="#fixed">&#128030; Fixed</a></li>
-<li><a class="reference internal" href="#documentation">&#128218; Documentation</a></li>
-<li><a class="reference internal" href="#changed">&#128295; Changed</a></li>
-<li><a class="reference internal" href="#internal">&#128297; Internal</a></li>
-<li><a class="reference internal" href="#refactorings">&#9874;&#65039; Refactorings</a></li>
-</ul>
-</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
   <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
   <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
@@ -185,51 +178,6 @@ data-aria-dark="Switch to auto color mode">
         <article class="yue" role="main">
           <section id="unreleased">
 <h1>Unreleased<a class="headerlink" href="#unreleased" title="Link to this heading">¶</a></h1>
-<section id="features">
-<h2>✨ Features<a class="headerlink" href="#features" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>Added tbx task for markdown formating of .lint.json</p></li>
-<li><p>Added a Nox task for dependencies packages and their licenses with Markdown output</p></li>
-<li><p><a class="reference external" href="https://github.com/exasol/python-toolbox/issues/293">#293</a>: Added <code class="docutils literal notranslate"><span class="pre">py.typed</span></code> file</p></li>
-</ul>
-</section>
-<section id="fixed">
-<h2>🐞 Fixed<a class="headerlink" href="#fixed" title="Link to this heading">¶</a></h2>
-<ul>
-<li><p>Fixed an issue in the CI workflow that caused it to be executed twice on the initial push of a PR if the PR branch was on the repo itself.</p>
-<p>🚨 Attention: Due to these changes, the workflows will no longer be executed if the PR comes from a branch not located in this repository.
-As third-party contributions from outside forks are rare to nearly non-existent, this downside was considered a reasonable trade-off at this time.</p>
-</li>
-</ul>
-</section>
-<section id="documentation">
-<h2>📚 Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>Updated design doc (Added known Issues)</p></li>
-<li><p>Updated migration progress table</p></li>
-<li><p>Updated the FAQ with an entry about the <code class="docutils literal notranslate"><span class="pre">isort</span></code> compatibility issue</p></li>
-<li><p><a class="reference external" href="https://github.com/exasol/python-toolbox/issues/351">#351</a>, <a class="reference external" href="https://github.com/exasol/python-toolbox/issues/352">#352</a>: updated user guide</p></li>
-</ul>
-</section>
-<section id="changed">
-<h2>🔧 Changed<a class="headerlink" href="#changed" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>Updated <code class="docutils literal notranslate"><span class="pre">actions/upload-artifacts</span></code> version to <code class="docutils literal notranslate"><span class="pre">4.6.0</span></code></p></li>
-</ul>
-</section>
-<section id="internal">
-<h2>🔩 Internal<a class="headerlink" href="#internal" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>Relocked dependencies</p></li>
-<li><p>Update referenced github actions</p></li>
-</ul>
-</section>
-<section id="refactorings">
-<h2>⚒️ Refactorings<a class="headerlink" href="#refactorings" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p><a class="reference external" href="https://github.com/exasol/python-toolbox/issues/339">#339</a>: Secret ALTERNATIVE_GITHUB_TOKEN removed from GitHub workflows</p></li>
-</ul>
-</section>
 </section>
 
         </article><button class="back-to-top" type="button">
@@ -244,10 +192,10 @@ As third-party contributions from outside forks are rare to nearly non-existent,
         <span>Previous</span><div class="title">Changelog</div></div>
     </a>
   </div><div class="navigation-next">
-    <a href="changes_0.20.0.html">
+    <a href="changes_0.21.0.html">
       <div class="page-info">
         <span>Next</span>
-        <div class="title">0.20.0 - 2024-12-17</div>
+        <div class="title">0.21.0 - 2025-02-25</div>
       </div>
       <i class="i-lucide chevron-right"></i>
     </a>
