@@ -227,5 +227,5 @@ def dependency_licenses(session: Session) -> None:
 
 @nox.session(name="dependency:audit", python=False)
 def audit(session: Session) -> None:
-    """Runs the audit for packages regard known vulnerabilities"""
+    """Check for known vulnerabilities"""
     _audit(session)
