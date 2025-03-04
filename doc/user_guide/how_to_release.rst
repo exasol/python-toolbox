@@ -14,7 +14,7 @@ Creating a Release
 
     .. code-block:: shell
 
-        nox -s release:prepare -- <major>.<minor>.<patch>
+        nox -s release:prepare -- "${TAG}"
 
 #. Merge your **Pull Request** to the **default branch**
 #. Switch to the **default branch**:
@@ -55,13 +55,13 @@ The release failed during pre-release checks
 
     .. code-block:: shell
 
-        git tag -d x.y.z
+        git tag -d "${TAG}"
 
 #. Delete the remote tag
 
     .. code-block:: shell
 
-        git push --delete origin x.y.z
+        git push --delete origin "${TAG}"
 
 #. Fix the issue(s) which lead to the failing checks
 #. Start the release process from the beginning
