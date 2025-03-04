@@ -8,6 +8,6 @@
     :maxdepth: 2
 
     ../design
-    development
     plugins
     modules/modules
+    ../user_guide/how_to_release
