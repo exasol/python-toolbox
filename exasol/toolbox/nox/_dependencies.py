@@ -212,6 +212,10 @@ def _packages_to_markdown(
     return template.format(heading=heading(), rows=rows)
 
 
+def _audit(session: Session) -> None:
+    session.run("poetry", "run", "pip-audit")
+
+
 @nox.session(name="dependency:licenses", python=False)
 def dependency_licenses(session: Session) -> None:
     """returns the packages and their licenses"""
@@ -219,3 +223,9 @@ def dependency_licenses(session: Session) -> None:
     dependencies = _dependencies(toml.read_text())
     package_infos = _licenses()
     print(_packages_to_markdown(dependencies=dependencies, packages=package_infos))
+
+
+@nox.session(name="dependency:audit", python=False)
+def audit(session: Session) -> None:
+    """Check for known vulnerabilities"""
+    _audit(session)

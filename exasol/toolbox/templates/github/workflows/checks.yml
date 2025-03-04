@@ -139,6 +139,25 @@ jobs:
           path: .security.json
           include-hidden-files: true
 
+  Vulnerabilities:
+    name: Check Vulnerabilities (Python-${{ matrix.python-version }})
+    needs: [ Version-Check, build-matrix ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python & Poetry Environment
+        uses: ./.github/actions/python-environment
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run Package vulnerabilities Check
+        run: poetry run nox -s dependency:audit
+
   Format:
     name: Format Check
     runs-on: ubuntu-latest
