@@ -6,8 +6,9 @@
 .. toctree::
     :maxdepth: 2
 
-    overview
     getting_started
+    features
     workflows
     customization
     migrating
+    how_to_release
