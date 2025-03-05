@@ -3,7 +3,7 @@ name = "exasol-toolbox"
 packages = [
     { include = "exasol" },
 ]
-version = "0.20.0"
+version = "0.21.0"
 description = "Your one-stop solution for managing all standard tasks and core workflows of your Python project."
 authors = [
     "Nicola Coretti <nicola.coretti@exasol.com>"
@@ -59,6 +59,7 @@ typer = {extras = ["all"], version = ">=0.7.0"}
 bandit = {extras = ["toml"], version = "^1.7.9"}
 jinja2 = "^3.1.4"
 pip-licenses = "^5.0.0"
+pip-audit = "^2.7.3"
 
 [tool.poetry.group.dev.dependencies]
 autoimport = "^1.4.0"
