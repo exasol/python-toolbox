@@ -14,12 +14,11 @@ from noxconfig import PROJECT_CONFIG
 
 
 def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
-    isort = ["poetry", "run", "isort", "-v"]
-    black = ["poetry", "run", "black"]
-    isort = isort if mode == Mode.Fix else isort + ["--check"]
-    black = black if mode == Mode.Fix else black + ["--check"]
-    session.run(*isort, *files)
-    session.run(*black, *files)
+    def command(*args: str) -> list[str]:
+        return args if mode==Mode.Fix else list(args) + ["--check"]
+
+    session.run(*command("poetry", "run", "isort"), *files)
+    session.run(*command("poetry", "run", "black"), *files)
 
 
 def _pyupgrade(session: Session, files: Iterable[str]) -> None:
@@ -47,3 +46,13 @@ def fmt_check(session: Session) -> None:
     """Checks the project for correct formatting"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
     _code_format(session=session, mode=Mode.Check, files=py_files)
+
+
+class XSession:
+    def run(self, *args):
+        print(f'session.run(args: {args})')
+
+
+if __name__ == "__main__":
+    session = XSession()
+    _code_format(session, Mode.Fix, [])
