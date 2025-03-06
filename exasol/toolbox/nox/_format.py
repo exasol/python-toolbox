@@ -15,7 +15,7 @@ from noxconfig import PROJECT_CONFIG
 
 def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
     def command(*args: str) -> list[str]:
-        return args if mode==Mode.Fix else list(args) + ["--check"]
+        return args if mode == Mode.Fix else list(args) + ["--check"]
 
     session.run(*command("poetry", "run", "isort"), *files)
     session.run(*command("poetry", "run", "black"), *files)
@@ -50,7 +50,7 @@ def fmt_check(session: Session) -> None:
 
 class XSession:
     def run(self, *args):
-        print(f'session.run(args: {args})')
+        print(f"session.run(args: {args})")
 
 
 if __name__ == "__main__":
