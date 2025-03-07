@@ -46,13 +46,3 @@ def fmt_check(session: Session) -> None:
     """Checks the project for correct formatting"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
     _code_format(session=session, mode=Mode.Check, files=py_files)
-
-
-class XSession:
-    def run(self, *args):
-        print(f"session.run(args: {args})")
-
-
-if __name__ == "__main__":
-    session = XSession()
-    _code_format(session, Mode.Fix, [])
