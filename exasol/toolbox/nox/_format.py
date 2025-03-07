@@ -15,7 +15,7 @@ from noxconfig import PROJECT_CONFIG
 
 def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
     def command(*args: str) -> list[str]:
-        return args if mode == Mode.Fix else list(args) + ["--check"]
+        return list(args) if mode == Mode.Fix else list(args) + ["--check"]
 
     session.run(*command("poetry", "run", "isort"), *files)
     session.run(*command("poetry", "run", "black"), *files)
