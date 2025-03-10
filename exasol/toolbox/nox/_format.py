@@ -14,12 +14,11 @@ from noxconfig import PROJECT_CONFIG
 
 
 def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
-    isort = ["poetry", "run", "isort", "-v"]
-    black = ["poetry", "run", "black"]
-    isort = isort if mode == Mode.Fix else isort + ["--check"]
-    black = black if mode == Mode.Fix else black + ["--check"]
-    session.run(*isort, *files)
-    session.run(*black, *files)
+    def command(*args: str) -> Iterable[str]:
+        return args if mode == Mode.Fix else list(args) + ["--check"]
+
+    session.run(*command("poetry", "run", "isort"), *files)
+    session.run(*command("poetry", "run", "black"), *files)
 
 
 def _pyupgrade(session: Session, files: Iterable[str]) -> None:
