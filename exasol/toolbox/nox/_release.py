@@ -235,10 +235,6 @@ def release(session: Session) -> None:
     default_branch = match.group(1) if match else None
     subprocess.run(["git", "checkout", default_branch])
     subprocess.run(["git", "pull"])
-    key = False
-    if not key:
-        return
-    print(":(")
     subprocess.run(["git", "tag", str(new_version)])
     subprocess.run(["git", "push", "origin", str(new_version)])
     pass
