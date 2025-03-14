@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import re
+import subprocess
 import sys
+from enum import Enum
 from pathlib import Path
 from typing import (
     List,
@@ -25,9 +28,7 @@ from exasol.toolbox.release import (
     new_unreleased,
 )
 from noxconfig import PROJECT_CONFIG
-from enum import Enum
-import subprocess
-import re
+
 
 def _create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
@@ -37,19 +38,21 @@ def _create_parser() -> argparse.ArgumentParser:
     )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
-        "-v", "--version",
+        "-v",
+        "--version",
         type=cli.version,
         help="A version string of the following format:" '"NUMBER.NUMBER.NUMBER"',
         required=False,
-        default=argparse.SUPPRESS
+        default=argparse.SUPPRESS,
     )
     group.add_argument(
-        "-t", "--type",
+        "-t",
+        "--type",
         type=ReleaseTypes,
         help="specifies which type of upgrade is to be performed",
         required=False,
         choices=[rt.value for rt in list(ReleaseTypes)],
-        default=argparse.SUPPRESS
+        default=argparse.SUPPRESS,
     )
     parser.add_argument(
         "--no-add",
@@ -113,19 +116,21 @@ def _type_release(release_type: ReleaseTypes, old_version: Version) -> Version:
     upgrade = {
         ReleaseTypes.Major: Version(old_version.major + 1, 0, 0),
         ReleaseTypes.Minor: Version(old_version.major, old_version.minor + 1, 0),
-        ReleaseTypes.Patch: Version(old_version.major, old_version.minor, old_version.patch + 1),
+        ReleaseTypes.Patch: Version(
+            old_version.major, old_version.minor, old_version.patch + 1
+        ),
     }
     return upgrade[release_type]
 
 
-def _version_control(session: Session, args: argparse.Namespace,) -> Version:
+def _version_control(
+    session: Session,
+    args: argparse.Namespace,
+) -> Version:
     has_release_version = hasattr(args, "version")
     has_release_type = hasattr(args, "type")
 
     old_version = Version.from_poetry()
-
-    if has_release_version and has_release_type:
-        session.error("choose either a release version or a release type")
 
     if has_release_version and not has_release_type:
         if not _is_valid_version(old=old_version, new=args.version):
@@ -137,6 +142,8 @@ def _version_control(session: Session, args: argparse.Namespace,) -> Version:
 
     if not has_release_version and has_release_type:
         return _type_release(release_type=args.type, old_version=old_version)
+
+    session.error("error in _version_control")
 
 
 @nox.session(name="release:prepare", python=False)
@@ -201,17 +208,19 @@ def release(session: Session) -> None:
     )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
-        "-v", "--version",
+        "-v",
+        "--version",
         type=cli.version,
         help="A version string of the following format:" '"NUMBER.NUMBER.NUMBER"',
-        default=argparse.SUPPRESS
+        default=argparse.SUPPRESS,
     )
     group.add_argument(
-        "-t", "--type",
+        "-t",
+        "--type",
         type=ReleaseTypes,
         help="specifies which type of upgrade is to be performed",
         choices=list(ReleaseTypes),
-        default=argparse.SUPPRESS
+        default=argparse.SUPPRESS,
     )
 
     args = parser.parse_args(session.posargs)

@@ -5,15 +5,17 @@ from unittest.mock import patch
 
 import pytest
 
+from exasol.toolbox.nox._release import (
+    ReleaseTypes,
+    _type_release,
+)
 from exasol.toolbox.release import (
     Version,
     extract_release_notes,
     new_changelog,
 )
-from exasol.toolbox.nox._release import (
-    ReleaseTypes,
-    _type_release
-)
+
+
 @pytest.mark.parametrize(
     "input,expected",
     [
@@ -148,11 +150,12 @@ def test_extract_release_notes(unreleased_md):
 
 
 @pytest.mark.parametrize(
-    "rtype,old,expected",[
+    "rtype,old,expected",
+    [
         ("major", "1.2.3", "2.0.0"),
         ("minor", "1.2.3", "1.3.0"),
         ("patch", "1.2.3", "1.2.4"),
-    ]
+    ],
 )
 def test_type_release(rtype, old, expected):
     actual = _type_release(ReleaseTypes(rtype), Version.from_string(old))
