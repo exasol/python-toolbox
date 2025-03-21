@@ -1,8 +1,14 @@
 from __future__ import annotations
 
+import argparse
+import json
 import subprocess
 import tempfile
 from dataclasses import dataclass
+from enum import (
+    Enum,
+    auto,
+)
 from inspect import cleandoc
 from json import loads
 from pathlib import Path
@@ -211,8 +217,87 @@ def _packages_to_markdown(
     return template.format(heading=heading(), rows=rows)
 
 
-def _audit(session: Session) -> None:
-    session.run("poetry", "run", "pip-audit")
+class PipAuditFormat(Enum):
+    columns = auto()
+    json = auto()
+
+    @classmethod
+    def _missing_(cls, value):
+        if isinstance(value, str):
+            for member in cls:
+                if member.name == value.lower():
+                    return member
+        return None
+
+    @classmethod
+    def name_tuple(cls) -> tuple:
+        return tuple(fmt.name for fmt in PipAuditFormat)
+
+
+class Audit:
+    @staticmethod
+    def _filter_json_for_vulnerabilities(audit_json_bytes: bytes) -> dict:
+        """filters json for only packages with vulnerabilities"""
+        audit_dict = json.loads(audit_json_bytes.decode("utf-8"))
+        return {
+            "dependencies": [
+                {
+                    "name": entry["name"],
+                    "version": entry["version"],
+                    "vulns": entry["vulns"],
+                }
+                for entry in audit_dict["dependencies"]
+                if entry["vulns"]
+            ]
+        }
+
+    @staticmethod
+    def _parse_format(session) -> argparse.Namespace:
+        parser = argparse.ArgumentParser(
+            description="Audits dependencies for security vulnerabilities",
+            usage="nox -s dependency:audit -- -- [options]",
+        )
+        parser.add_argument(
+            "-f",
+            "--format",
+            type=str,
+            default=PipAuditFormat.columns.name,
+            help="Format to emit audit results in",
+            choices=PipAuditFormat.name_tuple(),
+        )
+        parser.add_argument(
+            "-o",
+            "--output",
+            type=Path,
+            default=None,
+            help="Output results to the given file",
+        )
+        return parser.parse_args(args=session.posargs)
+
+    def run(self, session: Session) -> None:
+        args = self._parse_format(session)
+        audit_format = PipAuditFormat[args.format]
+
+        command = ["poetry", "run", "pip-audit", "-f", audit_format.name]
+        if audit_format == PipAuditFormat.columns:
+            if args.output:
+                command.extend(["-o", args.output])
+            session.run(*command)
+
+        elif audit_format == PipAuditFormat.json:
+            output = subprocess.run(command, capture_output=True)
+            audit_json = self._filter_json_for_vulnerabilities(output.stdout)
+
+            if args.output:
+                with open(args.output, "w") as file:
+                    json.dump(audit_json, file)
+            else:
+                print(audit_json)
+
+            if output.returncode != 0:
+                session.warn(
+                    f"Command {' '.join(command)} failed with exit code {output.returncode}",
+                )
 
 
 @nox.session(name="dependency:licenses", python=False)
@@ -227,4 +312,4 @@ def dependency_licenses(session: Session) -> None:
 @nox.session(name="dependency:audit", python=False)
 def audit(session: Session) -> None:
     """Check for known vulnerabilities"""
-    _audit(session)
+    Audit().run(session=session)

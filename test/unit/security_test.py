@@ -462,3 +462,60 @@ def test_from_json(json_file, expected):
         references=expected["references"],
     )
     assert list(actual) == [expected_issue]
+
+
+@pytest.mark.parametrize(
+    "reference, expected",
+    [
+        pytest.param(
+            "CVE-2025-27516",
+            (
+                ["CVE-2025-27516"],
+                [],
+                ["https://nvd.nist.gov/vuln/detail/CVE-2025-27516"],
+            ),
+            id="CVE_identified_with_link",
+        ),
+        pytest.param(
+            "CWE-611",
+            ([], ["CWE-611"], ["https://cwe.mitre.org/data/definitions/611.html"]),
+            id="CWE_identified_with_link",
+        ),
+        pytest.param(
+            "GHSA-cpwx-vrp4-4pq7",
+            ([], [], ["https://github.com/advisories/GHSA-cpwx-vrp4-4pq7"]),
+            id="GHSA_link",
+        ),
+        pytest.param(
+            "PYSEC-2025-9",
+            (
+                [],
+                [],
+                [
+                    "https://github.com/pypa/advisory-database/blob/main/vulns/dummy/PYSEC-2025-9.yaml"
+                ],
+            ),
+            id="PYSEC_link",
+        ),
+    ],
+)
+def test_identify_pypi_references(reference: str, expected):
+    actual = security.identify_pypi_references([reference], package_name="dummy")
+    assert actual == expected
+
+
+class TestFromPython:
+    @staticmethod
+    def test_no_vulnerability_returns_empty_list():
+        actual = set(security.from_python("{}"))
+        assert actual == set()
+
+    @staticmethod
+    def test_convert_vulnerability_to_issue(
+        pip_audit_report, pip_audit_jinja2_issue, pip_audit_cryptography_issue
+    ):
+        audit_json = json.dumps(pip_audit_report)
+        expected = {pip_audit_jinja2_issue, pip_audit_cryptography_issue}
+
+        actual = set(security.from_python(audit_json))
+        assert actual == expected

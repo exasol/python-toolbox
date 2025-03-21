@@ -16,7 +16,6 @@ from enum import Enum
 from functools import partial
 from inspect import cleandoc
 from pathlib import Path
-from typing import Tuple
 
 import typer
 
@@ -99,6 +98,63 @@ def from_maven(report: str) -> Iterable[Issue]:
                 description=v["description"],
                 coordinates=dependency_name,
                 references=tuple(references),
+            )
+
+
+class VulnerabilitySource(str, Enum):
+    CVE = "CVE"
+    CWE = "CWE"
+    GHSA = "GHSA"
+    PYSEC = "PYSEC"
+
+    def get_link(self, package: str, vuln_id: str) -> str:
+        if self == VulnerabilitySource.CWE:
+            cwe_id = vuln_id.upper().replace(f"{VulnerabilitySource.CWE.value}-", "")
+            return f"https://cwe.mitre.org/data/definitions/{cwe_id}.html"
+
+        map_link = {
+            VulnerabilitySource.CVE: "https://nvd.nist.gov/vuln/detail/{vuln_id}",
+            VulnerabilitySource.GHSA: "https://github.com/advisories/{vuln_id}",
+            VulnerabilitySource.PYSEC: "https://github.com/pypa/advisory-database/blob/main/vulns/{package}/{vuln_id}.yaml",
+        }
+        return map_link[self].format(package=package, vuln_id=vuln_id)
+
+
+def identify_pypi_references(
+    references: list[str], package_name: str
+) -> tuple[list[str], list[str], list[str]]:
+    ref_cves, ref_cwes, ref_links = [], [], []
+    for reference in references:
+        for source in VulnerabilitySource:
+            if reference.upper().startswith(source.value):
+                if source == VulnerabilitySource.CVE:
+                    ref_cves.append(reference)
+                elif source == VulnerabilitySource.CWE:
+                    ref_cwes.append(reference)
+                ref_links.append(
+                    source.get_link(package=package_name, vuln_id=reference)
+                )
+                continue
+    return ref_cves, ref_cwes, ref_links
+
+
+def from_python(report: str) -> Iterable[Issue]:
+    # Note: Consider adding warnings if there is the same cve with multiple coordinates
+    report_dict = json.loads(report)
+    dependencies = report_dict.get("dependencies", [])
+    for dependency in dependencies:
+        package = dependency["name"]
+        for v in dependency["vulns"]:
+            refs = [v["id"]] + v["aliases"]
+            cves, cwes, links = identify_pypi_references(
+                references=refs, package_name=package
+            )
+            yield Issue(
+                cve="None" if not cves else cves[0],
+                cwe="None" if not cwes else cwes[0],
+                description=v["description"],
+                coordinates=f"{package}:{dependency['version']}",
+                references=tuple(links),
             )
 
 
@@ -220,6 +276,7 @@ CLI.add_typer(CVE_CLI, name="cve", help="Work with CVE's")
 
 class Format(str, Enum):
     Maven = "maven"
+    Python = "python"
 
 
 # pylint: disable=redefined-builtin
@@ -243,7 +300,13 @@ def convert(
             stdout(issue)
         raise typer.Exit(code=0)
 
-    actions = {Format.Maven: _maven}
+    def _python(infile):
+        issues = from_python(infile.read())
+        for issue in _issues_as_json_str(issues):
+            stdout(issue)
+        raise typer.Exit(code=0)
+
+    actions = {Format.Maven: _maven, Format.Python: _python}
     action = actions[format]
     action(input_file)
 
