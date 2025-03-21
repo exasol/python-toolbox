@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import subprocess
 import tempfile
-from collections import defaultdict
 from dataclasses import dataclass
 from inspect import cleandoc
 from json import loads
@@ -154,7 +153,7 @@ def _packages_to_markdown(
     dependencies: dict[str, list], packages: list[Package]
 ) -> str:
     def heading():
-        text = "# Dependecies\n"
+        text = "# Dependencies\n"
         return text
 
     def dependency(group: str, group_packages: list, packages: list[Package]) -> str:

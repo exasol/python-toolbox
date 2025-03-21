@@ -138,7 +138,7 @@ def test_packages_from_json(json, expected):
                     license_link="",
                 ),
             ],
-            """# Dependecies
+            """# Dependencies
 ## Project Dependencies
 |Package|version|Licence|
 |---|---|---|
