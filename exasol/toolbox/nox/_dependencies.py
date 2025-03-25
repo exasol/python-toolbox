@@ -237,7 +237,8 @@ class PipAuditFormat(Enum):
 class Audit:
     @staticmethod
     def _filter_json_for_vulnerabilities(audit_json_bytes: bytes) -> dict:
-        """Filters json for only packages with vulnerabilities
+        """
+        Filters JSON from pip-audit for only packages with vulnerabilities
 
         Examples:
         >>> audit_json_dict = {"dependencies": [

@@ -139,7 +139,24 @@ def identify_pypi_references(
 
 
 def from_pip_audit(report: str) -> Iterable[Issue]:
-    # Note: Consider adding warnings if there is the same cve with multiple coordinates
+    """
+    Transforms the JSON output from `nox -s dependency:audit` into an iterable of
+    `security.Issue` objects.
+
+    This does not gracefully handle scenarios where:
+     - a CVE is not initially associated with the vulnerability
+     - the same vulnerability ID (CVE, PYSEC, GHSA, etc.) is present across
+     multiple coordinates.
+
+    Input:
+        '{"dependencies": [{"name": "<package_name>", "version": "<package_version>",
+        "vulns": [{"id": "<vuln_id>", "fix_versions": ["<fix_version>"],
+        "aliases": ["<vuln_id2>"], "description": "<vuln_description>"}]}]}'
+
+    Args:
+        report:
+            the JSON output of `nox -s dependency:audit` provided as a str
+    """
     report_dict = json.loads(report)
     dependencies = report_dict.get("dependencies", [])
     for dependency in dependencies:
