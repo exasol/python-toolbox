@@ -237,7 +237,21 @@ class PipAuditFormat(Enum):
 class Audit:
     @staticmethod
     def _filter_json_for_vulnerabilities(audit_json_bytes: bytes) -> dict:
-        """filters json for only packages with vulnerabilities"""
+        """Filters json for only packages with vulnerabilities
+
+        Examples:
+        >>> audit_json_dict = {"dependencies": [
+        ... {"name": "alabaster", "version": "0.7.16", "vulns": []},
+        ... {"name": "cryptography", "version": "43.0.3", "vulns":
+        ... [{"id": "GHSA-79v4-65xg-pq4g", "fix_versions": ["44.0.1"],
+        ... "aliases": ["CVE-2024-12797"],
+        ... "description": "pyca/cryptography\'s wheels..."}]}]}
+        >>> audit_json = json.dumps(audit_json_dict).encode()
+        >>> Audit._filter_json_for_vulnerabilities(audit_json)
+        {"dependencies": [{"name": "cryptography", "version": "43.0.3", "vulns":
+        [{"id": "GHSA-79v4-65xg-pq4g", "fix_versions": ["44.0.1"], "aliases":
+        ["CVE-2024-12797"], "description": "pyca/cryptography\'s wheels..."}]}]}
+        """
         audit_dict = json.loads(audit_json_bytes.decode("utf-8"))
         return {
             "dependencies": [
