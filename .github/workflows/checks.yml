@@ -54,6 +54,7 @@ jobs:
           python-version: "3.9"
 
       - name: Run changelog update check
+        if: ${{ github.ref != 'refs/heads/main' }}
         run: poetry run nox -s changelog:updated
 
   build-matrix:
