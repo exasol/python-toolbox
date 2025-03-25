@@ -19,7 +19,7 @@ Example Usage
 
         name: Report Security Issues
 
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
 
         permissions:
           issues: write
