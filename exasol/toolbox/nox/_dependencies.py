@@ -266,7 +266,7 @@ class Audit:
         }
 
     @staticmethod
-    def _parse_format(session) -> argparse.Namespace:
+    def _parse_args(session) -> argparse.Namespace:
         parser = argparse.ArgumentParser(
             description="Audits dependencies for security vulnerabilities",
             usage="nox -s dependency:audit -- -- [options]",
@@ -289,7 +289,7 @@ class Audit:
         return parser.parse_args(args=session.posargs)
 
     def run(self, session: Session) -> None:
-        args = self._parse_format(session)
+        args = self._parse_args(session)
         audit_format = PipAuditFormat[args.format]
 
         command = ["poetry", "run", "pip-audit", "-f", audit_format.name]
