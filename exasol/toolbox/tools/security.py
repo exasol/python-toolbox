@@ -16,6 +16,7 @@ from enum import Enum
 from functools import partial
 from inspect import cleandoc
 from pathlib import Path
+from typing import Self
 
 import typer
 
@@ -107,6 +108,13 @@ class VulnerabilitySource(str, Enum):
     GHSA = "GHSA"
     PYSEC = "PYSEC"
 
+    @classmethod
+    def from_prefix(cls, name: str) -> Self | None:
+        for el in cls:
+            if name.upper().startswith(el.value):
+                return el
+        return None
+
     def get_link(self, package: str, vuln_id: str) -> str:
         if self == VulnerabilitySource.CWE:
             cwe_id = vuln_id.upper().replace(f"{VulnerabilitySource.CWE.value}-", "")
@@ -123,19 +131,17 @@ class VulnerabilitySource(str, Enum):
 def identify_pypi_references(
     references: list[str], package_name: str
 ) -> tuple[list[str], list[str], list[str]]:
-    ref_cves, ref_cwes, ref_links = [], [], []
+    refs: dict = {k: [] for k in VulnerabilitySource}
+    links = []
     for reference in references:
-        for source in VulnerabilitySource:
-            if reference.upper().startswith(source.value):
-                if source == VulnerabilitySource.CVE:
-                    ref_cves.append(reference)
-                elif source == VulnerabilitySource.CWE:
-                    ref_cwes.append(reference)
-                ref_links.append(
-                    source.get_link(package=package_name, vuln_id=reference)
-                )
-                continue
-    return ref_cves, ref_cwes, ref_links
+        if source := VulnerabilitySource.from_prefix(reference.upper()):
+            refs[source].append(reference)
+            links.append(source.get_link(package=package_name, vuln_id=reference))
+    return (
+        refs[VulnerabilitySource.CVE],
+        refs[VulnerabilitySource.CWE],
+        links,
+    )
 
 
 def from_pip_audit(report: str) -> Iterable[Issue]:
