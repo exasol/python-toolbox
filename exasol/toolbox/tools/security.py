@@ -138,7 +138,7 @@ def identify_pypi_references(
     return ref_cves, ref_cwes, ref_links
 
 
-def from_python(report: str) -> Iterable[Issue]:
+def from_pip_audit(report: str) -> Iterable[Issue]:
     # Note: Consider adding warnings if there is the same cve with multiple coordinates
     report_dict = json.loads(report)
     dependencies = report_dict.get("dependencies", [])
@@ -276,7 +276,7 @@ CLI.add_typer(CVE_CLI, name="cve", help="Work with CVE's")
 
 class Format(str, Enum):
     Maven = "maven"
-    Python = "python"
+    PipAudit = "pip-audit"
 
 
 # pylint: disable=redefined-builtin
@@ -300,13 +300,13 @@ def convert(
             stdout(issue)
         raise typer.Exit(code=0)
 
-    def _python(infile):
-        issues = from_python(infile.read())
+    def _pip_audit(infile):
+        issues = from_pip_audit(infile.read())
         for issue in _issues_as_json_str(issues):
             stdout(issue)
         raise typer.Exit(code=0)
 
-    actions = {Format.Maven: _maven, Format.Python: _python}
+    actions = {Format.Maven: _maven, Format.PipAudit: _pip_audit}
     action = actions[format]
     action(input_file)
 

@@ -504,10 +504,10 @@ def test_identify_pypi_references(reference: str, expected):
     assert actual == expected
 
 
-class TestFromPython:
+class TestFromPipAudit:
     @staticmethod
     def test_no_vulnerability_returns_empty_list():
-        actual = set(security.from_python("{}"))
+        actual = set(security.from_pip_audit("{}"))
         assert actual == set()
 
     @staticmethod
@@ -517,5 +517,5 @@ class TestFromPython:
         audit_json = json.dumps(pip_audit_report)
         expected = {pip_audit_jinja2_issue, pip_audit_cryptography_issue}
 
-        actual = set(security.from_python(audit_json))
+        actual = set(security.from_pip_audit(audit_json))
         assert actual == expected
