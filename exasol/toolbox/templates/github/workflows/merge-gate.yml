@@ -16,7 +16,7 @@ jobs:
   # This job ensures inputs have been executed successfully.
   approve-merge:
     name: Allow Merge
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # If you need additional jobs to be part of the merge gate, add them below
     needs: [ fast-checks, slow-checks ]
 
