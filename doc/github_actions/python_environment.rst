@@ -33,7 +33,7 @@ Example Usage
 
       test-job:
         name: Tests
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
 
         steps:
           - name: SCM Checkout
