@@ -465,6 +465,21 @@ def test_from_json(json_file, expected):
 
 
 @pytest.mark.parametrize(
+    "prefix,expected",
+    [
+        pytest.param("DUMMY", None, id="without_a_matching_prefix_returns_none"),
+        pytest.param(
+            f"{security.VulnerabilitySource.CWE.value.lower()}-1234",
+            security.VulnerabilitySource.CWE,
+            id="with_matching_prefix_returns_vulnerability_source",
+        ),
+    ],
+)
+def test_from_prefix(prefix: str, expected: security.VulnerabilitySource | None):
+    assert security.VulnerabilitySource.from_prefix(prefix) == expected
+
+
+@pytest.mark.parametrize(
     "reference, expected",
     [
         pytest.param(
