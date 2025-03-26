@@ -33,6 +33,7 @@ This project mainly serves three main purposes:
         - run integration tests
         - determine code coverage
         - build-, open-, clean- documentation
+        - creates GitHub Issues for vulnerabilities
     * CI (verify PR's and merges)
     * CI/CD (verify and publish releases)
     * Build & Publish Documentation (verify and publish documentation)
@@ -187,7 +188,10 @@ _________________
     * - Action
       - Description
     * - python-environment
-      - Sets up an appropriate poetry based python environment
+      - Sets up an appropriate poetry-based python environment
+    * - security-issues
+      - Takes a JSON of known vulnerabilities affecting a repo & creates GitHub Issues
+        in said repo for any vulnerabilities, which do not yet have a GitHub Issue
 
 
 Known Issues
