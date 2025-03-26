@@ -172,13 +172,14 @@ def from_pip_audit(report: str) -> Iterable[Issue]:
             cves, cwes, links = identify_pypi_references(
                 references=refs, package_name=package
             )
-            yield Issue(
-                cve="None" if not cves else cves[0],
-                cwe="None" if not cwes else cwes[0],
-                description=v["description"],
-                coordinates=f"{package}:{dependency['version']}",
-                references=tuple(links),
-            )
+            if cves:
+                yield Issue(
+                    cve=sorted(cves)[0],
+                    cwe="None" if not cwes else ", ".join(cwes),
+                    description=v["description"],
+                    coordinates=f"{package}:{dependency['version']}",
+                    references=tuple(links),
+                )
 
 
 @dataclass(frozen=True)
