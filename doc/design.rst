@@ -150,32 +150,11 @@ Tasks
 ~~~~~
 .. todo:: Add diagram configuration and tasks (noxfile.py + noxconfig.py + exasol.toolbox)
 
-.. list-table::
-    :header-rows: 1
-    :widths: 30 70
+To view all the defined nox tasks & their definitions use:
 
-    * - Tasks
-      - Description
-    * - fix
-      - Runs all automated fixes on the code base
-    * - check
-      - Runs all available checks on the project
-    * - lint
-      - Runs the linter on the project
-    * - type-check
-      - Runs the type checker on the project
-    * - unit-tests
-      - Runs all unit tests
-    * - integration-tests
-      - Runs the all integration tests
-    * - coverage
-      - Runs all tests (unit + integration) and reports the code coverage
-    * - build-docs
-      - Builds the project documentation
-    * - open-docs
-      - Opens the built project documentation
-    * - clean-docs
-      - Removes the documentations build folder
+.. code-block:: shell
+
+   poetry run nox -l
 
 Workflows
 ~~~~~~~~~
