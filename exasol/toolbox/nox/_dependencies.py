@@ -217,23 +217,6 @@ def _packages_to_markdown(
     return template.format(heading=heading(), rows=rows)
 
 
-class PipAuditFormat(Enum):
-    columns = auto()
-    json = auto()
-
-    @classmethod
-    def _missing_(cls, value):
-        if isinstance(value, str):
-            for member in cls:
-                if member.name == value.lower():
-                    return member
-        return None
-
-    @classmethod
-    def name_tuple(cls) -> tuple:
-        return tuple(fmt.name for fmt in PipAuditFormat)
-
-
 class Audit:
     @staticmethod
     def _filter_json_for_vulnerabilities(audit_json_bytes: bytes) -> dict:
@@ -273,14 +256,6 @@ class Audit:
             usage="nox -s dependency:audit -- -- [options]",
         )
         parser.add_argument(
-            "-f",
-            "--format",
-            type=str,
-            default=PipAuditFormat.columns.name,
-            help="Format to emit audit results in",
-            choices=PipAuditFormat.name_tuple(),
-        )
-        parser.add_argument(
             "-o",
             "--output",
             type=Path,
@@ -291,28 +266,21 @@ class Audit:
 
     def run(self, session: Session) -> None:
         args = self._parse_args(session)
-        audit_format = PipAuditFormat[args.format]
 
-        command = ["poetry", "run", "pip-audit", "-f", audit_format.name]
-        if audit_format == PipAuditFormat.columns:
-            if args.output:
-                command.extend(["-o", args.output])
-            session.run(*command)
+        command = ["poetry", "run", "pip-audit", "-f", "json"]
+        output = subprocess.run(command, capture_output=True)
 
-        elif audit_format == PipAuditFormat.json:
-            output = subprocess.run(command, capture_output=True)
-            audit_json = self._filter_json_for_vulnerabilities(output.stdout)
+        audit_json = self._filter_json_for_vulnerabilities(output.stdout)
+        if args.output:
+            with open(args.output, "w") as file:
+                json.dump(audit_json, file)
+        else:
+            print(json.dumps(audit_json, indent=2))
 
-            if args.output:
-                with open(args.output, "w") as file:
-                    json.dump(audit_json, file)
-            else:
-                print(audit_json)
-
-            if output.returncode != 0:
-                session.warn(
-                    f"Command {' '.join(command)} failed with exit code {output.returncode}",
-                )
+        if output.returncode != 0:
+            session.warn(
+                f"Command {' '.join(command)} failed with exit code {output.returncode}",
+            )
 
 
 @nox.session(name="dependency:licenses", python=False)
