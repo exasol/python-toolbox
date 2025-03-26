@@ -5,10 +5,6 @@ import json
 import subprocess
 import tempfile
 from dataclasses import dataclass
-from enum import (
-    Enum,
-    auto,
-)
 from inspect import cleandoc
 from json import loads
 from pathlib import Path
