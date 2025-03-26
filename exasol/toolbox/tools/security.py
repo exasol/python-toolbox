@@ -151,7 +151,8 @@ def from_pip_audit(report: str) -> Iterable[Issue]:
     `security.Issue` objects.
 
     This does not gracefully handle scenarios where:
-     - a CVE is not initially associated with the vulnerability
+     - a CVE is not initially associated with the vulnerability; however, the assumption
+     is that such vulnerabilities will later be associated with a CVE.
      - the same vulnerability ID (CVE, PYSEC, GHSA, etc.) is present across
      multiple coordinates.
 
