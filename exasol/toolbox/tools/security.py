@@ -1,5 +1,7 @@
 """This module contains security related CLI tools and code"""
 
+from __future__ import annotations
+
 import json
 import re
 import subprocess
@@ -16,7 +18,6 @@ from enum import Enum
 from functools import partial
 from inspect import cleandoc
 from pathlib import Path
-from typing import Self
 
 import typer
 
@@ -35,7 +36,7 @@ class Issue:
     references: tuple
 
 
-def _issues(input) -> Generator[Issue, None, None]:
+def _issues(input) -> Generator[Issue]:
     lines = (l for l in input if l.strip() != "")
     for line in lines:
         obj = json.loads(line)
@@ -48,7 +49,7 @@ def _issues_as_json_str(issues):
         yield json.dumps(issue)
 
 
-def gh_security_issues() -> Generator[tuple[str, str], None, None]:
+def gh_security_issues() -> Generator[tuple[str, str]]:
     """
     Yields issue-id, cve-id pairs for all (closed, open) issues associated with CVEs
 
@@ -109,7 +110,7 @@ class VulnerabilitySource(str, Enum):
     PYSEC = "PYSEC"
 
     @classmethod
-    def from_prefix(cls, name: str) -> Self | None:
+    def from_prefix(cls, name: str) -> VulnerabilitySource | None:
         for el in cls:
             if name.upper().startswith(el.value):
                 return el
