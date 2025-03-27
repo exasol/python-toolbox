@@ -1,8 +1,7 @@
-import sys
-from pathlib import Path
 import json
+import sys
 from datetime import datetime
-from inspect import cleandoc
+from pathlib import Path
 
 from pydantic import (
     BaseModel,
@@ -10,7 +9,7 @@ from pydantic import (
 )
 
 _TOOLBOX_PATH = Path(__file__).parent / ".."
-sys.path.append(f'{_TOOLBOX_PATH}')
+sys.path.append(f"{_TOOLBOX_PATH}")
 
 from exasol.toolbox.metrics import Rating
 
@@ -18,11 +17,7 @@ from exasol.toolbox.metrics import Rating
 class Metrics(BaseModel):
     """This schema defines the structure and values for reporting Q/A metrics for projects."""
 
-    project: str = Field(
-        description=(
-            "Project Name Corresponding to the metrics."
-        )
-    )
+    project: str = Field(description=("Project Name Corresponding to the metrics."))
     commit: str = Field(
         description=(
             "Commit-Hash pointing to the state of the codebase used for generating the metrics."
@@ -33,7 +28,8 @@ class Metrics(BaseModel):
     )
     coverage: float = Field(
         description="Represents the percentage of the codebase that is covered by automated tests.",
-        ge=0, le=100
+        ge=0,
+        le=100,
     )
     maintainability: Rating = Field(
         description="Rating of how easily the codebase can be understood, adapted, and extended.",
