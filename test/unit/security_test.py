@@ -4,6 +4,7 @@ import pathlib
 import subprocess
 from contextlib import contextmanager
 from inspect import cleandoc
+from typing import Type
 from unittest import mock
 
 import pytest
@@ -475,7 +476,7 @@ def test_from_json(json_file, expected):
         ),
     ],
 )
-def test_from_prefix(prefix: str, expected: security.VulnerabilitySource | None):
+def test_from_prefix(prefix: str, expected):
     assert security.VulnerabilitySource.from_prefix(prefix) == expected
 
 
