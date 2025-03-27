@@ -196,7 +196,7 @@ _________________
 security-issues
 ^^^^^^^^^^^^^^^
 The `security-issues/action.yml` creates GitHub Issues for known vulnerabilities
-for `maven` and `pip-audit <https://pypi.org/project/pip-audit/>`_.
+for `maven <https://sonatype.github.io/ossindex-maven/maven-plugin/>`_ and `pip-audit <https://pypi.org/project/pip-audit/>`_.
 The following steps are taken:
 
 1. Convert a JSON of known vulnerabilities into a common format (`class Issue`)
@@ -204,11 +204,11 @@ The following steps are taken:
 3. Create new GitHub Issues
 4. Return a JSON of the newly created GitHub Issues
 
-Input variants
-~~~~~~~~~~~~~~
+Input Variants
+""""""""""""""
 An input variant would be passed in as a string-encoded JSON.
 
-`maven` (via `mvn --batch-mode org.sonatype.ossindex.maven:ossindex-maven-plugin:audit org.sonatype.ossindex.maven:ossindex-maven-plugin:audit-aggregate`)
+`maven` (with `ossindex-audit <https://sonatype.github.io/ossindex-maven/maven-plugin/ossindex-audit/>`_)
 
 .. code-block:: json
 
@@ -259,7 +259,7 @@ An input variant would be passed in as a string-encoded JSON.
     }
 
 Known Issues
-~~~~~~~~~~~~~
+""""""""""""
 The `security-issues/action.yml` assumes that eventually every known vulnerability will
 be associated with a singular CVE.
 
