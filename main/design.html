@@ -154,14 +154,21 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#tasks">Tasks</a></li>
 <li><a class="reference internal" href="#workflows">Workflows</a><ul>
 <li><a class="reference internal" href="#available-workflows">Available Workflows</a></li>
-<li><a class="reference internal" href="#available-actions">Available Actions</a></li>
+<li><a class="reference internal" href="#available-actions">Available Actions</a><ul>
+<li><a class="reference internal" href="#security-issues">security-issues</a><ul>
+<li><a class="reference internal" href="#input-variants">Input Variants</a></li>
+<li><a class="reference internal" href="#known-issues">Known Issues</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#known-issues">Known Issues</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id4">Known Issues</a><ul>
 <li><a class="reference internal" href="#passing-files-as-individual-arguments-on-the-cli">Passing files as individual arguments on the CLI</a></li>
 <li><a class="reference internal" href="#inconsistent-naming">Inconsistent Naming</a></li>
 <li><a class="reference internal" href="#project-configuration">Project Configuration</a></li>
@@ -229,7 +236,7 @@ may have project specific additions, which ideally reuse existing building block
 <ol class="arabic simple">
 <li><p>Provide library code, scripts and commands for common developer tasks within a python project.</p></li>
 <li><dl class="simple">
-<dt>Provide and maintain commonly required functionality for python project</dt><dd><ul class="simple">
+<dt>Provide and maintain commonly required functionality for a python project</dt><dd><ul class="simple">
 <li><dl class="simple">
 <dt>Common Projects Tasks</dt><dd><ul>
 <li><p>apply code formatters</p></li>
@@ -239,6 +246,7 @@ may have project specific additions, which ideally reuse existing building block
 <li><p>run integration tests</p></li>
 <li><p>determine code coverage</p></li>
 <li><p>build-, open-, clean- documentation</p></li>
+<li><p>creates GitHub Issues for vulnerabilities</p></li>
 </ul>
 </dd>
 </dl>
@@ -260,8 +268,8 @@ may have project specific additions, which ideally reuse existing building block
 <h3>Design Principles<a class="headerlink" href="#design-principles" title="Link to this heading">¶</a></h3>
 <ul>
 <li><dl class="simple">
-<dt>This project needs to be thought of as development dependency only!</dt><dd><ul class="simple">
-<li><p>Library code should not imported/used in non development code of the projects</p></li>
+<dt>This project needs to be thought of as a development dependency only!</dt><dd><ul class="simple">
+<li><p>Library code should not imported/used in non-development code of the projects</p></li>
 </ul>
 </dd>
 </dl>
@@ -276,10 +284,10 @@ may have project specific additions, which ideally reuse existing building block
 </dl>
 </li>
 <li><dl class="simple">
-<dt>Provide extension points (hooks) where for project specific behaviour</dt><dd><ul class="simple">
+<dt>Provide extension points (hooks) for project specific behaviour</dt><dd><ul class="simple">
 <li><p>If it can’t be a convention or configuration setting</p></li>
 <li><p>If having something as a convention or configuration significantly complicates the implementation</p></li>
-<li><p>If you have a obvious use case within at least one project</p></li>
+<li><p>If you have an obvious use case within at least one project</p></li>
 </ul>
 </dd>
 </dl>
@@ -299,7 +307,7 @@ may have project specific additions, which ideally reuse existing building block
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>It is clear that not everything can and will be automated right from the beginning,
-but there should be continues effort to improve the work of the developers.</p>
+but there should be continuous effort to improve the work of the developers.</p>
 <p>e.g.:</p>
 <blockquote>
 <div><p><strong>Template &gt; Generator &gt; Automated Updater</strong></p>
@@ -363,18 +371,18 @@ E.g.:</p>
 <section id="design-decisions">
 <h3>Design Decisions<a class="headerlink" href="#design-decisions" title="Link to this heading">¶</a></h3>
 <ul>
-<li><p>Whenever possible tools provided or required by the toolbox should get their configuration from the projects <em>pyproject.toml</em> file.</p></li>
-<li><p>Whenever a more dynamic configuration is needed it should be made part of the config object in the projects <em>noxconfig.py</em> file.</p></li>
-<li><p>The required standard tooling used within the toolbox will obey what have been agreed upon in the exasol <a class="reference external" href="https://exasol.github.io/python-styleguide/guides/tooling.html">python-styleguide</a>.</p></li>
+<li><p>Whenever possible, tools provided or required by the toolbox should get their configuration from the projects <em>pyproject.toml</em> file.</p></li>
+<li><p>Whenever a more dynamic configuration is needed, it should be made part of the config object in the projects <em>noxconfig.py</em> file.</p></li>
+<li><p>The required standard tooling used within the toolbox will obey what has been agreed upon in the Exasol <a class="reference external" href="https://exasol.github.io/python-styleguide/guides/tooling.html">python-styleguide</a>.</p></li>
 <li><dl>
-<dt>As Task runner the toolbox will be using nox</dt><dd><div class="admonition warning">
+<dt>For a task runner, the toolbox will be using nox</dt><dd><div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Known Issue(s)</p>
 <p>Nox tasks should not call (notify) other nox tasks. This can lead to unexpected behaviour
 due to the fact that the job/task queue will <a class="reference external" href="https://nox.thea.codes/en/stable/config.html#nox.sessions.Session.notify">execute a task only once</a>.</p>
-<p>Therefore all functionality which need to be reused or called multiple times within or by different nox tasks,
-should be provided by python code (e.g. functions) which is receiving a nox session as argument
-but isn’t  annotated as a nox session/task (<a class="reference external" href="https://nox.thea.codes/en/stable/config.html#defining-sessions">&#64;nox.session</a>).</p>
+<p>Therefore, all functionality, which needs to be re-used, called multiple times calls, or is used by different nox tasks,
+should be provided by python code (e.g. functions) which receives a nox session as an argument, but the code itself
+shall not be annotated as a nox session/task (<a class="reference external" href="https://nox.thea.codes/en/stable/config.html#defining-sessions">&#64;nox.session</a>).</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -385,14 +393,14 @@ but isn’t  annotated as a nox session/task (<a class="reference external" href
 <li><p>It is already used by a couple of our projects, so the team is familiar with it</p></li>
 <li><p>The author of the toolbox is very familiar with it</p></li>
 </ul>
-<p>That said, no in depth evaluation of other tools haven been done.</p>
+<p>That said, no in-depth evaluation of other tools has been done.</p>
 </div>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>Workflows (CI/CD &amp; Co.) will be github actions based</dt><dd><ul class="simple">
-<li><p>This is the standard tool within the exasol integration team</p></li>
+<dt>Workflows (CI/CD &amp; Co.) will be GitHub Actions-based</dt><dd><ul class="simple">
+<li><p>This is the standard tool within the Exasol Integration Team</p></li>
 </ul>
 </dd>
 </dl>
@@ -408,57 +416,16 @@ but isn’t  annotated as a nox session/task (<a class="reference external" href
 <p class="admonition-title">Todo</p>
 <p>Add diagram configuration and tasks (noxfile.py + noxconfig.py + exasol.toolbox)</p>
 </div>
-<div class="table-wrapper colwidths-given docutils container">
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 30.0%" />
-<col style="width: 70.0%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Tasks</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>fix</p></td>
-<td><p>Runs all automated fixes on the code base</p></td>
-</tr>
-<tr class="row-odd"><td><p>check</p></td>
-<td><p>Runs all available checks on the project</p></td>
-</tr>
-<tr class="row-even"><td><p>lint</p></td>
-<td><p>Runs the linter on the project</p></td>
-</tr>
-<tr class="row-odd"><td><p>type-check</p></td>
-<td><p>Runs the type checker on the project</p></td>
-</tr>
-<tr class="row-even"><td><p>unit-tests</p></td>
-<td><p>Runs all unit tests</p></td>
-</tr>
-<tr class="row-odd"><td><p>integration-tests</p></td>
-<td><p>Runs the all integration tests</p></td>
-</tr>
-<tr class="row-even"><td><p>coverage</p></td>
-<td><p>Runs all tests (unit + integration) and reports the code coverage</p></td>
-</tr>
-<tr class="row-odd"><td><p>build-docs</p></td>
-<td><p>Builds the project documentation</p></td>
-</tr>
-<tr class="row-even"><td><p>open-docs</p></td>
-<td><p>Opens the built project documentation</p></td>
-</tr>
-<tr class="row-odd"><td><p>clean-docs</p></td>
-<td><p>Removes the documentations build folder</p></td>
-</tr>
-</tbody>
-</table>
+<p>To view all the defined nox tasks &amp; their definitions use:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">poetry<span class="w"> </span>run<span class="w"> </span>nox<span class="w"> </span>-l
+</span></pre></div>
 </div>
 </section>
 <section id="workflows">
 <h4>Workflows<a class="headerlink" href="#workflows" title="Link to this heading">¶</a></h4>
 <div class="admonition-todo admonition" id="id3">
 <p class="admonition-title">Todo</p>
-<p>Add diagram of github workflows and interaction</p>
+<p>Add diagram of GitHub workflows and interaction</p>
 </div>
 <section id="available-workflows">
 <h5>Available Workflows<a class="headerlink" href="#available-workflows" title="Link to this heading">¶</a></h5>
@@ -502,22 +469,105 @@ but isn’t  annotated as a nox session/task (<a class="reference external" href
 </thead>
 <tbody>
 <tr class="row-even"><td><p>python-environment</p></td>
-<td><p>Sets up an appropriate poetry based python environment</p></td>
+<td><p>Sets up an appropriate poetry-based python environment</p></td>
+</tr>
+<tr class="row-odd"><td><p>security-issues</p></td>
+<td><p>Takes a JSON of known vulnerabilities affecting a repo &amp; creates GitHub Issues
+in said repo for any vulnerabilities, which do not yet have a GitHub Issue</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-</section>
-</section>
-</section>
+<section id="security-issues">
+<h6>security-issues<a class="headerlink" href="#security-issues" title="Link to this heading">¶</a></h6>
+<p>The <cite>security-issues/action.yml</cite> creates GitHub Issues for known vulnerabilities
+for <a class="reference external" href="https://sonatype.github.io/ossindex-maven/maven-plugin/">maven</a> and <a class="reference external" href="https://pypi.org/project/pip-audit/">pip-audit</a>.
+The following steps are taken:</p>
+<ol class="arabic simple">
+<li><p>Convert a JSON of known vulnerabilities into a common format (<cite>class Issue</cite>)</p></li>
+<li><p>Filter out vulnerabilities which already have an existing GitHub Issue via CVE</p></li>
+<li><p>Create new GitHub Issues</p></li>
+<li><p>Return a JSON of the newly created GitHub Issues</p></li>
+</ol>
+<section id="input-variants">
+<h6 aria-level="7">Input Variants<a class="headerlink" href="#input-variants" title="Link to this heading">¶</a></h6>
+<p>An input variant would be passed in as a string-encoded JSON.</p>
+<p><cite>maven</cite> (with <a class="reference external" href="https://sonatype.github.io/ossindex-maven/maven-plugin/ossindex-audit/">ossindex-audit</a>)</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="p">{</span>
+</span><span data-line="2"><span class="w">    </span><span class="nt">&quot;vulnerable&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span data-line="3"><span class="w">        </span><span class="nt">&quot;&lt;package_name&gt;@&lt;package_version&gt;:compile&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span data-line="4"><span class="w">            </span><span class="nt">&quot;coordinates&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;package_name&gt;@&lt;package_version&gt;&quot;</span><span class="p">,</span>
+</span><span data-line="5"><span class="w">            </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;package_description&gt;&quot;</span><span class="p">,</span>
+</span><span data-line="6"><span class="w">            </span><span class="nt">&quot;reference&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;oss_url_for_vuln&gt;&quot;</span><span class="p">,</span>
+</span><span data-line="7"><span class="w">            </span><span class="nt">&quot;vulnerabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span data-line="8"><span class="w">                </span><span class="p">{</span>
+</span><span data-line="9"><span class="w">                    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;vuln_id&gt;&quot;</span><span class="p">,</span>
+</span><span data-line="10"><span class="w">                    </span><span class="nt">&quot;displayName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;vuln_name&gt;&quot;</span><span class="p">,</span>
+</span><span data-line="11"><span class="w">                    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;vuln_title&gt;&quot;</span><span class="p">,</span>
+</span><span data-line="12"><span class="w">                    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;vuln_description&gt;&quot;</span><span class="p">,</span>
+</span><span data-line="13"><span class="w">                    </span><span class="nt">&quot;cvssScore&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">7.5</span><span class="p">,</span>
+</span><span data-line="14"><span class="w">                    </span><span class="nt">&quot;cvssVector&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H&quot;</span><span class="p">,</span>
+</span><span data-line="15"><span class="w">                    </span><span class="nt">&quot;cwe&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;cwe_vuln_id&gt;&quot;</span><span class="p">,</span>
+</span><span data-line="16"><span class="w">                    </span><span class="nt">&quot;cve&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;cve_vuln_id&gt;&quot;</span><span class="p">,</span>
+</span><span data-line="17"><span class="w">                    </span><span class="nt">&quot;reference&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;oss_url_for_vuln&gt;&quot;</span><span class="p">,</span>
+</span><span data-line="18"><span class="w">                    </span><span class="nt">&quot;externalReferences&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;&lt;vuln_reference_url&gt;&quot;</span><span class="p">],</span>
+</span><span data-line="19"><span class="w">                </span><span class="p">}</span>
+</span><span data-line="20"><span class="w">            </span><span class="p">],</span>
+</span><span data-line="21"><span class="w">        </span><span class="p">},</span>
+</span><span data-line="22"><span class="w">    </span><span class="p">}</span>
+</span><span data-line="23"><span class="p">}</span>
+</span></pre></div>
+</div>
+<p><cite>pip-audit</cite> (via <cite>nox -s dependency:audit</cite>)</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="p">{</span>
+</span><span data-line="2"><span class="w">     </span><span class="nt">&quot;dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span data-line="3"><span class="w">         </span><span class="p">{</span>
+</span><span data-line="4"><span class="w">             </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;package_name&gt;&quot;</span><span class="p">,</span>
+</span><span data-line="5"><span class="w">             </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;package_version&gt;&quot;</span><span class="p">,</span>
+</span><span data-line="6"><span class="w">             </span><span class="nt">&quot;vulns&quot;</span><span class="p">:</span>
+</span><span data-line="7"><span class="w">             </span><span class="p">[</span>
+</span><span data-line="8"><span class="w">                 </span><span class="p">{</span>
+</span><span data-line="9"><span class="w">                     </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;vuln_id&gt;&quot;</span><span class="p">,</span>
+</span><span data-line="10"><span class="w">                     </span><span class="nt">&quot;fix_versions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;&lt;fix_version&gt;&quot;</span><span class="p">],</span>
+</span><span data-line="11"><span class="w">                     </span><span class="nt">&quot;aliases&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;&lt;vuln_id2&gt;&quot;</span><span class="p">],</span>
+</span><span data-line="12"><span class="w">                     </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;vuln_description&gt;&quot;</span>
+</span><span data-line="13"><span class="w">                 </span><span class="p">}</span>
+</span><span data-line="14"><span class="w">             </span><span class="p">]</span>
+</span><span data-line="15"><span class="w">         </span><span class="p">}</span>
+</span><span data-line="16"><span class="w">     </span><span class="p">]</span>
+</span><span data-line="17"><span class="w"> </span><span class="p">}</span>
+</span></pre></div>
+</div>
 </section>
 <section id="known-issues">
-<h2>Known Issues<a class="headerlink" href="#known-issues" title="Link to this heading">¶</a></h2>
+<h6 aria-level="7">Known Issues<a class="headerlink" href="#known-issues" title="Link to this heading">¶</a></h6>
+<p>The <cite>security-issues/action.yml</cite> assumes that eventually every known vulnerability will
+be associated with a singular CVE.</p>
+<ul class="simple">
+<li><p>This can be problematic as vulnerabilities may be initially reported to different
+services and not receive a CVE until a few days later or, in some cases, never. This
+could mean that some vulnerabilities are initially missed or, in some cases,
+never propagated by our action.</p></li>
+<li><p>Additionally, reporting tools like <cite>pip-audit</cite> must link a vulnerability with the
+different vulnerability IDs from different reporting services. Typically, this is done
+by selecting 1 of the vulnerability IDs as the unique identifier of the vulnerability.
+This, as is the case for <cite>pip-audit</cite>, may not be the CVE, so it is possible if the
+linked vulnerability IDs were to change (i.e. wrongly linked CVE) that we could end
+up with multiple GitHub Issues for the same underlying vulnerability.</p></li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+</section>
+</section>
+<section id="id4">
+<h2>Known Issues<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
 <p>This section documents flaws, sins, and known issues with the current design and/or its current implementation that were either known upfront or surfaced through the course of implementing it. Additionally, it attempts to explain why certain choices were made at the time, so one can better understand whether it may be reasonable to make changes now or in the future.</p>
 <section id="passing-files-as-individual-arguments-on-the-cli">
 <h3>Passing files as individual arguments on the CLI<a class="headerlink" href="#passing-files-as-individual-arguments-on-the-cli" title="Link to this heading">¶</a></h3>
 <p><strong>Description:</strong></p>
-<p>As of today selection of python files for linting, formatting etc. is done by passing all relevant python files as individual argument(s)
+<p>As of today selection of Python files for linting, formatting etc. is done by passing all relevant python files as individual argument(s)
 to the tools used/invoked by the python toolbox.</p>
 <p><strong>Downsides:</strong></p>
 <ul class="simple">
@@ -597,7 +647,7 @@ While Nox isn’t a perfect fit, it still meets most of our requirements for a t
 <li><p>Nox does not support grouping.</p></li>
 </ul>
 <p><strong>Rationale/History:</strong></p>
-<p>Why Nox was choosen:</p>
+<p>Why Nox was chosen:</p>
 <ul class="simple">
 <li><p>No additional language(s) required: There was no need to introduce extra programming languages or binaries, simplifying the development process.</p></li>
 <li><p>Python-based: Being Python-based, Nox can be extended and understood by Python developers.</p></li>
@@ -619,14 +669,14 @@ Therefore, a naming convention to indicate grouping should be adopted.</p>
 <section id="poetry-for-project-management">
 <h3>Poetry for Project Management<a class="headerlink" href="#poetry-for-project-management" title="Link to this heading">¶</a></h3>
 <p>While poetry was and is a good choice for Exasol project, dependency, build tool etc. “most recently”
-<a class="reference external" href="https://docs.astral.sh/uv/">uv</a> has surfaced and made big advanced. Looking at uv it addresses additional itches with
-our projects and therefore in the long run it may be a good idea to migrate our project setups to it.
+<a class="reference external" href="https://docs.astral.sh/uv/">uv</a> has surfaced and made big advancements. Looking at uv it addresses additional itches with
+our projects, and, therefore, in the long run, it may be a good idea to migrate our project setups to it.
 Use poetry for project, build and dependency management.</p>
 </section>
 <section id="code-formatting">
 <h3>Code Formatting<a class="headerlink" href="#code-formatting" title="Link to this heading">¶</a></h3>
 <p><strong>Description:</strong></p>
-<p>Currently we use Black and Isort for code formatting, though running them on a larger code base as pre-commit hooks or such can take quite a bit of time.</p>
+<p>Currently, we use Black and Isort for code formatting, though running them on a larger code base as pre-commit hooks or such can take quite a bit of time.</p>
 <p><strong>Downsides:</strong></p>
 <ul class="simple">
 <li><p>Two tools and an aligned configuration of them are required to cleanly and correctly format the codebase.</p></li>
@@ -640,7 +690,7 @@ Use poetry for project, build and dependency management.</p>
 <li><p>Black and Isort already have been known by most python devs when we where selecting the tools</p></li>
 </ul>
 <p><strong>Ideas/Solutions:</strong></p>
-<p>As <a class="reference external" href="https://docs.astral.sh/ruff/">Ruff</a> is fairly stable and also tested and used by many Python projects
+<p>As <a class="reference external" href="https://docs.astral.sh/ruff/">Ruff</a> is fairly stable and also tested and used by many Python projects,
 we should consider transitioning to it.</p>
 <p>Advantages:</p>
 <ul class="simple">
@@ -663,17 +713,17 @@ We are currently using Pylint instead of Ruff.</p>
 </ul>
 <p><strong>Rationale/History:</strong></p>
 <ul class="simple">
-<li><p>Well known</p></li>
+<li><p>Well-known</p></li>
 <li><p>Pylint provides built-in project score/rating</p></li>
 <li><p>Project score is good for improving legacy code bases which haven’t been linted previously</p></li>
 <li><p>Plugin support</p></li>
 </ul>
 <p><strong>Ideas/Possible Solutions:</strong></p>
-<p>Replacing Pylint with Ruff for linting would provide significant performance improvement. Additionally, Ruff offers an LSP and IDE integrations and is widely used these days. Additionaly there would be an additional synergy if we adopt ruff for formatting the code base.</p>
+<p>Replacing Pylint with Ruff for linting would provide significant performance improvement. Additionally, Ruff offers an LSP and IDE integrations and is widely used these days. Additionally, there would be an additional synergy if we adopt ruff for formatting the code base.</p>
 <p>Transitioning to Ruff requires us to adjust the migration and improvement strategies for our projects:</p>
 <ul class="simple">
 <li><p>Currently, our codebase improvements are guided by scores. However, with Ruff, a new approach is necessary. For example, we could incrementally introduce specific linting rules, fix the related issues, and then enforce these rules.</p></li>
-<li><p>The project rating and scoring system will also need modification. One possiblity would be to run Ruff and Pylint in parallel, utilizing Pylint solely for rating and issue resolution while Ruff is incorporated for linting tasks.</p></li>
+<li><p>The project rating and scoring system will also need modification. One possibility would be to run Ruff and Pylint in parallel, utilizing Pylint solely for rating and issue resolution while Ruff is incorporated for linting tasks.</p></li>
 </ul>
 </section>
 <section id="security-linter">

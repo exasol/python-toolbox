@@ -13,7 +13,7 @@ def chdir(path):
 
 def initialize(directory):
     with chdir(directory) as _working_dir:
-        with open('some-file.txt', 'w') as f:
+        with open("some-file.txt", "w") as f:
             f.write("Some content")
 
 
@@ -23,7 +23,7 @@ from contextlib import chdir
 
 def initialize(directory):
     with chdir(directory) as _working_dir:
-        with open('some-file.txt', 'w') as f:
+        with open("some-file.txt", "w") as f:
             f.write("Some content")
 
 
@@ -35,6 +35,6 @@ def initialize(directory):
     old_dir = os.getcwd()
     os.chdir(directory)
     os.chdir(old_dir)
-    with open('some-file.txt', 'w') as f:
+    with open("some-file.txt", "w") as f:
         f.write("Some content")
     os.chdir(old_dir)
