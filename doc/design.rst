@@ -193,6 +193,33 @@ _________________
       - Takes a JSON of known vulnerabilities affecting a repo & creates GitHub Issues
         in said repo for any vulnerabilities, which do not yet have a GitHub Issue
 
+security-issues
+^^^^^^^^^^^^^^^
+The `security-issues/action.yml` creates GitHub Issues for known vulnerabilities
+for `maven` and `pip-audit`.
+The following steps are taken:
+
+1. Convert a JSON of known vulnerabilities into a common format (`class Issue`)
+2. Filter out vulnerabilities which already have an existing GitHub Issue via CVE
+3. Create new GitHub Issues
+4. Return a JSON of the newly created GitHub Issues
+
+Known Issues
+~~~~~~~~~~~~~
+The `security-issues/action.yml` assumes that eventually every known vulnerability will
+be associated with a singular CVE.
+
+* This can be problematic as vulnerabilities may be initially reported to different
+  services and not receive a CVE until a few days later or, in some cases, never. This
+  could mean that some vulnerabilities are initially missed or, in some cases,
+  never propagated by our action.
+* Additionally, reporting tools like `pip-audit` must link a vulnerability with the
+  different vulnerability IDs from different reporting services. Typically, this is done
+  by selecting 1 of the vulnerability IDs as the unique identifier of the vulnerability.
+  This, as is the case for `pip-audit`, is not the CVE, so it is possible if the linked
+  vulnerability IDs were to change (i.e. wrongly linked CVE) that we could end up with
+  multiple GitHub Issues for the same underlying vulnerability.
+
 
 Known Issues
 ------------
