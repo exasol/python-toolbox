@@ -4,7 +4,6 @@ import pathlib
 import subprocess
 from contextlib import contextmanager
 from inspect import cleandoc
-from typing import Type
 from unittest import mock
 
 import pytest
