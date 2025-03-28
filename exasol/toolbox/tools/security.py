@@ -396,7 +396,7 @@ def create(
     { "cve": "<cve-id>", "cwe": "<cwe-id>", "description": "<multiline string>", "coordinates": "<string>", "references": ["<url>", "<url>", ...] }
 
     Output:
-    Links to the created issue(s)
+    { "cve": "<cve-id>", "cwe": "<cwe-id>", "description": "<multiline string>", "coordinates": "<string>", "references": ["<url>", "<url>", ...], "issue_url": "<url>" }
     """
     for issue in _issues(input_file):
         std_err, issue_url = create_security_issue(issue, project)
