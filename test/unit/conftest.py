@@ -7,7 +7,7 @@ from exasol.toolbox.tools import security
 
 @pytest.fixture(scope="session")
 def pip_audit_jinja2_issue():
-    return security.Issue(
+    return security.VulnerabilityIssue(
         cve="CVE-2025-27516",
         cwe="None",
         description=cleandoc(
@@ -33,7 +33,7 @@ def pip_audit_jinja2_issue():
 
 @pytest.fixture(scope="session")
 def pip_audit_cryptography_issue():
-    return security.Issue(
+    return security.VulnerabilityIssue(
         cve="CVE-2024-12797",
         cwe="None",
         description=cleandoc(
