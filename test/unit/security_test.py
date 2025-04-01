@@ -8,7 +8,10 @@ from unittest import mock
 
 import pytest
 
-from exasol.toolbox.security import GitHubVulnerabilityIssue
+from exasol.toolbox.security import (
+    GitHubVulnerabilityIssue,
+    VulnerabilitySource,
+)
 from exasol.toolbox.tools import security
 
 
@@ -493,14 +496,14 @@ def test_from_json(json_file, expected):
     [
         pytest.param("DUMMY", None, id="without_a_matching_prefix_returns_none"),
         pytest.param(
-            f"{security.VulnerabilitySource.CWE.value.lower()}-1234",
-            security.VulnerabilitySource.CWE,
+            f"{VulnerabilitySource.CWE.value.lower()}-1234",
+            VulnerabilitySource.CWE,
             id="with_matching_prefix_returns_vulnerability_source",
         ),
     ],
 )
 def test_from_prefix(prefix: str, expected):
-    assert security.VulnerabilitySource.from_prefix(prefix) == expected
+    assert VulnerabilitySource.from_prefix(prefix) == expected
 
 
 @pytest.mark.parametrize(
