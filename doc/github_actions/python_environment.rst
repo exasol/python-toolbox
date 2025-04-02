@@ -18,7 +18,7 @@ Parameters
    * - poetry-version
      - Poetry version to use
      - True
-     - 2.0.1
+     - 2.1.2
 
 Example Usage
 -------------
@@ -43,6 +43,6 @@ Example Usage
             uses: exasol/python-toolbox/.github/actions/python-environment@0.21.0
             with:
               python-version: 3.12
-              poetry-version: 2.0.1
+              poetry-version: 2.1.2
 
             ...
