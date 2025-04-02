@@ -19,7 +19,10 @@ import nox
 import tomlkit
 from nox import Session
 
-from exasol.toolbox.security import GitHubVulnerabilityIssue
+from exasol.toolbox.security import (
+    GitHubVulnerabilityIssue,
+    from_pip_audit,
+)
 
 
 @dataclass(frozen=True)
@@ -388,18 +391,14 @@ class VulnerabilityTracker:
 
     def _split_resolution_status(self) -> None:
         to_resolve_by_cve = {vuln.cve: vuln for vuln in self.to_resolve}
-        cves_to_resolve = to_resolve_by_cve.keys()
-        audit_json, _ = Audit().audit()
+        cves_to_resolve = set(to_resolve_by_cve.keys())
 
-        not_resolved: list = []
-        for dependency in audit_json["dependencies"]:
-            for v in dependency["vulns"]:
-                vuln_ids = set([v["id"]] + v["aliases"])
-                if remaining_cves := (cves_to_resolve & vuln_ids):
-                    not_resolved.extend(
-                        to_resolve_by_cve[cve] for cve in remaining_cves
-                    )
-        self.not_resolved = set(not_resolved)
+        audit_json, _ = Audit().audit()
+        cve_audit = {vuln.cve for vuln in from_pip_audit(json.dumps(audit_json))}
+
+        cves_not_resolved = cves_to_resolve.intersection(cve_audit)
+
+        self.not_resolved = {to_resolve_by_cve[cve] for cve in cves_not_resolved}
         self.resolved = self.to_resolve - self.not_resolved
 
     def get_packages(self) -> set[str]:

@@ -11,6 +11,8 @@ import pytest
 from exasol.toolbox.security import (
     GitHubVulnerabilityIssue,
     VulnerabilitySource,
+    from_pip_audit,
+    identify_pypi_references,
 )
 from exasol.toolbox.tools import security
 
@@ -545,14 +547,14 @@ def test_from_prefix(prefix: str, expected):
     ],
 )
 def test_identify_pypi_references(reference: str, expected):
-    actual = security.identify_pypi_references([reference], package_name="dummy")
+    actual = identify_pypi_references([reference], package_name="dummy")
     assert actual == expected
 
 
 class TestFromPipAudit:
     @staticmethod
     def test_no_vulnerability_returns_empty_list():
-        actual = set(security.from_pip_audit("{}"))
+        actual = set(from_pip_audit("{}"))
         assert actual == set()
 
     @staticmethod
@@ -562,5 +564,5 @@ class TestFromPipAudit:
         audit_json = json.dumps(pip_audit_report)
         expected = {pip_audit_jinja2_issue, pip_audit_cryptography_issue}
 
-        actual = set(security.from_pip_audit(audit_json))
+        actual = set(from_pip_audit(audit_json))
         assert actual == expected

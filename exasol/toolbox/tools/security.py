@@ -21,7 +21,7 @@ import typer
 from exasol.toolbox.security import (
     GitHubVulnerabilityIssue,
     VulnerabilityIssue,
-    VulnerabilitySource,
+    from_pip_audit,
 )
 
 stdout = print
@@ -80,61 +80,6 @@ def from_maven(report: str) -> Iterable[VulnerabilityIssue]:
                 coordinates=dependency_name,
                 references=tuple(references),
             )
-
-
-def identify_pypi_references(
-    references: list[str], package_name: str
-) -> tuple[list[str], list[str], list[str]]:
-    refs: dict = {k: [] for k in VulnerabilitySource}
-    links = []
-    for reference in references:
-        if source := VulnerabilitySource.from_prefix(reference.upper()):
-            refs[source].append(reference)
-            links.append(source.get_link(package=package_name, vuln_id=reference))
-    return (
-        refs[VulnerabilitySource.CVE],
-        refs[VulnerabilitySource.CWE],
-        links,
-    )
-
-
-def from_pip_audit(report: str) -> Iterable[VulnerabilityIssue]:
-    """
-    Transforms the JSON output from `nox -s dependency:audit` into an iterable of
-    `VulnerabilityIssue` objects.
-
-    This does not gracefully handle scenarios where:
-     - a CVE is not initially associated with the vulnerability; however, the assumption
-     is that such vulnerabilities will later be associated with a CVE.
-     - the same vulnerability ID (CVE, PYSEC, GHSA, etc.) is present across
-     multiple coordinates.
-
-    Input:
-        '{"dependencies": [{"name": "<package_name>", "version": "<package_version>",
-        "vulns": [{"id": "<vuln_id>", "fix_versions": ["<fix_version>"],
-        "aliases": ["<vuln_id2>"], "description": "<vuln_description>"}]}]}'
-
-    Args:
-        report:
-            the JSON output of `nox -s dependency:audit` provided as a str
-    """
-    report_dict = json.loads(report)
-    dependencies = report_dict.get("dependencies", [])
-    for dependency in dependencies:
-        package = dependency["name"]
-        for v in dependency["vulns"]:
-            refs = [v["id"]] + v["aliases"]
-            cves, cwes, links = identify_pypi_references(
-                references=refs, package_name=package
-            )
-            if cves:
-                yield VulnerabilityIssue(
-                    cve=sorted(cves)[0],
-                    cwe="None" if not cwes else ", ".join(cwes),
-                    description=v["description"],
-                    coordinates=f"{package}:{dependency['version']}",
-                    references=tuple(links),
-                )
 
 
 @dataclass(frozen=True)
