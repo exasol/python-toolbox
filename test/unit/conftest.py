@@ -55,6 +55,14 @@ def pip_audit_cryptography_issue():
 
 
 @pytest.fixture(scope="session")
+def pip_audit_cryptography_github_issue(pip_audit_cryptography_issue):
+    return security.GitHubVulnerabilityIssue.from_vulnerability_issue(
+        issue=pip_audit_cryptography_issue,
+        issue_url="https://github.com/exasol/<repo-name>/issues/394",
+    )
+
+
+@pytest.fixture(scope="session")
 def pip_audit_report(pip_audit_jinja2_issue, pip_audit_cryptography_issue):
     jinja2_name, jinja2_version = pip_audit_jinja2_issue.coordinates.split(":")
     cryptography_name, cryptography_version = (

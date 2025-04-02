@@ -16,7 +16,7 @@ from exasol.toolbox.tools import security
 
 
 @pytest.fixture(scope="session")
-def vulnerability_issue():
+def maven_vulnerability_issue():
     return security.VulnerabilityIssue(
         cve="CVE-2023-39410",
         cwe="CWE-XYZ",
@@ -27,40 +27,36 @@ def vulnerability_issue():
 
 
 @pytest.fixture(scope="session")
-def vulnerability_json(vulnerability_issue):
+def maven_vulnerability_json(maven_vulnerability_issue):
     return json.dumps(
         {
-            "cve": vulnerability_issue.cve,
-            "cwe": vulnerability_issue.cwe,
-            "description": vulnerability_issue.description,
-            "coordinates": vulnerability_issue.coordinates,
-            "references": vulnerability_issue.references,
+            "cve": maven_vulnerability_issue.cve,
+            "cwe": maven_vulnerability_issue.cwe,
+            "description": maven_vulnerability_issue.description,
+            "coordinates": maven_vulnerability_issue.coordinates,
+            "references": maven_vulnerability_issue.references,
         }
     )
 
 
 @pytest.fixture(scope="session")
-def github_vulnerability_issue(vulnerability_issue):
-    return GitHubVulnerabilityIssue(
-        cve=vulnerability_issue.cve,
-        cwe=vulnerability_issue.cwe,
-        description=vulnerability_issue.description,
-        coordinates=vulnerability_issue.coordinates,
-        references=vulnerability_issue.references,
+def maven_github_vulnerability_issue(maven_vulnerability_issue):
+    return GitHubVulnerabilityIssue.from_vulnerability_issue(
+        issue=maven_vulnerability_issue,
         issue_url="https://my-issue.com",
     )
 
 
 @pytest.fixture(scope="session")
-def github_vulnerability_json(github_vulnerability_issue):
+def maven_github_vulnerability_json(maven_github_vulnerability_issue):
     return json.dumps(
         {
-            "cve": github_vulnerability_issue.cve,
-            "cwe": github_vulnerability_issue.cwe,
-            "description": github_vulnerability_issue.description,
-            "coordinates": github_vulnerability_issue.coordinates,
-            "references": github_vulnerability_issue.references,
-            "issue_url": github_vulnerability_issue.issue_url,
+            "cve": maven_github_vulnerability_issue.cve,
+            "cwe": maven_github_vulnerability_issue.cwe,
+            "description": maven_github_vulnerability_issue.description,
+            "coordinates": maven_github_vulnerability_issue.coordinates,
+            "references": maven_github_vulnerability_issue.references,
+            "issue_url": maven_github_vulnerability_issue.issue_url,
         }
     )
 
@@ -75,11 +71,11 @@ def empty_path():
 
 
 class TestCreateSecurityIssue:
-    def test_security_issue_title_template(self, vulnerability_issue):
-        actual = security.security_issue_title(vulnerability_issue)
+    def test_security_issue_title_template(self, maven_vulnerability_issue):
+        actual = security.security_issue_title(maven_vulnerability_issue)
         assert actual == "🔐 CVE-2023-39410: pkg:maven/fr.turri/aXMLRPC@1.13.0"
 
-    def test_security_issue_body_template(self, vulnerability_issue):
+    def test_security_issue_body_template(self, maven_vulnerability_issue):
         expected = cleandoc(
             """
                     ## Summary
@@ -96,7 +92,7 @@ class TestCreateSecurityIssue:
                     """
         )
 
-        actual = security.security_issue_body(vulnerability_issue)
+        actual = security.security_issue_body(maven_vulnerability_issue)
         assert actual == expected
 
     def test_gh_cli_is_not_available(self):
@@ -150,14 +146,14 @@ class TestCreateSecurityIssue:
         assert actual == expected
 
     @mock.patch("subprocess.run")
-    def test_query_gh_security_issues(self, run_mock, vulnerability_issue):
+    def test_query_gh_security_issues(self, run_mock, maven_vulnerability_issue):
         result = mock.MagicMock(subprocess.CompletedProcess)
         result.returncode = 0
         result.stdout = b"https://github.com/exasol/some-project/issues/16"
         result.stderr = b"Creating Issue"
         run_mock.return_value = result
 
-        actual = security.create_security_issue(vulnerability_issue)
+        actual = security.create_security_issue(maven_vulnerability_issue)
         assert actual == (
             "Creating Issue",
             "https://github.com/exasol/some-project/issues/16",
@@ -381,25 +377,29 @@ def test_convert_maven_input_no_vulnerable():  # pylint: disable=redefined-outer
 
 class TestVulnerabilityIssue:
     @staticmethod
-    def test_json_str(vulnerability_issue, vulnerability_json):
-        actual = vulnerability_issue.json_str
-        assert actual == vulnerability_json
+    def test_json_str(maven_vulnerability_issue, maven_vulnerability_json):
+        actual = maven_vulnerability_issue.json_str
+        assert actual == maven_vulnerability_json
 
     @staticmethod
-    def test_extract_from_jsonl(vulnerability_issue, tmp_path, vulnerability_json):
+    def test_extract_from_jsonl(
+        maven_vulnerability_issue, tmp_path, maven_vulnerability_json
+    ):
         temp_file = tmp_path / "test_data.json"
-        temp_file.write_text(f"{vulnerability_json}\n{vulnerability_json}")
+        temp_file.write_text(f"{maven_vulnerability_json}\n{maven_vulnerability_json}")
         jsonl = temp_file.read_text().splitlines()
 
-        actual = list(vulnerability_issue.extract_from_jsonl(jsonl))
-        assert actual == [vulnerability_issue, vulnerability_issue]
+        actual = list(maven_vulnerability_issue.extract_from_jsonl(jsonl))
+        assert actual == [maven_vulnerability_issue, maven_vulnerability_issue]
 
 
 class TestGitHubVulnerabilityIssue:
     @staticmethod
-    def test_json_str(github_vulnerability_issue, github_vulnerability_json):
-        actual = github_vulnerability_issue.json_str
-        assert actual == github_vulnerability_json
+    def test_json_str(
+        maven_github_vulnerability_issue, maven_github_vulnerability_json
+    ):
+        actual = maven_github_vulnerability_issue.json_str
+        assert actual == maven_github_vulnerability_json
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -412,25 +412,28 @@ class TestGitHubVulnerabilityIssue:
         ],
     )
     def test_from_vulnerability_issue(
-        vulnerability_issue, github_vulnerability_issue, url: str
+        maven_vulnerability_issue, maven_github_vulnerability_issue, url: str
     ):
         actual = GitHubVulnerabilityIssue.from_vulnerability_issue(
-            issue=vulnerability_issue, issue_url=url
+            issue=maven_vulnerability_issue, issue_url=url
         )
-        assert actual == github_vulnerability_issue
+        assert actual == maven_github_vulnerability_issue
 
     @staticmethod
     def test_extract_from_jsonl(
-        github_vulnerability_issue, tmp_path, github_vulnerability_json
+        maven_github_vulnerability_issue, tmp_path, maven_github_vulnerability_json
     ):
         temp_file = tmp_path / "test_data.json"
         temp_file.write_text(
-            f"{github_vulnerability_json}\n{github_vulnerability_json}"
+            f"{maven_github_vulnerability_json}\n{maven_github_vulnerability_json}"
         )
         jsonl = temp_file.read_text().splitlines()
 
         actual = list(GitHubVulnerabilityIssue.extract_from_jsonl(jsonl))
-        assert actual == [github_vulnerability_issue, github_vulnerability_issue]
+        assert actual == [
+            maven_github_vulnerability_issue,
+            maven_github_vulnerability_issue,
+        ]
 
 
 @pytest.mark.parametrize(
@@ -438,30 +441,30 @@ class TestGitHubVulnerabilityIssue:
     [
         (
             """{
-    "results": [
-        {
-            "code": "1 import subprocess\\n2 from typing import Iterable\\n3 \\n",
-            "col_offset": 12,
-            "end_col_offset": 17,
-            "filename": "/home/test/python-toolbox/exasol/toolbox/git.py",
-            "issue_confidence": "HIGH",
-            "issue_cwe": {
-                "id": 78,
-                "link": "https://cwe.mitre.org/data/definitions/78.html"
-            },
-            "issue_severity": "LOW",
-            "issue_text": "Consider possible security implications associated with the subprocess module.",
-            "line_number": 53,
-            "line_range": [
-                1
-            ],
-            "more_info": "https://bandit.readthedocs.io/en/1.7.10/blacklists/blacklist_imports.html#b404-import-subprocess",
-            "test_id": "B404",
-            "test_name": "blacklist"
-        }
-    ]
-}
-            """,
+        "results": [
+            {
+                "code": "1 import subprocess\\n2 from typing import Iterable\\n3 \\n",
+                "col_offset": 12,
+                "end_col_offset": 17,
+                "filename": "/home/test/python-toolbox/exasol/toolbox/git.py",
+                "issue_confidence": "HIGH",
+                "issue_cwe": {
+                    "id": 78,
+                    "link": "https://cwe.mitre.org/data/definitions/78.html"
+                },
+                "issue_severity": "LOW",
+                "issue_text": "Consider possible security implications associated with the subprocess module.",
+                "line_number": 53,
+                "line_range": [
+                    1
+                ],
+                "more_info": "https://bandit.readthedocs.io/en/1.7.10/blacklists/blacklist_imports.html#b404-import-subprocess",
+                "test_id": "B404",
+                "test_name": "blacklist"
+            }
+        ]
+    }
+                """,
             {
                 "file_name": "exasol/toolbox/git.py",
                 "line": 53,
