@@ -9,3 +9,4 @@
 
 ## ⚒️ Refactorings
 * [#388](https://github.com/exasol/python-toolbox/issues/388): Switch GitHub workflows to use pinned OS version
+* [#376](https://github.com/exasol/python-toolbox/issues/376): Update to poetry 2.1.2
