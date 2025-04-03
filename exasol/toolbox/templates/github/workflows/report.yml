@@ -49,7 +49,7 @@ jobs:
       - name: Generate GitHub Summary
         run: |
           echo -e "# Summary\n" >> $GITHUB_STEP_SUMMARY
-          poetry run -- nox -s project:report -- -- --format markdown >> $GITHUB_STEP_SUMMARY
+          poetry run -- nox -s project:report -- --format markdown >> $GITHUB_STEP_SUMMARY
           poetry run -- nox -s dependency:licenses >> $GITHUB_STEP_SUMMARY
           echo -e "\n\n# Coverage\n" >> $GITHUB_STEP_SUMMARY
           poetry run coverage report -- --format markdown >> $GITHUB_STEP_SUMMARY
