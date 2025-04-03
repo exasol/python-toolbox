@@ -20,11 +20,11 @@ jobs:
         uses: ./.github/actions/python-environment
 
       - name: Generate matrix
-        run: poetry run nox -s matrix:python
+        run: poetry run -- nox -s matrix:python
 
       - id: set-matrix
         run: |
-          echo "matrix=$(poetry run nox -s matrix:python)" >> $GITHUB_OUTPUT
+          echo "matrix=$(poetry run -- nox -s matrix:python)" >> $GITHUB_OUTPUT
 
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
