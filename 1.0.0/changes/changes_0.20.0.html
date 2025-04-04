@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="grass" data-content_root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>0.20.0 - 2024-12-17 - Toolbox</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="0.19.0 - 2024-12-05" href="changes_0.19.0.html" /><link rel="prev" title="0.21.0 - 2025-02-25" href="changes_0.21.0.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=c516b45e" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
+    
+    <meta property="og:type" content="website"/><meta property="og:title" content="0.20.0 - 2024-12-17"/>
+<meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../index.html">
+      <img class="light-logo" src="../_static/light-exasol-logo.svg" alt="Exasol Toolbox" height="28" loading="lazy" />
+      <img class="dark-logo" src="../_static/dark-exasol-logo.svg" alt="Exasol Toolbox" height="28" loading="lazy" />
+      <strong>Exasol Toolbox</strong>
+    </a>
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="nav-versions">
+    <button type="button" aria-label="Versions">
+      <span class="md:hidden">Versions</span>
+      <span class="hidden md:inline">1.0.0</span>
+      <i class="i-lucide chevron-down"></i>
+    </button>
+    <div class="nav-versions-choices"><ul><li><a href="changes_0.20.0.html">1.0.0</a></li><li><a href="../../0.21.0/changes/changes_0.20.0.html">0.21.0</a></li><li><a href="../../0.20.0/changes/changes_0.20.0.html">0.20.0</a></li><li><a href="../../0.19.0/index.html">0.19.0</a></li><li><a href="../../0.18.0/index.html">0.18.0</a></li><li><a href="../../0.17.0/index.html">0.17.0</a></li><li><a href="../../0.16.0/index.html">0.16.0</a></li><li><a href="../../0.15.0/index.html">0.15.0</a></li><li><a href="../../0.14.0/index.html">0.14.0</a></li><li><a href="../../0.13.0/index.html">0.13.0</a></li><li><a href="../../0.12.0/index.html">0.12.0</a></li><li><a href="../../0.11.0/index.html">0.11.0</a></li><li><a href="../../0.10.0/index.html">0.10.0</a></li><li><a href="../../0.9.0/index.html">0.9.0</a></li><li><a href="../../0.8.0/index.html">0.8.0</a></li><li><a href="../../0.7.0/index.html">0.7.0</a></li><li><a href="../../0.6.2/index.html">0.6.2</a></li><li><a href="../../0.6.1/index.html">0.6.1</a></li><li><a href="../../0.6.0/index.html">0.6.0</a></li><li><a href="../../0.5.0/index.html">0.5.0</a></li><li><a href="../../0.4.0/index.html">0.4.0</a></li><li><a href="../../0.3.0/index.html">0.3.0</a></li><li><a href="../../0.2.0/index.html">0.2.0</a></li><li><a href="../../0.1.0/index.html">0.1.0</a></li></ul></div>
+  </div><div class="sy-head-socials">
+  <a href="https://github.com/exasol/python-toolbox" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/user_guide.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-person" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path></svg> User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/getting_started.html">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/features.html">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/workflows.html">GitHub Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/customization.html">Customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/migrating.html">Migrating Legacy Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/how_to_release.html">How to Release?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/developer_guide.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-tools" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.433 2.304A4.492 4.492 0 0 0 3.5 6c0 1.598.832 3.002 2.09 3.802.518.328.929.923.902 1.64v.008l-.164 3.337a.75.75 0 1 1-1.498-.073l.163-3.33c.002-.085-.05-.216-.207-.316A5.996 5.996 0 0 1 2 6a5.993 5.993 0 0 1 2.567-4.92 1.482 1.482 0 0 1 1.673-.04c.462.296.76.827.76 1.423v2.82c0 .082.041.16.11.206l.75.51a.25.25 0 0 0 .28 0l.75-.51A.249.249 0 0 0 9 5.282V2.463c0-.596.298-1.127.76-1.423a1.482 1.482 0 0 1 1.673.04A5.993 5.993 0 0 1 14 6a5.996 5.996 0 0 1-2.786 5.068c-.157.1-.209.23-.207.315l.163 3.33a.752.752 0 0 1-1.094.714.75.75 0 0 1-.404-.64l-.164-3.345c-.027-.717.384-1.312.902-1.64A4.495 4.495 0 0 0 12.5 6a4.492 4.492 0 0 0-1.933-3.696c-.024.017-.067.067-.067.16v2.818a1.75 1.75 0 0 1-.767 1.448l-.75.51a1.75 1.75 0 0 1-1.966 0l-.75-.51A1.75 1.75 0 0 1 5.5 5.282V2.463c0-.092-.043-.142-.067-.159Z"></path></svg> Developer Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design.html">Design Document</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/plugins.html">Plugin Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/modules/modules.html">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../developer_guide/modules/sphinx/sphinx.html">sphinx</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../developer_guide/modules/nox.html">nox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../developer_guide/modules/nox_tasks.html">nox_tasks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../developer_guide/modules/pre_commit_hooks.html">pre_commit_hooks</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/how_to_release.html">How to Release?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../styleguide/index.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-paintbrush" viewBox="0 0 16 16" aria-hidden="true"><path d="M11.134 1.535c.7-.509 1.416-.942 2.076-1.155.649-.21 1.463-.267 2.069.34.603.601.568 1.411.368 2.07-.202.668-.624 1.39-1.125 2.096-1.011 1.424-2.496 2.987-3.775 4.249-1.098 1.084-2.132 1.839-3.04 2.3a3.744 3.744 0 0 1-1.055 3.217c-.431.431-1.065.691-1.657.861-.614.177-1.294.287-1.914.357A21.151 21.151 0 0 1 .797 16H.743l.007-.75H.749L.742 16a.75.75 0 0 1-.743-.742l.743-.008-.742.007v-.054a21.25 21.25 0 0 1 .13-2.284c.067-.647.187-1.287.358-1.914.17-.591.43-1.226.86-1.657a3.746 3.746 0 0 1 3.227-1.054c.466-.893 1.225-1.907 2.314-2.982 1.271-1.255 2.833-2.75 4.245-3.777ZM1.62 13.089c-.051.464-.086.929-.104 1.395.466-.018.932-.053 1.396-.104a10.511 10.511 0 0 0 1.668-.309c.526-.151.856-.325 1.011-.48a2.25 2.25 0 1 0-3.182-3.182c-.155.155-.329.485-.48 1.01a10.515 10.515 0 0 0-.309 1.67Zm10.396-10.34c-1.224.89-2.605 2.189-3.822 3.384l1.718 1.718c1.21-1.205 2.51-2.597 3.387-3.833.47-.662.78-1.227.912-1.662.134-.444.032-.551.009-.575h-.001V1.78c-.014-.014-.113-.113-.548.027-.432.14-.995.462-1.655.942Zm-4.832 7.266-.001.001a9.859 9.859 0 0 0 1.63-1.142L7.155 7.216a9.7 9.7 0 0 0-1.161 1.607c.482.302.889.71 1.19 1.192Z"></path></svg> Python Styleguide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../styleguide/guides/style.html">Styleguide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../styleguide/guides/idioms/idioms.html">Idioms</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../styleguide/guides/idioms/general.html">General</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../styleguide/guides/idioms/strings.html">Strings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../styleguide/guides/idioms/looping.html">Looping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../styleguide/guides/idioms/dictionaries.html">Dictionaries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../styleguide/guides/idioms/seperation_of_concerns.html">Separation of Concerns</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../issues.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-list-unordered" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.75 2.5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg> Issue Tracking Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-terminal" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 2.75C0 1.784.784 1 1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25Zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25ZM7.25 8a.749.749 0 0 1-.22.53l-2.25 2.25a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L5.44 8 3.72 6.28a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215l2.25 2.25c.141.14.22.331.22.53Zm1.5 1.5h3a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1 0-1.5Z"></path></svg> Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../github_actions/github_actions.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm4.879-2.773 4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215Z"></path></svg> Github Actions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../github_actions/python_environment.html">python-environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../github_actions/security_issues.html">security-issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-cpu" viewBox="0 0 16 16" aria-hidden="true"><path d="M6.5.75V2h3V.75a.75.75 0 0 1 1.5 0V2h1.25c.966 0 1.75.784 1.75 1.75V5h1.25a.75.75 0 0 1 0 1.5H14v3h1.25a.75.75 0 0 1 0 1.5H14v1.25A1.75 1.75 0 0 1 12.25 14H11v1.25a.75.75 0 0 1-1.5 0V14h-3v1.25a.75.75 0 0 1-1.5 0V14H3.75A1.75 1.75 0 0 1 2 12.25V11H.75a.75.75 0 0 1 0-1.5H2v-3H.75a.75.75 0 0 1 0-1.5H2V3.75C2 2.784 2.784 2 3.75 2H5V.75a.75.75 0 0 1 1.5 0Zm5.75 11.75a.25.25 0 0 0 .25-.25v-8.5a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25ZM5.75 5h4.5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-.75.75h-4.5a.75.75 0 0 1-.75-.75v-4.5A.75.75 0 0 1 5.75 5Zm.75 4.5h3v-3h-3Z"></path></svg> API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../metrics.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-graph" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 1.75V13.5h13.75a.75.75 0 0 1 0 1.5H.75a.75.75 0 0 1-.75-.75V1.75a.75.75 0 0 1 1.5 0Zm14.28 2.53-5.25 5.25a.75.75 0 0 1-1.06 0L7 7.06 4.28 9.78a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l3.25-3.25a.75.75 0 0 1 1.06 0L10 7.94l4.72-4.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042Z"></path></svg> Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-question" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.756 2.756 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6.24 6.24 0 0 0-.26.16.952.952 0 0 0-.276.245.75.75 0 0 1-1.248-.832c.184-.264.42-.489.692-.661.103-.067.207-.132.313-.195l.007-.004c.1-.061.182-.11.258-.161a.969.969 0 0 0 .277-.245C8.96 6.514 9 6.427 9 6.25a.612.612 0 0 0-.262-.525A1.27 1.27 0 0 0 8 5.5c-.369 0-.595.09-.74.187a1.01 1.01 0 0 0-.34.398ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg> FAQ</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="changelog.html">Changelog</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="unreleased.html">Unreleased</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_1.0.0.html">1.0.0 - 2025-04-04</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.21.0.html">0.21.0 - 2025-02-25</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">0.20.0 - 2024-12-17</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.19.0.html">0.19.0 - 2024-12-05</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.18.0.html">0.18.0 - 2024-11-19</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.17.0.html">0.17.0 - 2024-11-18</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.16.0.html">0.16.0 - 2024-11-15</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.15.0.html">0.15.0 - 2024-09-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.14.0.html">0.14.0 - 2024-07-02</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.13.0.html">0.13.0 - 2024-06-06</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.12.0.html">0.12.0 - 2024-05-17</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.11.0.html">0.11.0 - 2024-05-17</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.10.0.html">0.10.0 - 2024-05-15</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.9.0.html">0.9.0 - 2024-05-08</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.8.0.html">0.8.0 - 2024-02-07</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.7.0.html">0.7.0 - 2024-01-26</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.6.2.html">0.6.2 - 2023-11-20</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.6.1.html">0.6.1 - 2023-10-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.6.0.html">0.6.0 - 2023-10-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.5.0.html">0.5.0 - 2023-10-12</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.4.0.html">0.4.0 - 2023-04-19</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.3.0.html">0.3.0 - 2022-12-21</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.2.0.html">0.2.0 - 2022-12-20</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes_0.1.0.html">0.1.0 - 2022-11-25</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#breaking-changes">&#128680; Breaking Changes</a></li>
+<li><a class="reference internal" href="#added">&#10024; Added</a></li>
+<li><a class="reference internal" href="#documentation">&#128218; Documentation</a></li>
+<li><a class="reference internal" href="#fixed">&#128030; Fixed</a></li>
+<li><a class="reference internal" href="#internal">&#128297; Internal</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">Exasol Toolbox</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="changelog.html"><span itemprop="name">Changelog</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">0.20.0 - 2024-12-17</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <section id="id1">
+<h1>0.20.0 - 2024-12-17<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<section id="breaking-changes">
+<h2>🚨 Breaking Changes<a class="headerlink" href="#breaking-changes" title="Link to this heading">¶</a></h2>
+<ul>
+<li><p><strong>Matrices in CI/CD workflows will be generated automatically now</strong></p>
+<p>Make sure you have installed all the latest workflow files, especially the newly added ones:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">matrix-all.yml</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">matrix-python.yml</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">matrix-exasol.yml</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="added">
+<h2>✨ Added<a class="headerlink" href="#added" title="Link to this heading">¶</a></h2>
+<ul>
+<li><p>Added support for dynamically generated workflow matrices.</p>
+<p>This feature allows you to easily change the test matrices in one place: <code class="docutils literal notranslate"><span class="pre">noxconfig.py</span></code>.</p>
+<p>Note: As usual, there are different ways a user can adjust or change the behavior. In the case of the build matrices, there are three obvious ways:</p>
+<ul class="simple">
+<li><p>Set the appropriate fields in the <code class="docutils literal notranslate"><span class="pre">noxconfig.py</span></code> project configuration (<code class="docutils literal notranslate"><span class="pre">PROJECT_CONFIG</span></code>):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">python_versions</span> <span class="pre">=</span> <span class="pre">[</span> <span class="pre">...</span> <span class="pre">]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">exasol_versions</span> <span class="pre">=</span> <span class="pre">[</span> <span class="pre">...</span> <span class="pre">]</span></code></p></li>
+</ul>
+</li>
+<li><p>Overwrite the nox tasks:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">matrix:all</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">matrix:python</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">matrix:exasol</span></code></p></li>
+</ul>
+</li>
+<li><p>Overwrite/replace the matrix generation workflows:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">matrix-all.yml</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">matrix-python.yml</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">matrix-exasol.yml</span></code></p></li>
+</ul>
+</li>
+</ul>
+<p>Among all of the above, the safest way is to set the matrix-related fields in your project config object in <code class="docutils literal notranslate"><span class="pre">noxconfig.py</span></code>.</p>
+</li>
+<li><p>Added a nox task to validate the build/test artifacts and use it in the github workflow report</p></li>
+</ul>
+</section>
+<section id="documentation">
+<h2>📚 Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Added new entries to the frequently asked questions regarding <code class="docutils literal notranslate"><span class="pre">multiversion</span> <span class="pre">documentation</span></code></p></li>
+</ul>
+</section>
+<section id="fixed">
+<h2>🐞 Fixed<a class="headerlink" href="#fixed" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Fixed <code class="docutils literal notranslate"><span class="pre">index.rst</span></code> documentation template to provide the correct underlining length of the main heading</p></li>
+<li><p>Added multi-version extension to Sphinx configuration of the project template</p></li>
+<li><p>fixed bug in tbx worflow install error if directory exists <a class="reference external" href="https://github.com/exasol/python-toolbox/issues/298">#298</a> also <a class="reference external" href="https://github.com/exasol/python-toolbox/issues/297">#297</a></p></li>
+</ul>
+</section>
+<section id="internal">
+<h2>🔩 Internal<a class="headerlink" href="#internal" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Relocked dependencies</p></li>
+</ul>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="changes_0.21.0.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">0.21.0 - 2025-02-25</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="changes_0.19.0.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">0.19.0 - 2024-12-05</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2022, Exasol</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/exasol/python-toolbox" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+      <script src="../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../_static/shibuya.js?v=e2230717"></script></body>
+</html>
