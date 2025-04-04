@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=3b41e830" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=c516b45e" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -203,7 +203,7 @@ data-aria-dark="Switch to auto color mode">
 <tr class="row-odd"><td><p>poetry-version</p></td>
 <td><p>Poetry version to use</p></td>
 <td><p>True</p></td>
-<td><p>1.2.2</p></td>
+<td><p>2.1.2</p></td>
 </tr>
 </tbody>
 </table>
@@ -226,10 +226,10 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="13"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v4</span>
 </span><span data-line="14">
 </span><span data-line="15"><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Setup Python &amp; Poetry Environment</span>
-</span><span data-line="16"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exasol/python-toolbox/.github/actions/python-environment@0.9.0</span>
+</span><span data-line="16"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exasol/python-toolbox/.github/actions/python-environment@0.21.0</span>
 </span><span data-line="17"><span class="w">        </span><span class="nt">with</span><span class="p">:</span>
 </span><span data-line="18"><span class="w">          </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3.12</span>
-</span><span data-line="19"><span class="w">          </span><span class="nt">poetry-version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.2.2</span>
+</span><span data-line="19"><span class="w">          </span><span class="nt">poetry-version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.1.2</span>
 </span><span data-line="20">
 </span><span data-line="21"><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 </span></pre></div>

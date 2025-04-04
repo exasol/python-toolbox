@@ -155,7 +155,7 @@ To view all the defined nox tasks & their definitions use:
 
 .. code-block:: shell
 
-   poetry run nox -l
+   poetry run -- nox -l
 
 Workflows
 ~~~~~~~~~
