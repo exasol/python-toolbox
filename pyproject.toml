@@ -1,6 +1,6 @@
 [project]
 name = "exasol-toolbox"
-version = "0.21.0"
+version = "1.0.0"
 description = "Your one-stop solution for managing all standard tasks and core workflows of your Python project."
 authors = [
     {name = "Nicola Coretti", email = "nicola.coretti@exasol.com"},
