@@ -10,10 +10,7 @@ from collections.abc import (
     Generator,
     Iterable,
 )
-from dataclasses import (
-    asdict,
-    dataclass,
-)
+from dataclasses import dataclass
 from enum import Enum
 from functools import partial
 from inspect import cleandoc
@@ -21,32 +18,14 @@ from pathlib import Path
 
 import typer
 
+from exasol.toolbox.security import (
+    GitHubVulnerabilityIssue,
+    VulnerabilityIssue,
+    from_pip_audit,
+)
+
 stdout = print
 stderr = partial(print, file=sys.stderr)
-
-
-# Note: In the long term we may want to adapt the official CVE json schema
-# https://github.com/CVEProject/cve-schema/blob/master/schema/v5.0/CVE_JSON_5.0_schema.json
-@dataclass(frozen=True)
-class Issue:
-    cve: str
-    cwe: str
-    description: str
-    coordinates: str
-    references: tuple
-
-
-def _issues(input) -> Generator[Issue]:
-    lines = (l for l in input if l.strip() != "")
-    for line in lines:
-        obj = json.loads(line)
-        yield Issue(**obj)
-
-
-def _issues_as_json_str(issues):
-    for issue in issues:
-        issue = asdict(issue)
-        yield json.dumps(issue)
 
 
 def gh_security_issues() -> Generator[tuple[str, str]]:
@@ -87,101 +66,20 @@ def gh_security_issues() -> Generator[tuple[str, str]]:
     return issues
 
 
-def from_maven(report: str) -> Iterable[Issue]:
+def from_maven(report: str) -> Iterable[VulnerabilityIssue]:
     # Note: Consider adding warnings if there is the same cve with multiple coordinates
     report = json.loads(report)
     dependencies = report.get("vulnerable", {})  # type: ignore
     for dependency_name, dependency in dependencies.items():  # type: ignore
         for v in dependency["vulnerabilities"]:  # type: ignore
             references = [v["reference"]] + v["externalReferences"]
-            yield Issue(
+            yield VulnerabilityIssue(
                 cve=v["cve"],
                 cwe=v["cwe"],
                 description=v["description"],
                 coordinates=dependency_name,
                 references=tuple(references),
             )
-
-
-class VulnerabilitySource(str, Enum):
-    CVE = "CVE"
-    CWE = "CWE"
-    GHSA = "GHSA"
-    PYSEC = "PYSEC"
-
-    @classmethod
-    def from_prefix(cls, name: str) -> VulnerabilitySource | None:
-        for el in cls:
-            if name.upper().startswith(el.value):
-                return el
-        return None
-
-    def get_link(self, package: str, vuln_id: str) -> str:
-        if self == VulnerabilitySource.CWE:
-            cwe_id = vuln_id.upper().replace(f"{VulnerabilitySource.CWE.value}-", "")
-            return f"https://cwe.mitre.org/data/definitions/{cwe_id}.html"
-
-        map_link = {
-            VulnerabilitySource.CVE: "https://nvd.nist.gov/vuln/detail/{vuln_id}",
-            VulnerabilitySource.GHSA: "https://github.com/advisories/{vuln_id}",
-            VulnerabilitySource.PYSEC: "https://github.com/pypa/advisory-database/blob/main/vulns/{package}/{vuln_id}.yaml",
-        }
-        return map_link[self].format(package=package, vuln_id=vuln_id)
-
-
-def identify_pypi_references(
-    references: list[str], package_name: str
-) -> tuple[list[str], list[str], list[str]]:
-    refs: dict = {k: [] for k in VulnerabilitySource}
-    links = []
-    for reference in references:
-        if source := VulnerabilitySource.from_prefix(reference.upper()):
-            refs[source].append(reference)
-            links.append(source.get_link(package=package_name, vuln_id=reference))
-    return (
-        refs[VulnerabilitySource.CVE],
-        refs[VulnerabilitySource.CWE],
-        links,
-    )
-
-
-def from_pip_audit(report: str) -> Iterable[Issue]:
-    """
-    Transforms the JSON output from `nox -s dependency:audit` into an iterable of
-    `security.Issue` objects.
-
-    This does not gracefully handle scenarios where:
-     - a CVE is not initially associated with the vulnerability; however, the assumption
-     is that such vulnerabilities will later be associated with a CVE.
-     - the same vulnerability ID (CVE, PYSEC, GHSA, etc.) is present across
-     multiple coordinates.
-
-    Input:
-        '{"dependencies": [{"name": "<package_name>", "version": "<package_version>",
-        "vulns": [{"id": "<vuln_id>", "fix_versions": ["<fix_version>"],
-        "aliases": ["<vuln_id2>"], "description": "<vuln_description>"}]}]}'
-
-    Args:
-        report:
-            the JSON output of `nox -s dependency:audit` provided as a str
-    """
-    report_dict = json.loads(report)
-    dependencies = report_dict.get("dependencies", [])
-    for dependency in dependencies:
-        package = dependency["name"]
-        for v in dependency["vulns"]:
-            refs = [v["id"]] + v["aliases"]
-            cves, cwes, links = identify_pypi_references(
-                references=refs, package_name=package
-            )
-            if cves:
-                yield Issue(
-                    cve=sorted(cves)[0],
-                    cwe="None" if not cwes else ", ".join(cwes),
-                    description=v["description"],
-                    coordinates=f"{package}:{dependency['version']}",
-                    references=tuple(links),
-                )
 
 
 @dataclass(frozen=True)
@@ -241,11 +139,11 @@ def issues_to_markdown(issues: Iterable[SecurityIssue]) -> str:
     return template.format(header=_header(), rows="\n".join(_row(i) for i in issues))
 
 
-def security_issue_title(issue: Issue) -> str:
+def security_issue_title(issue: VulnerabilityIssue) -> str:
     return f"🔐 {issue.cve}: {issue.coordinates}"
 
 
-def security_issue_body(issue: Issue) -> str:
+def security_issue_body(issue: VulnerabilityIssue) -> str:
     def as_markdown_listing(elements: Iterable[str]):
         return "\n".join(f"- {element}" for element in elements)
 
@@ -269,7 +167,9 @@ def security_issue_body(issue: Issue) -> str:
     )
 
 
-def create_security_issue(issue: Issue, project: str | None = None) -> tuple[str, str]:
+def create_security_issue(
+    issue: VulnerabilityIssue, project: str | None = None
+) -> tuple[str, str]:
     # fmt: off
     command = [
         "gh", "issue", "create",
@@ -322,14 +222,14 @@ def convert(
 
     def _maven(infile):
         issues = from_maven(infile.read())
-        for issue in _issues_as_json_str(issues):
-            stdout(issue)
+        for issue in issues:
+            stdout(issue.json_str)
         raise typer.Exit(code=0)
 
     def _pip_audit(infile):
         issues = from_pip_audit(infile.read())
-        for issue in _issues_as_json_str(issues):
-            stdout(issue)
+        for issue in issues:
+            stdout(issue.json_str)
         raise typer.Exit(code=0)
 
     actions = {Format.Maven: _maven, Format.PipAudit: _pip_audit}
@@ -364,10 +264,12 @@ def filter(
         for issue in to_be_filtered:
             stderr(f"{issue}")
         filtered_issues = [
-            issue for issue in _issues(infile) if issue.cve not in to_be_filtered
+            issue
+            for issue in VulnerabilityIssue.extract_from_jsonl(infile)
+            if issue.cve not in to_be_filtered
         ]
-        for issue in _issues_as_json_str(filtered_issues):
-            stdout(issue)
+        for issue in filtered_issues:
+            stdout(issue.json_str)
         raise typer.Exit(code=0)
 
     def _pass_through(infile):
@@ -396,12 +298,15 @@ def create(
     { "cve": "<cve-id>", "cwe": "<cwe-id>", "description": "<multiline string>", "coordinates": "<string>", "references": ["<url>", "<url>", ...] }
 
     Output:
-    Links to the created issue(s)
+    { "cve": "<cve-id>", "cwe": "<cwe-id>", "description": "<multiline string>", "coordinates": "<string>", "references": ["<url>", "<url>", ...], "issue_url": "<url>" }
     """
-    for issue in _issues(input_file):
+    for issue in VulnerabilityIssue.extract_from_jsonl(input_file):
         std_err, issue_url = create_security_issue(issue, project)
         stderr(std_err)
-        stdout(format_jsonl(issue_url, issue))
+        ghvi = GitHubVulnerabilityIssue.from_vulnerability_issue(
+            issue=issue, issue_url=issue_url
+        )
+        stdout(ghvi.json_str)
 
 
 class PPrintFormats(str, Enum):
@@ -419,12 +324,6 @@ def json_issue_to_markdown(
     issues = from_json(content, path.absolute())
     issues = sorted(issues, key=lambda i: (i.file_name, i.cwe, i.test_id))
     print(issues_to_markdown(issues))
-
-
-def format_jsonl(issue_url: str, issue: Issue) -> str:
-    issue_json = asdict(issue)
-    issue_json["issue_url"] = issue_url.strip()
-    return json.dumps(issue_json)
 
 
 if __name__ == "__main__":

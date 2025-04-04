@@ -7,7 +7,7 @@ from exasol.toolbox.tools import security
 
 @pytest.fixture(scope="session")
 def pip_audit_jinja2_issue():
-    return security.Issue(
+    return security.VulnerabilityIssue(
         cve="CVE-2025-27516",
         cwe="None",
         description=cleandoc(
@@ -33,7 +33,7 @@ def pip_audit_jinja2_issue():
 
 @pytest.fixture(scope="session")
 def pip_audit_cryptography_issue():
-    return security.Issue(
+    return security.VulnerabilityIssue(
         cve="CVE-2024-12797",
         cwe="None",
         description=cleandoc(
@@ -51,6 +51,14 @@ def pip_audit_cryptography_issue():
             "https://github.com/advisories/GHSA-79v4-65xg-pq4g",
             "https://nvd.nist.gov/vuln/detail/CVE-2024-12797",
         ),
+    )
+
+
+@pytest.fixture(scope="session")
+def pip_audit_cryptography_github_issue(pip_audit_cryptography_issue):
+    return security.GitHubVulnerabilityIssue.from_vulnerability_issue(
+        issue=pip_audit_cryptography_issue,
+        issue_url="https://github.com/exasol/<repo-name>/issues/394",
     )
 
 

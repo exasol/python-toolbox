@@ -2,10 +2,6 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-from typing import (
-    List,
-    Tuple,
-)
 
 import nox
 from nox import Session
@@ -35,25 +31,25 @@ def _create_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "version",
         type=cli.version,
-        help=("A version string of the following format:" '"NUMBER.NUMBER.NUMBER"'),
+        help="A version string of the following format:" '"NUMBER.NUMBER.NUMBER"',
     )
     parser.add_argument(
         "--no-add",
         default=False,
         action="store_true",
-        help=("Neither add nor commit the changes"),
+        help="Neither add nor commit the changes",
     )
     parser.add_argument(
         "--no-branch",
         default=False,
         action="store_true",
-        help=("Do not create a branch to commit the changes on"),
+        help="Do not create a branch to commit the changes on",
     )
     parser.add_argument(
         "--no-pr",
         default=False,
         action="store_true",
-        help=("Do not create a pull request for the changes"),
+        help="Do not create a pull request for the changes",
     )
     return parser
 
@@ -89,8 +85,8 @@ def _add_files_to_index(session: Session, files: list[Path]) -> None:
         session.run("git", "add", f"{file}")
 
 
-@nox.session(name="release:prepare", python=False)
-def prepare_release(session: Session, python=False) -> None:
+@nox.session(name="release:prepare")
+def prepare_release(session: Session) -> None:
     """
     Prepares the project for a new release.
     """

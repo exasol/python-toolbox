@@ -106,7 +106,7 @@ Ideas
 
 .. todo::
 
-    Add additional details to the :code:`security.Issue` type
+    Add additional details to the :code:`VulnerabilityIssue` type
 
 
 .. todo::

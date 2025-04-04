@@ -8,7 +8,59 @@ from unittest import mock
 
 import pytest
 
+from exasol.toolbox.security import (
+    GitHubVulnerabilityIssue,
+    VulnerabilitySource,
+    from_pip_audit,
+    identify_pypi_references,
+)
 from exasol.toolbox.tools import security
+
+
+@pytest.fixture(scope="session")
+def maven_vulnerability_issue():
+    return security.VulnerabilityIssue(
+        cve="CVE-2023-39410",
+        cwe="CWE-XYZ",
+        description="Random Multiline\nDescription\n;)",
+        coordinates="pkg:maven/fr.turri/aXMLRPC@1.13.0",
+        references=("https://www.example.com", "https://www.foobar.com"),
+    )
+
+
+@pytest.fixture(scope="session")
+def maven_vulnerability_json(maven_vulnerability_issue):
+    return json.dumps(
+        {
+            "cve": maven_vulnerability_issue.cve,
+            "cwe": maven_vulnerability_issue.cwe,
+            "description": maven_vulnerability_issue.description,
+            "coordinates": maven_vulnerability_issue.coordinates,
+            "references": maven_vulnerability_issue.references,
+        }
+    )
+
+
+@pytest.fixture(scope="session")
+def maven_github_vulnerability_issue(maven_vulnerability_issue):
+    return GitHubVulnerabilityIssue.from_vulnerability_issue(
+        issue=maven_vulnerability_issue,
+        issue_url="https://my-issue.com",
+    )
+
+
+@pytest.fixture(scope="session")
+def maven_github_vulnerability_json(maven_github_vulnerability_issue):
+    return json.dumps(
+        {
+            "cve": maven_github_vulnerability_issue.cve,
+            "cwe": maven_github_vulnerability_issue.cwe,
+            "description": maven_github_vulnerability_issue.description,
+            "coordinates": maven_github_vulnerability_issue.coordinates,
+            "references": maven_github_vulnerability_issue.references,
+            "issue_url": maven_github_vulnerability_issue.issue_url,
+        }
+    )
 
 
 @contextmanager
@@ -21,56 +73,28 @@ def empty_path():
 
 
 class TestCreateSecurityIssue:
-    @pytest.mark.parametrize(
-        "expected,issue",
-        [
-            (
-                "🔐 CVE-2023-39410: pkg:maven/fr.turri/aXMLRPC@1.13.0",
-                security.Issue(
-                    cve="CVE-2023-39410",
-                    cwe="None",
-                    description="None",
-                    coordinates="pkg:maven/fr.turri/aXMLRPC@1.13.0",
-                    references=tuple(),
-                ),
-            )
-        ],
-    )
-    def test_security_issue_title_template(self, expected, issue):
-        actual = security.security_issue_title(issue)
-        assert actual == expected
+    def test_security_issue_title_template(self, maven_vulnerability_issue):
+        actual = security.security_issue_title(maven_vulnerability_issue)
+        assert actual == "🔐 CVE-2023-39410: pkg:maven/fr.turri/aXMLRPC@1.13.0"
 
-    @pytest.mark.parametrize(
-        "expected,issue",
-        [
-            (
-                cleandoc(
+    def test_security_issue_body_template(self, maven_vulnerability_issue):
+        expected = cleandoc(
+            """
+                    ## Summary
+                    Random Multiline
+                    Description
+                    ;)
+
+                    CVE: CVE-2023-39410
+                    CWE: CWE-XYZ
+
+                    ## References
+                    - https://www.example.com
+                    - https://www.foobar.com
                     """
-                                ## Summary
-                                Random Multiline
-                                Description
-                                ;)
+        )
 
-                                CVE: CVE-2023-39410
-                                CWE: CWE-XYZ
-
-                                ## References
-                                - https://www.example.com
-                                - https://www.foobar.com
-                                """
-                ),
-                security.Issue(
-                    cve="CVE-2023-39410",
-                    cwe="CWE-XYZ",
-                    description="Random Multiline\nDescription\n;)",
-                    coordinates="pkg:maven/fr.turri/aXMLRPC@1.13.0",
-                    references=("https://www.example.com", "https://www.foobar.com"),
-                ),
-            )
-        ],
-    )
-    def test_security_issue_body_template(self, expected, issue):
-        actual = security.security_issue_body(issue)
+        actual = security.security_issue_body(maven_vulnerability_issue)
         assert actual == expected
 
     def test_gh_cli_is_not_available(self):
@@ -124,27 +148,18 @@ class TestCreateSecurityIssue:
         assert actual == expected
 
     @mock.patch("subprocess.run")
-    def test_query_gh_security_issues(self, run_mock):
+    def test_query_gh_security_issues(self, run_mock, maven_vulnerability_issue):
         result = mock.MagicMock(subprocess.CompletedProcess)
         result.returncode = 0
         result.stdout = b"https://github.com/exasol/some-project/issues/16"
         result.stderr = b"Creating Issue"
         run_mock.return_value = result
 
-        issues = security.Issue(
-            cve="CVE-2023-39410",
-            cwe="None",
-            description="None",
-            coordinates="pkg:maven/fr.turri/aXMLRPC@1.13.0",
-            references=tuple(),
-        )
-
-        expected = (
+        actual = security.create_security_issue(maven_vulnerability_issue)
+        assert actual == (
             "Creating Issue",
             "https://github.com/exasol/some-project/issues/16",
         )
-        actual = security.create_security_issue(issues)
-        assert actual == expected
 
 
 class TestGhSecurityIssues:
@@ -307,7 +322,7 @@ def maven_report():
 
 def test_convert_maven_input(maven_report):  # pylint: disable=redefined-outer-name
     expected = {
-        security.Issue(
+        security.VulnerabilityIssue(
             cve="CVE-2023-39410",
             cwe="CWE-502",
             description="When deserializing untrusted or corrupted data, it is "
@@ -327,7 +342,7 @@ def test_convert_maven_input(maven_report):  # pylint: disable=redefined-outer-n
                 "https://lists.apache.org/thread/q142wj99cwdd0jo5lvdoxzoymlqyjdds",
             ),
         ),
-        security.Issue(
+        security.VulnerabilityIssue(
             cve="CVE-2020-36641",
             cwe="CWE-611",
             description="A vulnerability classified as problematic was found in "
@@ -362,48 +377,65 @@ def test_convert_maven_input_no_vulnerable():  # pylint: disable=redefined-outer
     assert len(actual) == 0
 
 
-def test_format_jsonl():
-    issue = security.Issue(
-        coordinates="coordinates",
-        cve="cve",
-        cwe="cwe",
-        description="description",
-        references=(),
-    )
-    expected = json.dumps(
-        {
-            "cve": "cve",
-            "cwe": "cwe",
-            "description": "description",
-            "coordinates": "coordinates",
-            "references": [],
-            "issue_url": "my_issue_url",
-        }
-    )
-    actual = security.format_jsonl("my_issue_url", issue)
-    assert actual == expected
+class TestVulnerabilityIssue:
+    @staticmethod
+    def test_json_str(maven_vulnerability_issue, maven_vulnerability_json):
+        actual = maven_vulnerability_issue.json_str
+        assert actual == maven_vulnerability_json
+
+    @staticmethod
+    def test_extract_from_jsonl(
+        maven_vulnerability_issue, tmp_path, maven_vulnerability_json
+    ):
+        temp_file = tmp_path / "test_data.json"
+        temp_file.write_text(f"{maven_vulnerability_json}\n{maven_vulnerability_json}")
+        jsonl = temp_file.read_text().splitlines()
+
+        actual = list(maven_vulnerability_issue.extract_from_jsonl(jsonl))
+        assert actual == [maven_vulnerability_issue, maven_vulnerability_issue]
 
 
-def test_format_jsonl_removes_newline():
-    issue = security.Issue(
-        coordinates="coordinates",
-        cve="cve",
-        cwe="cwe",
-        description="description",
-        references=(),
+class TestGitHubVulnerabilityIssue:
+    @staticmethod
+    def test_json_str(
+        maven_github_vulnerability_issue, maven_github_vulnerability_json
+    ):
+        actual = maven_github_vulnerability_issue.json_str
+        assert actual == maven_github_vulnerability_json
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "url",
+        [
+            pytest.param("https://my-issue.com", id="issue_url"),
+            pytest.param(
+                "https://my-issue.com\n", id="issue_url_with_newline_stripped"
+            ),
+        ],
     )
-    expected = json.dumps(
-        {
-            "cve": "cve",
-            "cwe": "cwe",
-            "description": "description",
-            "coordinates": "coordinates",
-            "references": [],
-            "issue_url": "my_issue_url",
-        }
-    )
-    actual = security.format_jsonl("my_issue_url\n", issue)
-    assert actual == expected
+    def test_from_vulnerability_issue(
+        maven_vulnerability_issue, maven_github_vulnerability_issue, url: str
+    ):
+        actual = GitHubVulnerabilityIssue.from_vulnerability_issue(
+            issue=maven_vulnerability_issue, issue_url=url
+        )
+        assert actual == maven_github_vulnerability_issue
+
+    @staticmethod
+    def test_extract_from_jsonl(
+        maven_github_vulnerability_issue, tmp_path, maven_github_vulnerability_json
+    ):
+        temp_file = tmp_path / "test_data.json"
+        temp_file.write_text(
+            f"{maven_github_vulnerability_json}\n{maven_github_vulnerability_json}"
+        )
+        jsonl = temp_file.read_text().splitlines()
+
+        actual = list(GitHubVulnerabilityIssue.extract_from_jsonl(jsonl))
+        assert actual == [
+            maven_github_vulnerability_issue,
+            maven_github_vulnerability_issue,
+        ]
 
 
 @pytest.mark.parametrize(
@@ -411,30 +443,30 @@ def test_format_jsonl_removes_newline():
     [
         (
             """{
-    "results": [
-        {
-            "code": "1 import subprocess\\n2 from typing import Iterable\\n3 \\n",
-            "col_offset": 12,
-            "end_col_offset": 17,
-            "filename": "/home/test/python-toolbox/exasol/toolbox/git.py",
-            "issue_confidence": "HIGH",
-            "issue_cwe": {
-                "id": 78,
-                "link": "https://cwe.mitre.org/data/definitions/78.html"
-            },
-            "issue_severity": "LOW",
-            "issue_text": "Consider possible security implications associated with the subprocess module.",
-            "line_number": 53,
-            "line_range": [
-                1
-            ],
-            "more_info": "https://bandit.readthedocs.io/en/1.7.10/blacklists/blacklist_imports.html#b404-import-subprocess",
-            "test_id": "B404",
-            "test_name": "blacklist"
-        }
-    ]
-}
-            """,
+        "results": [
+            {
+                "code": "1 import subprocess\\n2 from typing import Iterable\\n3 \\n",
+                "col_offset": 12,
+                "end_col_offset": 17,
+                "filename": "/home/test/python-toolbox/exasol/toolbox/git.py",
+                "issue_confidence": "HIGH",
+                "issue_cwe": {
+                    "id": 78,
+                    "link": "https://cwe.mitre.org/data/definitions/78.html"
+                },
+                "issue_severity": "LOW",
+                "issue_text": "Consider possible security implications associated with the subprocess module.",
+                "line_number": 53,
+                "line_range": [
+                    1
+                ],
+                "more_info": "https://bandit.readthedocs.io/en/1.7.10/blacklists/blacklist_imports.html#b404-import-subprocess",
+                "test_id": "B404",
+                "test_name": "blacklist"
+            }
+        ]
+    }
+                """,
             {
                 "file_name": "exasol/toolbox/git.py",
                 "line": 53,
@@ -469,14 +501,14 @@ def test_from_json(json_file, expected):
     [
         pytest.param("DUMMY", None, id="without_a_matching_prefix_returns_none"),
         pytest.param(
-            f"{security.VulnerabilitySource.CWE.value.lower()}-1234",
-            security.VulnerabilitySource.CWE,
+            f"{VulnerabilitySource.CWE.value.lower()}-1234",
+            VulnerabilitySource.CWE,
             id="with_matching_prefix_returns_vulnerability_source",
         ),
     ],
 )
 def test_from_prefix(prefix: str, expected):
-    assert security.VulnerabilitySource.from_prefix(prefix) == expected
+    assert VulnerabilitySource.from_prefix(prefix) == expected
 
 
 @pytest.mark.parametrize(
@@ -515,14 +547,14 @@ def test_from_prefix(prefix: str, expected):
     ],
 )
 def test_identify_pypi_references(reference: str, expected):
-    actual = security.identify_pypi_references([reference], package_name="dummy")
+    actual = identify_pypi_references([reference], package_name="dummy")
     assert actual == expected
 
 
 class TestFromPipAudit:
     @staticmethod
     def test_no_vulnerability_returns_empty_list():
-        actual = set(security.from_pip_audit("{}"))
+        actual = set(from_pip_audit("{}"))
         assert actual == set()
 
     @staticmethod
@@ -532,5 +564,5 @@ class TestFromPipAudit:
         audit_json = json.dumps(pip_audit_report)
         expected = {pip_audit_jinja2_issue, pip_audit_cryptography_issue}
 
-        actual = set(security.from_pip_audit(audit_json))
+        actual = set(from_pip_audit(audit_json))
         assert actual == expected
