@@ -22,7 +22,7 @@ jobs:
         run: |
           echo "Please enable the version check by replacing this output with shell command bellow:"
           echo ""
-          echo "poetry run version-check <<VERSION_PY>>"
+          echo "poetry run -- version-check <<VERSION_PY>>"
           echo ""
           echo "Note: <<VERSION_PY>> needs to point to the version file of the project (version.py)."
           exit 1
@@ -41,7 +41,7 @@ jobs:
 
       - name: Build Documentation
         run: |
-          poetry run python -m nox -s docs:build
+          poetry run -- nox -s docs:build
 
   build-matrix:
     name: Generate Build Matrix
@@ -61,7 +61,7 @@ jobs:
           python-version: "3.9"
 
       - name: Run changelog update check
-        run: poetry run nox -s changelog:updated
+        run: poetry run -- nox -s changelog:updated
 
   Lint:
     name: Linting (Python-${{ matrix.python-version }})
@@ -81,7 +81,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run lint
-        run: poetry run nox -s lint:code
+        run: poetry run -- nox -s lint:code
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4.6.0
@@ -110,7 +110,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run type-check
-        run: poetry run nox -s lint:typing
+        run: poetry run -- nox -s lint:typing
 
   Security:
     name: Security Checks (Python-${{ matrix.python-version }})
@@ -130,7 +130,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run security linter
-        run: poetry run nox -s lint:security
+        run: poetry run -- nox -s lint:security
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4.6.0
@@ -153,7 +153,7 @@ jobs:
           python-version: "3.9"
 
       - name: Run format check
-        run: poetry run nox -s project:format
+        run: poetry run -- nox -s project:format
 
   Tests:
     name: Unit-Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
@@ -175,7 +175,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Run Tests and Collect Coverage
-        run: poetry run nox -s test:unit -- -- --coverage
+        run: poetry run -- nox -s test:unit -- --coverage
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4.6.0
