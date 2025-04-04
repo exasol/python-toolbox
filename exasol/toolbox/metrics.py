@@ -1,6 +1,7 @@
 import datetime
 import json
 import re
+import subprocess
 import sys
 from collections import defaultdict
 from dataclasses import (
@@ -14,7 +15,6 @@ from enum import (
 from functools import singledispatch
 from inspect import cleandoc
 from pathlib import Path
-import subprocess
 from tempfile import TemporaryDirectory
 from typing import (
     Any,
@@ -100,6 +100,7 @@ class Report:
     security: Rating
     technical_debt: Rating
 
+
 def total_coverage(file: Union[str, Path]) -> float:
     with TemporaryDirectory() as tmpdir:
         tmp_dir = Path(tmpdir)
@@ -113,11 +114,11 @@ def total_coverage(file: Union[str, Path]) -> float:
         stdout = p.stdout.strip()
         if (p.returncode == 1) and (stdout == "No data to report."):
             print(
-                f'The following command'
-                f' returned non-zero exit status {p.returncode}:\n'
+                f"The following command"
+                f" returned non-zero exit status {p.returncode}:\n"
                 f'  {" ".join(p.args)}\n'
-                f'{stdout}\n'
-                'Returning total coverage 100 %.',
+                f"{stdout}\n"
+                "Returning total coverage 100 %.",
                 file=sys.stderr,
             )
             return 100.0
