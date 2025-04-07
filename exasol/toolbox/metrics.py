@@ -1,6 +1,8 @@
 import datetime
 import json
 import re
+import subprocess
+import sys
 from collections import defaultdict
 from dataclasses import (
     asdict,
@@ -13,7 +15,6 @@ from enum import (
 from functools import singledispatch
 from inspect import cleandoc
 from pathlib import Path
-from subprocess import run
 from tempfile import TemporaryDirectory
 from typing import (
     Any,
@@ -104,11 +105,23 @@ def total_coverage(file: Union[str, Path]) -> float:
     with TemporaryDirectory() as tmpdir:
         tmp_dir = Path(tmpdir)
         report = tmp_dir / "coverage.json"
-        run(
+        p = subprocess.run(
             ["coverage", "json", f"--data-file={file}", "-o", f"{report}"],
             capture_output=True,
-            check=True,
+            check=False,
+            encoding="utf-8",
         )
+        stdout = p.stdout.strip()
+        if (p.returncode == 1) and (stdout == "No data to report."):
+            print(
+                f"The following command"
+                f" returned non-zero exit status {p.returncode}:\n"
+                f'  {" ".join(p.args)}\n'
+                f"{stdout}\n"
+                "Returning total coverage 100 %.",
+                file=sys.stderr,
+            )
+            return 100.0
         with open(report, encoding="utf-8") as r:
             data = json.load(r)
             total: float = data["totals"]["percent_covered"]
