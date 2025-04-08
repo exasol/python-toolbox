@@ -220,6 +220,7 @@ def test_x1(mock, cmdline, expected):
         if args == ("git", "remote", "show", "origin"):
             return "test\nHEAD branch: main\ntest"
         return ""
+
     def simulate_fail(args, **kwargs):
         print("_______________")
         print(args)
