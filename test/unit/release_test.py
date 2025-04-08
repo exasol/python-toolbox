@@ -1,12 +1,18 @@
 import subprocess
 from datetime import datetime
 from inspect import cleandoc
-from unittest.mock import patch
+from subprocess import CalledProcessError
+from unittest.mock import (
+    MagicMock,
+    patch,
+)
 
 import pytest
 
 from exasol.toolbox.nox._release import (
+    ReleaseError,
     ReleaseTypes,
+    _trigger_release,
     _type_release,
 )
 from exasol.toolbox.release import (
@@ -161,3 +167,71 @@ def test_type_release(rtype, old, expected):
     actual = _type_release(ReleaseTypes(rtype), Version.from_string(old))
     expected = Version.from_string(expected)
     assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "cmdline, expected",
+    [
+        (
+            ("git", "remote", "show", "origin"),
+            CalledProcessError,
+        ),
+        (
+            ("git", "remote", "show", "origin"),
+            "test\nHEAD: \ntest",
+        ),
+        (
+            ("git", "checkout", "main"),
+            CalledProcessError,
+        ),
+        (
+            ("git", "pull"),
+            CalledProcessError,
+        ),
+        (
+            ("git", "tag", "--list"),
+            CalledProcessError,
+        ),
+        (
+            ("git", "tag", "--list"),
+            "0.1.0\n0.2.0\n0.3.0",
+        ),
+        (
+            ("gh", "release", "list"),
+            CalledProcessError,
+        ),
+        (
+            ("gh", "release", "list"),
+            "0.1.0\n0.2.0\n0.3.0",
+        ),
+        (
+            ("git", "tag", "0.3.0"),
+            CalledProcessError,
+        ),
+        (
+            ("git", "push", "origin", "0.3.0"),
+            CalledProcessError,
+        ),
+    ],
+)
+@patch("exasol.toolbox.nox._release.Version.from_poetry", return_value="0.3.0")
+def test_x1(mock, cmdline, expected):
+    def valide_result(args):
+        if args == ("git", "remote", "show", "origin"):
+            return "test\nHEAD branch: main\ntest"
+        return ""
+    def simulate_fail(args, **kwargs):
+        print("_______________")
+        print(args)
+        if args != cmdline:
+            print(valide_result(args))
+            return MagicMock(returncode=0, stdout=valide_result(args))
+        if expected == CalledProcessError:
+            raise CalledProcessError(returncode=1, cmd=cmdline)
+        else:
+            return MagicMock(returncode=0, stdout=expected)
+
+    with patch("subprocess.run", side_effect=simulate_fail):
+        with pytest.raises(ReleaseError) as ex:
+            _trigger_release()
+        print(ex.value)

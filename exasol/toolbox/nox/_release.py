@@ -143,7 +143,53 @@ def _version_control(
     if not has_release_version and has_release_type:
         return _type_release(release_type=args.type, old_version=old_version)
 
-    session.error("error in _version_control")
+    session.error("version not allowed with type")
+
+
+class ReleaseError(Exception):
+    """Error during trigger release"""
+
+
+def _trigger_release() -> Version:
+    def run(*args: str):
+        try:
+            return subprocess.run(
+                args, capture_output=True, text=True, check=True
+            ).stdout
+        except subprocess.CalledProcessError as ex:
+            raise ReleaseError(f"failed to execute command {args}") from ex
+
+    branches = run("git", "remote", "show", "origin")
+    if not (default_branch := re.search(r"HEAD branch: (\S+)", branches)):
+        raise ReleaseError("default branch could not be found")
+    default_branch = default_branch.group(1)
+
+    run("git", "checkout", default_branch)
+    run("git", "pull")
+
+    release_version = Version.from_poetry()
+    print(f"release version: {release_version}")
+
+    if re.search(rf"{release_version}", run("git", "tag", "--list")):
+        raise ReleaseError(f"tag {release_version} already exists")
+    if re.search(rf"{release_version}", run("gh", "release", "list")):
+        raise ReleaseError(f"release {release_version} already exists")
+
+    run("git", "tag", str(release_version))
+    run("git", "push", "origin", str(release_version))
+    return release_version
+
+
+def _trigger_release_test():
+    def run(*args: str):
+        return subprocess.run(args, capture_output=True, text=True, check=True).stdout
+
+    v = Version.from_poetry()
+    run("echo", "test 1")
+    run("echo", "test 2")
+    run("echo", "test 3")
+    run("echo", "test 4")
+    run("echo", "test 5")
 
 
 @nox.session(name="release:prepare", python=False)
@@ -155,6 +201,7 @@ def prepare_release(session: Session, python=False) -> None:
     args = parser.parse_args(session.posargs)
 
     new_version = _version_control(session, args)
+    print(f"release version: {new_version}")
 
     if not args.no_branch and not args.no_add:
         session.run("git", "switch", "-c", f"release/prepare-{new_version}")
@@ -199,42 +246,5 @@ def prepare_release(session: Session, python=False) -> None:
 
 
 @nox.session(name="release:trigger", python=False)
-def release(session: Session) -> None:
-
-    parser = argparse.ArgumentParser(
-        prog="nox -s release:experimental",
-        usage="nox -s release:experimental -- [-h] [-v | --version VERSION] [-t | --type {major,minor,patch}]",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument(
-        "-v",
-        "--version",
-        type=cli.version,
-        help="A version string of the following format:" '"NUMBER.NUMBER.NUMBER"',
-        default=argparse.SUPPRESS,
-    )
-    group.add_argument(
-        "-t",
-        "--type",
-        type=ReleaseTypes,
-        help="specifies which type of upgrade is to be performed",
-        choices=list(ReleaseTypes),
-        default=argparse.SUPPRESS,
-    )
-
-    args = parser.parse_args(session.posargs)
-
-    new_version = _version_control(session, args)
-    print(str(new_version))
-
-    result = subprocess.run(["git", "remote", "show", "origin"], capture_output=True)
-    match = re.search(r"HEAD branch: (\S+)", result.stdout.decode("utf-8"))
-    if not match:
-        session.error("Default branch could not be found")
-    default_branch = match.group(1) if match else None
-    subprocess.run(["git", "checkout", default_branch])
-    subprocess.run(["git", "pull"])
-    subprocess.run(["git", "tag", str(new_version)])
-    subprocess.run(["git", "push", "origin", str(new_version)])
-    pass
+def trigger_release(session: Session) -> None:
+    print(_trigger_release())

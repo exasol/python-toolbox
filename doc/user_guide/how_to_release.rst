@@ -4,46 +4,19 @@ How to Release?
 Creating a Release
 ++++++++++++++++++
 
-1. Set a variable named **TAG** with the appropriate version numbers:
-
-    .. code-block:: shell
-
-        TAG="<major>.<minor>.<patch>"
-
 #. Prepare the project for a new release:
 
     .. code-block:: shell
 
-        nox -s release:prepare -- "${TAG}"
+        nox -s release:prepare -- [-h] [-v | --version VERSION] [-t | --type {major,minor,patch}]
 
 #. Merge your **Pull Request** to the **default branch**
-#. Switch to the **default branch**:
+
+#. Trigger the release:
 
     .. code-block:: shell
 
-        git checkout $(git remote show origin | sed -n '/HEAD branch/s/.*: //p')
-
-#. Update branch:
-
-    .. code-block:: shell
-
-        git pull
-
-#. Create a new tag in your local repo:
-
-    .. code-block:: shell
-
-        git tag "${TAG}"
-
-#. Push the repo to remote:
-
-    .. code-block:: shell
-
-        git push origin "${TAG}"
-
-    .. hint::
-
-         GitHub workflow **.github/workflows/cd.yml** reacts on this tag and starts the release process
+        nox -s release:trigger -- [-h] [-v | --version VERSION] [-t | --type {major,minor,patch}]
 
 What to do if the release failed?
 +++++++++++++++++++++++++++++++++
