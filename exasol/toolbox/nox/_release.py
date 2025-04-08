@@ -160,9 +160,9 @@ def _trigger_release() -> Version:
             raise ReleaseError(f"failed to execute command {args}") from ex
 
     branches = run("git", "remote", "show", "origin")
-    if not (default_branch := re.search(r"HEAD branch: (\S+)", branches)):
+    if not (result := re.search(r"HEAD branch: (\S+)", branches)):
         raise ReleaseError("default branch could not be found")
-    default_branch = default_branch.group(1)
+    default_branch = result.group(1)
 
     run("git", "checkout", default_branch)
     run("git", "pull")
