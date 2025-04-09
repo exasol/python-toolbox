@@ -7,26 +7,34 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from exasol.toolbox.nox.plugin import hookimpl
-from exasol.toolbox.tools.replace_version import update_workflow
+from exasol.toolbox.tools.replace_version import update_github_yml
 
 
 class UpdateTemplates:
     TEMPLATE_PATH: Path = Path(__file__).parent / "exasol" / "toolbox" / "templates"
+    PARENT_PATH: Path = Path(__file__).parent
 
     @property
-    def workflows(self):
+    def template_workflows(self) -> list[Path]:
         gh_workflows = self.TEMPLATE_PATH / "github" / "workflows"
-        gh_workflows = [f for f in gh_workflows.iterdir() if f.is_file()]
-        return gh_workflows
+        return [f for f in gh_workflows.iterdir() if f.is_file()]
+
+    @property
+    def actions(self) -> list[Path]:
+        gh_actions = self.PARENT_PATH / ".github" / "actions"
+        return [f for f in gh_actions.iterdir() if f.is_file()]
 
     @hookimpl
     def prepare_release_update_version(self, session, config, version):
-        for workflow in self.workflows:
-            update_workflow(workflow, version)
+        for workflow in self.template_workflows:
+            update_github_yml(workflow, version)
+
+        for action in self.actions:
+            update_github_yml(action, version)
 
     @hookimpl
     def prepare_release_add_files(self, session, config):
-        return self.workflows
+        return self.template_workflows + self.actions
 
 
 @dataclass(frozen=True)
