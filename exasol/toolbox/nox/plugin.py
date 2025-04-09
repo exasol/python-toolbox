@@ -41,7 +41,7 @@ class NoxTasks:
     @hookspec
     def prepare_release_add_files(self, session, config):
         """
-        Files which should be added to the prepare relase commit should be added using add.
+        Files which should be added to the prepare release commit should be added using add.
 
         Args:
             session (nox.Session):
@@ -64,7 +64,7 @@ class NoxTasks:
 
         This function acts as a hook that gets called before the execution of integration tests.
         It can be used to execute any project-specific tasks that need to be performed before
-        the tests run, such as starting or initalizing a database.
+        the tests run, such as starting or initializing a database.
 
         Args:
             session (nox.Session):
