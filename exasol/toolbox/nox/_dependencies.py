@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import argparse
+import json
 import subprocess
 import tempfile
-from collections import defaultdict
 from dataclasses import dataclass
 from inspect import cleandoc
 from json import loads
@@ -154,7 +155,7 @@ def _packages_to_markdown(
     dependencies: dict[str, list], packages: list[Package]
 ) -> str:
     def heading():
-        text = "# Dependecies\n"
+        text = "# Dependencies\n"
         return text
 
     def dependency(group: str, group_packages: list, packages: list[Package]) -> str:
@@ -212,8 +213,70 @@ def _packages_to_markdown(
     return template.format(heading=heading(), rows=rows)
 
 
-def _audit(session: Session) -> None:
-    session.run("poetry", "run", "pip-audit")
+class Audit:
+    @staticmethod
+    def _filter_json_for_vulnerabilities(audit_json_bytes: bytes) -> dict:
+        """
+        Filters JSON from pip-audit for only packages with vulnerabilities
+
+        Examples:
+        >>> audit_json_dict = {"dependencies": [
+        ... {"name": "alabaster", "version": "0.7.16", "vulns": []},
+        ... {"name": "cryptography", "version": "43.0.3", "vulns":
+        ... [{"id": "GHSA-79v4-65xg-pq4g", "fix_versions": ["44.0.1"],
+        ... "aliases": ["CVE-2024-12797"],
+        ... "description": "pyca/cryptography\'s wheels..."}]}]}
+        >>> audit_json = json.dumps(audit_json_dict).encode()
+        >>> Audit._filter_json_for_vulnerabilities(audit_json)
+        {"dependencies": [{"name": "cryptography", "version": "43.0.3", "vulns":
+        [{"id": "GHSA-79v4-65xg-pq4g", "fix_versions": ["44.0.1"], "aliases":
+        ["CVE-2024-12797"], "description": "pyca/cryptography\'s wheels..."}]}]}
+        """
+        audit_dict = json.loads(audit_json_bytes.decode("utf-8"))
+        return {
+            "dependencies": [
+                {
+                    "name": entry["name"],
+                    "version": entry["version"],
+                    "vulns": entry["vulns"],
+                }
+                for entry in audit_dict["dependencies"]
+                if entry["vulns"]
+            ]
+        }
+
+    @staticmethod
+    def _parse_args(session) -> argparse.Namespace:
+        parser = argparse.ArgumentParser(
+            description="Audits dependencies for security vulnerabilities",
+            usage="nox -s dependency:audit -- -- [options]",
+        )
+        parser.add_argument(
+            "-o",
+            "--output",
+            type=Path,
+            default=None,
+            help="Output results to the given file",
+        )
+        return parser.parse_args(args=session.posargs)
+
+    def run(self, session: Session) -> None:
+        args = self._parse_args(session)
+
+        command = ["poetry", "run", "pip-audit", "-f", "json"]
+        output = subprocess.run(command, capture_output=True)
+
+        audit_json = self._filter_json_for_vulnerabilities(output.stdout)
+        if args.output:
+            with open(args.output, "w") as file:
+                json.dump(audit_json, file)
+        else:
+            print(json.dumps(audit_json, indent=2))
+
+        if output.returncode != 0:
+            session.warn(
+                f"Command {' '.join(command)} failed with exit code {output.returncode}",
+            )
 
 
 @nox.session(name="dependency:licenses", python=False)
@@ -228,4 +291,4 @@ def dependency_licenses(session: Session) -> None:
 @nox.session(name="dependency:audit", python=False)
 def audit(session: Session) -> None:
     """Check for known vulnerabilities"""
-    _audit(session)
+    Audit().run(session=session)

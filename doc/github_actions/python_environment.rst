@@ -18,7 +18,7 @@ Parameters
    * - poetry-version
      - Poetry version to use
      - True
-     - 1.2.2
+     - 2.1.2
 
 Example Usage
 -------------
@@ -33,16 +33,16 @@ Example Usage
 
       test-job:
         name: Tests
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
 
         steps:
           - name: SCM Checkout
             uses: actions/checkout@v4
 
           - name: Setup Python & Poetry Environment
-            uses: exasol/python-toolbox/.github/actions/python-environment@0.9.0
+            uses: exasol/python-toolbox/.github/actions/python-environment@0.21.0
             with:
               python-version: 3.12
-              poetry-version: 1.2.2
+              poetry-version: 2.1.2
 
             ...

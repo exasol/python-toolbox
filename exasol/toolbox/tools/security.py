@@ -1,5 +1,7 @@
 """This module contains security related CLI tools and code"""
 
+from __future__ import annotations
+
 import json
 import re
 import subprocess
@@ -16,7 +18,6 @@ from enum import Enum
 from functools import partial
 from inspect import cleandoc
 from pathlib import Path
-from typing import Tuple
 
 import typer
 
@@ -35,7 +36,7 @@ class Issue:
     references: tuple
 
 
-def _issues(input) -> Generator[Issue, None, None]:
+def _issues(input) -> Generator[Issue]:
     lines = (l for l in input if l.strip() != "")
     for line in lines:
         obj = json.loads(line)
@@ -48,7 +49,7 @@ def _issues_as_json_str(issues):
         yield json.dumps(issue)
 
 
-def gh_security_issues() -> Generator[tuple[str, str], None, None]:
+def gh_security_issues() -> Generator[tuple[str, str]]:
     """
     Yields issue-id, cve-id pairs for all (closed, open) issues associated with CVEs
 
@@ -100,6 +101,87 @@ def from_maven(report: str) -> Iterable[Issue]:
                 coordinates=dependency_name,
                 references=tuple(references),
             )
+
+
+class VulnerabilitySource(str, Enum):
+    CVE = "CVE"
+    CWE = "CWE"
+    GHSA = "GHSA"
+    PYSEC = "PYSEC"
+
+    @classmethod
+    def from_prefix(cls, name: str) -> VulnerabilitySource | None:
+        for el in cls:
+            if name.upper().startswith(el.value):
+                return el
+        return None
+
+    def get_link(self, package: str, vuln_id: str) -> str:
+        if self == VulnerabilitySource.CWE:
+            cwe_id = vuln_id.upper().replace(f"{VulnerabilitySource.CWE.value}-", "")
+            return f"https://cwe.mitre.org/data/definitions/{cwe_id}.html"
+
+        map_link = {
+            VulnerabilitySource.CVE: "https://nvd.nist.gov/vuln/detail/{vuln_id}",
+            VulnerabilitySource.GHSA: "https://github.com/advisories/{vuln_id}",
+            VulnerabilitySource.PYSEC: "https://github.com/pypa/advisory-database/blob/main/vulns/{package}/{vuln_id}.yaml",
+        }
+        return map_link[self].format(package=package, vuln_id=vuln_id)
+
+
+def identify_pypi_references(
+    references: list[str], package_name: str
+) -> tuple[list[str], list[str], list[str]]:
+    refs: dict = {k: [] for k in VulnerabilitySource}
+    links = []
+    for reference in references:
+        if source := VulnerabilitySource.from_prefix(reference.upper()):
+            refs[source].append(reference)
+            links.append(source.get_link(package=package_name, vuln_id=reference))
+    return (
+        refs[VulnerabilitySource.CVE],
+        refs[VulnerabilitySource.CWE],
+        links,
+    )
+
+
+def from_pip_audit(report: str) -> Iterable[Issue]:
+    """
+    Transforms the JSON output from `nox -s dependency:audit` into an iterable of
+    `security.Issue` objects.
+
+    This does not gracefully handle scenarios where:
+     - a CVE is not initially associated with the vulnerability; however, the assumption
+     is that such vulnerabilities will later be associated with a CVE.
+     - the same vulnerability ID (CVE, PYSEC, GHSA, etc.) is present across
+     multiple coordinates.
+
+    Input:
+        '{"dependencies": [{"name": "<package_name>", "version": "<package_version>",
+        "vulns": [{"id": "<vuln_id>", "fix_versions": ["<fix_version>"],
+        "aliases": ["<vuln_id2>"], "description": "<vuln_description>"}]}]}'
+
+    Args:
+        report:
+            the JSON output of `nox -s dependency:audit` provided as a str
+    """
+    report_dict = json.loads(report)
+    dependencies = report_dict.get("dependencies", [])
+    for dependency in dependencies:
+        package = dependency["name"]
+        for v in dependency["vulns"]:
+            refs = [v["id"]] + v["aliases"]
+            cves, cwes, links = identify_pypi_references(
+                references=refs, package_name=package
+            )
+            if cves:
+                yield Issue(
+                    cve=sorted(cves)[0],
+                    cwe="None" if not cwes else ", ".join(cwes),
+                    description=v["description"],
+                    coordinates=f"{package}:{dependency['version']}",
+                    references=tuple(links),
+                )
 
 
 @dataclass(frozen=True)
@@ -187,7 +269,7 @@ def security_issue_body(issue: Issue) -> str:
     )
 
 
-def create_security_issue(issue: Issue, project="") -> tuple[str, str]:
+def create_security_issue(issue: Issue, project: str | None = None) -> tuple[str, str]:
     # fmt: off
     command = [
         "gh", "issue", "create",
@@ -220,6 +302,7 @@ CLI.add_typer(CVE_CLI, name="cve", help="Work with CVE's")
 
 class Format(str, Enum):
     Maven = "maven"
+    PipAudit = "pip-audit"
 
 
 # pylint: disable=redefined-builtin
@@ -243,7 +326,13 @@ def convert(
             stdout(issue)
         raise typer.Exit(code=0)
 
-    actions = {Format.Maven: _maven}
+    def _pip_audit(infile):
+        issues = from_pip_audit(infile.read())
+        for issue in _issues_as_json_str(issues):
+            stdout(issue)
+        raise typer.Exit(code=0)
+
+    actions = {Format.Maven: _maven, Format.PipAudit: _pip_audit}
     action = actions[format]
     action(input_file)
 

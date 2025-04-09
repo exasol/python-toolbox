@@ -24,7 +24,7 @@ Overview
 This project mainly serves three main purposes:
 
 #. Provide library code, scripts and commands for common developer tasks within a python project.
-#. Provide and maintain commonly required functionality for python project
+#. Provide and maintain commonly required functionality for a python project
     * Common Projects Tasks
         - apply code formatters
         - lint project
@@ -33,6 +33,7 @@ This project mainly serves three main purposes:
         - run integration tests
         - determine code coverage
         - build-, open-, clean- documentation
+        - creates GitHub Issues for vulnerabilities
     * CI (verify PR's and merges)
     * CI/CD (verify and publish releases)
     * Build & Publish Documentation (verify and publish documentation)
@@ -45,16 +46,16 @@ Design
 
 Design Principles
 +++++++++++++++++
-* This project needs to be thought of as development dependency only!
-    - Library code should not imported/used in non development code of the projects
+* This project needs to be thought of as a development dependency only!
+    - Library code should not imported/used in non-development code of the projects
 * Convention over configuration
     - Being able to assume conventions reduces the code base/paths significantly
     - First thought always should be: Can it be done easily by using/applying convention(s)
     - Use configuration if it's more practical or if it simplifies transitioning projects
-* Provide extension points (hooks) where for project specific behaviour
+* Provide extension points (hooks) for project specific behaviour
     - If it can't be a convention or configuration setting
     - If having something as a convention or configuration significantly complicates the implementation
-    - If you have a obvious use case within at least one project
+    - If you have an obvious use case within at least one project
 * KISS (Keep It Stupid Simple)
     - This project shall simplify the work of the developer, not add a burden on top
     - Try to automate as much as possible
@@ -64,7 +65,7 @@ Design Principles
     .. note::
 
         It is clear that not everything can and will be automated right from the beginning,
-        but there should be continues effort to improve the work of the developers.
+        but there should be continuous effort to improve the work of the developers.
 
         e.g.:
 
@@ -114,18 +115,18 @@ Design Principles
 
 Design Decisions
 ++++++++++++++++
-* Whenever possible tools provided or required by the toolbox should get their configuration from the projects *pyproject.toml* file.
-* Whenever a more dynamic configuration is needed it should be made part of the config object in the projects *noxconfig.py* file.
-* The required standard tooling used within the toolbox will obey what have been agreed upon in the exasol `python-styleguide <https://exasol.github.io/python-styleguide/guides/tooling.html>`_.
-* As Task runner the toolbox will be using nox
+* Whenever possible, tools provided or required by the toolbox should get their configuration from the projects *pyproject.toml* file.
+* Whenever a more dynamic configuration is needed, it should be made part of the config object in the projects *noxconfig.py* file.
+* The required standard tooling used within the toolbox will obey what has been agreed upon in the Exasol `python-styleguide <https://exasol.github.io/python-styleguide/guides/tooling.html>`_.
+* For a task runner, the toolbox will be using nox
     .. warning:: Known Issue(s)
 
         Nox tasks should not call (notify) other nox tasks. This can lead to unexpected behaviour
         due to the fact that the job/task queue will `execute a task only once <https://nox.thea.codes/en/stable/config.html#nox.sessions.Session.notify>`_.
 
-        Therefore all functionality which need to be reused or called multiple times within or by different nox tasks,
-        should be provided by python code (e.g. functions) which is receiving a nox session as argument
-        but isn't  annotated as a nox session/task (`@nox.session <https://nox.thea.codes/en/stable/config.html#defining-sessions>`_).
+        Therefore, all functionality, which needs to be re-used, called multiple times calls, or is used by different nox tasks,
+        should be provided by python code (e.g. functions) which receives a nox session as an argument, but the code itself
+        shall not be annotated as a nox session/task (`@nox.session <https://nox.thea.codes/en/stable/config.html#defining-sessions>`_).
 
     .. note::
 
@@ -136,11 +137,11 @@ Design Decisions
         * It is already used by a couple of our projects, so the team is familiar with it
         * The author of the toolbox is very familiar with it
 
-        That said, no in depth evaluation of other tools haven been done.
+        That said, no in-depth evaluation of other tools has been done.
 
 
-* Workflows (CI/CD & Co.) will be github actions based
-    - This is the standard tool within the exasol integration team
+* Workflows (CI/CD & Co.) will be GitHub Actions-based
+    - This is the standard tool within the Exasol Integration Team
 * Workflows only shall provide an execution environment and orchestrate the execution itself
 
 Detailed Design
@@ -150,36 +151,15 @@ Tasks
 ~~~~~
 .. todo:: Add diagram configuration and tasks (noxfile.py + noxconfig.py + exasol.toolbox)
 
-.. list-table::
-    :header-rows: 1
-    :widths: 30 70
+To view all the defined nox tasks & their definitions use:
 
-    * - Tasks
-      - Description
-    * - fix
-      - Runs all automated fixes on the code base
-    * - check
-      - Runs all available checks on the project
-    * - lint
-      - Runs the linter on the project
-    * - type-check
-      - Runs the type checker on the project
-    * - unit-tests
-      - Runs all unit tests
-    * - integration-tests
-      - Runs the all integration tests
-    * - coverage
-      - Runs all tests (unit + integration) and reports the code coverage
-    * - build-docs
-      - Builds the project documentation
-    * - open-docs
-      - Opens the built project documentation
-    * - clean-docs
-      - Removes the documentations build folder
+.. code-block:: shell
+
+   poetry run -- nox -l
 
 Workflows
 ~~~~~~~~~
-.. todo:: Add diagram of github workflows and interaction
+.. todo:: Add diagram of GitHub workflows and interaction
 
 
 Available Workflows
@@ -208,7 +188,91 @@ _________________
     * - Action
       - Description
     * - python-environment
-      - Sets up an appropriate poetry based python environment
+      - Sets up an appropriate poetry-based python environment
+    * - security-issues
+      - Takes a JSON of known vulnerabilities affecting a repo & creates GitHub Issues
+        in said repo for any vulnerabilities, which do not yet have a GitHub Issue
+
+security-issues
+^^^^^^^^^^^^^^^
+The `security-issues/action.yml` creates GitHub Issues for known vulnerabilities
+for `maven <https://sonatype.github.io/ossindex-maven/maven-plugin/>`_ and `pip-audit <https://pypi.org/project/pip-audit/>`_.
+The following steps are taken:
+
+1. Convert a JSON of known vulnerabilities into a common format (`class Issue`)
+2. Filter out vulnerabilities which already have an existing GitHub Issue via CVE
+3. Create new GitHub Issues
+4. Return a JSON of the newly created GitHub Issues
+
+Input Variants
+""""""""""""""
+An input variant would be passed in as a string-encoded JSON.
+
+`maven` (with `ossindex-audit <https://sonatype.github.io/ossindex-maven/maven-plugin/ossindex-audit/>`_)
+
+.. code-block:: json
+
+        {
+            "vulnerable": {
+                "<package_name>@<package_version>:compile": {
+                    "coordinates": "<package_name>@<package_version>",
+                    "description": "<package_description>",
+                    "reference": "<oss_url_for_vuln>",
+                    "vulnerabilities": [
+                        {
+                            "id": "<vuln_id>",
+                            "displayName": "<vuln_name>",
+                            "title": "<vuln_title>",
+                            "description": "<vuln_description>",
+                            "cvssScore": 7.5,
+                            "cvssVector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+                            "cwe": "<cwe_vuln_id>",
+                            "cve": "<cve_vuln_id>",
+                            "reference": "<oss_url_for_vuln>",
+                            "externalReferences": ["<vuln_reference_url>"],
+                        }
+                    ],
+                },
+            }
+        }
+
+`pip-audit` (via `nox -s dependency:audit`)
+
+.. code-block:: json
+
+   {
+        "dependencies": [
+            {
+                "name": "<package_name>",
+                "version": "<package_version>",
+                "vulns":
+                [
+                    {
+                        "id": "<vuln_id>",
+                        "fix_versions": ["<fix_version>"],
+                        "aliases": ["<vuln_id2>"],
+                        "description": "<vuln_description>"
+                    }
+                ]
+            }
+        ]
+    }
+
+Known Issues
+""""""""""""
+The `security-issues/action.yml` assumes that eventually every known vulnerability will
+be associated with a singular CVE.
+
+* This can be problematic as vulnerabilities may be initially reported to different
+  services and not receive a CVE until a few days later or, in some cases, never. This
+  could mean that some vulnerabilities are initially missed or, in some cases,
+  never propagated by our action.
+* Additionally, reporting tools like `pip-audit` must link a vulnerability with the
+  different vulnerability IDs from different reporting services. Typically, this is done
+  by selecting 1 of the vulnerability IDs as the unique identifier of the vulnerability.
+  This, as is the case for `pip-audit`, may not be the CVE, so it is possible if the
+  linked vulnerability IDs were to change (i.e. wrongly linked CVE) that we could end
+  up with multiple GitHub Issues for the same underlying vulnerability.
 
 
 Known Issues
@@ -222,7 +286,7 @@ Passing files as individual arguments on the CLI
 
 **Description:**
 
-As of today selection of python files for linting, formatting etc. is done by passing all relevant python files as individual argument(s)
+As of today selection of Python files for linting, formatting etc. is done by passing all relevant python files as individual argument(s)
 to the tools used/invoked by the python toolbox.
 
 **Downsides:**
@@ -312,7 +376,7 @@ While Nox isn't a perfect fit, it still meets most of our requirements for a tas
 
 **Rationale/History:**
 
-Why Nox was choosen:
+Why Nox was chosen:
 
 - No additional language(s) required: There was no need to introduce extra programming languages or binaries, simplifying the development process.
 - Python-based: Being Python-based, Nox can be extended and understood by Python developers.
@@ -341,8 +405,8 @@ Poetry for Project Management
 +++++++++++++++++++++++++++++
 
 While poetry was and is a good choice for Exasol project, dependency, build tool etc. "most recently"
-`uv <https://docs.astral.sh/uv/>`_ has surfaced and made big advanced. Looking at uv it addresses additional itches with
-our projects and therefore in the long run it may be a good idea to migrate our project setups to it.
+`uv <https://docs.astral.sh/uv/>`_ has surfaced and made big advancements. Looking at uv it addresses additional itches with
+our projects, and, therefore, in the long run, it may be a good idea to migrate our project setups to it.
 Use poetry for project, build and dependency management.
 
 
@@ -351,7 +415,7 @@ Code Formatting
 
 **Description:**
 
-Currently we use Black and Isort for code formatting, though running them on a larger code base as pre-commit hooks or such can take quite a bit of time.
+Currently, we use Black and Isort for code formatting, though running them on a larger code base as pre-commit hooks or such can take quite a bit of time.
 
 **Downsides:**
 
@@ -367,7 +431,7 @@ Currently we use Black and Isort for code formatting, though running them on a l
 
 **Ideas/Solutions:**
 
-As `Ruff <https://docs.astral.sh/ruff/>`_ is fairly stable and also tested and used by many Python projects
+As `Ruff <https://docs.astral.sh/ruff/>`_ is fairly stable and also tested and used by many Python projects,
 we should consider transitioning to it.
 
 Advantages:
@@ -393,20 +457,20 @@ We are currently using Pylint instead of Ruff.
 
 **Rationale/History:**
 
-- Well known
+- Well-known
 - Pylint provides built-in project score/rating
 - Project score is good for improving legacy code bases which haven't been linted previously
 - Plugin support
 
 **Ideas/Possible Solutions:**
 
-Replacing Pylint with Ruff for linting would provide significant performance improvement. Additionally, Ruff offers an LSP and IDE integrations and is widely used these days. Additionaly there would be an additional synergy if we adopt ruff for formatting the code base.
+Replacing Pylint with Ruff for linting would provide significant performance improvement. Additionally, Ruff offers an LSP and IDE integrations and is widely used these days. Additionally, there would be an additional synergy if we adopt ruff for formatting the code base.
 
 Transitioning to Ruff requires us to adjust the migration and improvement strategies for our projects:
 
 - Currently, our codebase improvements are guided by scores. However, with Ruff, a new approach is necessary. For example, we could incrementally introduce specific linting rules, fix the related issues, and then enforce these rules.
 
-- The project rating and scoring system will also need modification. One possiblity would be to run Ruff and Pylint in parallel, utilizing Pylint solely for rating and issue resolution while Ruff is incorporated for linting tasks.
+- The project rating and scoring system will also need modification. One possibility would be to run Ruff and Pylint in parallel, utilizing Pylint solely for rating and issue resolution while Ruff is incorporated for linting tasks.
 
 
 Security Linter

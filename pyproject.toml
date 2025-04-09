@@ -1,22 +1,13 @@
-[tool.poetry]
+[project]
 name = "exasol-toolbox"
-packages = [
-    { include = "exasol" },
-]
-version = "0.21.0"
+version = "1.0.0"
 description = "Your one-stop solution for managing all standard tasks and core workflows of your Python project."
 authors = [
-    "Nicola Coretti <nicola.coretti@exasol.com>"
+    {name = "Nicola Coretti", email = "nicola.coretti@exasol.com"},
+    {name = "Ariel Schulz", email = "ariel.schulz@exasol.com"},
 ]
-license = "MIT"
 readme = "README.md"
-include = [
-    "README.rst",
-    "doc/changelog.rst",
-    "LICENSE",
-    "exasol/toolbox/templates/**/*"
-]
-
+license = "MIT"
 keywords = [
     "nox",
     "tooling",
@@ -26,7 +17,18 @@ keywords = [
     "infrastructure",
 ]
 
-[tool.poetry.urls]
+[tool.poetry]
+packages = [
+    { include = "exasol" },
+]
+include = [
+    "README.rst",
+    "doc/changelog.rst",
+    "LICENSE",
+    "exasol/toolbox/templates/**/*"
+]
+
+[poetry.urls]
 "Homepage" = "https://www.exasol.com/"
 "Documentation" = "https://exasol.github.io/python-toolbox/"
 "Source" = "https://github.com/exasol/python-toolbox"
@@ -34,6 +36,7 @@ keywords = [
 "Changelog" = "https://exasol.github.io/python-toolbox/changelog.html"
 
 [tool.poetry.dependencies]
+python = "^3.9"
 black = ">=24.1.0"
 coverage = ">=6.4.4,<8.0.0"
 furo = ">=2022.9.15"
@@ -48,7 +51,6 @@ pre-commit = ">=4"
 prysk = {extras = ["pytest-plugin"], version = ">0.17.0,<1"}
 pylint = ">=2.15.4"
 pytest = ">=7.2.2,<9"
-python = "^3.9"
 pyupgrade = ">=2.38.2,<4.0.0"
 shibuya = ">=2024.5.14"
 sphinx = ">=5.3,<8"
@@ -65,7 +67,10 @@ pip-audit = "^2.7.3"
 autoimport = "^1.4.0"
 
 [build-system]
-requires = ["poetry-core"]
+requires = [
+    "poetry>=2.0.0",
+    "poetry-core"
+]
 build-backend = "poetry.core.masonry.api"
 
 # Tooling
@@ -107,9 +112,6 @@ module = [
 ignore_errors = true
 
 [tool.poetry.plugins."console_scripts"]
-"version-check" = "exasol.toolbox.pre_commit_hooks.package_version:main"
-
-
-[tool.poetry.scripts]
+version-check = "exasol.toolbox.pre_commit_hooks.package_version:main"
 tbx = 'exasol.toolbox.tools.tbx:CLI'
 sphinx-multiversion = 'exasol.toolbox.sphinx.multiversion:main'
