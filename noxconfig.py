@@ -22,7 +22,7 @@ class UpdateTemplates:
     @property
     def actions(self) -> list[Path]:
         gh_actions = self.PARENT_PATH / ".github" / "actions"
-        return [f for f in gh_actions.iterdir() if f.is_file()]
+        return [f for f in gh_actions.rglob("*") if f.is_file()]
 
     @hookimpl
     def prepare_release_update_version(self, session, config, version):
