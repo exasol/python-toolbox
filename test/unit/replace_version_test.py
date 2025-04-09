@@ -48,9 +48,9 @@ def test_update_line_with_version(line: str, expected: str):
 )
 def test_update_versions(line_to_change, expected):
     dummy_lines = [
-        "foo/world@3.4.5\n",
-        "hallo/world/3.4.5\n",
-        "foo/world/3.4.5\n",
+        "exasol/python-toolbox/.github/actions/python-environment@dummy\n",
+        "- name: Create Security Issue Report\n",
+        "pip install exasol-toolbox==dummy\n",
     ]
     lines = dummy_lines + [line_to_change]
     expected_lines = dummy_lines + [expected]
