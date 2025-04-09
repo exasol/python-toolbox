@@ -68,7 +68,7 @@ def update_workflow(
         Path("./.github/workflows"), help="target directory to install the workflow to."
     ),
     confirm: bool = typer.Option(
-        False, help="Automatically confirm overwritting exsisting workflow(s)"
+        False, help="Automatically confirm overwriting the existing workflow(s)"
     ),
 ) -> None:
     """Similar to install but checks for existing workflows and shows diff"""
