@@ -50,8 +50,6 @@ jobs:
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
-        with:
-          python-version: "3.9"
 
       - name: Run changelog update check
         if: ${{ github.ref != 'refs/heads/main' }}
@@ -147,8 +145,6 @@ jobs:
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
-        with:
-          python-version: "3.9"
 
       - name: Run format check
         run: poetry run -- nox -s project:format
