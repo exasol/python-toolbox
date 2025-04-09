@@ -40,6 +40,7 @@ jobs:
   Changelog:
     name: Changelog Update Check
     runs-on: ubuntu-24.04
+    if: ${{ github.ref != 'refs/heads/main' }}
 
     steps:
       - name: SCM Checkout
@@ -52,7 +53,6 @@ jobs:
         uses: ./.github/actions/python-environment
 
       - name: Run changelog update check
-        if: ${{ github.ref != 'refs/heads/main' }}
         run: poetry run -- nox -s changelog:updated
 
   build-matrix:
