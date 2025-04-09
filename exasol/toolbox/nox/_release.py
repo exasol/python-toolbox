@@ -180,18 +180,6 @@ def _trigger_release() -> Version:
     return release_version
 
 
-def _trigger_release_test():
-    def run(*args: str):
-        return subprocess.run(args, capture_output=True, text=True, check=True).stdout
-
-    v = Version.from_poetry()
-    run("echo", "test 1")
-    run("echo", "test 2")
-    run("echo", "test 3")
-    run("echo", "test 4")
-    run("echo", "test 5")
-
-
 @nox.session(name="release:prepare", python=False)
 def prepare_release(session: Session, python=False) -> None:
     """
@@ -247,4 +235,5 @@ def prepare_release(session: Session, python=False) -> None:
 
 @nox.session(name="release:trigger", python=False)
 def trigger_release(session: Session) -> None:
+    """releases the project automatically"""
     print(_trigger_release())

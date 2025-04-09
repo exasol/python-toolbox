@@ -16,7 +16,7 @@ Creating a Release
 
     .. code-block:: shell
 
-        nox -s release:trigger -- [-h] [-v | --version VERSION] [-t | --type {major,minor,patch}]
+        nox -s release:trigger
 
 What to do if the release failed?
 +++++++++++++++++++++++++++++++++
