@@ -46,9 +46,6 @@ jobs:
       - name: SCM Checkout
         uses: actions/checkout@v4
 
-      - name: Fetch the main branch
-        run: git fetch origin main
-
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
 

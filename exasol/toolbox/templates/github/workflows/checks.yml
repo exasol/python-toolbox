@@ -50,7 +50,7 @@ jobs:
   Changelog:
     name: Changelog Update Check
     runs-on: ubuntu-24.04
-    if: ${{ github.ref != 'refs/heads/main' }}
+    if: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
 
     steps:
       - name: SCM Checkout
