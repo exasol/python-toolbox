@@ -50,15 +50,14 @@ jobs:
   Changelog:
     name: Changelog Update Check
     runs-on: ubuntu-24.04
+    if: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
 
     steps:
       - name: SCM Checkout
         uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
-        uses: ./.github/actions/python-environment
-        with:
-          python-version: "3.9"
+        uses: exasol/python-toolbox/.github/actions/python-environment@1.0.0
 
       - name: Run changelog update check
         run: poetry run -- nox -s changelog:updated
@@ -149,8 +148,6 @@ jobs:
 
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@1.0.0
-        with:
-          python-version: "3.9"
 
       - name: Run format check
         run: poetry run -- nox -s project:format

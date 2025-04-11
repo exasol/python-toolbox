@@ -40,21 +40,16 @@ jobs:
   Changelog:
     name: Changelog Update Check
     runs-on: ubuntu-24.04
+    if: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
 
     steps:
       - name: SCM Checkout
         uses: actions/checkout@v4
 
-      - name: Fetch the main branch
-        run: git fetch origin main
-
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
-        with:
-          python-version: "3.9"
 
       - name: Run changelog update check
-        if: ${{ github.ref != 'refs/heads/main' }}
         run: poetry run -- nox -s changelog:updated
 
   build-matrix:
@@ -147,8 +142,6 @@ jobs:
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
-        with:
-          python-version: "3.9"
 
       - name: Run format check
         run: poetry run -- nox -s project:format
