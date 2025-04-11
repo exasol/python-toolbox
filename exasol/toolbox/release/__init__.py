@@ -3,6 +3,7 @@ from __future__ import annotations
 import subprocess
 from dataclasses import dataclass
 from datetime import datetime
+from enum import Enum
 from functools import total_ordering
 from inspect import cleandoc
 from pathlib import Path
@@ -16,6 +17,15 @@ def _index_or(container, index, default):
         return container[index]
     except IndexError:
         return default
+
+
+class ReleaseTypes(Enum):
+    Major = "major"
+    Minor = "minor"
+    Patch = "patch"
+
+    def __str__(self):
+        return self.name.lower()
 
 
 @total_ordering
@@ -70,6 +80,23 @@ class Version:
         try:
             result = subprocess.run(
                 [poetry, "version", "--no-ansi", "--short"], capture_output=True
+            )
+        except subprocess.CalledProcessError as ex:
+            raise ToolboxError() from ex
+        version = result.stdout.decode().strip()
+
+        return Version.from_string(version)
+
+    @staticmethod
+    def upgrade_version_from_poetry(t: ReleaseTypes):
+        poetry = which("poetry")
+        if not poetry:
+            raise ToolboxError("Couldn't find poetry executable")
+
+        try:
+            result = subprocess.run(
+                [poetry, "version", str(t), "--dry-run", "--no-ansi", "--short"],
+                capture_output=True,
             )
         except subprocess.CalledProcessError as ex:
             raise ToolboxError() from ex

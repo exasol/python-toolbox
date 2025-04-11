@@ -4,7 +4,6 @@ import argparse
 import re
 import subprocess
 import sys
-from enum import Enum
 from pathlib import Path
 from typing import (
     List,
@@ -21,6 +20,7 @@ from exasol.toolbox.nox._shared import (
 )
 from exasol.toolbox.nox.plugin import NoxTasks
 from exasol.toolbox.release import (
+    ReleaseTypes,
     Version,
     extract_release_notes,
     new_changelog,
@@ -33,24 +33,15 @@ from noxconfig import PROJECT_CONFIG
 def _create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="nox -s release:prepare",
-        usage="nox -s release:experimental -- [-h] [-v | --version VERSION] [-t | --type {major,minor,patch}]",
+        usage="nox -s release:prepare -- [-h] [-t | --type {major,minor,patch}]",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument(
-        "-v",
-        "--version",
-        type=cli.version,
-        help="A version string of the following format:" '"NUMBER.NUMBER.NUMBER"',
-        required=False,
-        default=argparse.SUPPRESS,
-    )
-    group.add_argument(
+    parser.add_argument(
         "-t",
         "--type",
         type=ReleaseTypes,
         help="specifies which type of upgrade is to be performed",
-        required=False,
+        required=True,
         choices=[rt.value for rt in list(ReleaseTypes)],
         default=argparse.SUPPRESS,
     )
@@ -106,12 +97,6 @@ def _add_files_to_index(session: Session, files: list[Path]) -> None:
         session.run("git", "add", f"{file}")
 
 
-class ReleaseTypes(Enum):
-    Major = "major"
-    Minor = "minor"
-    Patch = "patch"
-
-
 def _type_release(release_type: ReleaseTypes, old_version: Version) -> Version:
     upgrade = {
         ReleaseTypes.Major: Version(old_version.major + 1, 0, 0),
@@ -121,29 +106,6 @@ def _type_release(release_type: ReleaseTypes, old_version: Version) -> Version:
         ),
     }
     return upgrade[release_type]
-
-
-def _version_control(
-    session: Session,
-    args: argparse.Namespace,
-) -> Version:
-    has_release_version = hasattr(args, "version")
-    has_release_type = hasattr(args, "type")
-
-    old_version = Version.from_poetry()
-
-    if has_release_version and not has_release_type:
-        if not _is_valid_version(old=old_version, new=args.version):
-            session.error(
-                f"Invalid version: the release version ({args.version}) "
-                f"must be greater than or equal to the current version ({args.version})"
-            )
-        return args.version
-
-    if not has_release_version and has_release_type:
-        return _type_release(release_type=args.type, old_version=old_version)
-
-    session.error("version not allowed with type")
 
 
 class ReleaseError(Exception):
@@ -188,8 +150,7 @@ def prepare_release(session: Session, python=False) -> None:
     parser = _create_parser()
     args = parser.parse_args(session.posargs)
 
-    new_version = _version_control(session, args)
-    print(f"release version: {new_version}")
+    new_version = Version.upgrade_version_from_poetry(args.type)
 
     if not args.no_branch and not args.no_add:
         session.run("git", "switch", "-c", f"release/prepare-{new_version}")
@@ -236,4 +197,4 @@ def prepare_release(session: Session, python=False) -> None:
 @nox.session(name="release:trigger", python=False)
 def trigger_release(session: Session) -> None:
     """releases the project automatically"""
-    print(_trigger_release())
+    print(f"new version: {_trigger_release()}")
