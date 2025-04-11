@@ -75,7 +75,7 @@ def _security_lint(session: Session, files: Iterable[str]) -> None:
 
 
 def _import_lint(session: Session, path: Path) -> None:
-    session.run("poetry", "run", "lint-imports", "--config", path)
+    session.run("lint-imports", "--config", path)
 
 
 class Dependencies:

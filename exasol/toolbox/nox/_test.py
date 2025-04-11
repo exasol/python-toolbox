@@ -21,14 +21,13 @@ from noxconfig import (
 def _test_command(
     path: Path, config: Config, context: MutableMapping[str, Any]
 ) -> Iterable[str]:
-    base_command = ["poetry", "run"]
     coverage_command = (
         ["coverage", "run", "-a", f"--rcfile={config.root / 'pyproject.toml'}", "-m"]
         if context["coverage"]
         else []
     )
     pytest_command = ["pytest", "-v", f"{path}"]
-    return base_command + coverage_command + pytest_command + context["fwd-args"]
+    return coverage_command + pytest_command + context["fwd-args"]
 
 
 def _unit_tests(
@@ -67,7 +66,7 @@ def _pass(
 def _coverage(
     session: Session, config: Config, context: MutableMapping[str, Any]
 ) -> None:
-    command = ["poetry", "run", "coverage", "report", "-m"]
+    command = ["coverage", "report", "-m"]
     coverage_file = config.root / ".coverage"
     coverage_file.unlink(missing_ok=True)
     _unit_tests(session, config, context)
