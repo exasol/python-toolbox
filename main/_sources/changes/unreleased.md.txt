@@ -3,6 +3,7 @@
 ## Bugfixes
 
 * #397: Fixed handling empty coverage
+* #403: Removed unneeded `poetry run` from internal code of nox tasks
 
 ## Refactorings
 
