@@ -17,8 +17,8 @@ def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
     def command(*args: str) -> Iterable[str]:
         return args if mode == Mode.Fix else list(args) + ["--check"]
 
-    session.run(*command("poetry", "run", "isort"), *files)
-    session.run(*command("poetry", "run", "black"), *files)
+    session.run(*command("isort"), *files)
+    session.run(*command("black"), *files)
 
 
 def _pyupgrade(session: Session, files: Iterable[str]) -> None:

@@ -263,7 +263,7 @@ class Audit:
     def run(self, session: Session) -> None:
         args = self._parse_args(session)
 
-        command = ["poetry", "run", "pip-audit", "-f", "json"]
+        command = ["pip-audit", "-f", "json"]
         output = subprocess.run(command, capture_output=True)
 
         audit_json = self._filter_json_for_vulnerabilities(output.stdout)
