@@ -18,6 +18,7 @@ keywords = [
 ]
 
 [tool.poetry]
+requires-poetry = ">=2.1.0"
 packages = [
     { include = "exasol" },
 ]
@@ -67,10 +68,7 @@ pip-audit = "^2.7.3"
 autoimport = "^1.4.0"
 
 [build-system]
-requires = [
-    "poetry>=2.0.0",
-    "poetry-core"
-]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 # Tooling
