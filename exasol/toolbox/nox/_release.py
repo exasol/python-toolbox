@@ -3,17 +3,11 @@ from __future__ import annotations
 import argparse
 import re
 import subprocess
-import sys
 from pathlib import Path
-from typing import (
-    List,
-    Tuple,
-)
 
 import nox
 from nox import Session
 
-from exasol.toolbox import cli
 from exasol.toolbox.nox._shared import (
     Mode,
     _version,
@@ -42,7 +36,6 @@ def _create_parser() -> argparse.ArgumentParser:
         type=ReleaseTypes,
         help="specifies which type of upgrade is to be performed",
         required=True,
-        choices=[rt.value for rt in list(ReleaseTypes)],
         default=argparse.SUPPRESS,
     )
     parser.add_argument(
@@ -97,17 +90,6 @@ def _add_files_to_index(session: Session, files: list[Path]) -> None:
         session.run("git", "add", f"{file}")
 
 
-def _type_release(release_type: ReleaseTypes, old_version: Version) -> Version:
-    upgrade = {
-        ReleaseTypes.Major: Version(old_version.major + 1, 0, 0),
-        ReleaseTypes.Minor: Version(old_version.major, old_version.minor + 1, 0),
-        ReleaseTypes.Patch: Version(
-            old_version.major, old_version.minor, old_version.patch + 1
-        ),
-    }
-    return upgrade[release_type]
-
-
 class ReleaseError(Exception):
     """Error during trigger release"""
 
@@ -119,7 +101,9 @@ def _trigger_release() -> Version:
                 args, capture_output=True, text=True, check=True
             ).stdout
         except subprocess.CalledProcessError as ex:
-            raise ReleaseError(f"failed to execute command {args}") from ex
+            raise ReleaseError(
+                f"failed to execute command {ex.cmd}\n\n{ex.stderr}"
+            ) from ex
 
     branches = run("git", "remote", "show", "origin")
     if not (result := re.search(r"HEAD branch: (\S+)", branches)):
@@ -196,5 +180,5 @@ def prepare_release(session: Session, python=False) -> None:
 
 @nox.session(name="release:trigger", python=False)
 def trigger_release(session: Session) -> None:
-    """releases the project automatically"""
+    """trigger an automatic project release"""
     print(f"new version: {_trigger_release()}")

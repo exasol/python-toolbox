@@ -28,6 +28,29 @@ class ReleaseTypes(Enum):
         return self.name.lower()
 
 
+def poetry(arguments: str):
+    def decorator(function):
+        def wrapper(*args, **kwargs):
+            cmd = which("poetry")
+            if not cmd:
+                raise ToolboxError("Couldn't find poetry executable")
+
+            try:
+                command = [cmd] + arguments.split(" ")
+                result = subprocess.run(
+                    command,
+                    capture_output=True,
+                )
+            except subprocess.CalledProcessError as ex:
+                raise ToolboxError() from ex
+
+            return function(result)
+
+        return wrapper
+
+    return decorator
+
+
 @total_ordering
 @dataclass(frozen=True)
 class Version:
@@ -72,37 +95,19 @@ class Version:
         return Version(*version)
 
     @staticmethod
-    def from_poetry():
-        poetry = which("poetry")
-        if not poetry:
-            raise ToolboxError("Couldn't find poetry executable")
-
-        try:
-            result = subprocess.run(
-                [poetry, "version", "--no-ansi", "--short"], capture_output=True
-            )
-        except subprocess.CalledProcessError as ex:
-            raise ToolboxError() from ex
+    @poetry("version --no-ansi --short")
+    def from_poetry(result):
         version = result.stdout.decode().strip()
 
         return Version.from_string(version)
 
     @staticmethod
     def upgrade_version_from_poetry(t: ReleaseTypes):
-        poetry = which("poetry")
-        if not poetry:
-            raise ToolboxError("Couldn't find poetry executable")
+        @poetry(f"version {str(t)} --dry-run --no-ansi --short")
+        def version(result):
+            return result.stdout.decode().strip()
 
-        try:
-            result = subprocess.run(
-                [poetry, "version", str(t), "--dry-run", "--no-ansi", "--short"],
-                capture_output=True,
-            )
-        except subprocess.CalledProcessError as ex:
-            raise ToolboxError() from ex
-        version = result.stdout.decode().strip()
-
-        return Version.from_string(version)
+        return Version.from_string(version())
 
 
 def extract_release_notes(file: str | Path) -> str:

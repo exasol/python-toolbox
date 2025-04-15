@@ -8,7 +8,7 @@ Creating a Release
 
     .. code-block:: shell
 
-        nox -s release:prepare -- [-h]
+         nox -s release:prepare -- --type {major,minor,patch}
 
 #. Merge your **Pull Request** to the **default branch**
 
@@ -36,17 +36,17 @@ The release failed during pre-release checks
 
         git push --delete origin "<major>.<minor>.<patch>"
 
-#. Fix the issue(s) which lead to the failing checks
+#. Fix the issue(s) which led to the failing checks
 #. Start the release process from the beginning
 
 
 One of the release steps failed (Partial Release)
 -------------------------------------------------
-#. Check the Github action/workflow to see which steps failed
+#. Check the GitHub action/workflow to see which steps failed
 #. Finish or redo the failed release steps manually
 
 .. note:: Example
 
-    **Scenario**: Publishing of the release on Github was successfully but during the PyPi release, the upload step got interrupted.
+    **Scenario**: Publishing of the release on GitHub was successfully but during the PyPi release, the upload step was interrupted.
 
     **Solution**: Manually push the package to PyPi
