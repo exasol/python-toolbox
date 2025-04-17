@@ -15,9 +15,11 @@ from exasol.toolbox.nox._release import (
     _trigger_release,
 )
 from exasol.toolbox.release import (
+    ReleaseTypes,
     Version,
     extract_release_notes,
     new_changelog,
+    poetry_command,
 )
 
 
@@ -56,7 +58,7 @@ def poetry_version():
         return subprocess.CompletedProcess(
             args=["poetry", "version", "--no-ansi", "--short"],
             returncode=0,
-            stdout=version.encode("utf8"),
+            stdout=version,
             stderr="",
         )
 
@@ -154,53 +156,113 @@ def test_extract_release_notes(unreleased_md):
     assert expected == actual
 
 
-@pytest.mark.parametrize(
-    "error_cmd",
-    [
-        ("git", "remote", "show", "origin"),
-        ("git", "checkout", "main"),
-        ("git", "pull"),
-        ("git", "tag", "--list"),
-        ("gh", "release", "list"),
-        ("git", "tag", "0.3.0"),
-        ("git", "push", "origin", "0.3.0"),
-    ],
-)
-@patch("exasol.toolbox.nox._release.Version.from_poetry", return_value="0.3.0")
-def test_trigger_release(mock, error_cmd):
-    def simulate_fail(args, **kwargs):
-        print("_______________")
-        print(args)
-        if args == error_cmd:
-            raise CalledProcessError(returncode=1, cmd=error_cmd)
-        result = ""
+@pytest.fixture(scope="class")
+def mock_from_poetry():
+    with patch(
+        "exasol.toolbox.nox._release.Version.from_poetry", return_value="0.3.0"
+    ) as mock_obj:
+        yield mock_obj
+
+
+class TestTriggerReleaseWithMocking:
+    @staticmethod
+    def _get_mock_string(args) -> str:
         if args == ("git", "remote", "show", "origin"):
-            result = "test\nHEAD branch: main\ntest"
-        return MagicMock(returncode=0, stdout=result)
+            return "test\nHEAD branch: main\ntest"
+        if args in [("git", "tag", "--list"), ("gh", "release", "list")]:
+            return "0.1.0\n0.2.0"
+        return ""
 
-    with patch("subprocess.run", side_effect=simulate_fail):
-        with pytest.raises(ReleaseError) as ex:
-            _trigger_release()
-        print(ex.value)
+    def _get_subprocess_run_mock(self, args) -> str:
+        return MagicMock(returncode=0, stdout=self._get_mock_string(args))
 
+    def test_works_as_expected(self, mock_from_poetry):
+        def simulate_pass(args, **kwargs):
+            return self._get_subprocess_run_mock(args)
 
-@pytest.mark.parametrize(
-    "error_cmd, result",
-    [
-        (
+        with patch("subprocess.run", side_effect=simulate_pass):
+            result = _trigger_release()
+        assert result == mock_from_poetry.return_value
+
+    @pytest.mark.parametrize(
+        "error_cmd",
+        [
             ("git", "remote", "show", "origin"),
-            "test\nHEAD: \ntest",
-        ),
-        (
+            ("git", "checkout", "main"),
+            ("git", "pull"),
             ("git", "tag", "--list"),
-            "0.1.0\n0.2.0\n0.3.0",
-        ),
-        (
             ("gh", "release", "list"),
-            "0.1.0\n0.2.0\n0.3.0",
-        ),
-    ],
-)
-@patch("exasol.toolbox.nox._release.Version.from_poetry", return_value="0.3.0")
-def test_trigger_release_bad_return(mock, error_cmd, result):
-    assert True
+            ("git", "tag", "0.3.0"),
+            ("git", "push", "origin", "0.3.0"),
+        ],
+    )
+    def test_caught_called_process_error_raises_release_error(
+        self, mock_from_poetry, error_cmd
+    ):
+        def simulate_fail(args, **kwargs):
+            if args == error_cmd:
+                raise CalledProcessError(returncode=1, cmd=error_cmd)
+            return self._get_subprocess_run_mock(args)
+
+        with patch("subprocess.run", side_effect=simulate_fail):
+            with pytest.raises(ReleaseError) as ex:
+                _trigger_release()
+        assert str(error_cmd) in str(ex)
+
+    def test_default_branch_could_not_be_found(self, mock_from_poetry):
+        def simulate_fail(args, **kwargs):
+            if args == ("git", "remote", "show", "origin"):
+                return MagicMock(returncode=0, stdout="DUMMY TEXT")
+            return self._get_subprocess_run_mock(args)
+
+        with patch("subprocess.run", side_effect=simulate_fail):
+            with pytest.raises(ReleaseError) as ex:
+                _trigger_release()
+        assert "default branch could not be found" in str(ex)
+
+    def test_tag_already_exists(self, mock_from_poetry):
+        version = mock_from_poetry.return_value
+
+        def simulate_fail(args, **kwargs):
+            if args == ("git", "tag", "--list"):
+                return MagicMock(returncode=0, stdout=f"0.1.0\n0.2.0\n{version}")
+            return self._get_subprocess_run_mock(args)
+
+        with patch("subprocess.run", side_effect=simulate_fail):
+            with pytest.raises(ReleaseError) as ex:
+                _trigger_release()
+        assert f"tag {version} already exists" in str(ex)
+
+    def test_release_already_exists(self, mock_from_poetry):
+        version = mock_from_poetry.return_value
+
+        def simulate_fail(args, **kwargs):
+            if args == ("gh", "release", "list"):
+                return MagicMock(returncode=0, stdout=f"0.1.0\n0.2.0\n{version}")
+            return self._get_subprocess_run_mock(args)
+
+        with patch("subprocess.run", side_effect=simulate_fail):
+            with pytest.raises(ReleaseError) as ex:
+                _trigger_release()
+        assert f"release {version} already exists" in str(ex)
+
+
+@patch("exasol.toolbox.release.which", return_value=None)
+def test_poetry_decorator_no_poetry_executable(mock):
+    @poetry_command
+    def test():
+        pass
+
+    with pytest.raises(ToolboxError):
+        test()
+
+
+@patch("exasol.toolbox.release.which", return_value="test/path")
+def test_poetry_decorator_subprocess(mock):
+    @poetry_command
+    def test():
+        raise subprocess.CalledProcessError(returncode=1, cmd=["test"])
+        pass
+
+    with pytest.raises(ToolboxError):
+        test()

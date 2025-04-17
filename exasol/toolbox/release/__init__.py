@@ -4,7 +4,10 @@ import subprocess
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from functools import total_ordering
+from functools import (
+    total_ordering,
+    wraps,
+)
 from inspect import cleandoc
 from pathlib import Path
 from shutil import which
@@ -28,27 +31,19 @@ class ReleaseTypes(Enum):
         return self.name.lower()
 
 
-def poetry(arguments: str):
-    def decorator(function):
-        def wrapper(*args, **kwargs):
-            cmd = which("poetry")
-            if not cmd:
-                raise ToolboxError("Couldn't find poetry executable")
+def poetry_command(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        cmd = which("poetry")
+        if not cmd:
+            raise ToolboxError("Couldn't find poetry executable")
+        print("huhu")
+        try:
+            return func(*args, **kwargs)
+        except subprocess.CalledProcessError as ex:
+            raise ToolboxError(f"Failed to execute: {ex.cmd}") from ex
 
-            try:
-                command = [cmd] + arguments.split(" ")
-                result = subprocess.run(
-                    command,
-                    capture_output=True,
-                )
-            except subprocess.CalledProcessError as ex:
-                raise ToolboxError() from ex
-
-            return function(result)
-
-        return wrapper
-
-    return decorator
+    return wrapper
 
 
 @total_ordering
@@ -95,19 +90,24 @@ class Version:
         return Version(*version)
 
     @staticmethod
-    @poetry("version --no-ansi --short")
-    def from_poetry(result):
-        version = result.stdout.decode().strip()
-
-        return Version.from_string(version)
+    @poetry_command
+    def from_poetry():
+        output = subprocess.run(
+            ["poetry", "version", "--no-ansi", "--short"],
+            capture_output=True,
+            text=True,
+        )
+        return Version.from_string(output.stdout.strip())
 
     @staticmethod
+    @poetry_command
     def upgrade_version_from_poetry(t: ReleaseTypes):
-        @poetry(f"version {str(t)} --dry-run --no-ansi --short")
-        def version(result):
-            return result.stdout.decode().strip()
-
-        return Version.from_string(version())
+        output = subprocess.run(
+            ["poetry", "version", str(t), "--dry-run", "--no-ansi", "--short"],
+            capture_output=True,
+            text=True,
+        )
+        return Version.from_string(output.stdout.strip())
 
 
 def extract_release_notes(file: str | Path) -> str:
