@@ -37,7 +37,6 @@ def poetry_command(func):
         cmd = which("poetry")
         if not cmd:
             raise ToolboxError("Couldn't find poetry executable")
-        print("huhu")
         try:
             return func(*args, **kwargs)
         except subprocess.CalledProcessError as ex:
