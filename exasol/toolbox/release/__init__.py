@@ -3,7 +3,11 @@ from __future__ import annotations
 import subprocess
 from dataclasses import dataclass
 from datetime import datetime
-from functools import total_ordering
+from enum import Enum
+from functools import (
+    total_ordering,
+    wraps,
+)
 from inspect import cleandoc
 from pathlib import Path
 from shutil import which
@@ -16,6 +20,29 @@ def _index_or(container, index, default):
         return container[index]
     except IndexError:
         return default
+
+
+class ReleaseTypes(Enum):
+    Major = "major"
+    Minor = "minor"
+    Patch = "patch"
+
+    def __str__(self):
+        return self.name.lower()
+
+
+def poetry_command(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        cmd = which("poetry")
+        if not cmd:
+            raise ToolboxError("Couldn't find poetry executable")
+        try:
+            return func(*args, **kwargs)
+        except subprocess.CalledProcessError as ex:
+            raise ToolboxError(f"Failed to execute: {ex.cmd}") from ex
+
+    return wrapper
 
 
 @total_ordering
@@ -62,20 +89,24 @@ class Version:
         return Version(*version)
 
     @staticmethod
+    @poetry_command
     def from_poetry():
-        poetry = which("poetry")
-        if not poetry:
-            raise ToolboxError("Couldn't find poetry executable")
+        output = subprocess.run(
+            ["poetry", "version", "--no-ansi", "--short"],
+            capture_output=True,
+            text=True,
+        )
+        return Version.from_string(output.stdout.strip())
 
-        try:
-            result = subprocess.run(
-                [poetry, "version", "--no-ansi", "--short"], capture_output=True
-            )
-        except subprocess.CalledProcessError as ex:
-            raise ToolboxError() from ex
-        version = result.stdout.decode().strip()
-
-        return Version.from_string(version)
+    @staticmethod
+    @poetry_command
+    def upgrade_version_from_poetry(t: ReleaseTypes):
+        output = subprocess.run(
+            ["poetry", "version", str(t), "--dry-run", "--no-ansi", "--short"],
+            capture_output=True,
+            text=True,
+        )
+        return Version.from_string(output.stdout.strip())
 
 
 def extract_release_notes(file: str | Path) -> str:

@@ -1,22 +1,20 @@
 from __future__ import annotations
 
 import argparse
+import re
+import subprocess
 from pathlib import Path
-from typing import (
-    List,
-    Tuple,
-)
 
 import nox
 from nox import Session
 
-from exasol.toolbox import cli
 from exasol.toolbox.nox._shared import (
     Mode,
     _version,
 )
 from exasol.toolbox.nox.plugin import NoxTasks
 from exasol.toolbox.release import (
+    ReleaseTypes,
     Version,
     extract_release_notes,
     new_changelog,
@@ -29,13 +27,16 @@ from noxconfig import PROJECT_CONFIG
 def _create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="nox -s release:prepare",
-        usage="nox -s release:prepare -- [-h] version",
+        usage="nox -s release:prepare -- [-h] [-t | --type {major,minor,patch}]",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
-        "version",
-        type=cli.version,
-        help=("A version string of the following format:" '"NUMBER.NUMBER.NUMBER"'),
+        "-t",
+        "--type",
+        type=ReleaseTypes,
+        help="specifies which type of upgrade is to be performed",
+        required=True,
+        default=argparse.SUPPRESS,
     )
     parser.add_argument(
         "--no-add",
@@ -89,6 +90,42 @@ def _add_files_to_index(session: Session, files: list[Path]) -> None:
         session.run("git", "add", f"{file}")
 
 
+class ReleaseError(Exception):
+    """Error during trigger release"""
+
+
+def _trigger_release() -> Version:
+    def run(*args: str):
+        try:
+            return subprocess.run(
+                args, capture_output=True, text=True, check=True
+            ).stdout
+        except subprocess.CalledProcessError as ex:
+            raise ReleaseError(
+                f"failed to execute command {ex.cmd}\n\n{ex.stderr}"
+            ) from ex
+
+    branches = run("git", "remote", "show", "origin")
+    if not (result := re.search(r"HEAD branch: (\S+)", branches)):
+        raise ReleaseError("default branch could not be found")
+    default_branch = result.group(1)
+
+    run("git", "checkout", default_branch)
+    run("git", "pull")
+
+    release_version = Version.from_poetry()
+    print(f"release version: {release_version}")
+
+    if re.search(rf"{release_version}", run("git", "tag", "--list")):
+        raise ReleaseError(f"tag {release_version} already exists")
+    if re.search(rf"{release_version}", run("gh", "release", "list")):
+        raise ReleaseError(f"release {release_version} already exists")
+
+    run("git", "tag", str(release_version))
+    run("git", "push", "origin", str(release_version))
+    return release_version
+
+
 @nox.session(name="release:prepare", python=False)
 def prepare_release(session: Session, python=False) -> None:
     """
@@ -97,14 +134,7 @@ def prepare_release(session: Session, python=False) -> None:
     parser = _create_parser()
     args = parser.parse_args(session.posargs)
 
-    if not _is_valid_version(
-        old=(old_version := Version.from_poetry()),
-        new=(new_version := args.version),
-    ):
-        session.error(
-            f"Invalid version: the release version ({new_version}) "
-            f"must be greater than or equal to the current version ({old_version})"
-        )
+    new_version = Version.upgrade_version_from_poetry(args.type)
 
     if not args.no_branch and not args.no_add:
         session.run("git", "switch", "-c", f"release/prepare-{new_version}")
@@ -146,3 +176,9 @@ def prepare_release(session: Session, python=False) -> None:
             "--body",
             '""',
         )
+
+
+@nox.session(name="release:trigger", python=False)
+def trigger_release(session: Session) -> None:
+    """trigger an automatic project release"""
+    print(f"new version: {_trigger_release()}")
