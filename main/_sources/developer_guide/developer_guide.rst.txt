@@ -10,4 +10,4 @@
     ../design
     plugins
     modules/modules
-    ../user_guide/how_to_release
+    how_to_release
