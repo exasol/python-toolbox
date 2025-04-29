@@ -1,20 +1,17 @@
 import argparse
-import subprocess
 import sys
 from argparse import (
     ArgumentParser,
     Namespace,
 )
-from collections import namedtuple
 from inspect import cleandoc
 from pathlib import Path
-from shutil import which
-from typing import Any
 
 import nox
 from nox import Session
 
-Version = namedtuple("Version", ["major", "minor", "patch"])
+from exasol.toolbox.error import ToolboxError
+from exasol.toolbox.version import Version
 
 _SUCCESS = 0
 _FAILURE = 1
@@ -36,47 +33,10 @@ _VERSION_MODULE_TEMPLATE = cleandoc('''
 # fmt: on
 
 
-def version_from_string(s: str) -> Version:
-    """Converts a version string of the following format major.minor.patch to a version object"""
-    major, minor, patch = (int(number, base=0) for number in s.split("."))
-    return Version(major, minor, patch)
-
-
-class CommitHookError(Exception):
-    """Indicates that this commit hook encountered an error"""
-
-
-def version_from_python_module(path: Path) -> Version:
-    """Retrieve version information from the `version` module"""
-    with open(path, encoding="utf-8") as file:
-        _locals: dict[str, Any] = {}
-        _globals: dict[str, Any] = {}
-        exec(file.read(), _locals, _globals)
-
-        try:
-            version = _globals["VERSION"]
-        except KeyError as ex:
-            raise CommitHookError("Couldn't find version within module") from ex
-
-        return version_from_string(version)
-
-
-def version_from_poetry() -> Version:
-    poetry = which("poetry")
-    if not poetry:
-        raise CommitHookError("Couldn't find poetry executable")
-
-    result = subprocess.run(
-        [poetry, "version", "--no-ansi"], capture_output=True, check=False
-    )
-    version = result.stdout.decode().split()[1]
-    return version_from_string(version)
-
-
 def write_version_module(version: Version, path: str, exists_ok: bool = True) -> None:
     version_file = Path(path)
     if version_file.exists() and not exists_ok:
-        raise CommitHookError(f"Version file [{version_file}] already exists.")
+        raise ToolboxError(f"Version file [{version_file}] already exists.")
     version_file.unlink(missing_ok=True)
     with open(version_file, "w", encoding="utf-8") as f:
         f.write(
@@ -111,8 +71,8 @@ def _create_parser() -> ArgumentParser:
 
 
 def _main_debug(args: Namespace) -> int:
-    module_version = version_from_python_module(args.version_module)
-    poetry_version = version_from_poetry()
+    module_version = Version.from_python_module(args.version_module)
+    poetry_version = Version.from_poetry()
 
     if args.fix:
         write_version_module(poetry_version, args.version_module)
