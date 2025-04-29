@@ -110,6 +110,5 @@ module = [
 ignore_errors = true
 
 [tool.poetry.plugins."console_scripts"]
-version-check = "exasol.toolbox.pre_commit_hooks.package_version:main"
 tbx = 'exasol.toolbox.tools.tbx:CLI'
 sphinx-multiversion = 'exasol.toolbox.sphinx.multiversion:main'
