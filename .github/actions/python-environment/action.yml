@@ -31,15 +31,9 @@ runs:
     - name: Setup up pipx if not present
       shell: bash
       run: |
-        if ! command -v pipx >/dev/null 2>&1; then
-          echo "install pipx"
-          python -m pip install --upgrade pip
-          python -m pip install pipx
-          pipx ensurepath
-          echo "$Home/.local/bin" >> $GITHUB_PATH
-        else
-          echo "pipx is present"
-        fi
+        python3 m pip install --upgrade pipx
+        pipx ensurepath
+        echo "$Home/.local/bin" >> $GITHUB_PATH
         
 
     - name: Setup Poetry (${{ inputs.poetry-version }})
