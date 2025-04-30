@@ -45,7 +45,7 @@ runs:
       run: |
         EXTRAS=$(echo "${{ inputs.extras }}" | tr -d ' ')
         if [[ -n "$EXTRAS" ]]; then
-          poetry install --with "$EXTRAS"
+          poetry install --extras "$EXTRAS"
         else
           poetry install
         fi
