@@ -11,7 +11,7 @@ import nox
 from nox import Session
 
 from exasol.toolbox.error import ToolboxError
-from exasol.toolbox.util import Version
+from exasol.toolbox.version import Version
 
 _SUCCESS = 0
 _FAILURE = 1

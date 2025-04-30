@@ -4,7 +4,7 @@ from datetime import datetime
 from inspect import cleandoc
 from pathlib import Path
 
-from exasol.toolbox.util import Version
+from exasol.toolbox.version import Version
 
 
 def extract_release_notes(file: str | Path) -> str:
