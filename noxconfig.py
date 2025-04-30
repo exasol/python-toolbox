@@ -44,9 +44,7 @@ class Config:
     root: Path = Path(__file__).parent
     doc: Path = Path(__file__).parent / "doc"
     importlinter: Path = Path(__file__).parent / ".import_linter_config"
-    version_file: Path = (
-        Path(__file__).parent / "exasol" / "toolbox" / "util" / "version.py"
-    )
+    version_file: Path = Path(__file__).parent / "exasol" / "toolbox" / "version.py"
     path_filters: Iterable[str] = (
         "dist",
         ".eggs",
