@@ -34,8 +34,8 @@ runs:
         if ! command -v pipx >/dev/null 2>&1; then
           python -m pip install --upgrade pip
           python -m pip install pipx
-          pipx ensurepath
         fi
+        pipx ensurepath
 
     - name: Setup Poetry (${{ inputs.poetry-version }})
       run: |
