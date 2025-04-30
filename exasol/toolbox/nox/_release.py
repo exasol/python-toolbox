@@ -19,10 +19,7 @@ from exasol.toolbox.release import (
     new_changes,
     new_unreleased,
 )
-from exasol.toolbox.version import (
-    ReleaseTypes,
-    Version,
-)
+from exasol.toolbox.util import ReleaseTypes, Version
 from noxconfig import PROJECT_CONFIG
 
 

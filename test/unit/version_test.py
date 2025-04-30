@@ -12,10 +12,7 @@ from exasol.toolbox.nox._release import (
     ReleaseError,
     _trigger_release,
 )
-from exasol.toolbox.version import (
-    Version,
-    poetry_command,
-)
+from exasol.toolbox.util import poetry_command, Version
 
 
 @pytest.mark.parametrize(

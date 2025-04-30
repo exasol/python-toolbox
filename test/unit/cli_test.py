@@ -3,7 +3,7 @@ from argparse import ArgumentTypeError
 import pytest
 
 from exasol.toolbox.cli import version
-from exasol.toolbox.version import Version
+from exasol.toolbox.util import Version
 
 
 @pytest.mark.parametrize(

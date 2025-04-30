@@ -3,10 +3,7 @@ from __future__ import annotations
 import subprocess
 from dataclasses import dataclass
 from enum import Enum
-from functools import (
-    total_ordering,
-    wraps,
-)
+from functools import wraps, total_ordering
 from pathlib import Path
 from shutil import which
 from typing import Any

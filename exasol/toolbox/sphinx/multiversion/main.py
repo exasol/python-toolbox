@@ -25,7 +25,7 @@ from exasol.toolbox.sphinx.multiversion import (
     git,
     sphinx,
 )
-from exasol.toolbox.version import Version as ExasolVersion
+from exasol.toolbox.util import Version as ExasolVersion
 
 logging.basicConfig(
     level="INFO",

@@ -7,9 +7,7 @@ from exasol.toolbox.release import (
     extract_release_notes,
     new_changelog,
 )
-from exasol.toolbox.version import (
-    Version,
-)
+from exasol.toolbox.util import Version
 
 
 @pytest.mark.parametrize(
