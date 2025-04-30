@@ -1,12 +1,21 @@
 import subprocess
 from subprocess import CalledProcessError
-from unittest.mock import patch, MagicMock
+from unittest.mock import (
+    MagicMock,
+    patch,
+)
 
 import pytest
 
 from exasol.toolbox.error import ToolboxError
-from exasol.toolbox.nox._release import _trigger_release, ReleaseError
-from exasol.toolbox.version import Version, poetry_command
+from exasol.toolbox.nox._release import (
+    ReleaseError,
+    _trigger_release,
+)
+from exasol.toolbox.version import (
+    Version,
+    poetry_command,
+)
 
 
 @pytest.mark.parametrize(
@@ -176,3 +185,23 @@ def test_poetry_decorator_subprocess(mock):
 
     with pytest.raises(ToolboxError):
         test()
+
+
+def test_version_from_python_module(tmp_path):
+    tmp_file = tmp_path / "file"
+    file = """
+MAJOR = 1
+MINOR = 2
+PATCH = 3
+VERSION = f"{MAJOR}.{MINOR}.{PATCH}"
+__version__ = VERSION
+    """
+    tmp_file.write_text(file)
+    assert Version.from_python_module(tmp_file) == Version.from_string("1.2.3")
+
+
+def test_version_from_python_no_module_error(tmp_path):
+    file_path = tmp_path / "file"
+    file_path.write_text("")
+    with pytest.raises(ToolboxError) as ex:
+        Version.from_python_module(file_path)

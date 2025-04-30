@@ -86,5 +86,3 @@ def test_extract_release_notes(unreleased_md):
     )
     actual = extract_release_notes(unreleased_md)
     assert expected == actual
-
-

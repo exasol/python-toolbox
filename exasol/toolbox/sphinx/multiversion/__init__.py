@@ -17,9 +17,9 @@ The original version and its defaults were minimally adjusted to work in Exasol'
 
 from exasol.toolbox.sphinx.multiversion.main import main
 from exasol.toolbox.sphinx.multiversion.sphinx import setup
-from exasol.toolbox.version import VERSION
+from exasol.toolbox.version import Version
 
-__version__ = VERSION
+__version__ = Version
 
 __all__ = [
     "setup",
