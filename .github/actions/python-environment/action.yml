@@ -38,7 +38,9 @@ runs:
         fi
 
     - name: Setup Poetry (${{ inputs.poetry-version }})
-      run: pipx install poetry==${{ inputs.poetry-version }}
+      run: |
+        pipx install poetry==${{ inputs.poetry-version }}
+        echo "$Home/.local/bin" >> $GITHUB_PATH
       shell: bash
 
     - name: Poetry install with extras
