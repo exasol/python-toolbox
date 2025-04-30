@@ -176,7 +176,7 @@ def test_poetry_decorator_no_poetry_executable(mock):
         test()
 
 
-@patch("exasol.toolbox.version.util.which", return_value="test/path")
+@patch("exasol.toolbox.util.version.which", return_value="test/path")
 def test_poetry_decorator_subprocess(mock):
     @poetry_command
     def test():
