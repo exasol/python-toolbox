@@ -32,15 +32,19 @@ runs:
       shell: bash
       run: |
         if ! command -v pipx >/dev/null 2>&1; then
+          echo "install pipx"
           python -m pip install --upgrade pip
           python -m pip install pipx
+          pipx ensurepath
+          echo "$Home/.local/bin" >> $GITHUB_PATH
+        else
+          echo "pipx is present"
         fi
-        pipx ensurepath
+        
 
     - name: Setup Poetry (${{ inputs.poetry-version }})
       run: |
         pipx install poetry==${{ inputs.poetry-version }}
-        echo "$Home/.local/bin" >> $GITHUB_PATH
       shell: bash
 
     - name: Poetry install with extras
