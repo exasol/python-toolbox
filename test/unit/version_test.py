@@ -12,10 +12,7 @@ from exasol.toolbox.nox._release import (
     ReleaseError,
     _trigger_release,
 )
-from exasol.toolbox.version import (
-    Version,
-    poetry_command,
-)
+from exasol.toolbox.util.version import poetry_command, Version
 
 
 @pytest.mark.parametrize(
@@ -166,7 +163,7 @@ class TestTriggerReleaseWithMocking:
         assert f"release {version} already exists" in str(ex)
 
 
-@patch("exasol.toolbox.version.which", return_value=None)
+@patch("exasol.toolbox.util.version.which", return_value=None)
 def test_poetry_decorator_no_poetry_executable(mock):
     @poetry_command
     def test():
@@ -176,7 +173,7 @@ def test_poetry_decorator_no_poetry_executable(mock):
         test()
 
 
-@patch("exasol.toolbox.version.which", return_value="test/path")
+@patch("exasol.toolbox.version.util.which", return_value="test/path")
 def test_poetry_decorator_subprocess(mock):
     @poetry_command
     def test():
