@@ -17,6 +17,7 @@ from nox import Session
 
 from noxconfig import PROJECT_CONFIG
 
+DEFAULT_PATH_FILTERS = ("dist", ".eggs", "venv", ".poetry")
 DOCS_OUTPUT_DIR = ".html-documentation"
 
 
@@ -26,23 +27,15 @@ class Mode(Enum):
 
 
 def python_files(project_root: Path) -> Iterable[Path]:
-    path_filters = tuple(["dist", ".eggs", "venv"] + list(PROJECT_CONFIG.path_filters))
-    return _python_files(project_root, path_filters)
-
-
-def _python_files(
-    project_root: Path, path_filters: Iterable[str] = ("dist", ".eggs", "venv")
-) -> Iterable[Path]:
-    """Returns all relevant"""
-    return _deny_filter(project_root.glob("**/*.py"), deny_list=path_filters)
-
-
-def _deny_filter(files: Iterable[Path], deny_list: Iterable[str]) -> Iterable[Path]:
     """
-    Adds a filter to remove unwanted paths containing python files from the iterator.
+    Returns iterable of python files after removing unwanted paths
     """
+    deny_list = tuple(DEFAULT_PATH_FILTERS + PROJECT_CONFIG.path_filters)
+
+    files = project_root.glob("**/*.py")
     for entry in deny_list:
         files = list(filter(lambda path: entry not in path.parts, files))
+
     return files
 
 
