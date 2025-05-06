@@ -2,4 +2,4 @@
 
 ## ✨ Features
 
-* [#378](https://github.com/exasol/python-toolbox/pull/378/files): Add Nox task to trigger a release
+* [#362](https://github.com/exasol/python-toolbox/issues/362): Added Nox task to trigger a release
