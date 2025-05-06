@@ -162,7 +162,7 @@ forward, and you just can use the example *noxfile.py* below.
 
 
 6. Set up the pre-commit hooks [optional]
-++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++
 
 #. Add a :code:`.pre-commit-config.yaml` file to your project root
 

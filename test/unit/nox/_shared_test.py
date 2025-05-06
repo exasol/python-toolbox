@@ -24,7 +24,7 @@ def path_filter_directory():
 
 @pytest.fixture(scope="session")
 def directories(package_directory, path_filter_directory):
-    yield (package_directory, path_filter_directory) + DEFAULT_PATH_FILTERS
+    yield DEFAULT_PATH_FILTERS.union({package_directory, path_filter_directory})
 
 
 @pytest.fixture(scope="session")

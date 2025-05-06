@@ -17,7 +17,7 @@ from nox import Session
 
 from noxconfig import PROJECT_CONFIG
 
-DEFAULT_PATH_FILTERS = ("dist", ".eggs", "venv", ".poetry")
+DEFAULT_PATH_FILTERS = {"dist", ".eggs", "venv", ".poetry"}
 DOCS_OUTPUT_DIR = ".html-documentation"
 
 
@@ -30,13 +30,10 @@ def python_files(project_root: Path) -> Iterable[Path]:
     """
     Returns iterable of python files after removing unwanted paths
     """
-    deny_list = tuple(DEFAULT_PATH_FILTERS + PROJECT_CONFIG.path_filters)
+    deny_list = DEFAULT_PATH_FILTERS.union(set(PROJECT_CONFIG.path_filters))
 
     files = project_root.glob("**/*.py")
-    for entry in deny_list:
-        files = list(filter(lambda path: entry not in path.parts, files))
-
-    return files
+    return [path for path in files if not set(path.parts).intersection(deny_list)]
 
 
 def _version(session: Session, mode: Mode, version_file: Path) -> None:
