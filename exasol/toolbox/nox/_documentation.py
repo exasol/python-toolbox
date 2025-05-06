@@ -36,9 +36,7 @@ def _build_multiversion_docs(session: nox.Session, config: Config) -> None:
         f"{config.doc}",
         DOCS_OUTPUT_DIR,
     )
-    session.run(
-        "touch", f"{DOCS_OUTPUT_DIR}/.nojekyll"
-    )
+    session.run("touch", f"{DOCS_OUTPUT_DIR}/.nojekyll")
 
 
 def _git_diff_changes_main() -> int:

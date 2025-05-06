@@ -1,7 +1,10 @@
 import pytest
 
 import noxconfig
-from exasol.toolbox.nox._shared import python_files, DEFAULT_PATH_FILTERS
+from exasol.toolbox.nox._shared import (
+    DEFAULT_PATH_FILTERS,
+    python_files,
+)
 
 
 @pytest.fixture(scope="session")
@@ -38,9 +41,12 @@ def create_files(tmp_directory, directories):
     yield file_list
 
 
-def test_python_files(monkeypatch, tmp_directory, create_files,
-                      package_directory, path_filter_directory):
-    object.__setattr__(noxconfig.PROJECT_CONFIG, 'path_filters', (path_filter_directory,))
+def test_python_files(
+    monkeypatch, tmp_directory, create_files, package_directory, path_filter_directory
+):
+    object.__setattr__(
+        noxconfig.PROJECT_CONFIG, "path_filters", (path_filter_directory,)
+    )
 
     actual = python_files(tmp_directory)
     assert len(actual) == 1
