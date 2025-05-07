@@ -46,9 +46,6 @@ class Config:
     importlinter: Path = Path(__file__).parent / ".import_linter_config"
     version_file: Path = Path(__file__).parent / "exasol" / "toolbox" / "version.py"
     path_filters: Iterable[str] = (
-        "dist",
-        ".eggs",
-        "venv",
         "metrics-schema",
         "project-template",
         "idioms",

@@ -1,6 +1,7 @@
 [project]
 name = "exasol-toolbox"
 version = "1.0.1"
+requires-python = "^3.9"
 description = "Your one-stop solution for managing all standard tasks and core workflows of your Python project."
 authors = [
     {name = "Nicola Coretti", email = "nicola.coretti@exasol.com"},
@@ -16,6 +17,7 @@ keywords = [
     "exasol",
     "infrastructure",
 ]
+dynamic = ["dependencies"]
 
 [tool.poetry]
 requires-poetry = ">=2.1.0"
@@ -37,7 +39,6 @@ Issues = "https://github.com/exasol/python-toolbox/issues"
 Changelog = "https://exasol.github.io/python-toolbox/changelog.html"
 
 [tool.poetry.dependencies]
-python = "^3.9"
 black = ">=24.1.0"
 coverage = ">=6.4.4,<8.0.0"
 furo = ">=2022.9.15"
@@ -68,7 +69,7 @@ pip-audit = "^2.7.3"
 autoimport = "^1.4.0"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=2.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 # Tooling
@@ -103,7 +104,6 @@ max-module-lines = 800
 
 [[tool.mypy.overrides]]
 module = [
-    "exasol.toolbox.sphinx.multiversion.*",
     "test.unit.*",
     "test.integration.*",
 ]
