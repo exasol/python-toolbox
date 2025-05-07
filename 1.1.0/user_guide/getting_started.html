@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="grass" data-content_root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Getting Started - Toolbox</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Features" href="features.html" /><link rel="prev" title="User Guide" href="user_guide.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=c516b45e" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
+    
+    <meta property="og:type" content="website"/><meta property="og:title" content="Getting Started"/>
+<meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../index.html">
+      <img class="light-logo" src="../_static/light-exasol-logo.svg" alt="Exasol Toolbox" height="28" loading="lazy" />
+      <img class="dark-logo" src="../_static/dark-exasol-logo.svg" alt="Exasol Toolbox" height="28" loading="lazy" />
+      <strong>Exasol Toolbox</strong>
+    </a>
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="nav-versions">
+    <button type="button" aria-label="Versions">
+      <span class="md:hidden">Versions</span>
+      <span class="hidden md:inline">1.1.0</span>
+      <i class="i-lucide chevron-down"></i>
+    </button>
+    <div class="nav-versions-choices"><ul><li><a href="getting_started.html">1.1.0</a></li><li><a href="../../1.0.1/user_guide/getting_started.html">1.0.1</a></li><li><a href="../../1.0.0/user_guide/getting_started.html">1.0.0</a></li><li><a href="../../0.21.0/user_guide/getting_started.html">0.21.0</a></li><li><a href="../../0.20.0/user_guide/getting_started.html">0.20.0</a></li><li><a href="../../0.19.0/user_guide/getting_started.html">0.19.0</a></li><li><a href="../../0.18.0/user_guide/getting_started.html">0.18.0</a></li><li><a href="../../0.17.0/user_guide/getting_started.html">0.17.0</a></li><li><a href="../../0.16.0/user_guide/getting_started.html">0.16.0</a></li><li><a href="../../0.15.0/user_guide/getting_started.html">0.15.0</a></li><li><a href="../../0.14.0/user_guide/getting_started.html">0.14.0</a></li><li><a href="../../0.13.0/user_guide/getting_started.html">0.13.0</a></li><li><a href="../../0.12.0/user_guide/getting_started.html">0.12.0</a></li><li><a href="../../0.11.0/user_guide/getting_started.html">0.11.0</a></li><li><a href="../../0.10.0/user_guide/getting_started.html">0.10.0</a></li><li><a href="../../0.9.0/user_guide/getting_started.html">0.9.0</a></li><li><a href="../../0.8.0/user_guide/getting_started.html">0.8.0</a></li><li><a href="../../0.7.0/user_guide/getting_started.html">0.7.0</a></li><li><a href="../../0.6.2/user_guide/getting_started.html">0.6.2</a></li><li><a href="../../0.6.1/user_guide/getting_started.html">0.6.1</a></li><li><a href="../../0.6.0/user_guide/getting_started.html">0.6.0</a></li><li><a href="../../0.5.0/user_guide/getting_started.html">0.5.0</a></li><li><a href="../../0.4.0/user_guide/getting_started.html">0.4.0</a></li><li><a href="../../0.3.0/user_guide/getting_started.html">0.3.0</a></li><li><a href="../../0.2.0/user_guide/getting_started.html">0.2.0</a></li><li><a href="../../0.1.0/user_guide/getting_started.html">0.1.0</a></li></ul></div>
+  </div><div class="sy-head-socials">
+  <a href="https://github.com/exasol/python-toolbox" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="user_guide.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-person" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path></svg> User Guide</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows.html">GitHub Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html">Customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrating.html">Migrating Legacy Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to_release.html">How to Release?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/developer_guide.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-tools" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.433 2.304A4.492 4.492 0 0 0 3.5 6c0 1.598.832 3.002 2.09 3.802.518.328.929.923.902 1.64v.008l-.164 3.337a.75.75 0 1 1-1.498-.073l.163-3.33c.002-.085-.05-.216-.207-.316A5.996 5.996 0 0 1 2 6a5.993 5.993 0 0 1 2.567-4.92 1.482 1.482 0 0 1 1.673-.04c.462.296.76.827.76 1.423v2.82c0 .082.041.16.11.206l.75.51a.25.25 0 0 0 .28 0l.75-.51A.249.249 0 0 0 9 5.282V2.463c0-.596.298-1.127.76-1.423a1.482 1.482 0 0 1 1.673.04A5.993 5.993 0 0 1 14 6a5.996 5.996 0 0 1-2.786 5.068c-.157.1-.209.23-.207.315l.163 3.33a.752.752 0 0 1-1.094.714.75.75 0 0 1-.404-.64l-.164-3.345c-.027-.717.384-1.312.902-1.64A4.495 4.495 0 0 0 12.5 6a4.492 4.492 0 0 0-1.933-3.696c-.024.017-.067.067-.067.16v2.818a1.75 1.75 0 0 1-.767 1.448l-.75.51a1.75 1.75 0 0 1-1.966 0l-.75-.51A1.75 1.75 0 0 1 5.5 5.282V2.463c0-.092-.043-.142-.067-.159Z"></path></svg> Developer Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design.html">Design Document</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/plugins.html">Plugin Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/modules/modules.html">Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../developer_guide/modules/sphinx/sphinx.html">sphinx</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../developer_guide/modules/nox.html">nox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../developer_guide/modules/nox_tasks.html">nox_tasks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../developer_guide/modules/pre_commit_hooks.html">pre_commit_hooks</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/how_to_release.html">How to Release?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../styleguide/index.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-paintbrush" viewBox="0 0 16 16" aria-hidden="true"><path d="M11.134 1.535c.7-.509 1.416-.942 2.076-1.155.649-.21 1.463-.267 2.069.34.603.601.568 1.411.368 2.07-.202.668-.624 1.39-1.125 2.096-1.011 1.424-2.496 2.987-3.775 4.249-1.098 1.084-2.132 1.839-3.04 2.3a3.744 3.744 0 0 1-1.055 3.217c-.431.431-1.065.691-1.657.861-.614.177-1.294.287-1.914.357A21.151 21.151 0 0 1 .797 16H.743l.007-.75H.749L.742 16a.75.75 0 0 1-.743-.742l.743-.008-.742.007v-.054a21.25 21.25 0 0 1 .13-2.284c.067-.647.187-1.287.358-1.914.17-.591.43-1.226.86-1.657a3.746 3.746 0 0 1 3.227-1.054c.466-.893 1.225-1.907 2.314-2.982 1.271-1.255 2.833-2.75 4.245-3.777ZM1.62 13.089c-.051.464-.086.929-.104 1.395.466-.018.932-.053 1.396-.104a10.511 10.511 0 0 0 1.668-.309c.526-.151.856-.325 1.011-.48a2.25 2.25 0 1 0-3.182-3.182c-.155.155-.329.485-.48 1.01a10.515 10.515 0 0 0-.309 1.67Zm10.396-10.34c-1.224.89-2.605 2.189-3.822 3.384l1.718 1.718c1.21-1.205 2.51-2.597 3.387-3.833.47-.662.78-1.227.912-1.662.134-.444.032-.551.009-.575h-.001V1.78c-.014-.014-.113-.113-.548.027-.432.14-.995.462-1.655.942Zm-4.832 7.266-.001.001a9.859 9.859 0 0 0 1.63-1.142L7.155 7.216a9.7 9.7 0 0 0-1.161 1.607c.482.302.889.71 1.19 1.192Z"></path></svg> Python Styleguide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../styleguide/guides/style.html">Styleguide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../styleguide/guides/idioms/idioms.html">Idioms</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../styleguide/guides/idioms/general.html">General</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../styleguide/guides/idioms/strings.html">Strings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../styleguide/guides/idioms/looping.html">Looping</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../styleguide/guides/idioms/dictionaries.html">Dictionaries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../styleguide/guides/idioms/seperation_of_concerns.html">Separation of Concerns</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../issues.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-list-unordered" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.75 2.5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg> Issue Tracking Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-terminal" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 2.75C0 1.784.784 1 1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25Zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25ZM7.25 8a.749.749 0 0 1-.22.53l-2.25 2.25a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L5.44 8 3.72 6.28a.749.749 0 0 1 .326-1.275.749.749 0 0 1 .734.215l2.25 2.25c.141.14.22.331.22.53Zm1.5 1.5h3a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1 0-1.5Z"></path></svg> Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../github_actions/github_actions.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm4.879-2.773 4.264 2.559a.25.25 0 0 1 0 .428l-4.264 2.559A.25.25 0 0 1 6 10.559V5.442a.25.25 0 0 1 .379-.215Z"></path></svg> Github Actions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../github_actions/python_environment.html">python-environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../github_actions/security_issues.html">security-issues</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-cpu" viewBox="0 0 16 16" aria-hidden="true"><path d="M6.5.75V2h3V.75a.75.75 0 0 1 1.5 0V2h1.25c.966 0 1.75.784 1.75 1.75V5h1.25a.75.75 0 0 1 0 1.5H14v3h1.25a.75.75 0 0 1 0 1.5H14v1.25A1.75 1.75 0 0 1 12.25 14H11v1.25a.75.75 0 0 1-1.5 0V14h-3v1.25a.75.75 0 0 1-1.5 0V14H3.75A1.75 1.75 0 0 1 2 12.25V11H.75a.75.75 0 0 1 0-1.5H2v-3H.75a.75.75 0 0 1 0-1.5H2V3.75C2 2.784 2.784 2 3.75 2H5V.75a.75.75 0 0 1 1.5 0Zm5.75 11.75a.25.25 0 0 0 .25-.25v-8.5a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25ZM5.75 5h4.5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-.75.75h-4.5a.75.75 0 0 1-.75-.75v-4.5A.75.75 0 0 1 5.75 5Zm.75 4.5h3v-3h-3Z"></path></svg> API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../metrics.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-graph" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 1.75V13.5h13.75a.75.75 0 0 1 0 1.5H.75a.75.75 0 0 1-.75-.75V1.75a.75.75 0 0 1 1.5 0Zm14.28 2.53-5.25 5.25a.75.75 0 0 1-1.06 0L7 7.06 4.28 9.78a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042l3.25-3.25a.75.75 0 0 1 1.06 0L10 7.94l4.72-4.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042Z"></path></svg> Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-question" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.756 2.756 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6.24 6.24 0 0 0-.26.16.952.952 0 0 0-.276.245.75.75 0 0 1-1.248-.832c.184-.264.42-.489.692-.661.103-.067.207-.132.313-.195l.007-.004c.1-.061.182-.11.258-.161a.969.969 0 0 0 .277-.245C8.96 6.514 9 6.427 9 6.25a.612.612 0 0 0-.262-.525A1.27 1.27 0 0 0 8 5.5c-.369 0-.595.09-.74.187a1.01 1.01 0 0 0-.34.398ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg> FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes/changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../changes/unreleased.html">Unreleased</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_1.1.0.html">1.1.0 - 2025-05-07</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_1.0.1.html">1.0.1 - 2025-04-11</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_1.0.0.html">1.0.0 - 2025-04-04</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.21.0.html">0.21.0 - 2025-02-25</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.20.0.html">0.20.0 - 2024-12-17</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.19.0.html">0.19.0 - 2024-12-05</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.18.0.html">0.18.0 - 2024-11-19</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.17.0.html">0.17.0 - 2024-11-18</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.16.0.html">0.16.0 - 2024-11-15</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.15.0.html">0.15.0 - 2024-09-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.14.0.html">0.14.0 - 2024-07-02</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.13.0.html">0.13.0 - 2024-06-06</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.12.0.html">0.12.0 - 2024-05-17</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.11.0.html">0.11.0 - 2024-05-17</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.10.0.html">0.10.0 - 2024-05-15</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.9.0.html">0.9.0 - 2024-05-08</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.8.0.html">0.8.0 - 2024-02-07</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.7.0.html">0.7.0 - 2024-01-26</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.6.2.html">0.6.2 - 2023-11-20</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.6.1.html">0.6.1 - 2023-10-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.6.0.html">0.6.0 - 2023-10-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.5.0.html">0.5.0 - 2023-10-12</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.4.0.html">0.4.0 - 2023-04-19</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.3.0.html">0.3.0 - 2022-12-21</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.2.0.html">0.2.0 - 2022-12-20</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes/changes_0.1.0.html">0.1.0 - 2022-11-25</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#create-a-new-project-with-exasol-toolbox-support">Create a New Project with Exasol-Toolbox Support</a></li>
+<li><a class="reference internal" href="#integrating-exasol-toolbox-into-your-project">Integrating Exasol-Toolbox into your Project</a><ul>
+<li><a class="reference internal" href="#add-the-toolbox-as-dependency">1. Add the toolbox as dependency</a></li>
+<li><a class="reference internal" href="#fine-tune-the-gitignore-file">2. Fine tune the .gitignore file</a></li>
+<li><a class="reference internal" href="#provide-a-project-configuration">3. Provide a project configuration</a><ul>
+<li><a class="reference internal" href="#root"><code class="docutils literal notranslate"><span class="pre">root</span></code></a></li>
+<li><a class="reference internal" href="#doc"><code class="docutils literal notranslate"><span class="pre">doc</span></code></a></li>
+<li><a class="reference internal" href="#version_file"><code class="docutils literal notranslate"><span class="pre">version_file</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#configure-the-tooling">4. Configure the tooling</a></li>
+<li><a class="reference internal" href="#make-the-toolbox-tasks-available">5. Make the toolbox tasks available</a></li>
+<li><a class="reference internal" href="#set-up-the-pre-commit-hooks-optional">6. Set up the pre-commit hooks [optional]</a></li>
+<li><a class="reference internal" href="#go">7. Go &#129372;</a></li>
+</ul>
+</li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">Exasol Toolbox</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="user_guide.html"><span itemprop="name"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-person" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path></svg> User Guide</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Getting Started</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h1>
+<p>Your usage of the <cite>exasol-toolbox</cite> will likely fall into one of two scenarios:</p>
+<ol class="arabic">
+<li><p>Integration into an existing project.</p>
+<blockquote>
+<div><p>If this is your situation, proceed to the section titled <a class="reference internal" href="#existing"><span class="std std-ref">Integrating Exasol-Toolbox into your Project</span></a>.</p>
+</div></blockquote>
+</li>
+<li><p>Creation of a new project.</p>
+<blockquote>
+<div><p>If you are starting a new project, please read the section <a class="reference internal" href="#new-project"><span class="std std-ref">Create a New Project with Exasol-Toolbox Support</span></a>.</p>
+</div></blockquote>
+</li>
+</ol>
+<section id="create-a-new-project-with-exasol-toolbox-support">
+<span id="new-project"></span><h2>Create a New Project with Exasol-Toolbox Support<a class="headerlink" href="#create-a-new-project-with-exasol-toolbox-support" title="Link to this heading">¶</a></h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>To establish a new project with toolbox support, you need to have <a class="reference external" href="https://www.cookiecutter.io">Cookiecutter</a> installed.</p>
+<dl class="simple">
+<dt><strong>TL;DR:</strong></dt><dd><p><code class="code docutils literal notranslate"><span class="pre">pipx</span> <span class="pre">install</span> <span class="pre">cookiecutter</span></code></p>
+</dd>
+</dl>
+</div>
+<p><strong>1. Create a new project</strong></p>
+<p>Cookiecutter will create the project within the current directory. So if you
+usually checkout all your GitHub repos in <code class="docutils literal notranslate"><span class="pre">~/git</span></code> you could use <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">~/git</span></code>
+before calling cookiecutter.</p>
+<p>Use the following command to create a new project:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">cookiecutter<span class="w"> </span>https://github.com/exasol/python-toolbox.git<span class="w"> </span><span class="se">\</span>
+</span><span data-line="2"><span class="w">  </span>--directory<span class="w"> </span>project-template
+</span></pre></div>
+</div>
+<p><strong>2. Follow the interactive project setup prompt</strong></p>
+<p><strong>3. Bootstrap the development environment</strong></p>
+<p>Navigate to the directory of the newly created project:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nb">cd</span><span class="w"> </span>&lt;your-project-name&gt;
+</span></pre></div>
+</div>
+<p>Generate a poetry environment for the project:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">poetry<span class="w"> </span>shell
+</span></pre></div>
+</div>
+<p>Install all necessary project and development dependencies for the project:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">poetry<span class="w"> </span>install
+</span></pre></div>
+</div>
+<p><strong>4. Start using your project</strong></p>
+<p>List all available nox tasks:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">nox<span class="w"> </span>-l
+</span></pre></div>
+</div>
+<p>Build and open the documentation:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">nox<span class="w"> </span>-s<span class="w"> </span>docs:build<span class="w">  </span>docs:open
+</span></pre></div>
+</div>
+<p>Execute the unit tests of the project:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">nox<span class="w"> </span>-s<span class="w"> </span>test:unit
+</span></pre></div>
+</div>
+</section>
+<section id="integrating-exasol-toolbox-into-your-project">
+<span id="existing"></span><h2>Integrating Exasol-Toolbox into your Project<a class="headerlink" href="#integrating-exasol-toolbox-into-your-project" title="Link to this heading">¶</a></h2>
+<section id="add-the-toolbox-as-dependency">
+<h3>1. Add the toolbox as dependency<a class="headerlink" href="#add-the-toolbox-as-dependency" title="Link to this heading">¶</a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">poetry<span class="w"> </span>add<span class="w"> </span>--group<span class="w"> </span>dev<span class="w"> </span>exasol-toolbox
+</span></pre></div>
+</div>
+</section>
+<section id="fine-tune-the-gitignore-file">
+<h3>2. Fine tune the .gitignore file<a class="headerlink" href="#fine-tune-the-gitignore-file" title="Link to this heading">¶</a></h3>
+<p>Add the standard documentation output folder (<em>.html-documentation</em>) to the <em>.gitignore</em>.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;.html-documentation&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>.gitignore<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>.gitignore<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Add documentation build folder to .gitignore&quot;</span>
+</span></pre></div>
+</div>
+</section>
+<section id="provide-a-project-configuration">
+<h3>3. Provide a project configuration<a class="headerlink" href="#provide-a-project-configuration" title="Link to this heading">¶</a></h3>
+<p>Make sure you provide the required configuration. Configuration for the exasol-toolbox gets provided by creating
+a <em>noxconfig.py</em> file in the workspace root. This file should contain at least
+a single module constant with the name <strong>PROJECT_CONFIG</strong> pointing to an object,
+which is required to to provide the following attributes:</p>
+<ul>
+<li><dl class="py attribute">
+<dt class="sig sig-object py" id="root">
+<span class="sig-name descname"><span class="pre">root</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#root" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</li>
+<li><dl class="py attribute">
+<dt class="sig sig-object py" id="doc">
+<span class="sig-name descname"><span class="pre">doc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#doc" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</li>
+<li><dl class="py attribute">
+<dt class="sig sig-object py" id="version_file">
+<span class="sig-name descname"><span class="pre">version_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Path</span></em><a class="headerlink" href="#version_file" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</li>
+</ul>
+<p>Alternatively you can use the <em>noxconfig.py</em> file bellow and adjust the value of the attributes if needed:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Be aware that the plugin definitions are completely optional. For further details on plugins, see the customization section.</p>
+</div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;Configuration for nox based task runner&quot;&quot;&quot;</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span data-line="8">
+</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">exasol.toolbox.nox.plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">hookimpl</span>
+</span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">exasol.toolbox.tools.replace_version</span><span class="w"> </span><span class="kn">import</span> <span class="n">update_github_yml</span>
+</span><span data-line="11">
+</span><span data-line="12">
+</span><span data-line="13"><span class="k">class</span><span class="w"> </span><span class="nc">UpdateTemplates</span><span class="p">:</span>
+</span><span data-line="14">    <span class="n">TEMPLATE_PATH</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;exasol&quot;</span> <span class="o">/</span> <span class="s2">&quot;toolbox&quot;</span> <span class="o">/</span> <span class="s2">&quot;templates&quot;</span>
+</span><span data-line="15">    <span class="n">PARENT_PATH</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+</span><span data-line="16">
+</span><span data-line="17">    <span class="nd">@property</span>
+</span><span data-line="18">    <span class="k">def</span><span class="w"> </span><span class="nf">template_workflows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+</span><span data-line="19">        <span class="n">gh_workflows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TEMPLATE_PATH</span> <span class="o">/</span> <span class="s2">&quot;github&quot;</span> <span class="o">/</span> <span class="s2">&quot;workflows&quot;</span>
+</span><span data-line="20">        <span class="k">return</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">gh_workflows</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()]</span>
+</span><span data-line="21">
+</span><span data-line="22">    <span class="nd">@property</span>
+</span><span data-line="23">    <span class="k">def</span><span class="w"> </span><span class="nf">actions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+</span><span data-line="24">        <span class="n">gh_actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PARENT_PATH</span> <span class="o">/</span> <span class="s2">&quot;.github&quot;</span> <span class="o">/</span> <span class="s2">&quot;actions&quot;</span>
+</span><span data-line="25">        <span class="k">return</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">gh_actions</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()]</span>
+</span><span data-line="26">
+</span><span data-line="27">    <span class="nd">@hookimpl</span>
+</span><span data-line="28">    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_release_update_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
+</span><span data-line="29">        <span class="k">for</span> <span class="n">workflow</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_workflows</span><span class="p">:</span>
+</span><span data-line="30">            <span class="n">update_github_yml</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
+</span><span data-line="31">
+</span><span data-line="32">        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">:</span>
+</span><span data-line="33">            <span class="n">update_github_yml</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
+</span><span data-line="34">
+</span><span data-line="35">    <span class="nd">@hookimpl</span>
+</span><span data-line="36">    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_release_add_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+</span><span data-line="37">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_workflows</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span>
+</span><span data-line="38">
+</span><span data-line="39">
+</span><span data-line="40"><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="41"><span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">:</span>
+</span><span data-line="42"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Project specific configuration used by nox infrastructure&quot;&quot;&quot;</span>
+</span><span data-line="43">
+</span><span data-line="44">    <span class="n">root</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+</span><span data-line="45">    <span class="n">doc</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;doc&quot;</span>
+</span><span data-line="46">    <span class="n">importlinter</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;.import_linter_config&quot;</span>
+</span><span data-line="47">    <span class="n">version_file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;exasol&quot;</span> <span class="o">/</span> <span class="s2">&quot;toolbox&quot;</span> <span class="o">/</span> <span class="s2">&quot;version.py&quot;</span>
+</span><span data-line="48">    <span class="n">path_filters</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="49">        <span class="s2">&quot;metrics-schema&quot;</span><span class="p">,</span>
+</span><span data-line="50">        <span class="s2">&quot;project-template&quot;</span><span class="p">,</span>
+</span><span data-line="51">        <span class="s2">&quot;idioms&quot;</span><span class="p">,</span>
+</span><span data-line="52">    <span class="p">)</span>
+</span><span data-line="53">    <span class="n">python_versions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;3.9&quot;</span><span class="p">,</span> <span class="s2">&quot;3.10&quot;</span><span class="p">,</span> <span class="s2">&quot;3.11&quot;</span><span class="p">,</span> <span class="s2">&quot;3.12&quot;</span><span class="p">,</span> <span class="s2">&quot;3.13&quot;</span><span class="p">]</span>
+</span><span data-line="54">    <span class="n">exasol_versions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;7.1.9&quot;</span><span class="p">]</span>
+</span><span data-line="55">    <span class="n">plugins</span> <span class="o">=</span> <span class="p">[</span><span class="n">UpdateTemplates</span><span class="p">]</span>
+</span><span data-line="56">
+</span><span data-line="57">
+</span><span data-line="58"><span class="n">PROJECT_CONFIG</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+</span></pre></div>
+</div>
+</section>
+<section id="configure-the-tooling">
+<h3>4. Configure the tooling<a class="headerlink" href="#configure-the-tooling" title="Link to this heading">¶</a></h3>
+<p>In order to make all standard task work properly, you need add the configuration settings below to your <em>pyproject.toml</em>,
+and adjust the following settings to your project needs:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>coverage</dt><dd><ul>
+<li><p>source</p></li>
+<li><p>fail_under</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>pylint</dt><dd><ul>
+<li><p>fail-under</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>mypy (overrides)</dt><dd><ul>
+<li><p>module</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">[tool.coverage.run]</span>
+</span><span data-line="2"><span class="n">relative_files</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+</span><span data-line="3"><span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+</span><span data-line="4"><span class="w">    </span><span class="s2">&quot;exasol&quot;</span><span class="p">,</span>
+</span><span data-line="5"><span class="p">]</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="k">[tool.coverage.report]</span>
+</span><span data-line="8"><span class="n">fail_under</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span>
+</span><span data-line="9">
+</span><span data-line="10">
+</span><span data-line="11"><span class="k">[tool.black]</span>
+</span><span data-line="12"><span class="n">line-length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">88</span>
+</span><span data-line="13"><span class="n">verbose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+</span><span data-line="14"><span class="n">include</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">.pyi?$&quot;</span>
+</span><span data-line="15">
+</span><span data-line="16">
+</span><span data-line="17"><span class="k">[tool.isort]</span>
+</span><span data-line="18"><span class="n">profile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;black&quot;</span>
+</span><span data-line="19"><span class="n">force_grid_wrap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+</span><span data-line="20">
+</span><span data-line="21">
+</span><span data-line="22"><span class="k">[tool.pylint.master]</span>
+</span><span data-line="23"><span class="n">fail-under</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">7.5</span>
+</span><span data-line="24">
+</span><span data-line="25"><span class="k">[tool.pylint.format]</span>
+</span><span data-line="26"><span class="n">max-line-length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">88</span>
+</span><span data-line="27"><span class="n">max-module-lines</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">800</span>
+</span><span data-line="28">
+</span><span data-line="29">
+</span><span data-line="30"><span class="k">[[tool.mypy.overrides]]</span>
+</span><span data-line="31"><span class="n">module</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+</span><span data-line="32"><span class="w">    </span><span class="s2">&quot;test.unit.*&quot;</span><span class="p">,</span>
+</span><span data-line="33"><span class="w">    </span><span class="s2">&quot;test.integration.*&quot;</span><span class="p">,</span>
+</span><span data-line="34"><span class="p">]</span>
+</span><span data-line="35"><span class="n">ignore_errors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+</span><span data-line="36">
+</span><span data-line="37"><span class="k">[tool.poetry.plugins.</span><span class="s2">&quot;console_scripts&quot;</span><span class="k">]</span>
+</span><span data-line="38"><span class="n">version-check</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;exasol.toolbox.pre_commit_hooks.package_version:main&quot;</span>
+</span><span data-line="39"><span class="n">tbx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;exasol.toolbox.tools.tbx:CLI&#39;</span>
+</span><span data-line="40"><span class="n">sphinx-multiversion</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;exasol.toolbox.sphinx.multiversion:main&#39;</span>
+</span></pre></div>
+</div>
+</section>
+<section id="make-the-toolbox-tasks-available">
+<h3>5. Make the toolbox tasks available<a class="headerlink" href="#make-the-toolbox-tasks-available" title="Link to this heading">¶</a></h3>
+<p>In order to use the standard toolbox task via nox, just import them in your <em>noxfile.py</em>.
+If you only need the standard tasks provided by the toolbox, your <em>noxfile.py</em> is straight
+forward, and you just can use the example <em>noxfile.py</em> below.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;defines nox tasks/targets for this project&quot;&quot;&quot;</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="kn">import</span><span class="w"> </span><span class="nn">nox</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="c1"># imports all nox task provided by the toolbox</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">exasol.toolbox.nox.tasks</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>  <span class="c1"># pylint: disable=wildcard-import disable=unused-wildcard-import</span>
+</span><span data-line="7">
+</span><span data-line="8"><span class="c1"># default actions to be run if nothing is explicitly specified with the -s option</span>
+</span><span data-line="9"><span class="n">nox</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">sessions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;project:fix&quot;</span><span class="p">]</span>
+</span><span data-line="10">
+</span><span data-line="11">
+</span></pre></div>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Keep in mind that the current path may not be included in the <code class="code docutils literal notranslate"><span class="pre">PYTHONPATH</span></code>, depending on the operating system you are using. This is explained in more detail in this resource: <a class="reference external" href="https://fedoraproject.org/wiki/Changes/PythonSafePath">https://fedoraproject.org/wiki/Changes/PythonSafePath</a>. Thus, it might be necessary to properly set the <code class="code docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> before running nox. This is because our nox tasks expect the <cite>noxconfig</cite> module to be located within the python path.</p>
+<p>For additional information on resolving this issue, please <a class="reference internal" href="../faq.html#faq-no-module-noxconfig"><span class="std std-ref">refer to</span></a>.</p>
+</div>
+</section>
+<section id="set-up-the-pre-commit-hooks-optional">
+<h3>6. Set up the pre-commit hooks [optional]<a class="headerlink" href="#set-up-the-pre-commit-hooks-optional" title="Link to this heading">¶</a></h3>
+<ol class="arabic">
+<li><p>Add a <code class="code docutils literal notranslate"><span class="pre">.pre-commit-config.yaml</span></code> file to your project root</p>
+<blockquote>
+<div><p>If you want to reuse Nox tasks in the pre-commit hooks, feel free to get some inspiration from the Python toolbox itself:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">default_stages</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">pre-commit</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">pre-push</span><span class="w"> </span><span class="p p-Indicator">]</span>
+</span><span data-line="2"><span class="nt">repos</span><span class="p">:</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+</span><span data-line="5"><span class="w">    </span><span class="nt">hooks</span><span class="p">:</span>
+</span><span data-line="6"><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">code-format</span>
+</span><span data-line="7"><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">code-format</span>
+</span><span data-line="8"><span class="w">        </span><span class="nt">types</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">python</span><span class="w"> </span><span class="p p-Indicator">]</span>
+</span><span data-line="9"><span class="w">        </span><span class="nt">pass_filenames</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span data-line="10"><span class="w">        </span><span class="nt">language</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">system</span>
+</span><span data-line="11"><span class="w">        </span><span class="nt">entry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">poetry run -- nox -s project:fix</span>
+</span><span data-line="12"><span class="w">        </span><span class="nt">stages</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">pre-commit</span><span class="w"> </span><span class="p p-Indicator">]</span>
+</span><span data-line="13">
+</span><span data-line="14"><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/pre-commit/pre-commit-hooks</span>
+</span><span data-line="15"><span class="w">    </span><span class="nt">rev</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v4.4.0</span>
+</span><span data-line="16"><span class="w">    </span><span class="nt">hooks</span><span class="p">:</span>
+</span><span data-line="17"><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">check-yaml</span>
+</span><span data-line="18"><span class="w">        </span><span class="nt">stages</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">pre-commit</span><span class="w"> </span><span class="p p-Indicator">]</span>
+</span><span data-line="19"><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">end-of-file-fixer</span>
+</span><span data-line="20"><span class="w">        </span><span class="nt">stages</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">pre-commit</span><span class="w"> </span><span class="p p-Indicator">]</span>
+</span><span data-line="21"><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">trailing-whitespace</span>
+</span><span data-line="22"><span class="w">        </span><span class="nt">stages</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">pre-commit</span><span class="w"> </span><span class="p p-Indicator">]</span>
+</span><span data-line="23">
+</span><span data-line="24"><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+</span><span data-line="25"><span class="w">    </span><span class="nt">hooks</span><span class="p">:</span>
+</span><span data-line="26"><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type-check</span>
+</span><span data-line="27"><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type-check</span>
+</span><span data-line="28"><span class="w">        </span><span class="nt">types</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">python</span><span class="w"> </span><span class="p p-Indicator">]</span>
+</span><span data-line="29"><span class="w">        </span><span class="nt">pass_filenames</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span data-line="30"><span class="w">        </span><span class="nt">language</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">system</span>
+</span><span data-line="31"><span class="w">        </span><span class="nt">entry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">poetry run -- nox -s lint:typing</span>
+</span><span data-line="32"><span class="w">        </span><span class="nt">stages</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">pre-push</span><span class="w"> </span><span class="p p-Indicator">]</span>
+</span><span data-line="33">
+</span><span data-line="34"><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+</span><span data-line="35"><span class="w">    </span><span class="nt">hooks</span><span class="p">:</span>
+</span><span data-line="36"><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lint</span>
+</span><span data-line="37"><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lint</span>
+</span><span data-line="38"><span class="w">        </span><span class="nt">types</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">python</span><span class="w"> </span><span class="p p-Indicator">]</span>
+</span><span data-line="39"><span class="w">        </span><span class="nt">pass_filenames</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span data-line="40"><span class="w">        </span><span class="nt">language</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">system</span>
+</span><span data-line="41"><span class="w">        </span><span class="nt">entry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">poetry run -- nox -s lint:code</span>
+</span><span data-line="42"><span class="w">        </span><span class="nt">stages</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="nv">pre-push</span><span class="w"> </span><span class="p p-Indicator">]</span>
+</span></pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Enable pre-commit hooks for your workspace</p>
+<blockquote>
+<div><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span data-line="1">poetry<span class="w"> </span>run<span class="w"> </span>--<span class="w"> </span>pre-commit<span class="w"> </span>install<span class="w"> </span>--hook-type<span class="w"> </span>pre-commit<span class="w"> </span>--hook-type<span class="w"> </span>pre-push
+</span></pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="go">
+<span id="toolbox-tasks"></span><h3>7. Go 🥜<a class="headerlink" href="#go" title="Link to this heading">¶</a></h3>
+<p>You are ready to use the toolbox. With <em>nox -l</em> you can list all available tasks.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">$ </span>nox<span class="w"> </span>-l
+</span><span data-line="2"><span class="go">Sessions defined in &lt;PATH_TO_YOUR_PROJECT&gt;/noxfile.py:</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="go">* project:fix -&gt; Runs all automated fixes on the code base</span>
+</span><span data-line="5"><span class="go">- project:check -&gt; Runs all available checks on the project</span>
+</span><span data-line="6"><span class="go">- project:report -&gt; Collects and generates metrics summary for the workspace</span>
+</span><span data-line="7"><span class="go">- test:unit -&gt; Runs all unit tests</span>
+</span><span data-line="8"><span class="go">- test:integration -&gt; Runs the all integration tests</span>
+</span><span data-line="9"><span class="go">- test:coverage -&gt; Runs all tests (unit + integration) and reports the code coverage</span>
+</span><span data-line="10"><span class="go">- lint:code -&gt; Runs the static code analyzer on the project</span>
+</span><span data-line="11"><span class="go">- lint:typing -&gt; Runs the type checker on the project</span>
+</span><span data-line="12"><span class="go">- lint:security -&gt; Runs the security linter on the project</span>
+</span><span data-line="13"><span class="go">- lint:dependencies -&gt; Checks if only valid sources of dependencies are used</span>
+</span><span data-line="14"><span class="go">- docs:multiversion -&gt; Builds the multiversion project documentation</span>
+</span><span data-line="15"><span class="go">- docs:build -&gt; Builds the project documentation</span>
+</span><span data-line="16"><span class="go">- docs:open -&gt; Opens the built project documentation</span>
+</span><span data-line="17"><span class="go">- docs:clean -&gt; Removes the documentations build folder</span>
+</span><span data-line="18"><span class="go">- release:prepare -&gt; Prepares the project for a new release.</span>
+</span><span data-line="19">
+</span><span data-line="20"><span class="go">sessions marked with * are selected, sessions marked with - are skipped.</span>
+</span></pre></div>
+</div>
+<p>Enjoy!</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The targets and their names may change over time, so the list below may not be up to date, as it is not automatically generated yet. Therefore, if you find discrepancies, please <a class="reference external" href="https://github.com/exasol/python-toolbox/compare">submit a quick PR</a> to address them.</p>
+</div>
+</section>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="user_guide.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-person" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path></svg> User Guide</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="features.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">Features</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2022, Exasol</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/exasol/python-toolbox" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/tabs.js?v=3ee01567"></script>
+      <script src="../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../_static/shibuya.js?v=e2230717"></script></body>
+</html>
