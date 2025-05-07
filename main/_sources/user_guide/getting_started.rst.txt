@@ -39,7 +39,7 @@ Use the following command to create a new project:
 
 **2. Follow the interactive project setup prompt**
 
-**3. Bootstrapp the development environment**
+**3. Bootstrap the development environment**
 
 Navigate to the directory of the newly created project:
 
@@ -127,7 +127,7 @@ Alternatively you can use the *noxconfig.py* file bellow and adjust the value of
 
 4. Configure the tooling
 ++++++++++++++++++++++++
-In order to make all standard task work properly you need add the configuration settings bellow to your *pyproject.toml*,
+In order to make all standard task work properly, you need add the configuration settings below to your *pyproject.toml*,
 and adjust the following settings to your project needs:
 
 * coverage
@@ -145,8 +145,8 @@ and adjust the following settings to your project needs:
 5. Make the toolbox tasks available
 +++++++++++++++++++++++++++++++++++
 In order to use the standard toolbox task via nox, just import them in your *noxfile.py*.
-If you only need the standard tasks provided by the toolbox your *noxfile.py* is straight
-forward and you just can use the example *noxfile.py* bellow.
+If you only need the standard tasks provided by the toolbox, your *noxfile.py* is straight
+forward, and you just can use the example *noxfile.py* below.
 
 .. literalinclude:: ../../noxfile.py
    :language: python3
@@ -161,8 +161,8 @@ forward and you just can use the example *noxfile.py* bellow.
 
 
 
-6. Setup the pre-commit hooks [optional]
-++++++++++++++++++++++++++++++++++++++++
+6. Set up the pre-commit hooks [optional]
++++++++++++++++++++++++++++++++++++++++++
 
 #. Add a :code:`.pre-commit-config.yaml` file to your project root
 
@@ -171,7 +171,7 @@ forward and you just can use the example *noxfile.py* bellow.
     .. literalinclude:: ../../.pre-commit-config.yaml
        :language: yaml
 
-#. Enable pre commit hooks for your workspace
+#. Enable pre-commit hooks for your workspace
 
     .. code-block:: shell
 
