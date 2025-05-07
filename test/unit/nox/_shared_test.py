@@ -42,8 +42,9 @@ def create_files(tmp_directory, directories):
 
 
 def test_python_files(
-    monkeypatch, tmp_directory, create_files, package_directory, path_filter_directory
+        tmp_directory, create_files, package_directory, path_filter_directory
 ):
+    # Use builtin object to modify attribute path_filters of frozen dataclass instance.
     object.__setattr__(
         noxconfig.PROJECT_CONFIG, "path_filters", (path_filter_directory,)
     )
