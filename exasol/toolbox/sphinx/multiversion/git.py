@@ -8,7 +8,7 @@ import tarfile
 import tempfile
 
 GitRef = collections.namedtuple(
-    "VersionRef",
+    "GitRef",
     [
         "name",
         "commit",

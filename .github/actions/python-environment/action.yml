@@ -13,14 +13,19 @@ inputs:
     required: true
     default: "2.1.2"
 
+  working-directory:
+    description: 'Working directory to use'
+    required: true
+    default: "."
+
 runs:
 
   using: "composite"
   steps:
 
     - name: Setup Poetry (${{ inputs.poetry-version }})
-      run: pipx install poetry==${{ inputs.poetry-version }}
       shell: bash
+      run: pipx install poetry==${{ inputs.poetry-version }}
 
     - name: Setup Python (${{ inputs.python-version}})
       uses: actions/setup-python@v5
@@ -29,5 +34,6 @@ runs:
         cache: 'poetry'
 
     - name: Poetry install
-      run: poetry install
+      working-directory: ${{ inputs.working-directory }}
       shell: bash
+      run: poetry install
