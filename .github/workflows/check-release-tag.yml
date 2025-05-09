@@ -1,14 +1,15 @@
 name: Check Release Tag
 
-on: workflow_call
+on:
+  workflow_call:
 
 jobs:
 
   check-tag-version-job:
-
     name: Check Tag Version
     runs-on: ubuntu-24.04
-
+    permissions:
+      contents: read
     steps:
       - name: SCM Checkout
         uses: actions/checkout@v4

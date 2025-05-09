@@ -11,8 +11,9 @@ jobs:
   cd-job:
     name: Continuous Delivery
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     steps:
-
       - name: SCM Checkout
         uses: actions/checkout@v4
 

@@ -4,11 +4,11 @@ on:
   workflow_call:
 
 jobs:
-
   Version-Check:
     name: Version
     runs-on: ubuntu-24.04
-
+    permissions:
+      contents: read
     steps:
       - name: SCM Checkout
         uses: actions/checkout@v4
@@ -31,7 +31,8 @@ jobs:
     name: Docs
     needs: [ Version-Check ]
     runs-on: ubuntu-24.04
-
+    permissions:
+      contents: read
     steps:
       - name: SCM Checkout
         uses: actions/checkout@v4
@@ -46,12 +47,15 @@ jobs:
   build-matrix:
     name: Generate Build Matrix
     uses: ./.github/workflows/matrix-python.yml
+    permissions:
+      contents: read
 
   Changelog:
     name: Changelog Update Check
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     if: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
-
     steps:
       - name: SCM Checkout
         uses: actions/checkout@v4
@@ -66,10 +70,11 @@ jobs:
     name: Linting (Python-${{ matrix.python-version }})
     needs: [ Version-Check, build-matrix ]
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
-
     steps:
       - name: SCM Checkout
         uses: actions/checkout@v4
@@ -95,6 +100,8 @@ jobs:
     name: Type Checking (Python-${{ matrix.python-version }})
     needs: [ Version-Check, build-matrix ]
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
@@ -115,6 +122,8 @@ jobs:
     name: Security Checks (Python-${{ matrix.python-version }})
     needs: [ Version-Check, build-matrix ]
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
@@ -141,7 +150,8 @@ jobs:
   Format:
     name: Format Check
     runs-on: ubuntu-24.04
-
+    permissions:
+      contents: read
     steps:
       - name: SCM Checkout
         uses: actions/checkout@v4
@@ -156,6 +166,8 @@ jobs:
     name: Unit-Tests (Python-${{ matrix.python-version }})
     needs: [ Documentation, Lint, Type-Check, Security, Format, build-matrix ]
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
