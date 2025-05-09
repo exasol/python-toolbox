@@ -1,11 +1,17 @@
 from datetime import datetime
 from inspect import cleandoc
 from subprocess import CalledProcessError
-from unittest.mock import patch, MagicMock
+from unittest.mock import (
+    MagicMock,
+    patch,
+)
 
 import pytest
 
-from exasol.toolbox.nox._release import _trigger_release, ReleaseError
+from exasol.toolbox.nox._release import (
+    ReleaseError,
+    _trigger_release,
+)
 from exasol.toolbox.release import (
     extract_release_notes,
     new_changelog,
