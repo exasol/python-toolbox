@@ -22,7 +22,7 @@ jobs:
         run: |
           echo "Please enable the version check by replacing this output with shell command bellow:"
           echo ""
-          echo "poetry run -- version-check <<VERSION_PY>>"
+          echo "poetry run -- nox -s version:check -- <<VERSION_PY>>"
           echo ""
           echo "Note: <<VERSION_PY>> needs to point to the version file of the project (version.py)."
           exit 1

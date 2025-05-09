@@ -37,7 +37,7 @@ def python_files(project_root: Path) -> Iterable[Path]:
 
 
 def _version(session: Session, mode: Mode, version_file: Path) -> None:
-    command = ["version-check"]
+    command = ["nox", "-s", "version:check", "--"]
     command = command if mode == Mode.Check else command + ["--fix"]
     session.run(*command, f"{version_file}")
 

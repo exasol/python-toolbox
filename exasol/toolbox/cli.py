@@ -1,6 +1,6 @@
 from argparse import ArgumentTypeError
 
-from exasol.toolbox.release import Version
+from exasol.toolbox.util.version import Version
 
 
 def version(arg: str) -> Version:

@@ -9,7 +9,7 @@ from sphinx import config as sphinx_config
 from sphinx.locale import _
 from sphinx.util import i18n as sphinx_i18n
 
-from exasol.toolbox.release import Version as ExasolVersion
+from exasol.toolbox.util.version import Version as ExasolVersion
 from exasol.toolbox.version import VERSION as PLUGIN_VERSION
 
 logger = logging.getLogger(__name__)

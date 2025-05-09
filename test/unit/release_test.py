@@ -1,4 +1,3 @@
-import subprocess
 from datetime import datetime
 from inspect import cleandoc
 from subprocess import CalledProcessError
@@ -9,75 +8,15 @@ from unittest.mock import (
 
 import pytest
 
-from exasol.toolbox.error import ToolboxError
 from exasol.toolbox.nox._release import (
     ReleaseError,
     _trigger_release,
 )
 from exasol.toolbox.release import (
-    ReleaseTypes,
-    Version,
     extract_release_notes,
     new_changelog,
-    poetry_command,
 )
-
-
-@pytest.mark.parametrize(
-    "input,expected",
-    [
-        ("1.2.3", Version(1, 2, 3)),
-        ("1.2", Version(1, 2, 0)),
-        ("1", Version(1, 0, 0)),
-    ],
-)
-def test_create_version_from_string(input, expected):
-    actual = Version.from_string(input)
-    assert expected == actual
-
-
-@pytest.mark.parametrize(
-    "old_version,new_version,expected",
-    [
-        (Version(1, 2, 3), Version(1, 2, 4), True),
-        (Version(1, 2, 3), Version(1, 3, 3), True),
-        (Version(1, 2, 3), Version(2, 2, 3), True),
-        (Version(1, 2, 3), Version(1, 1, 3), False),
-        (Version(1, 2, 3), Version(1, 2, 1), False),
-        (Version(1, 2, 3), Version(0, 3, 3), False),
-    ],
-)
-def test_is_later_version(old_version, new_version, expected):
-    actual = new_version > old_version
-    assert expected == actual
-
-
-@pytest.fixture
-def poetry_version():
-    def set_poetry_version(version):
-        return subprocess.CompletedProcess(
-            args=["poetry", "version", "--no-ansi", "--short"],
-            returncode=0,
-            stdout=version,
-            stderr="",
-        )
-
-    yield set_poetry_version
-
-
-@pytest.mark.parametrize(
-    "version,expected",
-    [
-        ("1.2.3", Version(1, 2, 3)),
-        ("1.2", Version(1, 2, 0)),
-        ("1", Version(1, 0, 0)),
-    ],
-)
-def test_version_from_poetry(poetry_version, version, expected):
-    with patch("subprocess.run", return_value=poetry_version(version)):
-        actual = Version.from_poetry()
-
-    assert expected == actual
+from exasol.toolbox.util.version import Version
 
 
 @pytest.mark.parametrize(
@@ -245,24 +184,3 @@ class TestTriggerReleaseWithMocking:
             with pytest.raises(ReleaseError) as ex:
                 _trigger_release()
         assert f"release {version} already exists" in str(ex)
-
-
-@patch("exasol.toolbox.release.which", return_value=None)
-def test_poetry_decorator_no_poetry_executable(mock):
-    @poetry_command
-    def test():
-        pass
-
-    with pytest.raises(ToolboxError):
-        test()
-
-
-@patch("exasol.toolbox.release.which", return_value="test/path")
-def test_poetry_decorator_subprocess(mock):
-    @poetry_command
-    def test():
-        raise subprocess.CalledProcessError(returncode=1, cmd=["test"])
-        pass
-
-    with pytest.raises(ToolboxError):
-        test()
