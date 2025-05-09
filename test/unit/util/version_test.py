@@ -108,3 +108,4 @@ def test_version_from_python_no_module_error(tmp_path):
     file_path.write_text("")
     with pytest.raises(ToolboxError) as ex:
         Version.from_python_module(file_path)
+    assert str(ex.value) == "Couldn't find version within module"
