@@ -2,6 +2,8 @@ name: Build Matrix (Exasol)
 
 on:
   workflow_call:
+    permissions:
+      content: read
     outputs:
       matrix:
         description: "Generates the exasol version build matrix"

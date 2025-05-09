@@ -2,6 +2,8 @@ name: Status Report
 
 on:
   workflow_call:
+    permissions:
+      content: read
 
 jobs:
 

@@ -2,6 +2,8 @@ name: Build Matrix (All Versions)
 
 on:
   workflow_call:
+    permissions:
+      content: read
     outputs:
       matrix:
         description: "Generates the all versions build matrix"

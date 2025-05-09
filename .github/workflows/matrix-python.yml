@@ -2,6 +2,8 @@ name: Build Matrix (Python)
 
 on:
   workflow_call:
+    permissions:
+      content: read
     outputs:
       matrix:
         description: "Generates the python version build matrix"

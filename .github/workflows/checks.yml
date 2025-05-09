@@ -2,6 +2,8 @@ name: Checks
 
 on:
   workflow_call:
+    permissions:
+      content: read
 
 jobs:
 
