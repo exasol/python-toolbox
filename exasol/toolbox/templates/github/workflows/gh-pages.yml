@@ -6,9 +6,10 @@ on:
 
 jobs:
 
-  documentation-job:
+  build-documentation:
     runs-on: ubuntu-24.04
-
+    permissions:
+      contents: read
     steps:
       - name: SCM Checkout
         uses: actions/checkout@v4
@@ -22,10 +23,22 @@ jobs:
         run: |
           poetry run -- nox -s docs:multiversion
 
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.7.3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          branch: gh-pages
-          folder: .html-documentation
-          git-config-name: Github Action
-          git-config-email: opensource@exasol.com
+          path: .html-documentation
+
+  deploy-documentation:
+    needs: [ build-documentation ]
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
