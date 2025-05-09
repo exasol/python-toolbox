@@ -1,5 +1,18 @@
 # Unreleased
 
+## Summary
+
+With #420, any GitHub repos using the PTB for **documentation** will also need to 
+reconfigure the GitHub Pages settings for each repo:
+1. Go to the affected repo's GitHub page
+2. Select 'Settings'
+3. Scroll down & select 'Pages'
+4. Within the 'Build and deployment' section, change 'Source' to 'GitHub Actions'.
+
+This should also create a 'github-pages' environment, if it does not yet exist.
+For most repos using the PTB, the updating of the github pages only happens when a
+PR is merged to main, so please check post-merge that it worked as expected.
+
 ## ⚒️ Refactorings
 
 * [#412](https://github.com/exasol/python-toolbox/issues/392):  Refactored pre commit hook package version.py into nox task
