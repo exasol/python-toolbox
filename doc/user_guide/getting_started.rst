@@ -179,7 +179,17 @@ forward, and you just can use the example *noxfile.py* below.
 
 .. _toolbox tasks:
 
-7. Go 🥜
+7. Setup for deploying documentation (optional)
++++++++++++++++++++++++++++++++++++++++++++++++
+Within the `gh-pages.yml`, we use the GitHub `upload-pages-artifact` and `deploy-pages`
+actions. In order to properly deploy your pages, you'll need to reconfigure the GitHub
+Pages settings for the repo:
+1. Go to the affected repo's GitHub page
+2. Select 'Settings'
+3. Scroll down & select 'Pages'
+4. Within the 'Build and deployment' section, change 'Source' to 'GitHub Actions'.
+
+8. Go 🥜
 +++++++++++++
 You are ready to use the toolbox. With *nox -l* you can list all available tasks.
 
