@@ -24,7 +24,7 @@ runs:
     - name: Setup up pipx if not present
       shell: bash
       run: |
-        python3 m pip install --upgrade pipx
+        python m pip install --upgrade pipx
         pipx ensurepath
         echo "$Home/.local/bin" >> $GITHUB_PATH
 
