@@ -28,4 +28,5 @@ permissions to be increased for specific jobs.
 * [#422](https://github.com/exasol/python-toolbox/issues/422): Set permissions within the GitHub workflows to restrict usage of the default GitHub token
 
 ## ✨ Features
+
 * [#413](https://github.com/exasol/python-toolbox/pull/413): Add support for installing extras to python-environment action
