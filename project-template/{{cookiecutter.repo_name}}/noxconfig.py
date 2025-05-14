@@ -15,11 +15,7 @@ class Config:
         / "{{cookiecutter.package_name}}"
         / "version.py"
     )
-    path_filters: Iterable[str] = (
-        "dist",
-        ".eggs",
-        "venv",
-    )
+    path_filters: Iterable[str] = ()
 
     plugins = []
 

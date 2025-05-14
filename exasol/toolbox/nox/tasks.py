@@ -85,5 +85,7 @@ from exasol.toolbox.nox._dependencies import (
     audit
 )
 
+from exasol.toolbox.nox._package_version import version_check
+
 # isort: on
 # fmt: on

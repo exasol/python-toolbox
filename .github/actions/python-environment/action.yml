@@ -13,6 +13,11 @@ inputs:
     required: true
     default: "2.1.2"
 
+  working-directory:
+    description: 'Working directory to use'
+    required: true
+    default: "."
+
   extras:
     description: 'Comma-separated list of extras'
     required: false
@@ -21,17 +26,17 @@ runs:
 
   using: "composite"
   steps:
+
     - name: Setup up pipx if not present
       shell: bash
       run: |
         python3 -m pip install --upgrade pipx
         pipx ensurepath
-        echo "$Home/.local/bin" >> $GITHUB_PATH
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
 
     - name: Setup Poetry (${{ inputs.poetry-version }})
       shell: bash
-      run: |
-        pipx install poetry==${{ inputs.poetry-version }}
+      run: pipx install poetry==${{ inputs.poetry-version }}
 
     - name: Setup Python (${{ inputs.python-version}})
       uses: actions/setup-python@v5
@@ -40,6 +45,7 @@ runs:
         cache: 'poetry'
 
     - name: Poetry install with extras
+      working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
         EXTRAS=$(echo "${{ inputs.extras }}" | tr -d ' ')

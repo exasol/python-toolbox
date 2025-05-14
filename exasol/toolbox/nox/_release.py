@@ -14,12 +14,14 @@ from exasol.toolbox.nox._shared import (
 )
 from exasol.toolbox.nox.plugin import NoxTasks
 from exasol.toolbox.release import (
-    ReleaseTypes,
-    Version,
     extract_release_notes,
     new_changelog,
     new_changes,
     new_unreleased,
+)
+from exasol.toolbox.util.version import (
+    ReleaseTypes,
+    Version,
 )
 from noxconfig import PROJECT_CONFIG
 

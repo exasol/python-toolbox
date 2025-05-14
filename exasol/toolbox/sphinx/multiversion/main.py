@@ -21,11 +21,11 @@ from rich.logging import RichHandler
 from sphinx import config as sphinx_config
 from sphinx import project as sphinx_project
 
-from exasol.toolbox.release import Version as ExasolVersion
 from exasol.toolbox.sphinx.multiversion import (
     git,
     sphinx,
 )
+from exasol.toolbox.util.version import Version as ExasolVersion
 
 logging.basicConfig(
     level="INFO",
