@@ -19,6 +19,18 @@ Parameters
      - Poetry version to use
      - True
      - 2.1.2
+   * - working-directory
+     - 'Working directory to use'
+     - True
+     - .
+   * - extras
+     - Comma-separated list of extras
+     - False
+     -
+   * - use-cache
+     - Use cache for poetry environment
+     - False
+     - true
 
 Example Usage
 -------------
@@ -44,5 +56,6 @@ Example Usage
             with:
               python-version: 3.12
               poetry-version: 2.1.2
+              working-directory: .
 
             ...

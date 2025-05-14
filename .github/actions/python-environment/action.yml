@@ -22,27 +22,32 @@ inputs:
     description: 'Comma-separated list of extras'
     required: false
 
+  use-cache:
+    description: 'Use cache for poetry environment'
+    required: false
+    default: 'true'
+
 runs:
 
   using: "composite"
   steps:
 
-    - name: Setup up pipx if not present
+    - name: Set up pipx if not present
       shell: bash
       run: |
         python3 -m pip install --upgrade pipx
-        pipx ensurepath
+        python3 -m pipx ensurepath
         echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-    - name: Setup Poetry (${{ inputs.poetry-version }})
+    - name: Set up Poetry (${{ inputs.poetry-version }})
       shell: bash
       run: pipx install poetry==${{ inputs.poetry-version }}
 
-    - name: Setup Python (${{ inputs.python-version}})
+    - name: Set up Python (${{ inputs.python-version}})
       uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
-        cache: 'poetry'
+        cache: ${{ inputs.use-cache == 'true' && 'poetry' || '' }}
 
     - name: Poetry install with extras
       working-directory: ${{ inputs.working-directory }}
