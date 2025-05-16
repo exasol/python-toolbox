@@ -78,3 +78,7 @@ html_theme_options = {
     "github_url": "https://github.com/exasol/python-toolbox",
     "accent_color": "grass",
 }
+# -- Configure link checking behavior  ----------------------------------------
+linkcheck_ignore = [
+
+]
