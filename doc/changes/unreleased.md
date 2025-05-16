@@ -29,4 +29,5 @@ permissions to be increased for specific jobs.
 
 ## ✨ Features
 
-* [#413](https://github.com/exasol/python-toolbox/pull/413): Add support for installing extras to python-environment action
+* [#161](https://github.com/exasol/python-toolbox/issues/161): Added support for installing extras & not using a cache to the python-environment action
+* [#408](https://github.com/exasol/python-toolbox/issues/408): Added support for GitHub runners who do not per default have pipx to use the python-environment action

@@ -20,13 +20,13 @@ Parameters
      - True
      - 2.1.2
    * - working-directory
-     - 'Working directory to use'
-     - True
+     - Working directory to use
+     - False
      - .
    * - extras
      - Comma-separated list of extras
      - False
-     -
+     - (not used by default)
    * - use-cache
      - Use cache for poetry environment
      - False
@@ -52,10 +52,12 @@ Example Usage
             uses: actions/checkout@v4
 
           - name: Setup Python & Poetry Environment
-            uses: exasol/python-toolbox/.github/actions/python-environment@0.21.0
+            uses: exasol/python-toolbox/.github/actions/python-environment@1.1.0
             with:
               python-version: 3.12
               poetry-version: 2.1.2
-              working-directory: .
+              working-directory: pytest-backend
+              use-cache: false
+              extras: 'numpy,pandas'
 
             ...

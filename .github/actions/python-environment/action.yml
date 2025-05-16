@@ -1,5 +1,5 @@
 name: 'SPPE'
-description: 'Setup python and poetry environment'
+description: 'Set up python and poetry environment'
 
 inputs:
 
@@ -15,7 +15,7 @@ inputs:
 
   working-directory:
     description: 'Working directory to use'
-    required: true
+    required: false
     default: "."
 
   extras:
