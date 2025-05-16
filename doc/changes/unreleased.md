@@ -26,3 +26,8 @@ permissions to be increased for specific jobs.
 
 * [#420](https://github.com/exasol/python-toolbox/issues/420): Replaced 3rd party action with GitHub actions for gh-pages
 * [#422](https://github.com/exasol/python-toolbox/issues/422): Set permissions within the GitHub workflows to restrict usage of the default GitHub token
+
+## ✨ Features
+
+* [#161](https://github.com/exasol/python-toolbox/issues/161): Added support for installing extras & not using a cache to the python-environment action
+* [#408](https://github.com/exasol/python-toolbox/issues/408): Added support for GitHub runners who do not per default have pipx to use the python-environment action

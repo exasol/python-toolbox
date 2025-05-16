@@ -1,5 +1,5 @@
 name: 'SPPE'
-description: 'Setup python and poetry environment'
+description: 'Set up python and poetry environment'
 
 inputs:
 
@@ -15,25 +15,47 @@ inputs:
 
   working-directory:
     description: 'Working directory to use'
-    required: true
+    required: false
     default: "."
+
+  extras:
+    description: 'Comma-separated list of extras'
+    required: false
+
+  use-cache:
+    description: 'Use cache for poetry environment'
+    required: false
+    default: 'true'
 
 runs:
 
   using: "composite"
   steps:
 
-    - name: Setup Poetry (${{ inputs.poetry-version }})
+    - name: Set up pipx if not present
+      shell: bash
+      run: |
+        python3 -m pip install --upgrade pipx
+        python3 -m pipx ensurepath
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Set up Poetry (${{ inputs.poetry-version }})
       shell: bash
       run: pipx install poetry==${{ inputs.poetry-version }}
 
-    - name: Setup Python (${{ inputs.python-version}})
+    - name: Set up Python (${{ inputs.python-version}})
       uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
-        cache: 'poetry'
+        cache: ${{ inputs.use-cache == 'true' && 'poetry' || '' }}
 
-    - name: Poetry install
+    - name: Poetry install with extras
       working-directory: ${{ inputs.working-directory }}
       shell: bash
-      run: poetry install
+      run: |
+        EXTRAS=$(echo "${{ inputs.extras }}" | tr -d ' ')
+        if [[ -n "$EXTRAS" ]]; then
+          poetry install --extras "$EXTRAS"
+        else
+          poetry install
+        fi
