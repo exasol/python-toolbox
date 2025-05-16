@@ -3,8 +3,18 @@ from __future__ import annotations
 import shutil
 import subprocess
 import sys
+import requests
 import webbrowser
+from itertools import repeat
+from pathlib import Path
+from typing import (
+    Container,
+    Iterable,
+    Optional,
+    Tuple,
+)
 
+import re
 import nox
 from nox import Session
 
@@ -37,6 +47,37 @@ def _build_multiversion_docs(session: nox.Session, config: Config) -> None:
         DOCS_OUTPUT_DIR,
     )
     session.run("touch", f"{DOCS_OUTPUT_DIR}/.nojekyll")
+
+
+def _doc_files(root: Path) -> Iterable[Path]:
+    """Returns an iterator over all documentation files of the project"""
+    docs = Path(root).glob("**/*.rst")
+
+    def _deny_filter(path: Path) -> bool:
+        return not ("venv" in path.parts)
+
+    return filter(lambda path: _deny_filter(path), docs)
+
+
+def _doc_urls(files: Iterable[Path]) -> Iterable[tuple[Path, str]]:
+    """Returns an iterable over all urls contained in the provided files"""
+    def should_filter(url: str) -> bool:
+        _filtered: Container[str] = []
+        return url.startswith("mailto") or url in _filtered
+
+    for file in files:
+        urls = re.findall( r"http[s]?://[^\s<>'\"\,\)\]]+[^\s<>'\"\,\.\)\]]" , file.open().read())
+        yield from zip(repeat(file), filter(lambda url: not should_filter(url), urls))
+
+
+def _doc_links_check(url: str) -> Tuple[Optional[int], str]:
+    """Checks if an url is still working (can be accessed)"""
+    try:
+        # User-Agent needs to be faked otherwise some webpages will deny access with a 403
+        result = requests.get(url, timeout=5)
+        return result.status_code, f"{result.reason}"
+    except requests.exceptions.RequestException as ex:
+        print("error:", ex)
 
 
 def _git_diff_changes_main() -> int:
@@ -86,6 +127,34 @@ def clean_docs(_session: Session) -> None:
     docs_folder = PROJECT_CONFIG.root / DOCS_OUTPUT_DIR
     if docs_folder.exists():
         shutil.rmtree(docs_folder)
+
+
+@nox.session(name="docs:links", python=False)
+def docs_list_links(session: Session) -> None:
+    """List all the links within the documentation."""
+    for path, url in _doc_urls(_doc_files(PROJECT_CONFIG.root)):
+        session.log(f"Url: {url}, File: {path}")
+
+
+@nox.session(name="docs:links:check", python=False)
+def docs_links_check(session: Session) -> None:
+    """Checks whether all links in the documentation are accessible."""
+    errors = []
+    urls = list(_doc_urls(_doc_files(PROJECT_CONFIG.root)))
+    urls_count = len(urls)
+    count = 1
+    for path, url in urls:
+        print(f"({count}/{urls_count}): {url}")
+        status, details = _doc_links_check(url)
+        if status != 200:
+            errors.append((path, url, status, details))
+        count += 1
+
+    if errors:
+        session.error(
+            "\n"
+            + "\n".join(f"Url: {e[1]}, File: {e[0]}, Error: {e[3]}" for e in errors)
+        )
 
 
 @nox.session(name="changelog:updated", python=False)

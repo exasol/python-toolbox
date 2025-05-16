@@ -2431,6 +2431,46 @@ socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
 zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
+name = "urlscan"
+version = "1.0.6"
+description = "View/select the URLs in an email message or file"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "urlscan-1.0.6-py2.py3-none-any.whl", hash = "sha256:e78811ae97fb9018086cf48db659df7bb168d1f2d4472d87d28b956a2fdf600a"},
+    {file = "urlscan-1.0.6.tar.gz", hash = "sha256:3bbf8900de23913c29aed27702eaba92a871b2fe95920e72c56a19fff7cb4581"},
+]
+
+[package.dependencies]
+urwid = ">=1.2.1"
+
+[[package]]
+name = "urwid"
+version = "3.0.2"
+description = "A full-featured console (xterm et al.) user interface library"
+optional = false
+python-versions = ">=3.9.0"
+groups = ["main"]
+files = [
+    {file = "urwid-3.0.2-py3-none-any.whl", hash = "sha256:94ec1448d0178c881c01845c2b478cdc89f7b71bb65349466dbc99da1965eaac"},
+    {file = "urwid-3.0.2.tar.gz", hash = "sha256:e7cb70ba1e7ff45779a5a57e43c57581ee7de6ceefb56c432491a4a6ce81eb78"},
+]
+
+[package.dependencies]
+wcwidth = "*"
+
+[package.extras]
+curses = ["windows-curses ; sys_platform == \"win32\""]
+glib = ["PyGObject"]
+lcd = ["pyserial"]
+serial = ["pyserial"]
+tornado = ["tornado (>=5.0)"]
+trio = ["exceptiongroup ; python_version < \"3.11\"", "trio (>=0.24.0)"]
+twisted = ["twisted"]
+zmq = ["zmq"]
+
+[[package]]
 name = "virtualenv"
 version = "20.31.1"
 description = "Virtual Python Environment builder"
@@ -2499,4 +2539,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<4.0"
-content-hash = "2fe3020811687baeb4344aeab5ac68bdb3731ffbe7eb8e8c5080072213b67a81"
+content-hash = "6e1ff7527d8e82dbc90b35009acf7f0234efe8ae535908077d93532b98b08fc2"
