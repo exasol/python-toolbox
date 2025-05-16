@@ -112,16 +112,20 @@ def total_coverage(file: Union[str, Path]) -> float:
             encoding="utf-8",
         )
         stdout = p.stdout.strip()
-        if (p.returncode == 1) and (stdout == "No data to report."):
-            print(
+
+        if p.returncode != 0:
+            message = (
                 f"The following command"
                 f" returned non-zero exit status {p.returncode}:\n"
                 f'  {" ".join(p.args)}\n'
-                f"{stdout}\n"
-                "Returning total coverage 100 %.",
-                file=sys.stderr,
+                f"{stdout}"
             )
-            return 100.0
+            if (p.returncode == 1) and (stdout == "No data to report."):
+                print(f"{message}\nReturning total coverage 100 %.", file=sys.stderr)
+                return 100.0
+            else:
+                raise RuntimeError(message)
+
         with open(report, encoding="utf-8") as r:
             data = json.load(r)
             total: float = data["totals"]["percent_covered"]
