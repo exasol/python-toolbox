@@ -65,7 +65,7 @@ def _create_parser() -> ArgumentParser:
         "--fix",
         action="store_true",
         default=False,
-        help="fix instead of check.",
+        help="updates the `version.py`, instead of performing a check.",
     )
     return parser
 
@@ -102,7 +102,10 @@ def _main(args: Namespace) -> int:
 
 @nox.session(name="version:check", python=False)
 def version_check(session: Session) -> None:
-    """"""
+    """
+    Compare the version in the `version.py` to that
+    declared in the `pyproject.toml`.
+    """
     parser = _create_parser()
     args = parser.parse_args(session.posargs)
     entry_point = _main if not args.debug else _main_debug
