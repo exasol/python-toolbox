@@ -9,7 +9,6 @@ from pathlib import Path
 import nox
 from nox import Session
 
-from exasol.toolbox.error import ToolboxError
 from exasol.toolbox.util.version import Version
 from noxconfig import (
     PROJECT_CONFIG,
@@ -36,11 +35,8 @@ _VERSION_MODULE_TEMPLATE = cleandoc('''
 # fmt: on
 
 
-def write_version_module(version: Version, version_file: Path, exists_ok: bool = True) -> None:
-    if version_file.exists() and not exists_ok:
-        raise ToolboxError(f"Version file [{version_file}] already exists.")
-    version_file.unlink(missing_ok=True)
-    with open(version_file, "w", encoding="utf-8") as f:
+def write_version_module(version: Version, version_file: Path) -> None:
+    with version_file.open(mode="w", encoding="utf-8") as f:
         f.write(
             _VERSION_MODULE_TEMPLATE.format(
                 major=version.major, minor=version.minor, patch=version.patch
