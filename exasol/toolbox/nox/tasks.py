@@ -35,7 +35,7 @@ def check(session: Session) -> None:
     """Runs all available checks on the project"""
     context = _context(session, coverage=True)
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
-    _version(session, Mode.Check, PROJECT_CONFIG.version_file)
+    _version(session, Mode.Check)
     _code_format(session, Mode.Check, py_files)
     _pylint(session, py_files)
     _type_check(session, py_files)

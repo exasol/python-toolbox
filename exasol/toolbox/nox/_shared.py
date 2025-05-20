@@ -36,10 +36,10 @@ def python_files(project_root: Path) -> Iterable[Path]:
     return [path for path in files if not set(path.parts).intersection(deny_list)]
 
 
-def _version(session: Session, mode: Mode, version_file: Path) -> None:
+def _version(session: Session, mode: Mode) -> None:
     command = ["nox", "-s", "version:check", "--"]
     command = command if mode == Mode.Check else command + ["--fix"]
-    session.run(*command, f"{version_file}")
+    session.run(*command)
 
 
 def _context_parser() -> argparse.ArgumentParser:

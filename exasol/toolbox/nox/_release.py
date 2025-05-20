@@ -44,19 +44,19 @@ def _create_parser() -> argparse.ArgumentParser:
         "--no-add",
         default=False,
         action="store_true",
-        help=("Neither add nor commit the changes"),
+        help="Neither add nor commit the changes",
     )
     parser.add_argument(
         "--no-branch",
         default=False,
         action="store_true",
-        help=("Do not create a branch to commit the changes on"),
+        help="Do not create a branch to commit the changes on",
     )
     parser.add_argument(
         "--no-pr",
         default=False,
         action="store_true",
-        help=("Do not create a pull request for the changes"),
+        help="Do not create a pull request for the changes",
     )
     return parser
 
@@ -67,7 +67,7 @@ def _is_valid_version(old: Version, new: Version) -> bool:
 
 def _update_project_version(session: Session, version: Version) -> Version:
     session.run("poetry", "version", f"{version}")
-    _version(session, Mode.Fix, PROJECT_CONFIG.version_file)
+    _version(session, Mode.Fix)
     return version
 
 
@@ -129,7 +129,7 @@ def _trigger_release() -> Version:
 
 
 @nox.session(name="release:prepare", python=False)
-def prepare_release(session: Session, python=False) -> None:
+def prepare_release(session: Session) -> None:
     """
     Prepares the project for a new release.
     """
