@@ -51,6 +51,14 @@ force_grid_wrap = 2
 [tool.pylint.master]
 fail-under = 5.0
 output-format = "colorized,json:.lint.json,text:.lint.txt"
+ignore = [
+    "noxfile.py",
+    "noxconfig.py",
+    "version.py",
+]
+ignore-paths = [
+    ".*/test/.*",
+]
 
 [tool.pylint.format]
 max-line-length = 88

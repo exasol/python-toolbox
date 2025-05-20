@@ -37,3 +37,4 @@ permissions to be increased for specific jobs.
 ## Bugfixes
 
 * #428: Fixed detecting report coverage failures
+* #434: Adapted template so new projects do not fail from lint errors
