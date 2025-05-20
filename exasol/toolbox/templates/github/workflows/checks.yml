@@ -19,13 +19,7 @@ jobs:
         uses: exasol/python-toolbox/.github/actions/python-environment@1.2.0
 
       - name: Check Version(s)
-        run: |
-          echo "Please enable the version check by replacing this output with shell command bellow:"
-          echo ""
-          echo "poetry run -- nox -s version:check -- <<VERSION_PY>>"
-          echo ""
-          echo "Note: <<VERSION_PY>> needs to point to the version file of the project (version.py)."
-          exit 1
+        run: poetry run -- nox -s version:check
 
   Documentation:
     name: Docs

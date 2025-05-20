@@ -1,5 +1,10 @@
 # Unreleased
 
+## Summary
+
+With #441, please ensure that the location of the `version.py` is given for `Config.version_file`,
+which is specified in the `noxconfig.py`
+
 ## 📚 Documentation
 * Updated getting_started.rst for allowing tag-based releases
 
