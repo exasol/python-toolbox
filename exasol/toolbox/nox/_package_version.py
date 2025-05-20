@@ -70,7 +70,7 @@ def _create_parser() -> ArgumentParser:
     return parser
 
 
-def _main_debug(args: Namespace) -> int:
+def _version_check(args: Namespace) -> int:
     module_version = Version.from_python_module(args.version_module)
     poetry_version = Version.from_poetry()
 
@@ -92,14 +92,6 @@ def _main_debug(args: Namespace) -> int:
     return _SUCCESS
 
 
-def _main(args: Namespace) -> int:
-    try:
-        return _main_debug(args)
-    except Exception as ex:
-        print(f"Error while executing program, details: {ex}", file=sys.stderr)
-        return _FAILURE
-
-
 @nox.session(name="version:check", python=False)
 def version_check(session: Session) -> None:
     """
@@ -108,6 +100,5 @@ def version_check(session: Session) -> None:
     """
     parser = _create_parser()
     args = parser.parse_args(session.posargs)
-    entry_point = _main if not args.debug else _main_debug
-    if entry_point(args):
+    if _version_check(args):
         session.error()
