@@ -31,6 +31,7 @@ permissions to be increased for specific jobs.
 
 * [#161](https://github.com/exasol/python-toolbox/issues/161): Added support for installing extras & not using a cache to the python-environment action
 * [#408](https://github.com/exasol/python-toolbox/issues/408): Added support for GitHub runners who do not per default have pipx to use the python-environment action
+* #433: Removed directory .html-documentation/.doctrees after creating documentation
 
 ## Bugfixes
 
