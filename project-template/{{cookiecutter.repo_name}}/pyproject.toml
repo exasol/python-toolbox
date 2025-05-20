@@ -1,37 +1,37 @@
-[build-system]
-requires = [
-    "poetry>=1.0.0",
+[project]
+name = "{{cookiecutter.pypi_package_name}}"
+version = "0.1.0"
+requires-python = ">={{cookiecutter.python_version_min}},<4.0"
+description = "{{cookiecutter.description}}"
+authors = [
+    {name = "{{cookiecutter.author_full_name}}", email = "{{cookiecutter.author_email}}"},
 ]
-build-backend = "poetry.core.masonry.api"
+readme = "README.md"
+license = "MIT"
+keywords = ['exasol', '{{cookiecutter.package_name}}']
+dynamic = ["dependencies"]
 
 [tool.poetry]
-name = "{{cookiecutter.pypi_package_name}}"
-packages  = [
-    {include = "exasol"},
-]
-version = "0.1.0"
-description = "{{cookiecutter.description}}"
-
-license = "MIT"
-
-authors = [
-    "{{cookiecutter.autor_full_name}} <{{cookiecutter.autor_email}}>"
+requires-poetry = ">=2.1.0"
+packages = [
+    { include = "exasol" },
 ]
 
-readme = "README.md"
-
+[poetry.urls]
 repository = "https://github.com/exasol/{{cookiecutter.repo_name}}"
 homepage = "https://github.com/exasol/{{cookiecutter.repo_name}}"
 
-keywords = ['exasol', '{{cookiecutter.package_name}}']
-
 [tool.poetry.dependencies]
-python = ">={{cookiecutter.python_version_min}},<4.0"
 
 [tool.poetry.group.dev.dependencies]
-exasol-toolbox = ">=0.12.0"
+exasol-toolbox = "^1.1.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.coverage.run]
+relative_files = true
 source = [
     "exasol",
 ]
@@ -39,17 +39,14 @@ source = [
 [tool.coverage.report]
 fail_under = 15
 
-
 [tool.black]
 line-length = 88
 verbose = false
 include = "\\.pyi?$"
 
-
 [tool.isort]
 profile = "black"
 force_grid_wrap = 2
-
 
 [tool.pylint.master]
 fail-under = 5.0
