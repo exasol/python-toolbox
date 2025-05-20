@@ -2,7 +2,7 @@
 
 ## Summary
 
-With #420, any GitHub repos using the PTB for **documentation** will also need to 
+With #420, any GitHub repos using the PTB for **documentation** will also need to
 reconfigure the GitHub Pages settings for each repo:
 1. Go to the affected repo's GitHub page
 2. Select 'Settings'
@@ -31,3 +31,7 @@ permissions to be increased for specific jobs.
 
 * [#161](https://github.com/exasol/python-toolbox/issues/161): Added support for installing extras & not using a cache to the python-environment action
 * [#408](https://github.com/exasol/python-toolbox/issues/408): Added support for GitHub runners who do not per default have pipx to use the python-environment action
+
+## Bugfixes
+
+* #428: Fixed detecting report coverage failures
