@@ -67,7 +67,7 @@ def _is_valid_version(old: Version, new: Version) -> bool:
 
 def _update_project_version(session: Session, version: Version) -> Version:
     session.run("poetry", "version", f"{version}")
-    _version(session, Mode.Fix, PROJECT_CONFIG.version_file)
+    _version(session, Mode.Fix)
     return version
 
 
