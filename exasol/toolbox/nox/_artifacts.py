@@ -156,14 +156,14 @@ def _combine_coverage(session: Session, dir: Path, pattern: str):
     if args := [f for f in dir.glob(pattern) if f.exists()]:
         session.run("coverage", "combine", "--keep", *args)
     else:
-        print(f"Could not find any file {dir}/{pattern}")
+        print(f"Could not find any file {dir}/{pattern}", file=sys.stderr)
 
 
 def _copy_artifacts(dir: Path, *files: str):
     for file in files:
         path = dir / file
         if path.exists():
-            print(f"Copying file {path}")
+            print(f"Copying file {path}", file=sys.stderr)
             shutil.copy(path, ".")
         else:
-            print(f"File not found {path}")
+            print(f"File not found {path}", file=sys.stderr)
