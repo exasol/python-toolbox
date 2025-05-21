@@ -1,3 +1,4 @@
+import shutil
 import json
 import pathlib
 import re
@@ -118,3 +119,51 @@ def _validate_coverage(path: Path) -> str:
             f"Invalid database, the database is missing the following tables {missing}"
         )
     return ""
+
+
+@nox.session(name="artifacts:copy", python=False)
+def copy_artifacts(session: Session) -> None:
+    """
+    Copy artifacts to the current directory
+    """
+
+    def get_suffix() -> str:
+        versions = getattr(PROJECT_CONFIG, "python_versions", None)
+        pivot = versions[0] if versions else "3.9"
+        return f"-python{pivot}"
+
+    dir = Path(session.posargs[0])
+    suffix = _python_version_suffix()
+    _combine_coverage(session, dir, f"coverage{suffix}*/.coverage")
+    _copy_artifacts(
+        dir,
+        f"lint{suffix}/.lint.txt",
+        f"lint{suffix}/.lint.json",
+        f"security{suffix}/.security.json",
+    )
+
+
+def _python_version_suffix() -> str:
+    versions = getattr(PROJECT_CONFIG, "python_versions", None)
+    pivot = versions[0] if versions else "3.9"
+    return f"-python{pivot}"
+
+
+def _combine_coverage(session: Session, dir: Path, pattern: str):
+    """
+    pattern: glob pattern, e.g. "*.coverage"
+    """
+    if args := [f for f in dir.glob(pattern) if f.exists()]:
+        session.run("coverage", "combine", "--keep", *args)
+    else:
+        print(f"Could not find any file {dir}/{pattern}")
+
+
+def _copy_artifacts(dir: Path, *files: str):
+    for file in files:
+        path = dir / file
+        if path.exists():
+            print(f"Copying file {path}")
+            shutil.copy(path, ".")
+        else:
+            print(f"File not found {path}")
