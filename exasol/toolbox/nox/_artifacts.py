@@ -137,6 +137,7 @@ def copy_artifacts(session: Session) -> None:
     _combine_coverage(session, dir, f"coverage{suffix}*/.coverage")
     _copy_artifacts(
         dir,
+        dir.parent,
         f"lint{suffix}/.lint.txt",
         f"lint{suffix}/.lint.json",
         f"security{suffix}/.security.json",
@@ -154,16 +155,16 @@ def _combine_coverage(session: Session, dir: Path, pattern: str):
     pattern: glob pattern, e.g. "*.coverage"
     """
     if args := [f for f in dir.glob(pattern) if f.exists()]:
-        session.run("coverage", "combine", "--keep", *args)
+        session.run("coverage", "combine", "--keep", *sorted(args))
     else:
         print(f"Could not find any file {dir}/{pattern}", file=sys.stderr)
 
 
-def _copy_artifacts(dir: Path, *files: str):
+def _copy_artifacts(source: Path, dest: Path, *files: str):
     for file in files:
-        path = dir / file
+        path = source / file
         if path.exists():
             print(f"Copying file {path}", file=sys.stderr)
-            shutil.copy(path, ".")
+            shutil.copy(path, dest)
         else:
             print(f"File not found {path}", file=sys.stderr)
