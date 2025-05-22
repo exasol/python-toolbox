@@ -12,36 +12,19 @@ from exasol.toolbox.nox._dependencies import (
 )
 
 
-@pytest.mark.parametrize(
-    "toml,expected",
-    [
-        (
-            """
-[tool.poetry.dependencies]
-pytest = ">=7.2.2,<9"
-python = "^3.9"
-            """,
-            {"project": ["pytest", "python"]},
-        ),
-        (
-            """
-[tool.poetry.dependencies]
-pytest = ">=7.2.2,<9"
-python = "^3.9"
+def test_dependencies():
+    toml = """
+        [tool.poetry.dependencies]
+        pytest = ">=7.2.2,<9"
+        python = "^3.9"
+        
+        [tool.poetry.group.dev.dependencies]
+        autoimport = "^1.4.0"
+    """
 
-[tool.poetry.dev.dependencies]
-pip-licenses = "^5.0.0"
 
-[tool.poetry.group.dev.dependencies]
-autoimport = "^1.4.0"
-            """,
-            {"project": ["pytest", "python"], "dev": ["pip-licenses", "autoimport"]},
-        ),
-    ],
-)
-def test_dependencies(toml, expected):
     actual = _dependencies(toml)
-    assert actual == expected
+    assert actual == {"project": ["pytest", "python"], "dev": ["autoimport"]}
 
 
 @pytest.mark.parametrize(

@@ -34,12 +34,6 @@ def _dependencies(toml_str: str) -> dict[str, list]:
     for package in packages:
         dependencies["project"].append(package)
 
-    packages = poetry.get("dev", {}).get("dependencies", {})
-    if packages:
-        dependencies["dev"] = []
-    for package in packages:
-        dependencies["dev"].append(package)
-
     groups = poetry.get("group", {})
     for group in groups:
         packages = groups.get(group, {}).get("dependencies")
