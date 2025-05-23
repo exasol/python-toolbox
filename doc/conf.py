@@ -80,5 +80,5 @@ html_theme_options = {
 }
 # -- Configure link checking behavior  ----------------------------------------
 linkcheck_ignore = [
-
+    r'http[s]?://'
 ]

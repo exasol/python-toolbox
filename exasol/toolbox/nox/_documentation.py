@@ -23,6 +23,8 @@ from noxconfig import (
     PROJECT_CONFIG,
     Config,
 )
+import tempfile
+import json
 
 
 def _build_docs(session: nox.Session, config: Config) -> None:
@@ -47,37 +49,6 @@ def _build_multiversion_docs(session: nox.Session, config: Config) -> None:
         DOCS_OUTPUT_DIR,
     )
     session.run("touch", f"{DOCS_OUTPUT_DIR}/.nojekyll")
-
-
-def _doc_files(root: Path) -> Iterable[Path]:
-    """Returns an iterator over all documentation files of the project"""
-    docs = Path(root).glob("**/*.rst")
-
-    def _deny_filter(path: Path) -> bool:
-        return not ("venv" in path.parts)
-
-    return filter(lambda path: _deny_filter(path), docs)
-
-
-def _doc_urls(files: Iterable[Path]) -> Iterable[tuple[Path, str]]:
-    """Returns an iterable over all urls contained in the provided files"""
-    def should_filter(url: str) -> bool:
-        _filtered: Container[str] = []
-        return url.startswith("mailto") or url in _filtered
-
-    for file in files:
-        urls = re.findall( r"http[s]?://[^\s<>'\"\,\)\]]+[^\s<>'\"\,\.\)\]]" , file.open().read())
-        yield from zip(repeat(file), filter(lambda url: not should_filter(url), urls))
-
-
-def _doc_links_check(url: str) -> Tuple[Optional[int], str]:
-    """Checks if an url is still working (can be accessed)"""
-    try:
-        # User-Agent needs to be faked otherwise some webpages will deny access with a 403
-        result = requests.get(url, timeout=5)
-        return result.status_code, f"{result.reason}"
-    except requests.exceptions.RequestException as ex:
-        print("error:", ex)
 
 
 def _git_diff_changes_main() -> int:
@@ -139,22 +110,52 @@ def docs_list_links(session: Session) -> None:
 @nox.session(name="docs:links:check", python=False)
 def docs_links_check(session: Session) -> None:
     """Checks whether all links in the documentation are accessible."""
-    errors = []
-    urls = list(_doc_urls(_doc_files(PROJECT_CONFIG.root)))
-    urls_count = len(urls)
-    count = 1
-    for path, url in urls:
-        print(f"({count}/{urls_count}): {url}")
-        status, details = _doc_links_check(url)
-        if status != 200:
-            errors.append((path, url, status, details))
-        count += 1
-
-    if errors:
-        session.error(
-            "\n"
-            + "\n".join(f"Url: {e[1]}, File: {e[0]}, Error: {e[3]}" for e in errors)
-        )
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmpdir = Path(tmpdir)
+        sp = subprocess.run(["poetry", "run", "--", "sphinx-build", "-b", 'linkcheck', PROJECT_CONFIG.root/"doc", tmpdir], capture_output=True, text=True)
+        print(sp.returncode)
+        if sp.returncode >= 2:
+            print(sp.stderr)
+            session.error(2)
+        output = tmpdir/"output.json"
+        results = output.read_text().split("\n")
+        reslen = len(results)
+        resstr = results[-1]
+        if (reslen == 0) or ((reslen == 1) and (resstr == "")):
+            return
+        elif resstr == "":
+            results.pop()
+        for line, result in enumerate(results):
+            resdict = json.loads(result)
+            if resdict['status'] == 'ignored' and resdict['uri'].startswith('http'):
+                try:
+                    match = re.search(r"https?://[^\s\"\'<>]+", resdict["uri"])
+                    if match:
+                        resdict['uri'] = match.group()
+                    print(f"{line}/{reslen}")
+                    result = requests.head(resdict['uri'], timeout=5)
+                    if result.status_code != 200:
+                        result = requests.get(resdict['uri'], timeout=5, stream=True)
+                        result.close()
+                    if result.status_code >= 400:
+                        resdict['status'] = 'broken'
+                        resdict['code'] = result.status_code
+                    if result.status_code < 400:
+                        resdict['status'] = 'working'
+                        resdict['code'] = result.status_code
+                except requests.exceptions.Timeout:
+                    resdict['status'] = 'timeout'
+                results[line] = json.dumps(resdict)
+        output.write_text("\n".join(f"{r}" for r in results))
+        errors = []
+        for result in results:
+            line = json.loads(result)
+            if (line["status"] == "broken") or line["status"] == "timeout":
+                errors.append(result)
+        if errors:
+            print("Error" + "s" if len(errors) > 1 else "")
+            print("\n".join(error for error in errors))
+            session.error(1)
 
 
 @nox.session(name="changelog:updated", python=False)
