@@ -22,7 +22,6 @@ def test_dependencies():
         autoimport = "^1.4.0"
     """
 
-
     actual = _dependencies(toml)
     assert actual == {"project": ["pytest", "python"], "dev": ["autoimport"]}
 
