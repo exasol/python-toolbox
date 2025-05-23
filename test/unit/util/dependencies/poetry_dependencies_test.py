@@ -15,15 +15,14 @@ ANALYSIS_GROUP = PoetryGroup(
     name="analysis", toml_section="tool.poetry.group.analysis.dependencies"
 )
 
+PYLINT = PoetryDependency(name="pylint", version="3.3.7", group=MAIN_GROUP)
+ISORT = PoetryDependency(name="isort", version="6.0.1", group=DEV_GROUP)
+BLACK = PoetryDependency(name="black", version="25.1.0", group=ANALYSIS_GROUP)
+
 DIRECT_DEPENDENCIES = {
-    MAIN_GROUP.name: [
-        PoetryDependency(name="numpy", version="2.2.6", group=MAIN_GROUP),
-        PoetryDependency(name="pylint", version="3.3.7", group=MAIN_GROUP),
-    ],
-    DEV_GROUP.name: [PoetryDependency(name="isort", version="6.0.1", group=DEV_GROUP)],
-    ANALYSIS_GROUP.name: [
-        PoetryDependency(name="black", version="25.1.0", group=ANALYSIS_GROUP)
-    ],
+    MAIN_GROUP.name: [PYLINT],
+    DEV_GROUP.name: [ISORT],
+    ANALYSIS_GROUP.name: [BLACK],
 }
 
 
@@ -45,10 +44,17 @@ def project_path(cwd, project_name):
 @pytest.fixture(scope="module")
 def create_poetry_project(cwd, project_name, project_path):
     subprocess.run(["poetry", "new", project_name], cwd=cwd)
-    subprocess.run(["poetry", "add", "numpy"], cwd=project_path)
-    subprocess.run(["poetry", "add", "pylint"], cwd=project_path)
-    subprocess.run(["poetry", "add", "--group", "dev", "isort"], cwd=project_path)
-    subprocess.run(["poetry", "add", "--group", "analysis", "black"], cwd=project_path)
+    subprocess.run(
+        ["poetry", "add", f"{PYLINT.name}=={PYLINT.version}"], cwd=project_path
+    )
+    subprocess.run(
+        ["poetry", "add", "--group", "dev", f"{ISORT.name}=={ISORT.version}"],
+        cwd=project_path,
+    )
+    subprocess.run(
+        ["poetry", "add", "--group", "analysis", f"{BLACK.name}=={BLACK.version}"],
+        cwd=project_path,
+    )
 
 
 @pytest.fixture(scope="module")
@@ -105,8 +111,6 @@ class TestPoetryDependencies:
 
     @staticmethod
     def test_all_dependencies(create_poetry_project, project_path):
-        # set_direct_deps = set(DIRECT_DEPENDENCIES)
-
         poetry_dep = PoetryDependencies(
             groups=(MAIN_GROUP, DEV_GROUP, ANALYSIS_GROUP),
             working_directory=project_path,
