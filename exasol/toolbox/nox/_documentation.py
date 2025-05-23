@@ -143,7 +143,7 @@ def docs_list_links(session: Session) -> None:
         file_links.sort(key=lambda file: file["filename"])
         print(
             "\n".join(
-                f"filename: {fl["filename"]} -> uri: {fl["uri"]}" for fl in file_links
+                f"filename: {fl['filename']} -> uri: {fl['uri']}" for fl in file_links
             )
         )
 
