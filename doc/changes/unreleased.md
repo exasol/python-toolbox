@@ -7,6 +7,7 @@ which is specified in the `noxconfig.py`
 
 ## 📚 Documentation
 * Updated getting_started.rst for allowing tag-based releases
+* [#382](https://github.com/exasol/python-toolbox/issues/382): Refactored `dependency:licenses` to use pydantic models & `poetry show`
 
 ## ✨ Features
 
