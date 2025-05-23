@@ -1,29 +1,22 @@
 import json
+from inspect import cleandoc
 
 import pytest
+from toolbox.util.dependencies.poetry_dependencies import (
+    PoetryDependency,
+    PoetryGroup,
+)
 
 from exasol.toolbox.nox._dependencies import (
     Audit,
-    Package,
-    _dependencies,
+    PackageLicense,
     _normalize,
     _packages_from_json,
     _packages_to_markdown,
 )
 
-
-def test_dependencies():
-    toml = """
-        [tool.poetry.dependencies]
-        pytest = ">=7.2.2,<9"
-        python = "^3.9"
-        
-        [tool.poetry.group.dev.dependencies]
-        autoimport = "^1.4.0"
-    """
-
-    actual = _dependencies(toml)
-    assert actual == {"project": ["pytest", "python"], "dev": ["autoimport"]}
+MAIN_GROUP = PoetryGroup(name="main", toml_section="project.dependencies")
+DEV_GROUP = PoetryGroup(name="dev", toml_section="tool.poetry.group.dev.dependencies")
 
 
 @pytest.mark.parametrize(
@@ -56,30 +49,30 @@ def test_normalize(licenses, expected):
     [
         (
             """
-[
-    {
-        "License": "license1",
-        "Name": "name1",
-        "URL": "link1",
-        "Version": "version1"
-    },
-    {
-        "License": "license2",
-        "Name": "name2",
-        "URL": "UNKNOWN",
-        "Version": "version2"
-    }
-]
-            """,
+        [
+            {
+                "License": "license1",
+                "Name": "name1",
+                "URL": "link1",
+                "Version": "version1"
+            },
+            {
+                "License": "license2",
+                "Name": "name2",
+                "URL": "UNKNOWN",
+                "Version": "version2"
+            }
+        ]
+                    """,
             [
-                Package(
+                PackageLicense(
                     name="name1",
                     version="version1",
                     package_link="link1",
                     license="license1",
                     license_link="",
                 ),
-                Package(
+                PackageLicense(
                     name="name2",
                     version="version2",
                     package_link="",
@@ -96,26 +89,40 @@ def test_packages_from_json(json, expected):
 
 
 @pytest.mark.parametrize(
-    "dependencies,packages,expected",
+    "dependencies,packages",
     [
         (
-            {"project": ["package1", "package3"], "dev": ["package2"]},
+            {
+                MAIN_GROUP.name: [
+                    PoetryDependency(
+                        name="package1", version="version1", group=MAIN_GROUP
+                    ),
+                    PoetryDependency(
+                        name="package3", version="version3", group=MAIN_GROUP
+                    ),
+                ],
+                DEV_GROUP.name: [
+                    PoetryDependency(
+                        name="package2", version="version2", group=DEV_GROUP
+                    )
+                ],
+            },
             [
-                Package(
+                PackageLicense(
                     name="package1",
                     package_link="package_link1",
                     version="version1",
                     license="license1",
                     license_link="license_link1",
                 ),
-                Package(
+                PackageLicense(
                     name="package2",
                     package_link="package_link2",
                     version="version2",
                     license="license2",
                     license_link="license_link2",
                 ),
-                Package(
+                PackageLicense(
                     name="package3",
                     package_link="package_link3",
                     version="version3",
@@ -123,8 +130,15 @@ def test_packages_from_json(json, expected):
                     license_link="",
                 ),
             ],
-            """# Dependencies
-## Project Dependencies
+        )
+    ],
+)
+def test_packages_to_markdown(dependencies, packages):
+    actual = _packages_to_markdown(dependencies, packages)
+    assert (
+        actual
+        == """# Dependencies
+## Main Dependencies
 |Package|version|Licence|
 |---|---|---|
 |[package1](package_link1)|version1|[license1](license_link1)|
@@ -135,13 +149,8 @@ def test_packages_from_json(json, expected):
 |---|---|---|
 |[package2](package_link2)|version2|[license2](license_link2)|
 
-""",
-        )
-    ],
-)
-def test_packages_to_markdown(dependencies, packages, expected):
-    actual = _packages_to_markdown(dependencies, packages)
-    assert actual == expected
+"""
+    )
 
 
 class TestFilterJsonForVulnerabilities:

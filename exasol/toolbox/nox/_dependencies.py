@@ -4,44 +4,25 @@ import argparse
 import json
 import subprocess
 import tempfile
-from dataclasses import dataclass
 from inspect import cleandoc
 from json import loads
 from pathlib import Path
 
 import nox
-import tomlkit
 from nox import Session
 
+from exasol.toolbox.util.dependencies.poetry_dependencies import (
+    Package,
+    PoetryDependencies,
+    PoetryDependency,
+    PoetryToml,
+)
 
-@dataclass(frozen=True)
-class Package:
-    name: str
+
+class PackageLicense(Package):
     package_link: str
-    version: str
     license: str
     license_link: str
-
-
-def _dependencies(toml_str: str) -> dict[str, list]:
-    toml = tomlkit.loads(toml_str)
-    poetry = toml.get("tool", {}).get("poetry", {})
-    dependencies: dict[str, list] = {}
-
-    packages = poetry.get("dependencies", {})
-    if packages:
-        dependencies["project"] = []
-    for package in packages:
-        dependencies["project"].append(package)
-
-    groups = poetry.get("group", {})
-    for group in groups:
-        packages = groups.get(group, {}).get("dependencies")
-        if packages and not dependencies.get(group, {}):
-            dependencies[group] = []
-        for package in packages:
-            dependencies[group].append(package)
-    return dependencies
 
 
 def _normalize(_license: str) -> str:
@@ -98,7 +79,7 @@ def _normalize(_license: str) -> str:
     return mapping[_license]
 
 
-def _packages_from_json(json: str) -> list[Package]:
+def _packages_from_json(json: str) -> list[PackageLicense]:
     packages = loads(json)
     packages_list = []
     mapping = {
@@ -114,7 +95,7 @@ def _packages_from_json(json: str) -> list[Package]:
     for package in packages:
         package_license = _normalize(package["License"])
         packages_list.append(
-            Package(
+            PackageLicense(
                 name=package["Name"],
                 package_link="" if package["URL"] == "UNKNOWN" else package["URL"],
                 version=package["Version"],
@@ -127,7 +108,7 @@ def _packages_from_json(json: str) -> list[Package]:
     return packages_list
 
 
-def _licenses() -> list[Package]:
+def _licenses() -> list[PackageLicense]:
     with tempfile.NamedTemporaryFile() as file:
         subprocess.run(
             [
@@ -146,13 +127,17 @@ def _licenses() -> list[Package]:
 
 
 def _packages_to_markdown(
-    dependencies: dict[str, list], packages: list[Package]
+    dependencies: dict[str, list], packages: list[PackageLicense]
 ) -> str:
     def heading():
         text = "# Dependencies\n"
         return text
 
-    def dependency(group: str, group_packages: list, packages: list[Package]) -> str:
+    def dependency(
+        group: str,
+        group_packages: list[PoetryDependency],
+        packages: list[PackageLicense],
+    ) -> str:
         def _header(_group: str):
             _group = "".join([word.capitalize() for word in _group.strip().split()])
             text = f"## {_group} Dependencies\n"
@@ -160,17 +145,13 @@ def _packages_to_markdown(
             text += "|---|---|---|\n"
             return text
 
-        def _rows(_group_packages: list, _packages: list[Package]) -> str:
-            def _normalize_package_name(name: str) -> str:
-                _name = name.lower()
-                while "_" in _name:
-                    _name = _name.replace("_", "-")
-                return _name
-
+        def _rows(
+            _group_packages: list[PoetryDependency], _packages: list[PackageLicense]
+        ) -> str:
             text = ""
             for package in _group_packages:
                 consistent = filter(
-                    lambda elem: (_normalize_package_name(elem.name) == package),
+                    lambda elem: elem.normalized_name == package.normalized_name,
                     _packages,
                 )
                 for content in consistent:
@@ -276,8 +257,11 @@ class Audit:
 @nox.session(name="dependency:licenses", python=False)
 def dependency_licenses(session: Session) -> None:
     """returns the packages and their licenses"""
-    toml = Path("pyproject.toml")
-    dependencies = _dependencies(toml.read_text())
+    working_directory = Path()
+    groups = PoetryToml(working_directory=working_directory).groups
+    dependencies = PoetryDependencies(
+        groups=groups, working_directory=working_directory
+    ).direct_dependencies
     package_infos = _licenses()
     print(_packages_to_markdown(dependencies=dependencies, packages=package_infos))
 
