@@ -5,6 +5,7 @@ from toolbox.util.dependencies.poetry_dependencies import (
 )
 
 from exasol.toolbox.util.dependencies.licenses import (
+    LICENSE_MAPPING_TO_URL,
     PackageLicense,
     _normalize,
     _packages_from_json,
@@ -13,6 +14,29 @@ from exasol.toolbox.util.dependencies.licenses import (
 
 MAIN_GROUP = PoetryGroup(name="main", toml_section="project.dependencies")
 DEV_GROUP = PoetryGroup(name="dev", toml_section="tool.poetry.group.dev.dependencies")
+
+
+class TestPackageLicense:
+    @staticmethod
+    def test_package_link_map_unknown_to_none():
+        result = PackageLicense(
+            name="dummy", version="dummy", package_link="UNKNOWN", license="dummy"
+        )
+        assert result.package_link is None
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "license,expected",
+        [
+            ("GPLv1", LICENSE_MAPPING_TO_URL["GPLv1"]),
+            ("DUMMY", None),
+        ],
+    )
+    def test_license_link(license, expected):
+        result = PackageLicense(
+            name="dummy", version="dummy", package_link="dummy", license=license
+        )
+        assert result.license_link == expected
 
 
 @pytest.mark.parametrize(
@@ -45,35 +69,33 @@ def test_normalize(licenses, expected):
     [
         (
             """
-            [
-                {
-                    "License": "license1",
-                    "Name": "name1",
-                    "URL": "link1",
-                    "Version": "version1"
-                },
-                {
-                    "License": "license2",
-                    "Name": "name2",
-                    "URL": "UNKNOWN",
-                    "Version": "version2"
-                }
-            ]
-                        """,
+                [
+                    {
+                        "License": "license1",
+                        "Name": "name1",
+                        "URL": "link1",
+                        "Version": "version1"
+                    },
+                    {
+                        "License": "license2",
+                        "Name": "name2",
+                        "URL": "UNKNOWN",
+                        "Version": "version2"
+                    }
+                ]
+                            """,
             [
                 PackageLicense(
                     name="name1",
                     version="version1",
                     package_link="link1",
                     license="license1",
-                    license_link="",
                 ),
                 PackageLicense(
                     name="name2",
                     version="version2",
-                    package_link="",
+                    package_link=None,
                     license="license2",
-                    license_link="",
                 ),
             ],
         )
@@ -108,22 +130,19 @@ def test_packages_from_json(json, expected):
                     name="package1",
                     package_link="package_link1",
                     version="version1",
-                    license="license1",
-                    license_link="license_link1",
+                    license="GPLv1",
                 ),
                 PackageLicense(
                     name="package2",
                     package_link="package_link2",
                     version="version2",
-                    license="license2",
-                    license_link="license_link2",
+                    license="GPLv2",
                 ),
                 PackageLicense(
                     name="package3",
-                    package_link="package_link3",
+                    package_link="UNKNOWN",
                     version="version3",
                     license="license3",
-                    license_link="",
                 ),
             ],
         )
@@ -135,15 +154,15 @@ def test_packages_to_markdown(dependencies, packages):
         actual
         == """# Dependencies
 ## Main Dependencies
-|Package|version|Licence|
+|Package|Version|License|
 |---|---|---|
-|[package1](package_link1)|version1|[license1](license_link1)|
-|[package3](package_link3)|version3|license3|
+|[package1](package_link1)|version1|[GPLv1](https://www.gnu.org/licenses/old-licenses/gpl-1.0.html)|
+|package3|version3|license3|
 
 ## Dev Dependencies
-|Package|version|Licence|
+|Package|Version|License|
 |---|---|---|
-|[package2](package_link2)|version2|[license2](license_link2)|
+|[package2](package_link2)|version2|[GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)|
 
 """
     )

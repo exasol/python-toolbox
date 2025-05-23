@@ -5,24 +5,62 @@ import tempfile
 from inspect import cleandoc
 from json import loads
 
+from pydantic import field_validator
+
 from exasol.toolbox.util.dependencies.poetry_dependencies import (
     PoetryDependency,
 )
 from exasol.toolbox.util.dependencies.shared_models import Package
 
+LICENSE_MAPPING_TO_ABBREVIATION = {
+    "BSD License": "BSD",
+    "MIT License": "MIT",
+    "The Unlicensed (Unlicensed)": "Unlicensed",
+    "Mozilla Public License 2.0 (MPL 2.0)": "MPLv2",
+    "GNU General Public License (GPL)": "GPL",
+    "GNU Lesser General Public License v2 (LGPLv2)": "LGPLv2",
+    "GNU General Public License v2 (GPLv2)": "GPLv2",
+    "GNU General Public License v2 or later (GPLv2+)": "GPLv2+",
+    "GNU General Public License v3 (GPLv3)": "GPLv3",
+    "Apache Software License": "Apache",
+}
+
+LICENSE_MAPPING_TO_URL = {
+    "GPLv1": "https://www.gnu.org/licenses/old-licenses/gpl-1.0.html",
+    "GPLv2": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
+    "LGPLv2": "https://www.gnu.org/licenses/old-licenses/lgpl-2.0.html",
+    "GPLv3": "https://www.gnu.org/licenses/gpl-3.0.html",
+    "LGPLv3": "https://www.gnu.org/licenses/lgpl-3.0.html",
+    "Apache": "https://www.apache.org/licenses/LICENSE-2.0",
+    "MIT": "https://mit-license.org/",
+    "BSD": "https://opensource.org/license/bsd-3-clause",
+}
+
 
 class PackageLicense(Package):
-    package_link: str
+    package_link: str | None
     license: str
-    license_link: str
+
+    @field_validator("package_link", mode="before")
+    def map_unknown_to_none(cls, v) -> str | None:
+        if v == "UNKNOWN":
+            return None
+        return v
+
+    @field_validator("license", mode="before")
+    def map_to_normalized_values(cls, v) -> str | None:
+        return _normalize(v)
+
+    @property
+    def license_link(self) -> str | None:
+        return LICENSE_MAPPING_TO_URL.get(self.license, None)
 
 
 def _normalize(_license: str) -> str:
-    def is_multi_license(l):
+    def is_multi_license(l) -> bool:
         return ";" in l
 
     def select_most_restrictive(licenses: list) -> str:
-        _max = 0
         lic = "Unknown"
         _mapping = {
             "Unknown": -1,
@@ -35,69 +73,33 @@ def _normalize(_license: str) -> str:
             "GPLv3": 6,
         }
         for l in licenses:
-            if l in _mapping:
-                if _mapping[l] > _mapping[lic]:
-                    lic = l
-            else:
+            if l not in _mapping:
                 return "<br>".join(licenses)
+            if _mapping[l] > _mapping[lic]:
+                lic = l
         return lic
-
-    mapping = {
-        "BSD License": "BSD",
-        "MIT License": "MIT",
-        "The Unlicensed (Unlicensed)": "Unlicensed",
-        "Mozilla Public License 2.0 (MPL 2.0)": "MPLv2",
-        "GNU General Public License (GPL)": "GPL",
-        "GNU Lesser General Public License v2 (LGPLv2)": "LGPLv2",
-        "GNU General Public License v2 (GPLv2)": "GPLv2",
-        "GNU General Public License v2 or later (GPLv2+)": "GPLv2+",
-        "GNU General Public License v3 (GPLv3)": "GPLv3",
-        "Apache Software License": "Apache",
-    }
 
     if is_multi_license(_license):
         items = []
         for item in _license.split(";"):
             item = str(item).strip()
-            if item in mapping:
-                items.append(mapping[item])
-            else:
-                items.append(item)
+            items.append(LICENSE_MAPPING_TO_ABBREVIATION.get(item, item))
         return select_most_restrictive(items)
 
-    if _license not in mapping:
-        return _license
-
-    return mapping[_license]
+    return LICENSE_MAPPING_TO_ABBREVIATION.get(_license, _license)
 
 
 def _packages_from_json(json: str) -> list[PackageLicense]:
     packages = loads(json)
-    packages_list = []
-    mapping = {
-        "GPLv1": "https://www.gnu.org/licenses/old-licenses/gpl-1.0.html",
-        "GPLv2": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
-        "LGPLv2": "https://www.gnu.org/licenses/old-licenses/lgpl-2.0.html",
-        "GPLv3": "https://www.gnu.org/licenses/gpl-3.0.html",
-        "LGPLv3": "https://www.gnu.org/licenses/lgpl-3.0.html",
-        "Apache": "https://www.apache.org/licenses/LICENSE-2.0",
-        "MIT": "https://mit-license.org/",
-        "BSD": "https://opensource.org/license/bsd-3-clause",
-    }
-    for package in packages:
-        package_license = _normalize(package["License"])
-        packages_list.append(
-            PackageLicense(
-                name=package["Name"],
-                package_link="" if package["URL"] == "UNKNOWN" else package["URL"],
-                version=package["Version"],
-                license=package_license,
-                license_link=(
-                    "" if package_license not in mapping else mapping[package_license]
-                ),
-            )
+    return [
+        PackageLicense(
+            name=package["Name"],
+            package_link=package["URL"],
+            version=package["Version"],
+            license=package["License"],
         )
-    return packages_list
+        for package in packages
+    ]
 
 
 def licenses() -> list[PackageLicense]:
@@ -114,16 +116,14 @@ def licenses() -> list[PackageLicense]:
             ],
             capture_output=True,
         )
-        result = _packages_from_json(file.read().decode())
-    return result
+        return _packages_from_json(file.read().decode())
 
 
 def packages_to_markdown(
     dependencies: dict[str, list], packages: list[PackageLicense]
 ) -> str:
     def heading():
-        text = "# Dependencies\n"
-        return text
+        return "# Dependencies\n"
 
     def dependency(
         group: str,
@@ -133,7 +133,7 @@ def packages_to_markdown(
         def _header(_group: str):
             _group = "".join([word.capitalize() for word in _group.strip().split()])
             text = f"## {_group} Dependencies\n"
-            text += "|Package|version|Licence|\n"
+            text += "|Package|Version|License|\n"
             text += "|---|---|---|\n"
             return text
 
