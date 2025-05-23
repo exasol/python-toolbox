@@ -4,6 +4,7 @@ import subprocess
 import tempfile
 from inspect import cleandoc
 from json import loads
+from typing import Optional
 
 from pydantic import field_validator
 
@@ -38,21 +39,21 @@ LICENSE_MAPPING_TO_URL = {
 
 
 class PackageLicense(Package):
-    package_link: str | None
+    package_link: Optional[str]
     license: str
 
     @field_validator("package_link", mode="before")
-    def map_unknown_to_none(cls, v) -> str | None:
+    def map_unknown_to_none(cls, v) -> Optional[str]:
         if v == "UNKNOWN":
             return None
         return v
 
     @field_validator("license", mode="before")
-    def map_to_normalized_values(cls, v) -> str | None:
+    def map_to_normalized_values(cls, v) -> Optional[str]:
         return _normalize(v)
 
     @property
-    def license_link(self) -> str | None:
+    def license_link(self) -> Optional[str]:
         return LICENSE_MAPPING_TO_URL.get(self.license, None)
 
 

@@ -1,7 +1,8 @@
 import subprocess
 
 import pytest
-from toolbox.util.dependencies.poetry_dependencies import (
+
+from exasol.toolbox.util.dependencies.poetry_dependencies import (
     PoetryDependencies,
     PoetryDependency,
     PoetryGroup,

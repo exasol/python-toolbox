@@ -17,16 +17,19 @@ from exasol.toolbox.util.dependencies.shared_models import Package
 
 class PoetryGroup(BaseModel):
     name: str
-    toml_section: str
+    toml_section: Optional[str]
 
     class Config:
         frozen = True
 
 
+TRANSITIVE_GROUP = PoetryGroup(name="transitive", toml_section=None)
+
+
 class PoetryDependency(Package):
     name: str
     version: str
-    group: PoetryGroup | None
+    group: PoetryGroup
 
 
 class PoetryToml(BaseModel):
@@ -45,12 +48,12 @@ class PoetryToml(BaseModel):
             raise ValueError(f"Error reading file: {str(e)}")
         return values
 
-    def get_section_dict(self, section: str) -> dict | None:
+    def get_section_dict(self, section: str) -> Optional[dict]:
         current = self._content.copy()
         for section in section.split("."):
             if section not in current:
                 return None
-            current = current[section]
+            current = current[section]  # type: ignore
         return current
 
     @property
@@ -83,13 +86,13 @@ class PoetryDependencies(BaseModel):
     working_directory: Path
 
     @staticmethod
-    def _extract_from_line(line: str, group: PoetryGroup | None) -> PoetryDependency:
+    def _extract_from_line(line: str, group: PoetryGroup) -> PoetryDependency:
         pattern = r"\s+(\d+(?:\.\d+)*)\s+"
         match = re.split(pattern, line)
         return PoetryDependency(name=match[0], version=match[1], group=group)
 
     def _extract_from_poetry_show(
-        self, output_text: str, group: PoetryGroup | None
+        self, output_text: str, group: PoetryGroup
     ) -> list[PoetryDependency]:
         return [
             self._extract_from_line(line, group=group)
@@ -125,8 +128,8 @@ class PoetryDependencies(BaseModel):
             for dep in group_list
         }
         for line in output.stdout.splitlines():
-            dep = self._extract_from_line(line=line, group=None)
+            dep = self._extract_from_line(line=line, group=TRANSITIVE_GROUP)
             if dep.name not in names_direct_dependencies:
                 transitive_dependencies.append(dep)
 
-        return direct_dependencies | {"transitive": transitive_dependencies}
+        return direct_dependencies | {TRANSITIVE_GROUP.name: transitive_dependencies}
