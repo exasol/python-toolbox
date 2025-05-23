@@ -7,7 +7,7 @@ Uniform Project Layout
 PTB expects a default project layout following "convention over configuration" when possible and reasonable.
 See the cookie-cutter project template for details, which is part of the python-toolbox workspace and can be found in directory `project-template`.
 You can also generate a project from the template to explore the default structure.
-For more details on this, please check out section `"getting started" <getting_started.html>`_ section.
+For more details on this, please check out section :ref:`Getting Started` section.
 
 Nox
 ---
