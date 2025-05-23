@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import json
+import os
+import re
 import shutil
 import subprocess
 import sys
-import requests
+import tempfile
 import webbrowser
 from itertools import repeat
 from pathlib import Path
@@ -14,17 +17,19 @@ from typing import (
     Tuple,
 )
 
-import re
 import nox
 from nox import Session
+from requests import (
+    get,
+    head,
+)
+from requests.exceptions import Timeout
 
 from exasol.toolbox.nox._shared import DOCS_OUTPUT_DIR
 from noxconfig import (
     PROJECT_CONFIG,
     Config,
 )
-import tempfile
-import json
 
 
 def _build_docs(session: nox.Session, config: Config) -> None:
@@ -103,21 +108,74 @@ def clean_docs(_session: Session) -> None:
 @nox.session(name="docs:links", python=False)
 def docs_list_links(session: Session) -> None:
     """List all the links within the documentation."""
-    for path, url in _doc_urls(_doc_files(PROJECT_CONFIG.root)):
-        session.log(f"Url: {url}, File: {path}")
+    ignore = [r".*"]
+    env = os.environ.copy()
+    env["SPHINX_EXTRA_LINKCHECK_IGNORES"] = ",".join(ignore)
+    with tempfile.TemporaryDirectory() as path:
+        tmpdir = Path(path)
+        sp = subprocess.run(
+            [
+                "poetry",
+                "run",
+                "--",
+                "sphinx-build",
+                "-b",
+                "linkcheck",
+                PROJECT_CONFIG.root / "doc",
+                tmpdir,
+            ],
+            capture_output=True,
+            text=True,
+            env=env,
+        )
+        print(sp.returncode)
+        if sp.returncode >= 2:
+            print(sp.stderr)
+            session.error(2)
+        output = tmpdir / "output.json"
+        links = output.read_text().split("\n")
+        file_links = []
+        for link in links:
+            if link != "":
+                line = json.loads(link)
+                if not line["uri"].startswith("#"):
+                    file_links.append(line)
+        file_links.sort(key=lambda file: file["filename"])
+        print(
+            "\n".join(
+                f"filename: {f["filename"]} -> uri: {f["uri"]}" for f in file_links
+            )
+        )
 
 
 @nox.session(name="docs:links:check", python=False)
 def docs_links_check(session: Session) -> None:
     """Checks whether all links in the documentation are accessible."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        tmpdir = Path(tmpdir)
-        sp = subprocess.run(["poetry", "run", "--", "sphinx-build", "-b", 'linkcheck', PROJECT_CONFIG.root/"doc", tmpdir], capture_output=True, text=True)
+    ignore = [r"https?://"]
+    env = os.environ.copy()
+    env["SPHINX_EXTRA_LINKCHECK_IGNORES"] = ",".join(ignore)
+    with tempfile.TemporaryDirectory() as path:
+        tmpdir = Path(path)
+        sp = subprocess.run(
+            [
+                "poetry",
+                "run",
+                "--",
+                "sphinx-build",
+                "-b",
+                "linkcheck",
+                PROJECT_CONFIG.root / "doc",
+                tmpdir,
+            ],
+            capture_output=True,
+            text=True,
+            env=env,
+        )
         print(sp.returncode)
         if sp.returncode >= 2:
             print(sp.stderr)
             session.error(2)
-        output = tmpdir/"output.json"
+        output = tmpdir / "output.json"
         results = output.read_text().split("\n")
         reslen = len(results)
         resstr = results[-1]
@@ -125,32 +183,32 @@ def docs_links_check(session: Session) -> None:
             return
         elif resstr == "":
             results.pop()
-        for line, result in enumerate(results):
+        for line_nr, result in enumerate(results):
             resdict = json.loads(result)
-            if resdict['status'] == 'ignored' and resdict['uri'].startswith('http'):
+            if resdict["status"] == "ignored" and resdict["uri"].startswith("http"):
                 try:
                     match = re.search(r"https?://[^\s\"\'<>]+", resdict["uri"])
                     if match:
-                        resdict['uri'] = match.group()
-                    print(f"{line}/{reslen}")
-                    result = requests.head(resdict['uri'], timeout=5)
-                    if result.status_code != 200:
-                        result = requests.get(resdict['uri'], timeout=5, stream=True)
-                        result.close()
-                    if result.status_code >= 400:
-                        resdict['status'] = 'broken'
-                        resdict['code'] = result.status_code
-                    if result.status_code < 400:
-                        resdict['status'] = 'working'
-                        resdict['code'] = result.status_code
-                except requests.exceptions.Timeout:
-                    resdict['status'] = 'timeout'
-                results[line] = json.dumps(resdict)
+                        resdict["uri"] = match.group()
+                    print(f"{line_nr}/{reslen}")
+                    request = head(resdict["uri"], timeout=5)
+                    if request.status_code != 200:
+                        request = get(resdict["uri"], timeout=5, stream=True)
+                        request.close()
+                    if request.status_code >= 400:
+                        resdict["status"] = "broken"
+                        resdict["code"] = request.status_code
+                    if request.status_code < 400:
+                        resdict["status"] = "working"
+                        resdict["code"] = request.status_code
+                except Timeout:
+                    resdict["status"] = "timeout"
+                results[line_nr] = json.dumps(resdict)
         output.write_text("\n".join(f"{r}" for r in results))
         errors = []
         for result in results:
-            line = json.loads(result)
-            if (line["status"] == "broken") or line["status"] == "timeout":
+            data = json.loads(result)
+            if (data["status"] == "broken") or data["status"] == "timeout":
                 errors.append(result)
         if errors:
             print("Error" + "s" if len(errors) > 1 else "")
