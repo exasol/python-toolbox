@@ -55,21 +55,6 @@ def pyproject_toml(project_path, create_poetry_project):
     return PoetryToml(working_directory=project_path)
 
 
-class TestPackage:
-    @staticmethod
-    @pytest.mark.parametrize(
-        "name,expected",
-        [
-            ("numpy", "numpy"),
-            ("sphinxcontrib-applehelp", "sphinxcontrib-applehelp"),
-            ("Imaginary_package", "imaginary-package"),
-        ],
-    )
-    def test_normalized_name(name, expected):
-        dep = PoetryDependency(name=name, version="0.1.0", group=None)
-        assert dep.normalized_name == expected
-
-
 class TestPoetryToml:
     @staticmethod
     def test_get_section_dict_exists(pyproject_toml):

@@ -12,6 +12,8 @@ from pydantic import (
 )
 from tomlkit import TOMLDocument
 
+from exasol.toolbox.util.dependencies.shared_models import Package
+
 
 class PoetryGroup(BaseModel):
     name: str
@@ -19,18 +21,6 @@ class PoetryGroup(BaseModel):
 
     class Config:
         frozen = True
-
-
-class Package(BaseModel):
-    name: str
-    version: str
-
-    class Config:
-        frozen = True
-
-    @property
-    def normalized_name(self) -> str:
-        return self.name.lower().replace("_", "-")
 
 
 class PoetryDependency(Package):
