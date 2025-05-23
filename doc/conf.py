@@ -80,5 +80,6 @@ html_theme_options = {
 }
 # -- Configure link checking behavior  ----------------------------------------
 extra_linkcheck_ignores = os.getenv("SPHINX_EXTRA_LINKCHECK_IGNORES")
-linkcheck_ignore = [] if not extra_linkcheck_ignores else extra_linkcheck_ignores.split(",")
-
+linkcheck_ignore = (
+    [] if not extra_linkcheck_ignores else extra_linkcheck_ignores.split(",")
+)
