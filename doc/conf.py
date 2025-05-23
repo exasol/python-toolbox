@@ -79,6 +79,6 @@ html_theme_options = {
     "accent_color": "grass",
 }
 # -- Configure link checking behavior  ----------------------------------------
-linkcheck_ignore = [
-    r'http[s]?://'
-]
+extra_linkcheck_ignores = os.getenv("SPHINX_EXTRA_LINKCHECK_IGNORES")
+linkcheck_ignore = [] if not extra_linkcheck_ignores else extra_linkcheck_ignores.split(",")
+
