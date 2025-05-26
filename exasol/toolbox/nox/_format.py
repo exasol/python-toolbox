@@ -36,7 +36,7 @@ def _pyupgrade(session: Session, files: Iterable[str]) -> None:
 def fix(session: Session) -> None:
     """Runs all automated fixes on the code base"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
-    _version(session, Mode.Fix, PROJECT_CONFIG.version_file)
+    _version(session, Mode.Fix)
     _pyupgrade(session, py_files)
     _code_format(session, Mode.Fix, py_files)
 

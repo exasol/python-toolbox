@@ -16,16 +16,10 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@1.1.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@1.2.0
 
       - name: Check Version(s)
-        run: |
-          echo "Please enable the version check by replacing this output with shell command bellow:"
-          echo ""
-          echo "poetry run -- nox -s version:check -- <<VERSION_PY>>"
-          echo ""
-          echo "Note: <<VERSION_PY>> needs to point to the version file of the project (version.py)."
-          exit 1
+        run: poetry run -- nox -s version:check
 
   Documentation:
     name: Docs
@@ -38,7 +32,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@1.1.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@1.2.0
 
       - name: Build Documentation
         run: |
@@ -61,7 +55,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@1.1.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@1.2.0
 
       - name: Run changelog update check
         run: poetry run -- nox -s changelog:updated
@@ -80,7 +74,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@1.1.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@1.2.0
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -111,7 +105,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@1.1.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@1.2.0
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -133,7 +127,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@1.1.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@1.2.0
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -157,7 +151,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@1.1.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@1.2.0
 
       - name: Run format check
         run: poetry run -- nox -s project:format
@@ -179,7 +173,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@1.1.0
+        uses: exasol/python-toolbox/.github/actions/python-environment@1.2.0
         with:
           python-version: ${{ matrix.python-version }}
 
