@@ -5,6 +5,12 @@
 With #441, please ensure that the location of the `version.py` is given for `Config.version_file`,
 which is specified in the `noxconfig.py`
 
+With #449, it's possible to customize what arguments are being using with `pyupgrade`
+via the `noxconfig.Config`:
+```python
+pyupgrade_args = ("--py310-plus",)
+```
+
 ## 📚 Documentation
 * Updated getting_started.rst for allowing tag-based releases
 
