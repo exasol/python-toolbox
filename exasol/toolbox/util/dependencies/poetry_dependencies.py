@@ -27,23 +27,27 @@ TRANSITIVE_GROUP = PoetryGroup(name="transitive", toml_section=None)
 
 
 class PoetryToml(BaseModel):
-    working_directory: Path
+    content: TOMLDocument
 
-    @model_validator(mode="before")
-    def read_content(cls, values):
-        file_path = values["working_directory"] / "pyproject.toml"
+    class Config:
+        frozen = True
+        arbitrary_types_allowed = True
+
+    @classmethod
+    def load_from_toml(cls, working_directory: Path) -> PoetryToml:
+        file_path = working_directory / "pyproject.toml"
         if not file_path.exists():
             raise ValueError(f"File not found: {file_path}")
 
         try:
             text = file_path.read_text()
-            cls._content: TOMLDocument = tomlkit.loads(text)
+            content = tomlkit.loads(text)
+            return cls(content=content)
         except Exception as e:
             raise ValueError(f"Error reading file: {str(e)}")
-        return values
 
     def get_section_dict(self, section: str) -> Optional[dict]:
-        current = self._content.copy()
+        current = self.content.copy()
         for section in section.split("."):
             if section not in current:
                 return None

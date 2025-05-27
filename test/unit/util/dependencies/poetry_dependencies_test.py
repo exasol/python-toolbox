@@ -59,7 +59,7 @@ def create_poetry_project(cwd, project_name, project_path):
 
 @pytest.fixture(scope="module")
 def pyproject_toml(project_path, create_poetry_project):
-    return PoetryToml(working_directory=project_path)
+    return PoetryToml.load_from_toml(working_directory=project_path)
 
 
 class TestPoetryToml:

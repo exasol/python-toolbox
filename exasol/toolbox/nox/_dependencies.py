@@ -88,9 +88,9 @@ class Audit:
 def dependency_licenses(session: Session) -> None:
     """returns the packages and their licenses"""
     working_directory = Path()
-    groups = PoetryToml(working_directory=working_directory).groups
+    poetry_dep = PoetryToml.load_from_toml(working_directory=working_directory)
     dependencies = PoetryDependencies(
-        groups=groups, working_directory=working_directory
+        groups=poetry_dep.groups, working_directory=working_directory
     ).direct_dependencies
     package_infos = licenses()
     print(packages_to_markdown(dependencies=dependencies, packages=package_infos))
