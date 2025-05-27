@@ -16,10 +16,6 @@ from noxconfig import PROJECT_CONFIG
 
 def _pylint(session: Session, files: Iterable[str]) -> None:
     session.run(
-        "poetry",
-        "run",
-        "python",
-        "-m",
         "pylint",
         "--output-format",
         "colorized,json:.lint.json,text:.lint.txt",
@@ -29,8 +25,6 @@ def _pylint(session: Session, files: Iterable[str]) -> None:
 
 def _type_check(session: Session, files: Iterable[str]) -> None:
     session.run(
-        "poetry",
-        "run",
         "mypy",
         "--explicit-package-bases",
         "--namespace-packages",
@@ -45,8 +39,6 @@ def _type_check(session: Session, files: Iterable[str]) -> None:
 
 def _security_lint(session: Session, files: Iterable[str]) -> None:
     session.run(
-        "poetry",
-        "run",
         "bandit",
         "--severity-level",
         "low",
@@ -59,8 +51,6 @@ def _security_lint(session: Session, files: Iterable[str]) -> None:
         *files,
     )
     session.run(
-        "poetry",
-        "run",
         "bandit",
         "--severity-level",
         "low",
