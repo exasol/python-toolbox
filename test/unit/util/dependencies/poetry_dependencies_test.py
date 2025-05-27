@@ -4,10 +4,10 @@ import pytest
 
 from exasol.toolbox.util.dependencies.poetry_dependencies import (
     PoetryDependencies,
-    PoetryDependency,
     PoetryGroup,
     PoetryToml,
 )
+from exasol.toolbox.util.dependencies.shared_models import Package
 
 MAIN_GROUP = PoetryGroup(name="main", toml_section="project.dependencies")
 DEV_GROUP = PoetryGroup(name="dev", toml_section="tool.poetry.group.dev.dependencies")
@@ -15,9 +15,9 @@ ANALYSIS_GROUP = PoetryGroup(
     name="analysis", toml_section="tool.poetry.group.analysis.dependencies"
 )
 
-PYLINT = PoetryDependency(name="pylint", version="3.3.7", group=MAIN_GROUP)
-ISORT = PoetryDependency(name="isort", version="6.0.1", group=DEV_GROUP)
-BLACK = PoetryDependency(name="black", version="25.1.0", group=ANALYSIS_GROUP)
+PYLINT = Package(name="pylint", version="3.3.7")
+ISORT = Package(name="isort", version="6.0.1")
+BLACK = Package(name="black", version="25.1.0")
 
 DIRECT_DEPENDENCIES = {
     MAIN_GROUP.name: [PYLINT],
@@ -85,20 +85,20 @@ class TestPoetryDependencies:
         [
             (
                 "coverage                      7.8.0     Code coverage measurement for Python",
-                PoetryDependency(name="coverage", version="7.8.0", group=MAIN_GROUP),
+                Package(name="coverage", version="7.8.0"),
             ),
             (
                 "furo                          2024.8.6  A clean customisable Sphinx documentation theme.",
-                PoetryDependency(name="furo", version="2024.8.6", group=MAIN_GROUP),
+                Package(name="furo", version="2024.8.6"),
             ),
             (
                 "import-linter                 2.3       Enforces rules for the imports within and between Python packages.",
-                PoetryDependency(name="import-linter", version="2.3", group=MAIN_GROUP),
+                Package(name="import-linter", version="2.3"),
             ),
         ],
     )
     def test_extract_from_line(line, expected):
-        result = PoetryDependencies._extract_from_line(line=line, group=MAIN_GROUP)
+        result = PoetryDependencies._extract_from_line(line=line)
         assert result == expected
 
     @staticmethod

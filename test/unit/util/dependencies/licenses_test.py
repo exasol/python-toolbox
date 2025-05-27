@@ -8,9 +8,9 @@ from exasol.toolbox.util.dependencies.licenses import (
     packages_to_markdown,
 )
 from exasol.toolbox.util.dependencies.poetry_dependencies import (
-    PoetryDependency,
     PoetryGroup,
 )
+from exasol.toolbox.util.dependencies.shared_models import Package
 
 MAIN_GROUP = PoetryGroup(name="main", toml_section="project.dependencies")
 DEV_GROUP = PoetryGroup(name="dev", toml_section="tool.poetry.group.dev.dependencies")
@@ -112,18 +112,10 @@ def test_packages_from_json(json, expected):
         (
             {
                 MAIN_GROUP.name: [
-                    PoetryDependency(
-                        name="package1", version="version1", group=MAIN_GROUP
-                    ),
-                    PoetryDependency(
-                        name="package3", version="version3", group=MAIN_GROUP
-                    ),
+                    Package(name="package1", version="version1"),
+                    Package(name="package3", version="version3"),
                 ],
-                DEV_GROUP.name: [
-                    PoetryDependency(
-                        name="package2", version="version2", group=DEV_GROUP
-                    )
-                ],
+                DEV_GROUP.name: [Package(name="package2", version="version2")],
             },
             [
                 PackageLicense(

@@ -8,9 +8,6 @@ from typing import Optional
 
 from pydantic import field_validator
 
-from exasol.toolbox.util.dependencies.poetry_dependencies import (
-    PoetryDependency,
-)
 from exasol.toolbox.util.dependencies.shared_models import Package
 
 LICENSE_MAPPING_TO_ABBREVIATION = {
@@ -127,7 +124,7 @@ def packages_to_markdown(
 
     def dependency(
         group: str,
-        group_packages: list[PoetryDependency],
+        group_packages: list[Package],
         packages: list[PackageLicense],
     ) -> str:
         def _header(_group: str):
@@ -138,7 +135,7 @@ def packages_to_markdown(
             return text
 
         def _rows(
-            _group_packages: list[PoetryDependency], _packages: list[PackageLicense]
+            _group_packages: list[Package], _packages: list[PackageLicense]
         ) -> str:
             text = ""
             for package in _group_packages:

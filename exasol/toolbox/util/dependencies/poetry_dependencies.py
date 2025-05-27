@@ -26,12 +26,6 @@ class PoetryGroup(BaseModel):
 TRANSITIVE_GROUP = PoetryGroup(name="transitive", toml_section=None)
 
 
-class PoetryDependency(Package):
-    name: str
-    version: str
-    group: PoetryGroup
-
-
 class PoetryToml(BaseModel):
     working_directory: Path
 
@@ -86,38 +80,39 @@ class PoetryDependencies(BaseModel):
     working_directory: Path
 
     @staticmethod
-    def _extract_from_line(line: str, group: PoetryGroup) -> PoetryDependency:
+    def _extract_from_line(line: str) -> Package:
         pattern = r"\s+(\d+(?:\.\d+)*)\s+"
         match = re.split(pattern, line)
-        return PoetryDependency(name=match[0], version=match[1], group=group)
+        return Package(name=match[0], version=match[1])
 
-    def _extract_from_poetry_show(
-        self, output_text: str, group: PoetryGroup
-    ) -> list[PoetryDependency]:
-        return [
-            self._extract_from_line(line, group=group)
-            for line in output_text.splitlines()
-        ]
+    def _extract_from_poetry_show(self, output_text: str) -> list[Package]:
+        return [self._extract_from_line(line) for line in output_text.splitlines()]
 
     @property
-    def direct_dependencies(self) -> dict[str, list[PoetryDependency]]:
+    def direct_dependencies(self) -> dict[str, list[Package]]:
         dependencies = {}
         for group in self.groups:
             command = ("poetry", "show", "--top-level", f"--only={group.name}")
             output = subprocess.run(
-                command, capture_output=True, text=True, cwd=self.working_directory, check=True
+                command,
+                capture_output=True,
+                text=True,
+                cwd=self.working_directory,
+                check=True,
             )
-            result = self._extract_from_poetry_show(
-                output_text=output.stdout, group=group
-            )
+            result = self._extract_from_poetry_show(output_text=output.stdout)
             dependencies[group.name] = result
         return dependencies
 
     @property
-    def all_dependencies(self) -> dict[str, list[PoetryDependency]]:
+    def all_dependencies(self) -> dict[str, list[Package]]:
         command = ("poetry", "show")
         output = subprocess.run(
-            command, capture_output=True, text=True, cwd=self.working_directory, check=True
+            command,
+            capture_output=True,
+            text=True,
+            cwd=self.working_directory,
+            check=True,
         )
 
         direct_dependencies = self.direct_dependencies.copy()
@@ -128,7 +123,7 @@ class PoetryDependencies(BaseModel):
             for dep in group_list
         }
         for line in output.stdout.splitlines():
-            dep = self._extract_from_line(line=line, group=TRANSITIVE_GROUP)
+            dep = self._extract_from_line(line=line)
             if dep.name not in names_direct_dependencies:
                 transitive_dependencies.append(dep)
 
