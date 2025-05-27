@@ -71,10 +71,11 @@ def _normalize(_license: str) -> str:
             "GPLv3": 6,
         }
         for l in licenses:
-            if l not in _mapping:
+            if l in _mapping:
+                if _mapping[l] > _mapping[lic]:
+                    lic = l
+            else:
                 return "<br>".join(licenses)
-            if _mapping[l] > _mapping[lic]:
-                lic = l
         return lic
 
     if is_multi_license(_license):
