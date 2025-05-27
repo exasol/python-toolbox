@@ -20,7 +20,7 @@ class TestPackageLicense:
     @staticmethod
     def test_package_link_map_unknown_to_none():
         result = PackageLicense(
-            name="dummy", version="dummy", package_link="UNKNOWN", license="dummy"
+            name="dummy", version="0.1.0", package_link="UNKNOWN", license="dummy"
         )
         assert result.package_link is None
 
@@ -34,7 +34,7 @@ class TestPackageLicense:
     )
     def test_license_link(license, expected):
         result = PackageLicense(
-            name="dummy", version="dummy", package_link="dummy", license=license
+            name="dummy", version="0.1.0", package_link="dummy", license=license
         )
         assert result.license_link == expected
 
@@ -74,26 +74,26 @@ def test_normalize(licenses, expected):
                         "License": "license1",
                         "Name": "name1",
                         "URL": "link1",
-                        "Version": "version1"
+                        "Version": "0.1.0"
                     },
                     {
                         "License": "license2",
                         "Name": "name2",
                         "URL": "UNKNOWN",
-                        "Version": "version2"
+                        "Version": "0.2.0"
                     }
                 ]
                             """,
             [
                 PackageLicense(
                     name="name1",
-                    version="version1",
+                    version="0.1.0",
                     package_link="link1",
                     license="license1",
                 ),
                 PackageLicense(
                     name="name2",
-                    version="version2",
+                    version="0.2.0",
                     package_link=None,
                     license="license2",
                 ),
@@ -112,28 +112,28 @@ def test_packages_from_json(json, expected):
         (
             {
                 MAIN_GROUP.name: [
-                    Package(name="package1", version="version1"),
-                    Package(name="package3", version="version3"),
+                    Package(name="package1", version="0.1.0"),
+                    Package(name="package3", version="0.1.0"),
                 ],
-                DEV_GROUP.name: [Package(name="package2", version="version2")],
+                DEV_GROUP.name: [Package(name="package2", version="0.2.0")],
             },
             [
                 PackageLicense(
                     name="package1",
                     package_link="package_link1",
-                    version="version1",
+                    version="0.1.0",
                     license="GPLv1",
                 ),
                 PackageLicense(
                     name="package2",
                     package_link="package_link2",
-                    version="version2",
+                    version="0.2.0",
                     license="GPLv2",
                 ),
                 PackageLicense(
                     name="package3",
                     package_link="UNKNOWN",
-                    version="version3",
+                    version="0.3.0",
                     license="license3",
                 ),
             ],
@@ -148,13 +148,13 @@ def test_packages_to_markdown(dependencies, packages):
 ## Main Dependencies
 |Package|Version|License|
 |---|---|---|
-|[package1](package_link1)|version1|[GPLv1](https://www.gnu.org/licenses/old-licenses/gpl-1.0.html)|
-|package3|version3|license3|
+|[package1](package_link1)|0.1.0|[GPLv1](https://www.gnu.org/licenses/old-licenses/gpl-1.0.html)|
+|package3|0.3.0|license3|
 
 ## Dev Dependencies
 |Package|Version|License|
 |---|---|---|
-|[package2](package_link2)|version2|[GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)|
+|[package2](package_link2)|0.2.0|[GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)|
 
 """
     )

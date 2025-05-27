@@ -83,7 +83,7 @@ class PoetryDependencies(BaseModel):
     def _extract_from_line(line: str) -> Package:
         pattern = r"\s+(\d+(?:\.\d+)*)\s+"
         match = re.split(pattern, line)
-        return Package(name=match[0], version=match[1])
+        return Package(name=match[0], version=match[1])  #
 
     def _extract_from_poetry_show(self, output_text: str) -> list[Package]:
         return [self._extract_from_line(line) for line in output_text.splitlines()]
