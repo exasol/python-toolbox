@@ -105,7 +105,7 @@ class PoetryDependencies(BaseModel):
         for group in self.groups:
             command = ("poetry", "show", "--top-level", f"--only={group.name}")
             output = subprocess.run(
-                command, capture_output=True, text=True, cwd=self.working_directory
+                command, capture_output=True, text=True, cwd=self.working_directory, check=True
             )
             result = self._extract_from_poetry_show(
                 output_text=output.stdout, group=group
@@ -117,7 +117,7 @@ class PoetryDependencies(BaseModel):
     def all_dependencies(self) -> dict[str, list[PoetryDependency]]:
         command = ("poetry", "show")
         output = subprocess.run(
-            command, capture_output=True, text=True, cwd=self.working_directory
+            command, capture_output=True, text=True, cwd=self.working_directory, check=True
         )
 
         direct_dependencies = self.direct_dependencies.copy()

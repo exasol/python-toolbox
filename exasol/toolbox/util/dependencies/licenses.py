@@ -58,10 +58,10 @@ class PackageLicense(Package):
 
 
 def _normalize(_license: str) -> str:
-    def is_multi_license(l) -> bool:
+    def is_multi_license(l: str) -> bool:
         return ";" in l
 
-    def select_most_restrictive(licenses: list) -> str:
+    def select_most_restrictive(licenses: list[str]) -> str:
         lic = "Unknown"
         _mapping = {
             "Unknown": -1,
@@ -107,8 +107,6 @@ def licenses() -> list[PackageLicense]:
     with tempfile.NamedTemporaryFile() as file:
         subprocess.run(
             [
-                "poetry",
-                "run",
                 "pip-licenses",
                 "--format=json",
                 "--output-file=" + file.name,
@@ -116,6 +114,7 @@ def licenses() -> list[PackageLicense]:
                 "--with-urls",
             ],
             capture_output=True,
+            check=True,
         )
         return _packages_from_json(file.read().decode())
 
