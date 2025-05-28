@@ -22,5 +22,6 @@ jobs:
   Metrics:
     needs: [ CI ]
     uses: ./.github/workflows/report.yml
+    secrets: inherit
     permissions:
       contents: read
