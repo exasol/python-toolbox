@@ -29,7 +29,7 @@ jobs:
       - name: Copy Artifacts into Root Folder
         working-directory: ./artifacts
         run: |
-          poetry run -- coverage combine --keep coverage-python3.9*/.coverage
+          poetry run -- coverage combine --keep coverage-python*/.coverage
           # Errors during copying are ignored because they are checked in the next step
           cp .coverage ../ || true
           cp lint-python3.9/.lint.txt ../ || true
@@ -41,6 +41,17 @@ jobs:
 
       - name: Generate Report
         run: poetry run -- nox -s project:report -- --format json | tee metrics.json
+
+      - name: Prepare files for sonar
+        run: |
+          poetry run -- coverage xml -o ci-coverage.xml --include="exasol/toolbox/*"
+
+      - name: Upload to sonar
+        run: |
+          poetry run -- pysonar --sonar-token ${{ secrets.SONAR_TOKEN }} \
+          --sonar-python-coverage-report-paths ci-coverage.xml \
+          --sonar-python-pylint-report-path .lint.json \
+          --sonar-python-bandit-report-paths .security.json
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4.6.2
