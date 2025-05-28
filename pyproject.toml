@@ -70,6 +70,7 @@ lxml = "^5.4.0"
 [tool.poetry.group.dev.dependencies]
 autoimport = "^1.4.0"
 pysonar = "^1.0.1.1548"
+types-requests = "^2.32.0.20250515"
 
 [build-system]
 requires = ["poetry-core>=2.0.0"]
