@@ -7,6 +7,7 @@ odbcconfig/odbcinst.ini
 .html-documentation
 
 .coverage
+.sonar
 
 _build/
 
