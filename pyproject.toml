@@ -64,6 +64,7 @@ bandit = {extras = ["toml"], version = "^1.7.9"}
 jinja2 = "^3.1.6"
 pip-licenses = "^5.0.0"
 pip-audit = "^2.7.3"
+pydantic = "^2.11.5"
 
 [tool.poetry.group.dev.dependencies]
 autoimport = "^1.4.0"
@@ -101,6 +102,8 @@ fail-under = 7.5
 max-line-length = 88
 max-module-lines = 800
 
+[tool.mypy]
+plugins = ['pydantic.mypy']
 
 [[tool.mypy.overrides]]
 module = [

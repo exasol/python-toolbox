@@ -21,7 +21,6 @@ from nox import Session
 
 from exasol.toolbox.nox._format import (
     _code_format,
-    _pyupgrade,
     fix,
 )
 

@@ -18,6 +18,7 @@ from enum import Enum
 from functools import partial
 from inspect import cleandoc
 from pathlib import Path
+from typing import Optional
 
 import typer
 
@@ -269,7 +270,9 @@ def security_issue_body(issue: Issue) -> str:
     )
 
 
-def create_security_issue(issue: Issue, project: str | None = None) -> tuple[str, str]:
+def create_security_issue(
+    issue: Issue, project: Optional[str] = None
+) -> tuple[str, str]:
     # fmt: off
     command = [
         "gh", "issue", "create",

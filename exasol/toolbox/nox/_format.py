@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Iterable
 
 import nox
 from nox import Session
@@ -10,7 +10,12 @@ from exasol.toolbox.nox._shared import (
     _version,
     python_files,
 )
-from noxconfig import PROJECT_CONFIG
+from noxconfig import (
+    PROJECT_CONFIG,
+    Config,
+)
+
+_PYUPGRADE_ARGS = ("--py39-plus",)
 
 
 def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
@@ -21,12 +26,11 @@ def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
     session.run(*command("black"), *files)
 
 
-def _pyupgrade(session: Session, files: Iterable[str]) -> None:
+def _pyupgrade(session: Session, config: Config, files: Iterable[str]) -> None:
+    pyupgrade_args = getattr(config, "pyupgrade_args", _PYUPGRADE_ARGS)
     session.run(
-        "poetry",
-        "run",
         "pyupgrade",
-        "--py38-plus",
+        *pyupgrade_args,
         "--exit-zero-even-if-changed",
         *files,
     )
@@ -37,7 +41,7 @@ def fix(session: Session) -> None:
     """Runs all automated fixes on the code base"""
     py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
     _version(session, Mode.Fix)
-    _pyupgrade(session, py_files)
+    _pyupgrade(session, config=PROJECT_CONFIG, files=py_files)
     _code_format(session, Mode.Fix, py_files)
 
 
