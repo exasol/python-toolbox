@@ -2,11 +2,10 @@
 
 ## Summary
 
-With #441, please ensure that the location of the `version.py` is given for `Config.version_file`,
-which is specified in the `noxconfig.py`
+This version of the PTB updates nox task `version:check`, see #441. 
+This requires file `noxconfig.py` of each project to specify the path to `version.py` in `Config.version_file`.
 
-With #449, it's possible to customize what arguments are being using with `pyupgrade`
-via the `noxconfig.Config`:
+With this version of the PTB you can customize the arguments for `pyupgrade` in file `noxconfig.py`, see ticket #449 for details:
 ```python
 pyupgrade_args = ("--py310-plus",)
 ```
