@@ -1,7 +1,7 @@
-import shutil
 import json
 import pathlib
 import re
+import shutil
 import sqlite3
 import sys
 from pathlib import Path

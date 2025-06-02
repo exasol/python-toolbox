@@ -1,10 +1,16 @@
-import pytest
 import contextlib
-from dataclasses import dataclass
-from pathlib import Path
 import re
+from dataclasses import dataclass
 from inspect import cleandoc
-from unittest.mock import Mock, patch, call
+from pathlib import Path
+from unittest.mock import (
+    Mock,
+    call,
+    patch,
+)
+
+import pytest
+
 from exasol.toolbox.nox._artifacts import copy_artifacts
 
 
@@ -34,7 +40,7 @@ def test_missing_files(tmp_path, capsys):
         ),
         captured.err,
     )
-    #with capsys.disabled():
+    # with capsys.disabled():
     #    print(captured.err)
 
 
@@ -44,6 +50,7 @@ class endswith:
     Assert that the str representation of the argument ends with the
     specfied suffix.
     """
+
     suffix: str
 
     def __eq__(self, actual):
@@ -58,12 +65,12 @@ def test_all_files(tmp_path, capsys):
         "coverage-python9.9-slow/.coverage",
         "lint-python9.9/.lint.txt",
         "lint-python9.9/.lint.json",
-        "security-python9.9/.security.json"
+        "security-python9.9/.security.json",
     ) as session:
         copy_artifacts(session)
 
     captured = capsys.readouterr()
-    assert session.run.call_args == call (
+    assert session.run.call_args == call(
         "coverage",
         "combine",
         "--keep",
