@@ -16,7 +16,7 @@ class Config:
         / "version.py"
     )
     path_filters: Iterable[str] = ()
-
+    pyupgrade_args = ("--py{{cookiecutter.python_version_min | replace('.', '')}}-plus",)
     plugins = []
 
 
