@@ -18,6 +18,10 @@ pyupgrade_args = ("--py310-plus",)
 
 * [#441](https://github.com/exasol/python-toolbox/issues/441): Switched nox task for `version:check` to use the config value of `version_file` to specify the location of the `version.py`
 
+## 🐞 Bug Fixes
+* Updated `python-environment` action to use space-separated values for extras
+
+
 ## ⚒️ Refactorings
 
 * [#449](https://github.com/exasol/python-toolbox/issues/449): Refactored `dependency:licenses`:
