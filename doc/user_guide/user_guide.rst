@@ -12,3 +12,4 @@
     customization
     migrating
     how_to_release
+    collecting_metrics
