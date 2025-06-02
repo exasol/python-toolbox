@@ -23,3 +23,7 @@ pyupgrade_args = ("--py310-plus",)
 * [#449](https://github.com/exasol/python-toolbox/issues/449): Refactored `dependency:licenses`:
     * to use pydantic models & `poetry show` for dependencies
     * to updated reading the `pyproject.toml` to be compatible with poetry 2.x+
+
+## 🔩 Internal
+
+* Relocked dependencies
