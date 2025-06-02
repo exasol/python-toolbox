@@ -40,8 +40,6 @@ def test_missing_files(tmp_path, capsys):
         ),
         captured.err,
     )
-    # with capsys.disabled():
-    #    print(captured.err)
 
 
 @dataclass
