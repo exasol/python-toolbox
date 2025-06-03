@@ -50,6 +50,7 @@ jobs:
         run: |
           poetry run -- pysonar --sonar-token ${{ secrets.SONAR_TOKEN }} \
           --sonar-pullrequest-branch ${{ github.ref_name }} \
+          --sonar-pullrequest-base main \
           --sonar-python-coverage-report-paths ci-coverage.xml \
           --sonar-python-pylint-report-path .lint.json \
           --sonar-python-bandit-report-paths .security.json
