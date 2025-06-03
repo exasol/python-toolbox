@@ -46,15 +46,15 @@ jobs:
         run: |
           poetry run -- coverage xml -o ci-coverage.xml --include="exasol/toolbox/*"
 
-      - name: Upload to sonar
-        run: |
-          poetry run -- pysonar --sonar-token ${{ secrets.SONAR_TOKEN }} \
-          --sonar-pullrequest-branch ${{ github.ref_name }} \
-          --sonar-pullrequest-base main \
-          --sonar-pullrequest-key python-toolbox:${{ github.ref_name }} \
-          --sonar-python-coverage-report-paths ci-coverage.xml \
-          --sonar-python-pylint-report-path .lint.json \
-          --sonar-python-bandit-report-paths .security.json
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.python.coverage.reportPaths=ci-coverage.xml
+            -Dsonar.python.pylint.reportPath .lint.json
+            -Dsonar.python.bandit.reportPaths .security.json
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4.6.2
