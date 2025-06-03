@@ -46,7 +46,7 @@ def test_missing_files(tmp_path, capsys):
 class endswith:
     """
     Assert that the str representation of the argument ends with the
-    specfied suffix.
+    specified suffix.
     """
 
     suffix: str
