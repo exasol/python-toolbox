@@ -5,7 +5,7 @@ PTB allows you to collect various metrics on the quality of your project
 regarding Coverage, Security, and Static Code Analysis.
 
 For each metric, there is a dedicated nox task, generating one or multiple
-files and based on a selected external python tool.
+files and based on a selected external Python tool.
 
 +-----------------------------+-----------------------------+--------------+
 | Nox Task                    | Generated Files             | Based on     |
@@ -28,8 +28,8 @@ Python version defined in file ``noxconfig.py``:
 
 The GitHub workflows of your project can:
 
-* Use a build matrix, e.g. using different python versions as shown above
+* Use a build matrix, e.g. using different Python versions as shown above
 * Define multiple test sessions, e.g. for distinguishing fast vs. slow or expensive tests.
 
-PTB combines the coverage data of all test sessions but using only the python
+PTB combines the coverage data of all test sessions but using only the Python
 version named first in attribute ``python_versions`` of class ``Config``.
