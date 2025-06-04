@@ -8,50 +8,6 @@ from exasol.toolbox.nox import _artifacts
 
 
 @pytest.mark.parametrize(
-    "files,requested_files,expected",
-    [
-        (
-            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
-            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
-            set(),
-        ),
-        (
-            {".lint.txt", ".security.json", ".coverage"},
-            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
-            {".lint.json"},
-        ),
-        (
-            {".lint.json", ".security.json", ".coverage"},
-            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
-            {".lint.txt"},
-        ),
-        (
-            {".lint.json", ".lint.txt", ".coverage"},
-            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
-            {".security.json"},
-        ),
-        (
-            {".lint.json", ".lint.txt", ".security.json"},
-            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
-            {".coverage"},
-        ),
-        (
-            {","},
-            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
-            {".lint.json", ".lint.txt", ".security.json", ".coverage"},
-        ),
-    ],
-)
-def test_check_lint_files(files, requested_files, expected, tmp_path):
-    path = Path(tmp_path)
-    for file in files:
-        Path(path, file).touch()
-
-    actual = _artifacts._missing_files(requested_files, path)
-    assert actual == expected
-
-
-@pytest.mark.parametrize(
     "file,expected",
     [
         ("Your code has been rated at 7.85/10 (previous run: 7.83/10, +0.02", ""),

@@ -18,13 +18,13 @@ LINT_JSON = ".lint.json"
 LINT_TXT = ".lint.txt"
 SECURITY_JSON = ".security.json"
 
+ALL_FILES = {COVERAGE_FILE, LINT_JSON, LINT_TXT, SECURITY_JSON}
+
 
 @nox.session(name="artifacts:validate", python=False)
 def check_artifacts(session: Session) -> None:
     """Validate that all project artifacts are available and consistent"""
-    if not_available := _missing_files(
-        {LINT_TXT, SECURITY_JSON, COVERAGE_FILE}, PROJECT_CONFIG.root
-    ):
+    if not_available := _missing_files(ALL_FILES, PROJECT_CONFIG.root):
         print(f"not available: {not_available}")
         sys.exit(1)
 

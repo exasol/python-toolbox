@@ -11,7 +11,13 @@ from unittest.mock import (
 
 import pytest
 
-from exasol.toolbox.nox._artifacts import copy_artifacts
+from exasol.toolbox.nox._artifacts import (
+    ALL_FILES,
+    COVERAGE_FILE,
+    LINT_JSON,
+    _missing_files,
+    copy_artifacts,
+)
 
 
 @contextlib.contextmanager
@@ -36,6 +42,25 @@ class EndsWith:
 
     def __eq__(self, actual):
         return str(actual).endswith(self.suffix)
+
+
+@pytest.mark.parametrize(
+    "missing_files",
+    [
+        (pytest.param(set(), id="all_files_present")),
+        (pytest.param({LINT_JSON}, id="lint_json_missing")),
+        (pytest.param({LINT_JSON, COVERAGE_FILE}, id="coverage_and_lint_json_missing")),
+        (pytest.param(ALL_FILES, id="all_files_missing")),
+    ],
+)
+def test_missing_files(missing_files, tmp_path):
+    existing_files = ALL_FILES - missing_files
+    path = Path(tmp_path)
+    for file in existing_files:
+        Path(path, file).touch()
+
+    actual = _missing_files(ALL_FILES, path)
+    assert actual == missing_files
 
 
 class TestCopyArtifacts:
