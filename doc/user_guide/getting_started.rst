@@ -209,6 +209,7 @@ order to properly set it up, you'll need to do the following for each public pro
 3. activate the SonarQubeCloud App
 4. create a project on SonarCloud
 5. add the following information to the project's `pyproject.toml`
+6. post-merge, update the branch protections to include SonarCube
 
 .. code-block:: toml
 

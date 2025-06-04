@@ -9,6 +9,7 @@ This requires the following changes for each public project:
 3. activate the SonarQubeCloud App
 4. create a project on SonarCloud
 5. add the following information to their `pyproject.toml`
+6. post-merge, update the branch protections to include SonarCube
 ```toml
 [tool.sonar]
 projectKey = "com.exasol:<project-key>"
