@@ -152,14 +152,14 @@ def _python_version_suffix() -> str:
     return f"-python{pivot}"
 
 
-def _combine_coverage(session: Session, dir: Path, pattern: str):
+def _combine_coverage(session: Session, artifact_dir: Path, pattern: str):
     """
     pattern: glob pattern, e.g. "*.coverage"
     """
-    if args := [f for f in dir.glob(pattern) if f.exists()]:
+    if args := [f for f in artifact_dir.glob(pattern) if f.exists()]:
         session.run("coverage", "combine", "--keep", *sorted(args))
     else:
-        print(f"Could not find any file {dir}/{pattern}", file=sys.stderr)
+        print(f"Could not find any file {artifact_dir}/{pattern}", file=sys.stderr)
 
 
 def _copy_artifacts(source: Path, dest: Path, files: Iterable[str]):
