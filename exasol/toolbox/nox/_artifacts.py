@@ -60,8 +60,9 @@ def _missing_files(expected_files: set, directory: Path) -> set:
     return expected_files - files
 
 
-def _print_validation_error(file: Path, message: str) -> None:
+def _handle_validation_error(file: Path, message: str) -> bool:
     print(f"error in [{file.name}]: {message}")
+    return False
 
 
 def _is_valid_lint_txt(file: Path) -> bool:
@@ -69,7 +70,7 @@ def _is_valid_lint_txt(file: Path) -> bool:
     expr = re.compile(r"^Your code has been rated at (\d+.\d+)/.*", re.MULTILINE)
     matches = expr.search(content)
     if not matches:
-        _print_validation_error(file, "Could not find a rating")
+        _handle_validation_error(file, "Could not find a rating")
         return False
     return True
 
@@ -79,14 +80,14 @@ def _is_valid_lint_json(file: Path) -> bool:
         content = file.read_text()
         issues = json.loads(content)
     except json.JSONDecodeError as ex:
-        _print_validation_error(file, f"Invalid json file, details: {ex}")
+        _handle_validation_error(file, f"Invalid json file, details: {ex}")
         return False
 
     for number, issue in enumerate(issues):
         actual = set(issue.keys())
         missing = LINT_JSON_ATTRIBUTES - actual
         if len(missing) > 0:
-            _print_validation_error(
+            _handle_validation_error(
                 file,
                 f"Invalid format, issue {number} is missing the following attributes {missing}",
             )
@@ -99,16 +100,14 @@ def _is_valid_security_json(file: Path) -> bool:
         content = file.read_text()
         actual = set(json.loads(content))
     except json.JSONDecodeError as ex:
-        _print_validation_error(file, f"Invalid json file, details: {ex}")
-        return False
+        return _handle_validation_error(file, f"Invalid json file, details: {ex}")
 
     missing = SECURITY_JSON_ATTRIBUTES - actual
     if len(missing) > 0:
-        _print_validation_error(
+        return _handle_validation_error(
             file,
             f"Invalid format, the file is missing the following attributes {missing}",
         )
-        return False
     return True
 
 
@@ -116,27 +115,24 @@ def _is_valid_coverage(path: Path) -> bool:
     try:
         conn = sqlite3.connect(path)
     except sqlite3.Error as ex:
-        _print_validation_error(
+        return _handle_validation_error(
             path, f"database connection not possible, details: {ex}"
         )
-        return False
     cursor = conn.cursor()
     try:
         actual_tables = set(
             cursor.execute("select name from sqlite_schema where type == 'table'")
         )
     except sqlite3.Error as ex:
-        _print_validation_error(path, f"schema query not possible, details: {ex}")
-        return False
+        return _handle_validation_error(path, f"schema query not possible, details: {ex}")
     expected = {"coverage_schema", "meta", "file", "line_bits"}
     actual = {f[0] for f in actual_tables if (f[0] in expected)}
     missing = expected - actual
     if len(missing) > 0:
-        _print_validation_error(
+        return _handle_validation_error(
             path,
             f"Invalid database, the database is missing the following tables {missing}",
         )
-        return False
     return True
 
 
