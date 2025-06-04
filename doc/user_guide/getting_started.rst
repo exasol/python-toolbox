@@ -201,7 +201,7 @@ We also need to configure settings for github-pages environment:
 
 8. Set up for Sonar
 +++++++++++++++++++
-We use SonarCube to analyze, visualize, & track linting, security, & coverage. In
+We use SonarQube Cloud to analyze, visualize, & track linting, security, & coverage. In
 order to properly set it up, you'll need to do the following for each public project:
 
 1. specify in the `noxconfig.py` the path to the project's source code in `Config.source`
@@ -209,7 +209,7 @@ order to properly set it up, you'll need to do the following for each public pro
 3. activate the SonarQubeCloud App
 4. create a project on SonarCloud
 5. add the following information to the project's `pyproject.toml`
-6. post-merge, update the branch protections to include SonarCube
+6. post-merge, update the branch protections to include SonarQube analysis
 
 .. code-block:: toml
 
