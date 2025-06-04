@@ -25,21 +25,17 @@ ALL_FILES = {COVERAGE_FILE, LINT_JSON, LINT_TXT, SECURITY_JSON}
 def check_artifacts(session: Session) -> None:
     """Validate that all project artifacts are available and consistent"""
     if not_available := _missing_files(ALL_FILES, PROJECT_CONFIG.root):
-        print(f"not available: {not_available}")
+        print(f"not available: {not_available}", file=sys.stderr)
         sys.exit(1)
 
-    error = False
-    if msg := _validate_lint_txt(Path(PROJECT_CONFIG.root, LINT_TXT)):
-        print(f"error in [{LINT_TXT}]: {msg}")
-    if msg := _validate_lint_json(Path(PROJECT_CONFIG.root, LINT_JSON)):
-        print(f"error in [{LINT_JSON}]: {msg}")
-    if msg := _validate_security_json(Path(PROJECT_CONFIG.root, SECURITY_JSON)):
-        print(f"error in [{SECURITY_JSON}]: {msg}")
-        error = True
-    if msg := _validate_coverage(Path(PROJECT_CONFIG.root, COVERAGE_FILE)):
-        print(f"error in [{COVERAGE_FILE}]: {msg}")
-        error = True
-    if error:
+    all_is_valid_checks = [
+        _is_valid_lint_txt(Path(PROJECT_CONFIG.root, LINT_TXT)),
+        _is_valid_lint_json(Path(PROJECT_CONFIG.root, LINT_JSON)),
+        _is_valid_security_json(Path(PROJECT_CONFIG.root, SECURITY_JSON)),
+        _is_valid_coverage(Path(PROJECT_CONFIG.root, COVERAGE_FILE)),
+    ]
+
+    if not all(all_is_valid_checks):
         sys.exit(1)
 
 
@@ -48,21 +44,28 @@ def _missing_files(expected_files: set, directory: Path) -> set:
     return expected_files - files
 
 
-def _validate_lint_txt(file: Path) -> str:
+def _print_validation_error(file: Path, message: str) -> None:
+    print(f"error in [{file.name}]: {message}")
+
+
+def _is_valid_lint_txt(file: Path) -> bool:
     content = file.read_text()
     expr = re.compile(r"^Your code has been rated at (\d+.\d+)/.*", re.MULTILINE)
     matches = expr.search(content)
     if not matches:
-        return "Could not find a rating"
-    return ""
+        _print_validation_error(file, "Could not find a rating")
+        return False
+    return True
 
 
-def _validate_lint_json(file: Path) -> str:
+def _is_valid_lint_json(file: Path) -> bool:
     try:
         content = file.read_text()
         issues = json.loads(content)
     except json.JSONDecodeError as ex:
-        return f"Invalid json file, details: {ex}"
+        _print_validation_error(file, f"Invalid json file, details: {ex}")
+        return False
+
     expected = {
         "type",
         "module",
@@ -80,43 +83,58 @@ def _validate_lint_json(file: Path) -> str:
         actual = set(issue.keys())
         missing = expected - actual
         if len(missing) > 0:
-            return f"Invalid format, issue {number} is missing the following attributes {missing}"
-    return ""
+            _print_validation_error(
+                file,
+                f"Invalid format, issue {number} is missing the following attributes {missing}",
+            )
+            return False
+    return True
 
 
-def _validate_security_json(file: Path) -> str:
+def _is_valid_security_json(file: Path) -> bool:
     try:
         content = file.read_text()
         actual = set(json.loads(content))
     except json.JSONDecodeError as ex:
-        return f"Invalid json file, details: {ex}"
+        _print_validation_error(file, f"Invalid json file, details: {ex}")
+        return False
     expected = {"errors", "generated_at", "metrics", "results"}
     missing = expected - actual
     if len(missing) > 0:
-        return f"Invalid format, the file is missing the following attributes {missing}"
-    return ""
+        _print_validation_error(
+            file,
+            f"Invalid format, the file is missing the following attributes {missing}",
+        )
+        return False
+    return True
 
 
-def _validate_coverage(path: Path) -> str:
+def _is_valid_coverage(path: Path) -> bool:
     try:
         conn = sqlite3.connect(path)
     except sqlite3.Error as ex:
-        return f"database connection not possible, details: {ex}"
+        _print_validation_error(
+            path, f"database connection not possible, details: {ex}"
+        )
+        return False
     cursor = conn.cursor()
     try:
         actual_tables = set(
             cursor.execute("select name from sqlite_schema where type == 'table'")
         )
     except sqlite3.Error as ex:
-        return f"schema query not possible, details: {ex}"
+        _print_validation_error(path, f"schema query not possible, details: {ex}")
+        return False
     expected = {"coverage_schema", "meta", "file", "line_bits"}
     actual = {f[0] for f in actual_tables if (f[0] in expected)}
     missing = expected - actual
     if len(missing) > 0:
-        return (
-            f"Invalid database, the database is missing the following tables {missing}"
+        _print_validation_error(
+            path,
+            f"Invalid database, the database is missing the following tables {missing}",
         )
-    return ""
+        return False
+    return True
 
 
 @nox.session(name="artifacts:copy", python=False)
