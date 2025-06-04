@@ -2,7 +2,6 @@ import json
 import re
 import shutil
 import sqlite3
-import subprocess
 import sys
 from collections.abc import Iterable
 from pathlib import Path
@@ -173,12 +172,12 @@ def _copy_artifacts(source: Path, dest: Path, files: Iterable[str]):
             print(f"File not found {path}", file=sys.stderr)
 
 
-def _prepare_coverage_xml(source: Path) -> None:
+def _prepare_coverage_xml(session: Session, source: Path) -> None:
     command = ["coverage", "xml", "-o", COVERAGE_XML, "--include", f"{source}/*"]
-    subprocess.run(command, check=True)
+    session.run(*command)
 
 
-def _upload_to_sonar(sonar_token: str) -> None:
+def _upload_to_sonar(session: Session, sonar_token: str) -> None:
     command = [
         "pysonar",
         "--sonar-token",
@@ -190,12 +189,12 @@ def _upload_to_sonar(sonar_token: str) -> None:
         "--sonar-python-bandit-report-paths",
         SECURITY_JSON,
     ]
-    subprocess.run(command, check=True)
+    session.run(*command)
 
 
 @nox.session(name="artifacts:sonar", python=False)
 def upload_artifacts_to_sonar(session: Session) -> None:
     """Upload artifacts to sonar for analysis"""
     sonar_token = session.posargs[0]
-    _prepare_coverage_xml(PROJECT_CONFIG.source)
-    _upload_to_sonar(sonar_token)
+    _prepare_coverage_xml(session, PROJECT_CONFIG.source)
+    _upload_to_sonar(session, sonar_token)

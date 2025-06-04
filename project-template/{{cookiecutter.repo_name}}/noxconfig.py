@@ -9,7 +9,7 @@ from typing import Iterable
 class Config:
     root: Path = Path(__file__).parent
     doc: Path = Path(__file__).parent / "doc"
-    source: Path = Path(__file__).parent / "exasol"/ "{{cookiecutter.package_name}}"
+    source: Path = Path("exasol/{{cookiecutter.package_name}}")
     version_file: Path = (
         Path(__file__).parent
         / "exasol"
