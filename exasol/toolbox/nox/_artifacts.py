@@ -49,10 +49,7 @@ def _missing_files(expected_files: set, directory: Path) -> set:
 
 
 def _validate_lint_txt(file: Path) -> str:
-    try:
-        content = file.read_text()
-    except FileNotFoundError as ex:
-        return f"Could not find file {file}, details: {ex}"
+    content = file.read_text()
     expr = re.compile(r"^Your code has been rated at (\d+.\d+)/.*", re.MULTILINE)
     matches = expr.search(content)
     if not matches:
@@ -63,9 +60,6 @@ def _validate_lint_txt(file: Path) -> str:
 def _validate_lint_json(file: Path) -> str:
     try:
         content = file.read_text()
-    except FileNotFoundError as ex:
-        return f"Could not find file {file}, details: {ex}"
-    try:
         issues = json.loads(content)
     except json.JSONDecodeError as ex:
         return f"Invalid json file, details: {ex}"
@@ -93,9 +87,6 @@ def _validate_lint_json(file: Path) -> str:
 def _validate_security_json(file: Path) -> str:
     try:
         content = file.read_text()
-    except FileNotFoundError as ex:
-        return f"Could not find file {file}, details: {ex}"
-    try:
         actual = set(json.loads(content))
     except json.JSONDecodeError as ex:
         return f"Invalid json file, details: {ex}"
