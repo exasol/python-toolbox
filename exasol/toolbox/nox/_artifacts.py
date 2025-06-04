@@ -19,7 +19,7 @@ LINT_TXT = ".lint.txt"
 SECURITY_JSON = ".security.json"
 
 ALL_FILES = {COVERAGE_FILE, LINT_JSON, LINT_TXT, SECURITY_JSON}
-
+COVERAGE_TABLES = {"coverage_schema", "meta", "file", "line_bits"}
 LINT_JSON_ATTRIBUTES = {
     "type",
     "module",
@@ -114,20 +114,21 @@ def _is_valid_security_json(file: Path) -> bool:
 def _is_valid_coverage(path: Path) -> bool:
     try:
         conn = sqlite3.connect(path)
+        cursor = conn.cursor()
     except sqlite3.Error as ex:
         return _handle_validation_error(
             path, f"database connection not possible, details: {ex}"
         )
-    cursor = conn.cursor()
     try:
         actual_tables = set(
             cursor.execute("select name from sqlite_schema where type == 'table'")
         )
     except sqlite3.Error as ex:
-        return _handle_validation_error(path, f"schema query not possible, details: {ex}")
-    expected = {"coverage_schema", "meta", "file", "line_bits"}
-    actual = {f[0] for f in actual_tables if (f[0] in expected)}
-    missing = expected - actual
+        return _handle_validation_error(
+            path, f"schema query not possible, details: {ex}"
+        )
+    actual = {f[0] for f in actual_tables if (f[0] in COVERAGE_TABLES)}
+    missing = COVERAGE_TABLES - actual
     if len(missing) > 0:
         return _handle_validation_error(
             path,

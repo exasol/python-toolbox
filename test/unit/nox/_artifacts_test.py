@@ -1,6 +1,7 @@
 import contextlib
 import json
 import re
+import sqlite3
 from dataclasses import dataclass
 from inspect import cleandoc
 from pathlib import Path
@@ -15,11 +16,13 @@ import pytest
 from exasol.toolbox.nox._artifacts import (
     ALL_FILES,
     COVERAGE_FILE,
+    COVERAGE_TABLES,
     LINT_JSON,
     LINT_JSON_ATTRIBUTES,
     LINT_TXT,
     SECURITY_JSON,
     SECURITY_JSON_ATTRIBUTES,
+    _is_valid_coverage,
     _is_valid_lint_json,
     _is_valid_lint_txt,
     _is_valid_security_json,
@@ -180,6 +183,41 @@ class TestIsValidSecurityJson:
         assert (
             f"missing the following attributes {missing_attributes}"
             in capsys.readouterr().out
+        )
+
+
+class TestIsValidCoverage:
+    @staticmethod
+    def _create_coverage_file(path: Path, tables: set) -> None:
+        connection = sqlite3.connect(path)
+        cursor = connection.cursor()
+        for table in tables:
+            cursor.execute(f"CREATE TABLE IF NOT EXISTS {table} (test INTEGER)")
+
+    def test_passes_when_as_expected(self, tmp_path):
+        path = Path(tmp_path, COVERAGE_FILE)
+        self._create_coverage_file(path, COVERAGE_TABLES)
+
+        result = _is_valid_coverage(path)
+
+        assert result
+
+    @pytest.mark.parametrize(
+        "missing_table",
+        [
+            pytest.param({"coverage_schema"}, id="missing_coverage_schema"),
+        ],
+    )
+    def test_database_missing_tables(self, tmp_path, capsys, missing_table):
+        tables = COVERAGE_TABLES - missing_table
+        path = Path(tmp_path, COVERAGE_FILE)
+        self._create_coverage_file(path, tables)
+
+        result = _is_valid_coverage(path)
+
+        assert not result
+        assert (
+            f"missing the following tables {missing_table}" in capsys.readouterr().out
         )
 
 
