@@ -20,6 +20,8 @@ from noxconfig import PROJECT_CONFIG
 DEFAULT_PATH_FILTERS = {"dist", ".eggs", "venv", ".poetry"}
 DOCS_OUTPUT_DIR = ".html-documentation"
 
+MINIMUM_PYTHON_VERSION = "3.9"
+
 
 class Mode(Enum):
     Fix = auto()

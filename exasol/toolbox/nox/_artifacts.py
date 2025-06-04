@@ -11,6 +11,7 @@ import nox
 from nox import Session
 
 from noxconfig import PROJECT_CONFIG
+from exasol.toolbox.nox._shared import MINIMUM_PYTHON_VERSION
 
 
 @nox.session(name="artifacts:validate", python=False)
@@ -144,7 +145,7 @@ def copy_artifacts(session: Session) -> None:
 
 def _python_version_suffix() -> str:
     versions = getattr(PROJECT_CONFIG, "python_versions", None)
-    pivot = versions[0] if versions else "3.9"
+    pivot = versions[0] if versions else MINIMUM_PYTHON_VERSION
     return f"-python{pivot}"
 
 
