@@ -39,6 +39,22 @@ jobs:
         run: |
           poetry run -- nox -s docs:build
 
+  Documentation-Links:
+    name: Doc Links Check
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python & Poetry Environment
+        uses: ./.github/actions/python-environment
+
+      - name: Link Check
+        run: |
+          poetry run -- nox -s docs:links:check
+
   Changelog:
     name: Changelog Update Check
     runs-on: ubuntu-24.04

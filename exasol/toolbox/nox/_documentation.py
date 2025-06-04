@@ -16,14 +16,11 @@ from typing import (
     Optional,
     Tuple,
 )
+import argparse
 
 import nox
+import requests   # type: ignore
 from nox import Session
-from requests import (
-    get,
-    head,
-)
-from requests.exceptions import Timeout
 
 from exasol.toolbox.nox._shared import DOCS_OUTPUT_DIR
 from noxconfig import (
@@ -34,8 +31,6 @@ from noxconfig import (
 
 def _build_docs(session: nox.Session, config: Config) -> None:
     session.run(
-        "poetry",
-        "run",
         "sphinx-build",
         "-W",
         "-b",
@@ -47,13 +42,32 @@ def _build_docs(session: nox.Session, config: Config) -> None:
 
 def _build_multiversion_docs(session: nox.Session, config: Config) -> None:
     session.run(
-        "poetry",
-        "run",
         "sphinx-multiversion",
         f"{config.doc}",
         DOCS_OUTPUT_DIR,
     )
     session.run("touch", f"{DOCS_OUTPUT_DIR}/.nojekyll")
+
+
+def _check_failed_links(results: list[str]):
+    errors = []
+    for line, result in enumerate(results):
+        if result.startswith("{") and "}" in result:
+            data = json.loads(result)
+            if not (data["status"] == "working") or (data["status"] == "ignored"):
+                match = re.search(r"https?://[^\s\"\'<>]+", data["uri"])
+                if match:
+                    try:
+                        request = requests.head(match.group(), timeout=15)
+                        if request.status_code == 200:
+                            data["status"] = "working"
+                            data["code"] = request.status_code
+                        results[line] = json.dumps(data)
+                    except requests.exceptions.Timeout:
+                        pass
+                if (data["status"] == "broken") or data["status"] == "timeout":
+                    errors.append(result)
+    return results, errors
 
 
 def _git_diff_changes_main() -> int:
@@ -108,25 +122,18 @@ def clean_docs(_session: Session) -> None:
 @nox.session(name="docs:links", python=False)
 def docs_list_links(session: Session) -> None:
     """List all the links within the documentation."""
-    ignore = [r".*"]
-    env = os.environ.copy()
-    env["SPHINX_EXTRA_LINKCHECK_IGNORES"] = ",".join(ignore)
     with tempfile.TemporaryDirectory() as path:
         tmpdir = Path(path)
         sp = subprocess.run(
             [
-                "poetry",
-                "run",
-                "--",
                 "sphinx-build",
                 "-b",
                 "linkcheck",
+                "-D",
+                "linkcheck_ignore=.*",
                 PROJECT_CONFIG.root / "doc",
                 tmpdir,
             ],
-            capture_output=True,
-            text=True,
-            env=env,
         )
         print(sp.returncode)
         if sp.returncode >= 2:
@@ -151,65 +158,43 @@ def docs_list_links(session: Session) -> None:
 @nox.session(name="docs:links:check", python=False)
 def docs_links_check(session: Session) -> None:
     """Checks whether all links in the documentation are accessible."""
-    ignore = [r"https?://"]
-    env = os.environ.copy()
-    env["SPHINX_EXTRA_LINKCHECK_IGNORES"] = ",".join(ignore)
+    parser = argparse.ArgumentParser(
+        prog="nox -s release:prepare",
+        usage="nox -s release:prepare -- [-h] [-o |--output]",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        type=Path,
+        help="path to output file",
+        default="",
+    )
+    args = parser.parse_args(session.posargs)
     with tempfile.TemporaryDirectory() as path:
         tmpdir = Path(path)
         sp = subprocess.run(
             [
-                "poetry",
-                "run",
-                "--",
                 "sphinx-build",
                 "-b",
                 "linkcheck",
                 PROJECT_CONFIG.root / "doc",
                 tmpdir,
             ],
-            capture_output=True,
-            text=True,
-            env=env,
         )
-        print(sp.returncode)
         if sp.returncode >= 2:
             print(sp.stderr)
             session.error(2)
         output = tmpdir / "output.json"
-        results = output.read_text().split("\n")
-        reslen = len(results)
-        resstr = results[-1]
-        if (reslen == 0) or ((reslen == 1) and (resstr == "")):
-            return
-        elif resstr == "":
-            results.pop()
-        for line_nr, result in enumerate(results):
-            resdict = json.loads(result)
-            if resdict["status"] == "ignored" and resdict["uri"].startswith("http"):
-                try:
-                    match = re.search(r"https?://[^\s\"\'<>]+", resdict["uri"])
-                    if match:
-                        resdict["uri"] = match.group()
-                    print(f"{line_nr}/{reslen}")
-                    request = head(resdict["uri"], timeout=5)
-                    if request.status_code != 200:
-                        request = get(resdict["uri"], timeout=5, stream=True)
-                        request.close()
-                    if request.status_code >= 400:
-                        resdict["status"] = "broken"
-                        resdict["code"] = request.status_code
-                    if request.status_code < 400:
-                        resdict["status"] = "working"
-                        resdict["code"] = request.status_code
-                except Timeout:
-                    resdict["status"] = "timeout"
-                results[line_nr] = json.dumps(resdict)
-        output.write_text("\n".join(f"{r}" for r in results))
-        errors = []
-        for result in results:
-            data = json.loads(result)
-            if (data["status"] == "broken") or data["status"] == "timeout":
-                errors.append(result)
+        out = output.read_text().split("\n")
+        results, errors = _check_failed_links(out)
+        if hasattr(args, "output"):
+            outputfile = Path(args.output) / "link-check-output.json"
+            if not outputfile.exists():
+                outputfile.parent.mkdir(parents=True, exist_ok=True)
+                outputfile.touch()
+            outputfile.write_text("\n".join(result for result in results))
+            print(f"file generated at path: {outputfile.resolve()}")
         if errors:
             print("Error" + "s" if len(errors) > 1 else "")
             print("\n".join(error for error in errors))

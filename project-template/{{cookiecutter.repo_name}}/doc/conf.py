@@ -76,3 +76,5 @@ html_theme_options = {
     "github_url": "https://github.com/exasol/{{cookiecutter.repo_name}}",
     "accent_color": "grass",
 }
+# -- Configure link checking behavior  ----------------------------------------
+linkcheck_rate_limit_timeout = 15
