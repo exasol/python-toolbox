@@ -10,7 +10,7 @@ import nox
 from nox import Session
 
 from exasol.toolbox.nox._shared import MINIMUM_PYTHON_VERSION
-from noxconfig import PROJECT_CONFIG
+from noxconfig import PROJECT_CONFIG, Config
 
 COVERAGE_FILE = ".coverage"
 COVERAGE_XML = "ci-coverage.xml"
@@ -183,7 +183,7 @@ def _prepare_coverage_xml(session: Session, source: Path) -> None:
     session.run(*command)
 
 
-def _upload_to_sonar(session: Session, sonar_token: str) -> None:
+def _upload_to_sonar(session: Session, sonar_token: str, config: Config) -> None:
     command = [
         "pysonar",
         "--sonar-token",
@@ -194,6 +194,10 @@ def _upload_to_sonar(session: Session, sonar_token: str) -> None:
         LINT_JSON,
         "--sonar-python-bandit-report-paths",
         SECURITY_JSON,
+        "--sonar-python-version",
+        ",".join(config.python_versions),
+        "--sonar-sources",
+        config.source
     ]
     session.run(*command)
 
@@ -203,4 +207,4 @@ def upload_artifacts_to_sonar(session: Session) -> None:
     """Upload artifacts to sonar for analysis"""
     sonar_token = session.posargs[0]
     _prepare_coverage_xml(session, PROJECT_CONFIG.source)
-    _upload_to_sonar(session, sonar_token)
+    _upload_to_sonar(session, sonar_token, PROJECT_CONFIG)
