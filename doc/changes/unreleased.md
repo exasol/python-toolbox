@@ -13,6 +13,7 @@ This requires the following changes for each public project:
 [tool.sonar]
 projectKey = "com.exasol:<project-key>"
 hostUrl = "https://sonarcloud.io"
+organization = "exasol"
 ```
 
 ## ✨ Features

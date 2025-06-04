@@ -215,6 +215,7 @@ order to properly set it up, you'll need to do the following for each public pro
     [tool.sonar]
     projectKey = "com.exasol:<project-key>"
     hostUrl = "https://sonarcloud.io"
+    organization = "exasol"
 
 9. Go 🥜
 +++++++++++++

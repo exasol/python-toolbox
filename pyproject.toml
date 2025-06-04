@@ -122,3 +122,4 @@ sphinx-multiversion = 'exasol.toolbox.sphinx.multiversion:main'
 [tool.sonar]
 projectKey = "com.exasol:python-toolbox"
 hostUrl = "https://sonarcloud.io"
+organization = "exasol"
