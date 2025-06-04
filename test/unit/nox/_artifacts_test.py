@@ -43,7 +43,7 @@ def test_missing_files(tmp_path, capsys):
 
 
 @dataclass
-class endswith:
+class EndsWith:
     """
     Assert that the str representation of the argument ends with the
     specified suffix.
@@ -72,8 +72,8 @@ def test_all_files(tmp_path, capsys):
         "coverage",
         "combine",
         "--keep",
-        endswith("coverage-python9.9-fast/.coverage"),
-        endswith("coverage-python9.9-slow/.coverage"),
+        EndsWith("coverage-python9.9-fast/.coverage"),
+        EndsWith("coverage-python9.9-slow/.coverage"),
     )
     assert re.match(
         cleandoc(
