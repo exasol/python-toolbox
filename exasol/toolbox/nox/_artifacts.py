@@ -1,13 +1,16 @@
 import json
 import pathlib
 import re
+import shutil
 import sqlite3
 import sys
+from collections.abc import Iterable
 from pathlib import Path
 
 import nox
 from nox import Session
 
+from exasol.toolbox.nox._shared import MINIMUM_PYTHON_VERSION
 from noxconfig import PROJECT_CONFIG
 
 
@@ -118,3 +121,49 @@ def _validate_coverage(path: Path) -> str:
             f"Invalid database, the database is missing the following tables {missing}"
         )
     return ""
+
+
+@nox.session(name="artifacts:copy", python=False)
+def copy_artifacts(session: Session) -> None:
+    """
+    Copy artifacts to the current directory
+    """
+
+    dir = Path(session.posargs[0])
+    suffix = _python_version_suffix()
+    _combine_coverage(session, dir, f"coverage{suffix}*/.coverage")
+    _copy_artifacts(
+        dir,
+        dir.parent,
+        [
+            f"lint{suffix}/.lint.txt",
+            f"lint{suffix}/.lint.json",
+            f"security{suffix}/.security.json",
+        ],
+    )
+
+
+def _python_version_suffix() -> str:
+    versions = getattr(PROJECT_CONFIG, "python_versions", None)
+    pivot = versions[0] if versions else MINIMUM_PYTHON_VERSION
+    return f"-python{pivot}"
+
+
+def _combine_coverage(session: Session, dir: Path, pattern: str):
+    """
+    pattern: glob pattern, e.g. "*.coverage"
+    """
+    if args := [f for f in dir.glob(pattern) if f.exists()]:
+        session.run("coverage", "combine", "--keep", *sorted(args))
+    else:
+        print(f"Could not find any file {dir}/{pattern}", file=sys.stderr)
+
+
+def _copy_artifacts(source: Path, dest: Path, files: Iterable[str]):
+    for file in files:
+        path = source / file
+        if path.exists():
+            print(f"Copying file {path}", file=sys.stderr)
+            shutil.copy(path, dest)
+        else:
+            print(f"File not found {path}", file=sys.stderr)

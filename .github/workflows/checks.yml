@@ -20,7 +20,7 @@ jobs:
         uses: ./.github/actions/python-environment
 
       - name: Check Version(s)
-        run: poetry run -- nox -s version:check -- `poetry run -- python -c "from noxconfig import PROJECT_CONFIG; print(PROJECT_CONFIG.version_file)"`
+        run: poetry run -- nox -s version:check
 
   Documentation:
     name: Docs
