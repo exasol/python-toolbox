@@ -76,7 +76,9 @@ from exasol.toolbox.nox._ci import (
 from exasol.toolbox.nox._release import prepare_release
 
 from exasol.toolbox.nox._artifacts import (
-    check_artifacts
+    check_artifacts,
+    copy_artifacts,
+    upload_artifacts_to_sonar
 )
 
 from exasol.toolbox.nox._dependencies import (
