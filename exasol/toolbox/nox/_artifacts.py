@@ -34,6 +34,8 @@ LINT_JSON_ATTRIBUTES = {
     "message-id",
 }
 
+SECURITY_JSON_ATTRIBUTES = {"errors", "generated_at", "metrics", "results"}
+
 
 @nox.session(name="artifacts:validate", python=False)
 def check_artifacts(session: Session) -> None:
@@ -99,8 +101,8 @@ def _is_valid_security_json(file: Path) -> bool:
     except json.JSONDecodeError as ex:
         _print_validation_error(file, f"Invalid json file, details: {ex}")
         return False
-    expected = {"errors", "generated_at", "metrics", "results"}
-    missing = expected - actual
+
+    missing = SECURITY_JSON_ATTRIBUTES - actual
     if len(missing) > 0:
         _print_validation_error(
             file,

@@ -18,8 +18,11 @@ from exasol.toolbox.nox._artifacts import (
     LINT_JSON,
     LINT_JSON_ATTRIBUTES,
     LINT_TXT,
+    SECURITY_JSON,
+    SECURITY_JSON_ATTRIBUTES,
     _is_valid_lint_json,
     _is_valid_lint_txt,
+    _is_valid_security_json,
     _missing_files,
     copy_artifacts,
 )
@@ -96,7 +99,7 @@ class TestIsValidLintTxt:
 
 class TestIsValidLintJson:
     @staticmethod
-    def _create_expected_json_file(path: Path, attributes: list) -> None:
+    def _create_expected_json_file(path: Path, attributes: set) -> None:
         path.touch()
         attributes_dict = {attribute: None for attribute in attributes}
         with path.open("w") as file:
@@ -129,6 +132,49 @@ class TestIsValidLintJson:
         self._create_expected_json_file(path, attributes=attributes)
 
         result = _is_valid_lint_json(path)
+
+        assert result == False
+        assert (
+            f"missing the following attributes {missing_attributes}"
+            in capsys.readouterr().out
+        )
+
+
+class TestIsValidSecurityJson:
+    @staticmethod
+    def _create_expected_json_file(path: Path, attributes: set) -> None:
+        path.touch()
+        attributes_dict = {attribute: None for attribute in attributes}
+        with path.open("w") as file:
+            json.dump(attributes_dict, file)
+
+    def test_passes_when_as_expected(self, tmp_path):
+        path = Path(tmp_path, SECURITY_JSON)
+        self._create_expected_json_file(path, attributes=SECURITY_JSON_ATTRIBUTES)
+
+        result = _is_valid_security_json(path)
+        assert result == True
+
+    @staticmethod
+    def test_is_not_a_json(tmp_path, capsys):
+        path = Path(tmp_path, LINT_JSON)
+        path.touch()
+        path.write_text("dummy")
+
+        result = _is_valid_security_json(path)
+
+        assert result == False
+        assert "Invalid json file" in capsys.readouterr().out
+
+    @pytest.mark.parametrize(
+        "missing_attributes", [pytest.param({"errors"}, id="missing_errors")]
+    )
+    def test_missing_attributes(self, tmp_path, capsys, missing_attributes):
+        attributes = SECURITY_JSON_ATTRIBUTES - missing_attributes
+        path = Path(tmp_path, LINT_JSON)
+        self._create_expected_json_file(path, attributes=attributes)
+
+        result = _is_valid_security_json(path)
 
         assert result == False
         assert (
