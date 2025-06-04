@@ -105,7 +105,7 @@ class TestCheckArtifacts:
         with mock_check_artifacts_session(tmp_path) as session:
             with pytest.raises(SystemExit):
                 check_artifacts(session)
-        assert f"error in [" in capsys.readouterr().err
+        assert "error in [" in capsys.readouterr().err
 
 
 class TestIsValidLintTxt:
@@ -260,7 +260,7 @@ class TestCopyArtifacts:
         captured = capsys.readouterr()
         assert re.match(
             cleandoc(
-                f"""
+                """
                 Could not find any file .*/coverage-python9.9\\*/.coverage
                 File not found .*/lint-python9.9/.lint.txt
                 File not found .*/lint-python9.9/.lint.json
@@ -293,7 +293,7 @@ class TestCopyArtifacts:
         )
         assert re.match(
             cleandoc(
-                f"""
+                """
                 Copying file .*/lint-python9.9/.lint.txt
                 Copying file .*/lint-python9.9/.lint.json
                 Copying file .*/security-python9.9/.security.json
