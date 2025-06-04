@@ -7,9 +7,7 @@ from exasol.toolbox.util.dependencies.licenses import (
     _packages_from_json,
     packages_to_markdown,
 )
-from exasol.toolbox.util.dependencies.poetry_dependencies import (
-    PoetryGroup,
-)
+from exasol.toolbox.util.dependencies.poetry_dependencies import PoetryGroup
 from exasol.toolbox.util.dependencies.shared_models import Package
 
 MAIN_GROUP = PoetryGroup(name="main", toml_section="project.dependencies")

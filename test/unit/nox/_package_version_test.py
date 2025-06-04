@@ -8,9 +8,7 @@ from exasol.toolbox.nox._package_version import (
     write_version_module,
 )
 from exasol.toolbox.util.version import Version
-from noxconfig import (
-    Config,
-)
+from noxconfig import Config
 
 DEFAULT_VERSION = Version(major=0, minor=1, patch=0)
 ALTERNATE_VERSION = Version(major=0, minor=2, patch=0)
