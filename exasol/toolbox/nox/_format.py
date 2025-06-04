@@ -39,7 +39,7 @@ def _pyupgrade(session: Session, config: Config, files: Iterable[str]) -> None:
 @nox.session(name="project:fix", python=False)
 def fix(session: Session) -> None:
     """Runs all automated fixes on the code base"""
-    py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
+    py_files = python_files(PROJECT_CONFIG.root)
     _version(session, Mode.Fix)
     _pyupgrade(session, config=PROJECT_CONFIG, files=py_files)
     _code_format(session, Mode.Fix, py_files)
@@ -48,5 +48,5 @@ def fix(session: Session) -> None:
 @nox.session(name="project:format", python=False)
 def fmt_check(session: Session) -> None:
     """Checks the project for correct formatting"""
-    py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
+    py_files = python_files(PROJECT_CONFIG.root)
     _code_format(session=session, mode=Mode.Check, files=py_files)

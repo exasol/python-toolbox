@@ -10,7 +10,10 @@ import nox
 from nox import Session
 
 from exasol.toolbox.nox._shared import MINIMUM_PYTHON_VERSION
-from noxconfig import PROJECT_CONFIG, Config
+from noxconfig import (
+    PROJECT_CONFIG,
+    Config,
+)
 
 COVERAGE_FILE = ".coverage"
 COVERAGE_XML = "ci-coverage.xml"
@@ -197,7 +200,7 @@ def _upload_to_sonar(session: Session, sonar_token: str, config: Config) -> None
         "--sonar-python-version",
         ",".join(config.python_versions),
         "--sonar-sources",
-        config.source
+        config.source,
     ]
     session.run(*command)
 
