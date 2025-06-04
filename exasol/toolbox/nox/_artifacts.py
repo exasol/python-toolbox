@@ -54,7 +54,7 @@ def _validate_lint_txt(file: Path) -> str:
     expr = re.compile(r"^Your code has been rated at (\d+.\d+)/.*", re.MULTILINE)
     matches = expr.search(content)
     if not matches:
-        return f"Could not find a rating"
+        return "Could not find a rating"
     return ""
 
 
