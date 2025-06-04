@@ -132,12 +132,12 @@ def copy_artifacts(session: Session) -> None:
     Copy artifacts to the current directory
     """
 
-    dir = Path(session.posargs[0])
+    artifact_dir = Path(session.posargs[0])
     suffix = _python_version_suffix()
-    _combine_coverage(session, dir, f"coverage{suffix}*/.coverage")
+    _combine_coverage(session, artifact_dir, f"coverage{suffix}*/.coverage")
     _copy_artifacts(
-        dir,
-        dir.parent,
+        artifact_dir,
+        artifact_dir.parent,
         [
             f"lint{suffix}/.lint.txt",
             f"lint{suffix}/.lint.json",
