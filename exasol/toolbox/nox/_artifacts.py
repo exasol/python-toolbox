@@ -202,7 +202,7 @@ def _upload_to_sonar(session: Session, sonar_token: str, config: Config) -> None
         "--sonar-sources",
         config.source,
     ]
-    session.run(*command)
+    session.run(*command) # type: ignore
 
 
 @nox.session(name="artifacts:sonar", python=False)
