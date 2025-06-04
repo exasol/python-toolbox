@@ -85,9 +85,7 @@ class TestIsValidLintTxt:
         text = "Your code has been rated at 7.85/10 (previous run: 7.83/10, +0.02"
         self._create_json_txt(path, text)
 
-        result = _is_valid_lint_txt(path)
-
-        assert result == True
+        assert _is_valid_lint_txt(path)
 
     def test_fails_when_rating_not_found(self, tmp_path, capsys):
         path = Path(tmp_path, LINT_TXT)
@@ -96,7 +94,7 @@ class TestIsValidLintTxt:
 
         result = _is_valid_lint_txt(path)
 
-        assert result == False
+        assert not result
         assert "Could not find a rating" in capsys.readouterr().out
 
 
@@ -113,7 +111,7 @@ class TestIsValidLintJson:
         self._create_expected_json_file(path, attributes=LINT_JSON_ATTRIBUTES)
 
         result = _is_valid_lint_json(path)
-        assert result == True
+        assert result
 
     @staticmethod
     def test_is_not_a_json(tmp_path, capsys):
@@ -123,7 +121,7 @@ class TestIsValidLintJson:
 
         result = _is_valid_lint_json(path)
 
-        assert result == False
+        assert not result
         assert "Invalid json file" in capsys.readouterr().out
 
     @pytest.mark.parametrize(
@@ -136,7 +134,7 @@ class TestIsValidLintJson:
 
         result = _is_valid_lint_json(path)
 
-        assert result == False
+        assert not result
         assert (
             f"missing the following attributes {missing_attributes}"
             in capsys.readouterr().out
@@ -155,8 +153,7 @@ class TestIsValidSecurityJson:
         path = Path(tmp_path, SECURITY_JSON)
         self._create_expected_json_file(path, attributes=SECURITY_JSON_ATTRIBUTES)
 
-        result = _is_valid_security_json(path)
-        assert result == True
+        assert _is_valid_security_json(path)
 
     @staticmethod
     def test_is_not_a_json(tmp_path, capsys):
@@ -166,7 +163,7 @@ class TestIsValidSecurityJson:
 
         result = _is_valid_security_json(path)
 
-        assert result == False
+        assert not result
         assert "Invalid json file" in capsys.readouterr().out
 
     @pytest.mark.parametrize(
@@ -179,7 +176,7 @@ class TestIsValidSecurityJson:
 
         result = _is_valid_security_json(path)
 
-        assert result == False
+        assert not result
         assert (
             f"missing the following attributes {missing_attributes}"
             in capsys.readouterr().out
