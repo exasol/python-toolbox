@@ -12,8 +12,10 @@ from nox import Session
 from exasol.toolbox.nox._shared import MINIMUM_PYTHON_VERSION
 from noxconfig import PROJECT_CONFIG
 
+COVERAGE_FILE = ".coverage"
 COVERAGE_XML = "ci-coverage.xml"
 LINT_JSON = ".lint.json"
+LINT_TXT = ".lint.txt"
 SECURITY_JSON = ".security.json"
 
 
@@ -21,21 +23,21 @@ SECURITY_JSON = ".security.json"
 def check_artifacts(session: Session) -> None:
     """Validate that all project artifacts are available and consistent"""
     if not_available := _missing_files(
-        {".lint.txt", ".security.json", ".coverage"}, PROJECT_CONFIG.root
+        {LINT_TXT, SECURITY_JSON, COVERAGE_FILE}, PROJECT_CONFIG.root
     ):
         print(f"not available: {not_available}")
         sys.exit(1)
 
     error = False
-    if msg := _validate_lint_txt(Path(PROJECT_CONFIG.root, ".lint.txt")):
-        print(f"error in [.lint.txt]: {msg}")
+    if msg := _validate_lint_txt(Path(PROJECT_CONFIG.root, LINT_TXT)):
+        print(f"error in [{LINT_TXT}]: {msg}")
     if msg := _validate_lint_json(Path(PROJECT_CONFIG.root, LINT_JSON)):
-        print(f"error in [.lint.json]: {msg}")
+        print(f"error in [{LINT_JSON}]: {msg}")
     if msg := _validate_security_json(Path(PROJECT_CONFIG.root, SECURITY_JSON)):
-        print(f"error in [.security.json]: {msg}")
+        print(f"error in [{SECURITY_JSON}]: {msg}")
         error = True
-    if msg := _validate_coverage(Path(PROJECT_CONFIG.root, ".coverage")):
-        print(f"error in [.coverage]: {msg}")
+    if msg := _validate_coverage(Path(PROJECT_CONFIG.root, COVERAGE_FILE)):
+        print(f"error in [{COVERAGE_FILE}]: {msg}")
         error = True
     if error:
         sys.exit(1)
@@ -134,14 +136,14 @@ def copy_artifacts(session: Session) -> None:
 
     artifact_dir = Path(session.posargs[0])
     suffix = _python_version_suffix()
-    _combine_coverage(session, artifact_dir, f"coverage{suffix}*/.coverage")
+    _combine_coverage(session, artifact_dir, f"coverage{suffix}*/{COVERAGE_FILE}")
     _copy_artifacts(
         artifact_dir,
         artifact_dir.parent,
         [
-            f"lint{suffix}/.lint.txt",
-            f"lint{suffix}/.lint.json",
-            f"security{suffix}/.security.json",
+            f"lint{suffix}/{LINT_TXT}",
+            f"lint{suffix}/{LINT_JSON}",
+            f"security{suffix}/{SECURITY_JSON}",
         ],
     )
 
