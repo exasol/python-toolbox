@@ -16,9 +16,12 @@ from exasol.toolbox.nox._artifacts import (
     ALL_FILES,
     COVERAGE_FILE,
     LINT_JSON,
+    LINT_JSON_ATTRIBUTES,
+    LINT_TXT,
+    _is_valid_lint_json,
     _is_valid_lint_txt,
     _missing_files,
-    copy_artifacts, _is_valid_lint_json,
+    copy_artifacts,
 )
 
 
@@ -65,25 +68,73 @@ def test_missing_files(missing_files, tmp_path):
     assert actual == missing_files
 
 
-@pytest.mark.parametrize(
-    "text,expected",
-    [
-        pytest.param(
-            "Your code has been rated at 7.85/10 (previous run: 7.83/10, +0.02",
-            True,
-            id="works_as_expected",
-        ),
-        pytest.param("test_text", False, id="detects_when_rating_not_found"),
-    ],
-)
-def test__is_valid_lint_txt(text, expected, tmp_path):
-    path = Path(tmp_path, ".lint.txt")
-    path.touch()
-    path.write_text(text)
+class TestIsValidLintTxt:
+    @staticmethod
+    def _create_json_txt(path: Path, text: str) -> None:
+        path.touch()
+        path.write_text(text)
 
-    result = _is_valid_lint_txt(path)
+    def test_passes_when_as_expected(self, tmp_path):
+        path = Path(tmp_path, LINT_TXT)
+        text = "Your code has been rated at 7.85/10 (previous run: 7.83/10, +0.02"
+        self._create_json_txt(path, text)
 
-    assert result == expected
+        result = _is_valid_lint_txt(path)
+
+        assert result == True
+
+    def test_fails_when_rating_not_found(self, tmp_path, capsys):
+        path = Path(tmp_path, LINT_TXT)
+        text = "dummy_text"
+        self._create_json_txt(path, text)
+
+        result = _is_valid_lint_txt(path)
+
+        assert result == False
+        assert "Could not find a rating" in capsys.readouterr().out
+
+
+class TestIsValidLintJson:
+    @staticmethod
+    def _create_expected_json_file(path: Path, attributes: list) -> None:
+        path.touch()
+        attributes_dict = {attribute: None for attribute in attributes}
+        with path.open("w") as file:
+            json.dump([attributes_dict], file)
+
+    def test_passes_when_as_expected(self, tmp_path):
+        path = Path(tmp_path, LINT_JSON)
+        self._create_expected_json_file(path, attributes=LINT_JSON_ATTRIBUTES)
+
+        result = _is_valid_lint_json(path)
+        assert result == True
+
+    @staticmethod
+    def test_is_not_a_json(tmp_path, capsys):
+        path = Path(tmp_path, LINT_JSON)
+        path.touch()
+        path.write_text("dummy")
+
+        result = _is_valid_lint_json(path)
+
+        assert result == False
+        assert "Invalid json file" in capsys.readouterr().out
+
+    @pytest.mark.parametrize(
+        "missing_attributes", [pytest.param({"message-id"}, id="missing_message-id")]
+    )
+    def test_missing_attributes(self, tmp_path, capsys, missing_attributes):
+        attributes = LINT_JSON_ATTRIBUTES - missing_attributes
+        path = Path(tmp_path, LINT_JSON)
+        self._create_expected_json_file(path, attributes=attributes)
+
+        result = _is_valid_lint_json(path)
+
+        assert result == False
+        assert (
+            f"missing the following attributes {missing_attributes}"
+            in capsys.readouterr().out
+        )
 
 
 class TestCopyArtifacts:

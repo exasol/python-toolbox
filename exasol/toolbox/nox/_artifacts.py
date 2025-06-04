@@ -20,6 +20,20 @@ SECURITY_JSON = ".security.json"
 
 ALL_FILES = {COVERAGE_FILE, LINT_JSON, LINT_TXT, SECURITY_JSON}
 
+LINT_JSON_ATTRIBUTES = {
+    "type",
+    "module",
+    "obj",
+    "line",
+    "column",
+    "endLine",
+    "endColumn",
+    "path",
+    "symbol",
+    "message",
+    "message-id",
+}
+
 
 @nox.session(name="artifacts:validate", python=False)
 def check_artifacts(session: Session) -> None:
@@ -66,22 +80,9 @@ def _is_valid_lint_json(file: Path) -> bool:
         _print_validation_error(file, f"Invalid json file, details: {ex}")
         return False
 
-    expected = {
-        "type",
-        "module",
-        "obj",
-        "line",
-        "column",
-        "endLine",
-        "endColumn",
-        "path",
-        "symbol",
-        "message",
-        "message-id",
-    }
     for number, issue in enumerate(issues):
         actual = set(issue.keys())
-        missing = expected - actual
+        missing = LINT_JSON_ATTRIBUTES - actual
         if len(missing) > 0:
             _print_validation_error(
                 file,
