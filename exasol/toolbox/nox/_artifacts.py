@@ -18,7 +18,7 @@ LINT_JSON = ".lint.json"
 LINT_TXT = ".lint.txt"
 SECURITY_JSON = ".security.json"
 
-ALL_FILES = {COVERAGE_FILE, LINT_JSON, LINT_TXT, SECURITY_JSON}
+ALL_LINT_FILES = {COVERAGE_FILE, LINT_JSON, LINT_TXT, SECURITY_JSON}
 COVERAGE_TABLES = {"coverage_schema", "meta", "file", "line_bits"}
 LINT_JSON_ATTRIBUTES = {
     "type",
@@ -40,8 +40,9 @@ SECURITY_JSON_ATTRIBUTES = {"errors", "generated_at", "metrics", "results"}
 @nox.session(name="artifacts:validate", python=False)
 def check_artifacts(session: Session) -> None:
     """Validate that all project artifacts are available and consistent"""
-    if not_available := _missing_files(ALL_FILES, PROJECT_CONFIG.root):
-        print(f"not available: {not_available}", file=sys.stderr)
+    all_files = {f.name for f in PROJECT_CONFIG.root.iterdir() if f.is_file()}
+    if missing_files := (ALL_LINT_FILES - all_files):
+        print(f"files not available: {missing_files}", file=sys.stderr)
         sys.exit(1)
 
     all_is_valid_checks = [
@@ -50,18 +51,12 @@ def check_artifacts(session: Session) -> None:
         _is_valid_security_json(Path(PROJECT_CONFIG.root, SECURITY_JSON)),
         _is_valid_coverage(Path(PROJECT_CONFIG.root, COVERAGE_FILE)),
     ]
-
     if not all(all_is_valid_checks):
         sys.exit(1)
 
 
-def _missing_files(expected_files: set, directory: Path) -> set:
-    files = {f.name for f in directory.iterdir() if f.is_file()}
-    return expected_files - files
-
-
 def _handle_validation_error(file: Path, message: str) -> bool:
-    print(f"error in [{file.name}]: {message}")
+    print(f"error in [{file.name}]: {message}", file=sys.stderr)
     return False
 
 

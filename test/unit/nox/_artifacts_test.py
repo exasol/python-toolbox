@@ -5,6 +5,7 @@ import sqlite3
 from dataclasses import dataclass
 from inspect import cleandoc
 from pathlib import Path
+from unittest import mock
 from unittest.mock import (
     Mock,
     call,
@@ -14,7 +15,7 @@ from unittest.mock import (
 import pytest
 
 from exasol.toolbox.nox._artifacts import (
-    ALL_FILES,
+    ALL_LINT_FILES,
     COVERAGE_FILE,
     COVERAGE_TABLES,
     LINT_JSON,
@@ -26,9 +27,18 @@ from exasol.toolbox.nox._artifacts import (
     _is_valid_lint_json,
     _is_valid_lint_txt,
     _is_valid_security_json,
-    _missing_files,
+    check_artifacts,
     copy_artifacts,
 )
+
+
+@contextlib.contextmanager
+def mock_check_artifacts_session(
+    path: Path,
+):
+    with patch("exasol.toolbox.nox._artifacts.PROJECT_CONFIG") as config:
+        config.root = path
+        yield Mock()
 
 
 @contextlib.contextmanager
@@ -55,23 +65,47 @@ class EndsWith:
         return str(actual).endswith(self.suffix)
 
 
-@pytest.mark.parametrize(
-    "missing_files",
-    [
-        (pytest.param(set(), id="all_files_present")),
-        (pytest.param({LINT_JSON}, id="lint_json_missing")),
-        (pytest.param({LINT_JSON, COVERAGE_FILE}, id="coverage_and_lint_json_missing")),
-        (pytest.param(ALL_FILES, id="all_files_missing")),
-    ],
-)
-def test_missing_files(missing_files, tmp_path):
-    existing_files = ALL_FILES - missing_files
-    path = Path(tmp_path)
-    for file in existing_files:
-        Path(path, file).touch()
+class TestCheckArtifacts:
+    @staticmethod
+    def _create_artifact_files(path: Path, existing_files: set):
+        for file in existing_files:
+            Path(path, file).touch()
 
-    actual = _missing_files(ALL_FILES, path)
-    assert actual == missing_files
+    @mock.patch("exasol.toolbox.nox._artifacts._is_valid_lint_txt", return_value=True)
+    @mock.patch("exasol.toolbox.nox._artifacts._is_valid_lint_json", return_value=True)
+    @mock.patch(
+        "exasol.toolbox.nox._artifacts._is_valid_security_json", return_value=True
+    )
+    @mock.patch("exasol.toolbox.nox._artifacts._is_valid_coverage", return_value=True)
+    def test_passes_when_as_expected(
+        self, mock_coverage, mock_security, mock_lint_json, mock_lint_txt, tmp_path
+    ):
+        self._create_artifact_files(tmp_path, ALL_LINT_FILES)
+        with mock_check_artifacts_session(tmp_path) as session:
+            check_artifacts(session)
+
+    @pytest.mark.parametrize(
+        "missing_files",
+        [
+            (pytest.param({LINT_JSON}, id="lint_json_missing")),
+            (pytest.param(ALL_LINT_FILES, id="all_files_missing")),
+        ],
+    )
+    def test_fails_when_file_missing(self, tmp_path, missing_files, capsys):
+        existing_files = ALL_LINT_FILES - missing_files
+        self._create_artifact_files(tmp_path, existing_files)
+
+        with mock_check_artifacts_session(tmp_path) as session:
+            with pytest.raises(SystemExit):
+                check_artifacts(session)
+        assert f"files not available: {missing_files}" in capsys.readouterr().err
+
+    def test_fails_when_check_fails(self, tmp_path, capsys):
+        self._create_artifact_files(tmp_path, ALL_LINT_FILES)
+        with mock_check_artifacts_session(tmp_path) as session:
+            with pytest.raises(SystemExit):
+                check_artifacts(session)
+        assert f"error in [" in capsys.readouterr().err
 
 
 class TestIsValidLintTxt:
@@ -95,7 +129,7 @@ class TestIsValidLintTxt:
         result = _is_valid_lint_txt(path)
 
         assert not result
-        assert "Could not find a rating" in capsys.readouterr().out
+        assert "Could not find a rating" in capsys.readouterr().err
 
 
 class TestIsValidLintJson:
@@ -122,7 +156,7 @@ class TestIsValidLintJson:
         result = _is_valid_lint_json(path)
 
         assert not result
-        assert "Invalid json file" in capsys.readouterr().out
+        assert "Invalid json file" in capsys.readouterr().err
 
     @pytest.mark.parametrize(
         "missing_attributes", [pytest.param({"message-id"}, id="missing_message-id")]
@@ -137,7 +171,7 @@ class TestIsValidLintJson:
         assert not result
         assert (
             f"missing the following attributes {missing_attributes}"
-            in capsys.readouterr().out
+            in capsys.readouterr().err
         )
 
 
@@ -164,7 +198,7 @@ class TestIsValidSecurityJson:
         result = _is_valid_security_json(path)
 
         assert not result
-        assert "Invalid json file" in capsys.readouterr().out
+        assert "Invalid json file" in capsys.readouterr().err
 
     @pytest.mark.parametrize(
         "missing_attributes", [pytest.param({"errors"}, id="missing_errors")]
@@ -179,7 +213,7 @@ class TestIsValidSecurityJson:
         assert not result
         assert (
             f"missing the following attributes {missing_attributes}"
-            in capsys.readouterr().out
+            in capsys.readouterr().err
         )
 
 
@@ -214,7 +248,7 @@ class TestIsValidCoverage:
 
         assert not result
         assert (
-            f"missing the following tables {missing_table}" in capsys.readouterr().out
+            f"missing the following tables {missing_table}" in capsys.readouterr().err
         )
 
 
