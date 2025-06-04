@@ -1,4 +1,5 @@
 import contextlib
+import json
 import re
 from dataclasses import dataclass
 from inspect import cleandoc
@@ -15,8 +16,9 @@ from exasol.toolbox.nox._artifacts import (
     ALL_FILES,
     COVERAGE_FILE,
     LINT_JSON,
+    _is_valid_lint_txt,
     _missing_files,
-    copy_artifacts,
+    copy_artifacts, _is_valid_lint_json,
 )
 
 
@@ -61,6 +63,27 @@ def test_missing_files(missing_files, tmp_path):
 
     actual = _missing_files(ALL_FILES, path)
     assert actual == missing_files
+
+
+@pytest.mark.parametrize(
+    "text,expected",
+    [
+        pytest.param(
+            "Your code has been rated at 7.85/10 (previous run: 7.83/10, +0.02",
+            True,
+            id="works_as_expected",
+        ),
+        pytest.param("test_text", False, id="detects_when_rating_not_found"),
+    ],
+)
+def test__is_valid_lint_txt(text, expected, tmp_path):
+    path = Path(tmp_path, ".lint.txt")
+    path.touch()
+    path.write_text(text)
+
+    result = _is_valid_lint_txt(path)
+
+    assert result == expected
 
 
 class TestCopyArtifacts:

@@ -8,26 +8,6 @@ from exasol.toolbox.nox import _artifacts
 
 
 @pytest.mark.parametrize(
-    "file,expected",
-    [
-        ("Your code has been rated at 7.85/10 (previous run: 7.83/10, +0.02", ""),
-        (
-            "test_text\nYour code has been rated at 7.85/10 (previous run: 7.83/10, +0.02\ntest_text",
-            "",
-        ),
-        ("", "Could not find a rating"),
-        ("test_text", "Could not find a rating"),
-    ],
-)
-def test_check_lint_txt(file, expected, tmp_path):
-    path = Path(tmp_path, ".lint.txt")
-    path.touch()
-    path.write_text(file)
-    actual = _artifacts._validate_lint_txt(path)
-    assert actual == expected
-
-
-@pytest.mark.parametrize(
     "attributes,expected",
     [
         (
@@ -221,7 +201,7 @@ def test_check_lint_json(attributes, expected, tmp_path):
         attributes_dict[attribute] = None
     with path.open("w") as file:
         json.dump([attributes_dict], file)
-    actual = _artifacts._validate_lint_json(path)
+    actual = _artifacts._is_valid_lint_json(path)
     assert actual == expected
 
 
@@ -255,7 +235,7 @@ def test_check_security_json(attributes, expected, tmp_path):
         attributes_dict[attribute] = None
     with path.open("w") as file:
         json.dump(attributes_dict, file)
-    actual = _artifacts._validate_security_json(path)
+    actual = _artifacts._is_valid_security_json(path)
     assert actual == expected
 
 
@@ -291,5 +271,5 @@ def test_check_coverage(tables, expected, tmp_path):
     cursor = connection.cursor()
     for table in tables:
         cursor.execute(f"CREATE TABLE IF NOT EXISTS {table} (test INTEGER)")
-    actual = _artifacts._validate_coverage(path)
+    actual = _artifacts._is_valid_coverage(path)
     assert actual == expected
