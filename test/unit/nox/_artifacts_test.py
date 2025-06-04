@@ -25,23 +25,6 @@ def mock_session(path: Path, python_version: str, *files: str):
         yield Mock(posargs=[str(path)])
 
 
-def test_missing_files(tmp_path, capsys):
-    with mock_session(tmp_path, "9.9") as session:
-        copy_artifacts(session)
-    captured = capsys.readouterr()
-    assert re.match(
-        cleandoc(
-            f"""
-            Could not find any file .*/coverage-python9.9\\*/.coverage
-            File not found .*/lint-python9.9/.lint.txt
-            File not found .*/lint-python9.9/.lint.json
-            File not found .*/security-python9.9/.security.json
-            """
-        ),
-        captured.err,
-    )
-
-
 @dataclass
 class EndsWith:
     """
@@ -55,35 +38,54 @@ class EndsWith:
         return str(actual).endswith(self.suffix)
 
 
-def test_all_files(tmp_path, capsys):
-    with mock_session(
-        tmp_path / "artifacts",
-        "9.9",
-        "coverage-python9.9-fast/.coverage",
-        "coverage-python9.9-slow/.coverage",
-        "lint-python9.9/.lint.txt",
-        "lint-python9.9/.lint.json",
-        "security-python9.9/.security.json",
-    ) as session:
-        copy_artifacts(session)
+class TestCopyArtifacts:
+    @staticmethod
+    def test_missing_files(tmp_path, capsys):
+        with mock_session(tmp_path, "9.9") as session:
+            copy_artifacts(session)
+        captured = capsys.readouterr()
+        assert re.match(
+            cleandoc(
+                f"""
+                Could not find any file .*/coverage-python9.9\\*/.coverage
+                File not found .*/lint-python9.9/.lint.txt
+                File not found .*/lint-python9.9/.lint.json
+                File not found .*/security-python9.9/.security.json
+                """
+            ),
+            captured.err,
+        )
 
-    captured = capsys.readouterr()
-    assert session.run.call_args == call(
-        "coverage",
-        "combine",
-        "--keep",
-        EndsWith("coverage-python9.9-fast/.coverage"),
-        EndsWith("coverage-python9.9-slow/.coverage"),
-    )
-    assert re.match(
-        cleandoc(
-            f"""
-            Copying file .*/lint-python9.9/.lint.txt
-            Copying file .*/lint-python9.9/.lint.json
-            Copying file .*/security-python9.9/.security.json
-            """
-        ),
-        captured.err,
-    )
-    for f in [".lint.txt", ".lint.json", ".security.json"]:
-        assert (tmp_path / f).exists()
+    @staticmethod
+    def test_all_files(tmp_path, capsys):
+        with mock_session(
+            tmp_path / "artifacts",
+            "9.9",
+            "coverage-python9.9-fast/.coverage",
+            "coverage-python9.9-slow/.coverage",
+            "lint-python9.9/.lint.txt",
+            "lint-python9.9/.lint.json",
+            "security-python9.9/.security.json",
+        ) as session:
+            copy_artifacts(session)
+
+        captured = capsys.readouterr()
+        assert session.run.call_args == call(
+            "coverage",
+            "combine",
+            "--keep",
+            EndsWith("coverage-python9.9-fast/.coverage"),
+            EndsWith("coverage-python9.9-slow/.coverage"),
+        )
+        assert re.match(
+            cleandoc(
+                f"""
+                Copying file .*/lint-python9.9/.lint.txt
+                Copying file .*/lint-python9.9/.lint.json
+                Copying file .*/security-python9.9/.security.json
+                """
+            ),
+            captured.err,
+        )
+        for f in [".lint.txt", ".lint.json", ".security.json"]:
+            assert (tmp_path / f).exists()
