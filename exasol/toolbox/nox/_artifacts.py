@@ -10,8 +10,8 @@ from pathlib import Path
 import nox
 from nox import Session
 
-from noxconfig import PROJECT_CONFIG
 from exasol.toolbox.nox._shared import MINIMUM_PYTHON_VERSION
+from noxconfig import PROJECT_CONFIG
 
 
 @nox.session(name="artifacts:validate", python=False)
