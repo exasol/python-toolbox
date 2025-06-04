@@ -1,8 +1,8 @@
 import json
-import pathlib
 import re
 import shutil
 import sqlite3
+import subprocess
 import sys
 from collections.abc import Iterable
 from pathlib import Path
@@ -12,6 +12,10 @@ from nox import Session
 
 from exasol.toolbox.nox._shared import MINIMUM_PYTHON_VERSION
 from noxconfig import PROJECT_CONFIG
+
+COVERAGE_XML = "ci-coverage.xml"
+LINT_JSON = ".lint.json"
+SECURITY_JSON = ".security.json"
 
 
 @nox.session(name="artifacts:validate", python=False)
@@ -26,9 +30,9 @@ def check_artifacts(session: Session) -> None:
     error = False
     if msg := _validate_lint_txt(Path(PROJECT_CONFIG.root, ".lint.txt")):
         print(f"error in [.lint.txt]: {msg}")
-    if msg := _validate_lint_json(Path(PROJECT_CONFIG.root, ".lint.json")):
+    if msg := _validate_lint_json(Path(PROJECT_CONFIG.root, LINT_JSON)):
         print(f"error in [.lint.json]: {msg}")
-    if msg := _validate_security_json(Path(PROJECT_CONFIG.root, ".security.json")):
+    if msg := _validate_security_json(Path(PROJECT_CONFIG.root, SECURITY_JSON)):
         print(f"error in [.security.json]: {msg}")
         error = True
     if msg := _validate_coverage(Path(PROJECT_CONFIG.root, ".coverage")):
@@ -167,3 +171,31 @@ def _copy_artifacts(source: Path, dest: Path, files: Iterable[str]):
             shutil.copy(path, dest)
         else:
             print(f"File not found {path}", file=sys.stderr)
+
+
+def _prepare_coverage_xml(source: Path) -> None:
+    command = ["coverage", "xml", "-o", COVERAGE_XML, "--include", f"{source}/*"]
+    subprocess.run(command, check=True)
+
+
+def _upload_to_sonar(sonar_token: str) -> None:
+    command = [
+        "pysonar",
+        "--sonar-token",
+        sonar_token,
+        "--sonar-python-coverage-report-paths",
+        COVERAGE_XML,
+        "--sonar-python-pylint-report-path",
+        LINT_JSON,
+        "--sonar-python-bandit-report-paths",
+        SECURITY_JSON,
+    ]
+    subprocess.run(command, check=True)
+
+
+@nox.session(name="artifacts:sonar", python=False)
+def upload_artifacts_to_sonar(session: Session) -> None:
+    """Upload artifacts to sonar for analysis"""
+    sonar_token = session.posargs[0]
+    _prepare_coverage_xml(PROJECT_CONFIG.source)
+    _upload_to_sonar(sonar_token)

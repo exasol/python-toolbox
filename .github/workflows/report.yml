@@ -36,7 +36,7 @@ jobs:
         run: poetry run -- nox -s project:report -- --format json | tee metrics.json
 
       - name: Upload to sonar
-        run: poetry run -- nox -s artifacts:sonar
+        run: poetry run -- nox -s artifacts:sonar -- ${{ secrets.SONAR_TOKEN }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4.6.2

@@ -179,8 +179,8 @@ forward, and you just can use the example *noxfile.py* below.
 
 .. _toolbox tasks:
 
-7. Setup for deploying documentation (optional)
-+++++++++++++++++++++++++++++++++++++++++++++++
+7. Set up for deploying documentation (optional)
+++++++++++++++++++++++++++++++++++++++++++++++++
 Within the `gh-pages.yml`, we use the GitHub `upload-pages-artifact` and `deploy-pages`
 actions. In order to properly deploy your pages, you'll need to reconfigure the GitHub
 Pages settings for the repo:
@@ -199,8 +199,24 @@ We also need to configure settings for github-pages environment:
 5. In the 'Deployment branches and tags', click 'Add deployment branch or tag rule'
 6. Select 'Ref type' to be 'Tag' and set the 'Name pattern' to `[0-9]*.[0-9]*.[0-9]*` (or whatever matches that repo's tags)
 
+8. Set up for Sonar
++++++++++++++++++++
+We use SonarCube to analyze, visualize, & track linting, security, & coverage. In
+order to properly set it up, you'll need to do the following for each public project:
 
-8. Go 🥜
+1. specify in the `noxconfig.py` the path to the project's source code in `Config.source`
+2. add the 'SONAR_TOKEN' to the 'Organization secrets'
+3. activate the SonarQubeCloud App
+4. create a project on SonarCloud
+5. add the following information to the project's `pyproject.toml`
+
+.. code-block:: toml
+
+    [tool.sonar]
+    projectKey = "com.exasol:<project-key>"
+    hostUrl = "https://sonarcloud.io"
+
+9. Go 🥜
 +++++++++++++
 You are ready to use the toolbox. With *nox -l* you can list all available tasks.
 
