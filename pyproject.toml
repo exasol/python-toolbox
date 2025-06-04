@@ -118,3 +118,7 @@ ignore_errors = true
 [tool.poetry.plugins."console_scripts"]
 tbx = 'exasol.toolbox.tools.tbx:CLI'
 sphinx-multiversion = 'exasol.toolbox.sphinx.multiversion:main'
+
+[tool.sonar]
+projectKey = "com.exasol:python-toolbox"
+hostUrl = "https://sonarcloud.io"
