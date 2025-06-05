@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import re
@@ -8,18 +9,19 @@ import subprocess
 import sys
 import tempfile
 import webbrowser
+from collections.abc import (
+    Container,
+    Iterable,
+)
 from itertools import repeat
 from pathlib import Path
 from typing import (
-    Container,
-    Iterable,
     Optional,
     Tuple,
 )
-import argparse
 
 import nox
-import requests   # type: ignore
+import requests  # type: ignore
 from nox import Session
 
 from exasol.toolbox.nox._shared import DOCS_OUTPUT_DIR
@@ -58,10 +60,14 @@ def _check_failed_links(results: list[str]):
                 match = re.search(r"https?://[^\s\"\'<>]+", data["uri"])
                 if match:
                     try:
-                        request = requests.head(match.group(), timeout=15)
+                        request = requests.get(match.group(), timeout=15)
                         if request.status_code == 200:
                             data["status"] = "working"
                             data["code"] = request.status_code
+                            if request.history:
+                                data["info"] = (
+                                    f"redirected: {" -> ".join(step.url for step in request.history)} -> {request.url}"
+                                )
                         results[line] = json.dumps(data)
                     except requests.exceptions.Timeout:
                         pass
