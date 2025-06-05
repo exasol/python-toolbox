@@ -95,6 +95,14 @@ class TestPoetryDependencies:
                 "import-linter                 2.3       Enforces rules for the imports within and between Python packages.",
                 Package(name="import-linter", version="2.3"),
             ),
+            (
+                "python-dateutil               2.9.0.post0     Extensions to the standard Python datetime module",
+                Package(name="python-dateutil", version="2.9.0.post0"),
+            ),
+            (
+                "types-requests                             2.32.0.20250602",
+                Package(name="types-requests", version="2.32.0.20250602"),
+            ),
         ],
     )
     def test_extract_from_line(line, expected):
