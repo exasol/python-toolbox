@@ -66,7 +66,7 @@ def _check_failed_links(results: list[str]):
                             data["code"] = request.status_code
                             if request.history:
                                 data["info"] = (
-                                    f"redirected: [{", ".join(step.url for step in request.history)}, {request.url}]"
+                                    f'redirected: [{", ".join(step.url for step in request.history)}, {request.url}]'
                                 )
                         results[line] = json.dumps(data)
                     except requests.exceptions.Timeout:
