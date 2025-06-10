@@ -119,7 +119,7 @@ def report_illegal(illegal: dict[str, list[str]], console: rich.console.Console)
 @nox.session(name="lint:code", python=False)
 def lint(session: Session) -> None:
     """Runs the static code analyzer on the project"""
-    py_files = python_files(PROJECT_CONFIG.root)
+    py_files = python_files(PROJECT_CONFIG.root / PROJECT_CONFIG.source)
     _pylint(session, py_files)
 
 
