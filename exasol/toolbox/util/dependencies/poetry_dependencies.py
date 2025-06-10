@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import re
 import subprocess
+import sys
 from pathlib import Path
 from typing import Optional
 
 import tomlkit
 from pydantic import (
     BaseModel,
-    model_validator,
 )
 from tomlkit import TOMLDocument
 
@@ -84,19 +84,33 @@ class PoetryDependencies(BaseModel):
     working_directory: Path
 
     @staticmethod
-    def _extract_from_line(line: str) -> Package:
-        pattern = r"\s+(\d+(?:\.\d+)*)\s+"
-        match = re.split(pattern, line)
-        return Package(name=match[0], version=match[1])  #
+    def _extract_from_line(line: str) -> Optional[Package]:
+        # remove (!) from line as indicates not installed in environment,
+        # which could occur for optional dependencies
+        split_line = line.replace("(!)", "").strip().split(maxsplit=2)
+        if len(split_line) < 2:
+            print(f"Unable to parse dependency={line}")
+            return None
+        return Package(name=split_line[0], version=split_line[1])
 
     def _extract_from_poetry_show(self, output_text: str) -> list[Package]:
-        return [self._extract_from_line(line) for line in output_text.splitlines()]
+        return [
+            package
+            for line in output_text.splitlines()
+            if (package := self._extract_from_line(line))
+        ]
 
     @property
     def direct_dependencies(self) -> dict[str, list[Package]]:
         dependencies = {}
         for group in self.groups:
-            command = ("poetry", "show", "--top-level", f"--only={group.name}")
+            command = (
+                "poetry",
+                "show",
+                "--top-level",
+                f"--only={group.name}",
+                "--no-truncate",
+            )
             output = subprocess.run(
                 command,
                 capture_output=True,
@@ -110,7 +124,7 @@ class PoetryDependencies(BaseModel):
 
     @property
     def all_dependencies(self) -> dict[str, list[Package]]:
-        command = ("poetry", "show")
+        command = ("poetry", "show", "--no-truncate")
         output = subprocess.run(
             command,
             capture_output=True,
@@ -128,7 +142,7 @@ class PoetryDependencies(BaseModel):
         }
         for line in output.stdout.splitlines():
             dep = self._extract_from_line(line=line)
-            if dep.name not in names_direct_dependencies:
+            if dep and dep.name not in names_direct_dependencies:
                 transitive_dependencies.append(dep)
 
         return direct_dependencies | {TRANSITIVE_GROUP.name: transitive_dependencies}
