@@ -51,4 +51,4 @@ def test_python_files(
 
     actual = python_files(tmp_directory)
     assert len(actual) == 1
-    assert actual[0].parent.name == package_directory
+    assert "toolbox-dummy" in actual[0]

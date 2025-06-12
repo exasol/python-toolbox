@@ -1,5 +1,4 @@
 import json
-import pathlib
 import re
 import shutil
 import sqlite3
@@ -11,116 +10,129 @@ import nox
 from nox import Session
 
 from exasol.toolbox.nox._shared import MINIMUM_PYTHON_VERSION
-from noxconfig import PROJECT_CONFIG
+from noxconfig import (
+    PROJECT_CONFIG,
+    Config,
+)
+
+COVERAGE_FILE = ".coverage"
+COVERAGE_XML = "ci-coverage.xml"
+LINT_JSON = ".lint.json"
+LINT_TXT = ".lint.txt"
+SECURITY_JSON = ".security.json"
+
+ALL_LINT_FILES = {COVERAGE_FILE, LINT_JSON, LINT_TXT, SECURITY_JSON}
+COVERAGE_TABLES = {"coverage_schema", "meta", "file", "line_bits"}
+LINT_JSON_ATTRIBUTES = {
+    "type",
+    "module",
+    "obj",
+    "line",
+    "column",
+    "endLine",
+    "endColumn",
+    "path",
+    "symbol",
+    "message",
+    "message-id",
+}
+
+SECURITY_JSON_ATTRIBUTES = {"errors", "generated_at", "metrics", "results"}
 
 
 @nox.session(name="artifacts:validate", python=False)
 def check_artifacts(session: Session) -> None:
     """Validate that all project artifacts are available and consistent"""
-    if not_available := _missing_files(
-        {".lint.txt", ".security.json", ".coverage"}, PROJECT_CONFIG.root
-    ):
-        print(f"not available: {not_available}")
+    all_files = {f.name for f in PROJECT_CONFIG.root.iterdir() if f.is_file()}
+    if missing_files := (ALL_LINT_FILES - all_files):
+        print(f"files not available: {missing_files}", file=sys.stderr)
         sys.exit(1)
 
-    error = False
-    if msg := _validate_lint_txt(Path(PROJECT_CONFIG.root, ".lint.txt")):
-        print(f"error in [.lint.txt]: {msg}")
-    if msg := _validate_lint_json(Path(PROJECT_CONFIG.root, ".lint.json")):
-        print(f"error in [.lint.json]: {msg}")
-    if msg := _validate_security_json(Path(PROJECT_CONFIG.root, ".security.json")):
-        print(f"error in [.security.json]: {msg}")
-        error = True
-    if msg := _validate_coverage(Path(PROJECT_CONFIG.root, ".coverage")):
-        print(f"error in [.coverage]: {msg}")
-        error = True
-    if error:
+    all_is_valid_checks = [
+        _is_valid_lint_txt(Path(PROJECT_CONFIG.root, LINT_TXT)),
+        _is_valid_lint_json(Path(PROJECT_CONFIG.root, LINT_JSON)),
+        _is_valid_security_json(Path(PROJECT_CONFIG.root, SECURITY_JSON)),
+        _is_valid_coverage(Path(PROJECT_CONFIG.root, COVERAGE_FILE)),
+    ]
+    if not all(all_is_valid_checks):
         sys.exit(1)
 
 
-def _missing_files(expected_files: set, directory: Path) -> set:
-    files = {f.name for f in directory.iterdir() if f.is_file()}
-    return expected_files - files
+def _handle_validation_error(file: Path, message: str) -> bool:
+    print(f"error in [{file.name}]: {message}", file=sys.stderr)
+    return False
 
 
-def _validate_lint_txt(file: Path) -> str:
-    try:
-        content = file.read_text()
-    except FileNotFoundError as ex:
-        return f"Could not find file {file}, details: {ex}"
+def _is_valid_lint_txt(file: Path) -> bool:
+    content = file.read_text()
     expr = re.compile(r"^Your code has been rated at (\d+.\d+)/.*", re.MULTILINE)
     matches = expr.search(content)
     if not matches:
-        return f"Could not find a rating"
-    return ""
+        _handle_validation_error(file, "Could not find a rating")
+        return False
+    return True
 
 
-def _validate_lint_json(file: Path) -> str:
+def _is_valid_lint_json(file: Path) -> bool:
     try:
         content = file.read_text()
-    except FileNotFoundError as ex:
-        return f"Could not find file {file}, details: {ex}"
-    try:
         issues = json.loads(content)
     except json.JSONDecodeError as ex:
-        return f"Invalid json file, details: {ex}"
-    expected = {
-        "type",
-        "module",
-        "obj",
-        "line",
-        "column",
-        "endLine",
-        "endColumn",
-        "path",
-        "symbol",
-        "message",
-        "message-id",
-    }
+        _handle_validation_error(file, f"Invalid json file, details: {ex}")
+        return False
+
     for number, issue in enumerate(issues):
         actual = set(issue.keys())
-        missing = expected - actual
+        missing = LINT_JSON_ATTRIBUTES - actual
         if len(missing) > 0:
-            return f"Invalid format, issue {number} is missing the following attributes {missing}"
-    return ""
+            _handle_validation_error(
+                file,
+                f"Invalid format, issue {number} is missing the following attributes {missing}",
+            )
+            return False
+    return True
 
 
-def _validate_security_json(file: Path) -> str:
+def _is_valid_security_json(file: Path) -> bool:
     try:
         content = file.read_text()
-    except FileNotFoundError as ex:
-        return f"Could not find file {file}, details: {ex}"
-    try:
         actual = set(json.loads(content))
     except json.JSONDecodeError as ex:
-        return f"Invalid json file, details: {ex}"
-    expected = {"errors", "generated_at", "metrics", "results"}
-    missing = expected - actual
+        return _handle_validation_error(file, f"Invalid json file, details: {ex}")
+
+    missing = SECURITY_JSON_ATTRIBUTES - actual
     if len(missing) > 0:
-        return f"Invalid format, the file is missing the following attributes {missing}"
-    return ""
+        return _handle_validation_error(
+            file,
+            f"Invalid format, the file is missing the following attributes {missing}",
+        )
+    return True
 
 
-def _validate_coverage(path: Path) -> str:
+def _is_valid_coverage(path: Path) -> bool:
     try:
         conn = sqlite3.connect(path)
+        cursor = conn.cursor()
     except sqlite3.Error as ex:
-        return f"database connection not possible, details: {ex}"
-    cursor = conn.cursor()
+        return _handle_validation_error(
+            path, f"database connection not possible, details: {ex}"
+        )
     try:
         actual_tables = set(
             cursor.execute("select name from sqlite_schema where type == 'table'")
         )
     except sqlite3.Error as ex:
-        return f"schema query not possible, details: {ex}"
-    expected = {"coverage_schema", "meta", "file", "line_bits"}
-    actual = {f[0] for f in actual_tables if (f[0] in expected)}
-    missing = expected - actual
-    if len(missing) > 0:
-        return (
-            f"Invalid database, the database is missing the following tables {missing}"
+        return _handle_validation_error(
+            path, f"schema query not possible, details: {ex}"
         )
-    return ""
+    actual = {f[0] for f in actual_tables if (f[0] in COVERAGE_TABLES)}
+    missing = COVERAGE_TABLES - actual
+    if len(missing) > 0:
+        return _handle_validation_error(
+            path,
+            f"Invalid database, the database is missing the following tables {missing}",
+        )
+    return True
 
 
 @nox.session(name="artifacts:copy", python=False)
@@ -129,16 +141,16 @@ def copy_artifacts(session: Session) -> None:
     Copy artifacts to the current directory
     """
 
-    dir = Path(session.posargs[0])
+    artifact_dir = Path(session.posargs[0])
     suffix = _python_version_suffix()
-    _combine_coverage(session, dir, f"coverage{suffix}*/.coverage")
+    _combine_coverage(session, artifact_dir, f"coverage{suffix}*/{COVERAGE_FILE}")
     _copy_artifacts(
-        dir,
-        dir.parent,
+        artifact_dir,
+        artifact_dir.parent,
         [
-            f"lint{suffix}/.lint.txt",
-            f"lint{suffix}/.lint.json",
-            f"security{suffix}/.security.json",
+            f"lint{suffix}/{LINT_TXT}",
+            f"lint{suffix}/{LINT_JSON}",
+            f"security{suffix}/{SECURITY_JSON}",
         ],
     )
 
@@ -149,14 +161,14 @@ def _python_version_suffix() -> str:
     return f"-python{pivot}"
 
 
-def _combine_coverage(session: Session, dir: Path, pattern: str):
+def _combine_coverage(session: Session, artifact_dir: Path, pattern: str):
     """
     pattern: glob pattern, e.g. "*.coverage"
     """
-    if args := [f for f in dir.glob(pattern) if f.exists()]:
+    if args := [f for f in artifact_dir.glob(pattern) if f.exists()]:
         session.run("coverage", "combine", "--keep", *sorted(args))
     else:
-        print(f"Could not find any file {dir}/{pattern}", file=sys.stderr)
+        print(f"Could not find any file {artifact_dir}/{pattern}", file=sys.stderr)
 
 
 def _copy_artifacts(source: Path, dest: Path, files: Iterable[str]):
@@ -167,3 +179,35 @@ def _copy_artifacts(source: Path, dest: Path, files: Iterable[str]):
             shutil.copy(path, dest)
         else:
             print(f"File not found {path}", file=sys.stderr)
+
+
+def _prepare_coverage_xml(session: Session, source: Path) -> None:
+    command = ["coverage", "xml", "-o", COVERAGE_XML, "--include", f"{source}/*"]
+    session.run(*command)
+
+
+def _upload_to_sonar(session: Session, sonar_token: str, config: Config) -> None:
+    command = [
+        "pysonar",
+        "--sonar-token",
+        sonar_token,
+        "--sonar-python-coverage-report-paths",
+        COVERAGE_XML,
+        "--sonar-python-pylint-report-path",
+        LINT_JSON,
+        "--sonar-python-bandit-report-paths",
+        SECURITY_JSON,
+        "--sonar-python-version",
+        ",".join(config.python_versions),
+        "--sonar-sources",
+        config.source,
+    ]
+    session.run(*command)  # type: ignore
+
+
+@nox.session(name="sonar:check", python=False)
+def upload_artifacts_to_sonar(session: Session) -> None:
+    """Upload artifacts to sonar for analysis"""
+    sonar_token = session.posargs[0]
+    _prepare_coverage_xml(session, PROJECT_CONFIG.source)
+    _upload_to_sonar(session, sonar_token, PROJECT_CONFIG)
