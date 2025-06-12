@@ -79,10 +79,14 @@ html_theme_options = {
     "accent_color": "grass",
 }
 # -- Configure link checking behavior  ----------------------------------------
-linkcheck_rate_limit_timeout = 20
-linkcheck_timeout = 7.5
-linkcheck_delay = 7.5
+linkcheck_rate_limit_timeout = 25
+linkcheck_timeout = 4
+linkcheck_delay = 10
 linkcheck_anchors = False
 linkcheck_ignore = [
-    "https://github.com/exasol/python-toolbox/issues/new"
 ]
+linkcheck_allowed_redirects = {
+    # All HTTP redirections from the source URI to
+    # the canonical URI will be treated as "working".
+    r'https://github/\.com/.*': r'https://github/\.com/login*'
+}
