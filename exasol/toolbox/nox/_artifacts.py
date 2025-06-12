@@ -205,7 +205,7 @@ def _upload_to_sonar(session: Session, sonar_token: str, config: Config) -> None
     session.run(*command)  # type: ignore
 
 
-@nox.session(name="artifacts:sonar", python=False)
+@nox.session(name="sonar:check", python=False)
 def upload_artifacts_to_sonar(session: Session) -> None:
     """Upload artifacts to sonar for analysis"""
     sonar_token = session.posargs[0]

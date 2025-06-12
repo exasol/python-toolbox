@@ -1,7 +1,7 @@
 # Unreleased
 
 ## Summary
-This version of the PTB adds nox task `artifacts:sonar`, see #451. This allows us to
+This version of the PTB adds nox task `sonar:check`, see #451. This allows us to
 use SonarQube Cloud to analyze, visualize, & track linting, security, & coverage. In
 order to properly set it up, you'll need to do the following instruction for each **public** project.
 At this time, PTB currently does not support setting up SonarQube for a **private** project.
