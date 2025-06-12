@@ -13,7 +13,7 @@ Nox
 ---
 
 The most central tool when interacting with the toolbox is :code:`nox`, which is the task runner used across all of Exasol's Python-based projects.
-The toolbox itself provides various standard tasks and a plugin mechanism to extend these tasks if needed. For more information regarding nox, please visit the `nox homepage <http://nox.thea.codes/en/stable/>`_.
+The toolbox itself provides various standard tasks and a plugin mechanism to extend these tasks if needed. For more information regarding nox, please visit the `nox homepage <https://nox.thea.codes/en/stable/>`_.
 
 Central files in regards to nox and the toolbox are:
 

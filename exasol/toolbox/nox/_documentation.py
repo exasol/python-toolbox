@@ -51,31 +51,6 @@ def _build_multiversion_docs(session: nox.Session, config: Config) -> None:
     session.run("touch", f"{DOCS_OUTPUT_DIR}/.nojekyll")
 
 
-def _check_failed_links(results: list[str]):
-    errors = []
-    for line, result in enumerate(results):
-        if result.startswith("{") and "}" in result:
-            data = json.loads(result)
-            if not (data["status"] == "working") or (data["status"] == "ignored"):
-                match = re.search(r"https?://[^\s\"\'<>]+", data["uri"])
-                if match:
-                    try:
-                        request = requests.get(match.group(), timeout=15)
-                        if request.status_code == 200:
-                            data["status"] = "working"
-                            data["code"] = request.status_code
-                            if request.history:
-                                data["info"] = (
-                                    f'redirected: [{", ".join(step.url for step in request.history)}, {request.url}]'
-                                )
-                        results[line] = json.dumps(data)
-                    except requests.exceptions.Timeout:
-                        pass
-                if (data["status"] == "broken") or data["status"] == "timeout":
-                    errors.append(result)
-    return results, errors
-
-
 def _git_diff_changes_main() -> int:
     """
     Check if doc/changes is changed and return the exit code of command git diff.
@@ -170,11 +145,7 @@ def docs_links_check(session: Session) -> None:
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
-        "-o",
-        "--output",
-        type=Path,
-        help="path to output file",
-        default="",
+        "-o", "--output", type=Path, help="path to output file", default=None
     )
     args = parser.parse_args(session.posargs)
     with tempfile.TemporaryDirectory() as path:
@@ -188,22 +159,22 @@ def docs_links_check(session: Session) -> None:
                 tmpdir,
             ],
         )
+        print(sp.returncode)
         if sp.returncode >= 2:
             print(sp.stderr)
             session.error(2)
-        output = tmpdir / "output.json"
-        out = output.read_text().split("\n")
-        results, errors = _check_failed_links(out)
-        if hasattr(args, "output"):
-            outputfile = Path(args.output) / "link-check-output.json"
-            if not outputfile.exists():
-                outputfile.parent.mkdir(parents=True, exist_ok=True)
-                outputfile.touch()
-            outputfile.write_text("\n".join(result for result in results))
-            print(f"file generated at path: {outputfile.resolve()}")
-        if errors:
-            print("Error" + "s" if len(errors) > 1 else "")
-            print("\n".join(error for error in errors))
+        if args.output:
+            print([hasattr(args, "output")])
+            print("warum gehst du hir rein")
+            result_json = tmpdir / "output.json"
+            dst = Path(args.output) / "link-check-output.json"
+            shutil.copyfile(result_json, dst)
+            print(f"file generated at path: {result_json.resolve()}")
+        result_txt = tmpdir / "output.txt"
+        if sp.returncode == 1 or result_txt.read_text() != "":
+            escape_rot = "\033[31m"
+            print(escape_rot + "errors:")
+            print(result_txt.read_text())
             session.error(1)
 
 

@@ -37,5 +37,5 @@ where we picked it up from, rather than the "original" source.
 
 
 .. _Raymond Hettinger: https://github.com/rhettinger
-.. _Transform Code into Beautiful, Idiomatic Python: https://www.youtube.com/watch?v=OSGv2VnC0go>
+.. _Transform Code into Beautiful, Idiomatic Python: https://www.youtube.com/watch?v=OSGv2VnC0go
 .. _Transform Python Slides: https://speakerdeck.com/pyconslides/transforming-code-into-beautiful-idiomatic-python-by-raymond-hettinger-1
