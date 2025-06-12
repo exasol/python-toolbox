@@ -83,5 +83,5 @@ linkcheck_rate_limit_timeout = 20
 linkcheck_timeout = 10
 linkcheck_anchors = False
 linkcheck_ignore = [
-    "https://github.com/exasol/python-toolbox/issues/new?assignees=&labels=documentation&projects=&template=documentation.md&title=%F0%9F%93%9A+%3CInsert+Title%3E"
+    "https://github.com/exasol/python-toolbox/issues/new"
 ]
