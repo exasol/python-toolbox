@@ -1,11 +1,27 @@
 from __future__ import annotations
 
+import argparse
+import json
+import os
+import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import webbrowser
+from collections.abc import (
+    Container,
+    Iterable,
+)
+from itertools import repeat
+from pathlib import Path
+from typing import (
+    Optional,
+    Tuple,
+)
 
 import nox
+import requests  # type: ignore
 from nox import Session
 
 from exasol.toolbox.nox._shared import DOCS_OUTPUT_DIR
@@ -17,8 +33,6 @@ from noxconfig import (
 
 def _build_docs(session: nox.Session, config: Config) -> None:
     session.run(
-        "poetry",
-        "run",
         "sphinx-build",
         "-W",
         "-b",
@@ -30,8 +44,6 @@ def _build_docs(session: nox.Session, config: Config) -> None:
 
 def _build_multiversion_docs(session: nox.Session, config: Config) -> None:
     session.run(
-        "poetry",
-        "run",
         "sphinx-multiversion",
         f"{config.doc}",
         DOCS_OUTPUT_DIR,
@@ -86,6 +98,82 @@ def clean_docs(_session: Session) -> None:
     docs_folder = PROJECT_CONFIG.root / DOCS_OUTPUT_DIR
     if docs_folder.exists():
         shutil.rmtree(docs_folder)
+
+
+@nox.session(name="docs:links", python=False)
+def docs_list_links(session: Session) -> None:
+    """List all the links within the documentation."""
+    with tempfile.TemporaryDirectory() as path:
+        tmpdir = Path(path)
+        sp = subprocess.run(
+            [
+                "sphinx-build",
+                "-b",
+                "linkcheck",
+                "-D",
+                "linkcheck_ignore=.*",
+                PROJECT_CONFIG.root / "doc",
+                tmpdir,
+            ],
+        )
+        print(sp.returncode)
+        if sp.returncode >= 2:
+            print(sp.stderr)
+            session.error(2)
+        output = tmpdir / "output.json"
+        links = output.read_text().split("\n")
+        file_links = []
+        for link in links:
+            if link != "":
+                line = json.loads(link)
+                if not line["uri"].startswith("#"):
+                    file_links.append(line)
+        file_links.sort(key=lambda file: file["filename"])
+        print(
+            "\n".join(
+                f"filename: {fl['filename']} -> uri: {fl['uri']}" for fl in file_links
+            )
+        )
+
+
+@nox.session(name="docs:links:check", python=False)
+def docs_links_check(session: Session) -> None:
+    """Checks whether all links in the documentation are accessible."""
+    parser = argparse.ArgumentParser(
+        prog="nox -s release:prepare",
+        usage="nox -s release:prepare -- [-h] [-o |--output]",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        "-o", "--output", type=Path, help="path to output file", default=None
+    )
+    args = parser.parse_args(session.posargs)
+    with tempfile.TemporaryDirectory() as path:
+        tmpdir = Path(path)
+        sp = subprocess.run(
+            [
+                "sphinx-build",
+                "-b",
+                "linkcheck",
+                PROJECT_CONFIG.root / "doc",
+                tmpdir,
+            ],
+        )
+        print(sp.returncode)
+        if sp.returncode >= 2:
+            print(sp.stderr)
+            session.error(2)
+        if args.output:
+            result_json = tmpdir / "output.json"
+            dst = Path(args.output) / "link-check-output.json"
+            shutil.copyfile(result_json, dst)
+            print(f"file generated at path: {result_json.resolve()}")
+        result_txt = tmpdir / "output.txt"
+        if sp.returncode == 1 or result_txt.read_text() != "":
+            escape_rot = "\033[31m"
+            print(escape_rot + "errors:")
+            print(result_txt.read_text())
+            session.error(1)
 
 
 @nox.session(name="changelog:updated", python=False)

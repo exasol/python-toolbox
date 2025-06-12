@@ -24,6 +24,7 @@ At this time, PTB currently does not support setting up SonarQube for a **privat
 
 ## ✨ Features
 * #451: Added nox task to execute pysonar & added Sonar to the CI
+* #409: Doc link & checks
 
 ## ⚒️ Refactorings
 * #451: Reduced scope of nox tasks `lint:code` (pylint) and `lint:security` (bandit) to analyze only the package code

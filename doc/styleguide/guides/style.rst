@@ -54,10 +54,10 @@ _____
 .. _Google Styleguide: https://google.github.io/styleguide/pyguide.html
 .. _PEP 8: https://peps.python.org/pep-0008/
 .. _Python Idioms: https://gist.github.com/0x4D31/f0b633548d8e0cfb66ee3bea6a0deff9
-.. _Python Like You Mean It: http://www.pythonlikeyoumeanit.com/module_2.html>
+.. _Python Like You Mean It: http://www.pythonlikeyoumeanit.com/module_2.html
 .. _Python Programming Idioms: https://en.wikibooks.org/wiki/Python_Programming/Idioms
 
-.. _Transform Code into Beautiful, Idiomatic Python: https://www.youtube.com/watch?v=OSGv2VnC0go>
+.. _Transform Code into Beautiful, Idiomatic Python: https://www.youtube.com/watch?v=OSGv2VnC0go
 .. _Transform Python Slides: https://speakerdeck.com/pyconslides/transforming-code-into-beautiful-idiomatic-python-by-raymond-hettinger-1
 .. _Stop Writing Classes: https://www.youtube.com/watch?v=o9pEzgHorH0
 .. _Refactoring Python: https://www.youtube.com/watch?v=D_6ybDcU5gc

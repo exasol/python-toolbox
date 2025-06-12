@@ -106,7 +106,6 @@ max-module-lines = 800
 
 [tool.mypy]
 plugins = ['pydantic.mypy']
-xml_report = 'mypy.xml'
 
 [[tool.mypy.overrides]]
 module = [
