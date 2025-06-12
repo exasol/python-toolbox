@@ -27,3 +27,4 @@ At this time, PTB currently does not support setting up SonarQube for a **privat
 
 ## ⚒️ Refactorings
 * #451: Reduced scope of nox tasks `lint:code` (pylint) and `lint:security` (bandit) to analyze only the package code
+* Removed mypy xml report, which was used to test Sonar capabilities but is not yet needed
