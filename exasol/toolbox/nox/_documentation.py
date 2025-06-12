@@ -164,8 +164,6 @@ def docs_links_check(session: Session) -> None:
             print(sp.stderr)
             session.error(2)
         if args.output:
-            print([hasattr(args, "output")])
-            print("warum gehst du hir rein")
             result_json = tmpdir / "output.json"
             dst = Path(args.output) / "link-check-output.json"
             shutil.copyfile(result_json, dst)

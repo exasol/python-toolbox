@@ -80,7 +80,8 @@ html_theme_options = {
 }
 # -- Configure link checking behavior  ----------------------------------------
 linkcheck_rate_limit_timeout = 20
-linkcheck_timeout = 10
+linkcheck_timeout = 7.5
+linkcheck_delay = 7.5
 linkcheck_anchors = False
 linkcheck_ignore = [
     "https://github.com/exasol/python-toolbox/issues/new"
