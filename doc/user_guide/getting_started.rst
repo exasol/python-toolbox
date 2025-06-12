@@ -201,25 +201,26 @@ We also need to configure settings for github-pages environment:
 
 8. Set up for Sonar
 +++++++++++++++++++
-We use SonarQube Cloud to analyze, visualize, & track linting, security, & coverage. In
-order to properly set it up, you'll need to do the following instructions for each **public** project.
-At this time, we do not currently support setting up SonarQube for a **private** project.
+PTB supports using SonarQube Cloud to analyze, visualize, & track linting, security, &
+coverage. In order to properly set it up, you'll need to do the following instructions
+for each **public** project. At this time, PTB currently does not support setting up
+SonarQube for a **private** project.
 
-1. specify in the `noxconfig.py` the relative path to the project's source code in `Config.source`
+1. Specify in the `noxconfig.py` the relative path to the project's source code in `Config.source`
     .. code-block:: python
 
         source: Path = Path("exasol/toolbox")
-2. add the 'SONAR_TOKEN' to the 'Organization secrets'
-3. activate the SonarQubeCloud App
-4. create a project on SonarCloud
-5. add the following information to the project's `pyproject.toml`
+2. Add the 'SONAR_TOKEN' to the 'Organization secrets' in GitHub (this requires a person being a GitHub organization owner).
+3. Activate the SonarQubeCloud App
+4. Create a project on SonarCloud
+5. Add the following information to the project's file `pyproject.toml`
     .. code-block:: toml
 
         [tool.sonar]
         projectKey = "com.exasol:<project-key>"
         hostUrl = "https://sonarcloud.io"
         organization = "exasol"
-6. post-merge, update the branch protections to include SonarQube analysis
+6. Post-merge, update the branch protections to include SonarQube analysis
 
 
 
