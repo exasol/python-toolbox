@@ -118,8 +118,8 @@ def report_illegal(illegal: dict[str, list[str]], console: rich.console.Console)
 
 @nox.session(name="lint:code", python=False)
 def lint(session: Session) -> None:
-    "Runs the static code analyzer on the project"
-    py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
+    """Runs the static code analyzer on the project"""
+    py_files = python_files(PROJECT_CONFIG.root / PROJECT_CONFIG.source)
     _pylint(session, py_files)
 
 
@@ -133,7 +133,7 @@ def type_check(session: Session) -> None:
 @nox.session(name="lint:security", python=False)
 def security_lint(session: Session) -> None:
     """Runs the security linter on the project"""
-    py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
+    py_files = python_files(PROJECT_CONFIG.root / PROJECT_CONFIG.source)
     _security_lint(session, py_files)
 
 

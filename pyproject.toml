@@ -1,11 +1,11 @@
 [project]
 name = "exasol-toolbox"
-version = "1.3.0"
+version = "1.4.0"
 requires-python = ">=3.9,<4.0"
 description = "Your one-stop solution for managing all standard tasks and core workflows of your Python project."
 authors = [
-    {name = "Nicola Coretti", email = "nicola.coretti@exasol.com"},
-    {name = "Ariel Schulz", email = "ariel.schulz@exasol.com"},
+    { name = "Nicola Coretti", email = "nicola.coretti@exasol.com" },
+    { name = "Ariel Schulz", email = "ariel.schulz@exasol.com" },
 ]
 readme = "README.md"
 license = "MIT"
@@ -39,19 +39,26 @@ Issues = "https://github.com/exasol/python-toolbox/issues"
 Changelog = "https://exasol.github.io/python-toolbox/changelog.html"
 
 [tool.poetry.dependencies]
+bandit = { extras = ["toml"], version = "^1.7.9" }
 black = ">=24.1.0"
 coverage = ">=6.4.4,<8.0.0"
 furo = ">=2022.9.15"
 importlib-resources = ">=5.12.0"
 import-linter = "^2.0"
 isort = "^6.0.1"
+jinja2 = "^3.1.6"
+lxml = "^5.4.0"
 mypy = ">=0.971"
 myst-parser = ">=2.0.0,<4"
 nox = ">=2022.8.7"
+pip-audit = "^2.7.3"
+pip-licenses = "^5.0.0"
 pluggy = "^1.5.0"
 pre-commit = ">=4"
-prysk = {extras = ["pytest-plugin"], version = ">0.17.0,<1"}
+prysk = { extras = ["pytest-plugin"], version = ">0.17.0,<1" }
+pydantic = "^2.11.5"
 pylint = ">=2.15.4"
+pysonar = "^1.0.1.1548"
 pytest = ">=7.2.2,<9"
 pyupgrade = ">=2.38.2,<4.0.0"
 shibuya = ">=2024.5.14"
@@ -59,12 +66,7 @@ sphinx = ">=5.3,<8"
 sphinx-copybutton = "^0.5.0"
 sphinx-inline-tabs = "^2023.4.21"
 sphinx-design = ">=0.5.0,<1"
-typer = {extras = ["all"], version = ">=0.7.0"}
-bandit = {extras = ["toml"], version = "^1.7.9"}
-jinja2 = "^3.1.6"
-pip-licenses = "^5.0.0"
-pip-audit = "^2.7.3"
-pydantic = "^2.11.5"
+typer = { extras = ["all"], version = ">=0.7.0" }
 
 [tool.poetry.group.dev.dependencies]
 autoimport = "^1.4.0"
@@ -104,6 +106,7 @@ max-module-lines = 800
 
 [tool.mypy]
 plugins = ['pydantic.mypy']
+xml_report = 'mypy.xml'
 
 [[tool.mypy.overrides]]
 module = [
@@ -115,3 +118,8 @@ ignore_errors = true
 [tool.poetry.plugins."console_scripts"]
 tbx = 'exasol.toolbox.tools.tbx:CLI'
 sphinx-multiversion = 'exasol.toolbox.sphinx.multiversion:main'
+
+[tool.sonar]
+projectKey = "com.exasol:python-toolbox"
+hostUrl = "https://sonarcloud.io"
+organization = "exasol"

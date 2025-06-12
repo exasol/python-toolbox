@@ -181,8 +181,8 @@ forward, and you just can use the example *noxfile.py* below.
 
 .. _toolbox tasks:
 
-7. Setup for deploying documentation (optional)
-+++++++++++++++++++++++++++++++++++++++++++++++
+7. Set up for deploying documentation (optional)
+++++++++++++++++++++++++++++++++++++++++++++++++
 Within the `gh-pages.yml`, we use the GitHub `upload-pages-artifact` and `deploy-pages`
 actions. In order to properly deploy your pages, you'll need to reconfigure the GitHub
 Pages settings for the repo:
@@ -201,8 +201,32 @@ We also need to configure settings for github-pages environment:
 5. In the 'Deployment branches and tags', click 'Add deployment branch or tag rule'
 6. Select 'Ref type' to be 'Tag' and set the 'Name pattern' to `[0-9]*.[0-9]*.[0-9]*` (or whatever matches that repo's tags)
 
+8. Set up for Sonar
++++++++++++++++++++
+PTB supports using SonarQube Cloud to analyze, visualize, & track linting, security, &
+coverage. In order to properly set it up, you'll need to do the following instructions
+for each **public** project. At this time, PTB currently does not support setting up
+SonarQube for a **private** project.
 
-8. Go 🥜
+1. Specify in the `noxconfig.py` the relative path to the project's source code in `Config.source`
+    .. code-block:: python
+
+        source: Path = Path("exasol/toolbox")
+2. Add the 'SONAR_TOKEN' to the 'Organization secrets' in GitHub (this requires a person being a GitHub organization owner).
+3. Activate the SonarQubeCloud App
+4. Create a project on SonarCloud
+5. Add the following information to the project's file `pyproject.toml`
+    .. code-block:: toml
+
+        [tool.sonar]
+        projectKey = "com.exasol:<project-key>"
+        hostUrl = "https://sonarcloud.io"
+        organization = "exasol"
+6. Post-merge, update the branch protections to include SonarQube analysis
+
+
+
+9. Go 🥜
 +++++++++++++
 You are ready to use the toolbox. With *nox -l* you can list all available tasks.
 
