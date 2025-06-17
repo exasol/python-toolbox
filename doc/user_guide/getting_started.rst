@@ -226,12 +226,14 @@ For a **private** project
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 1. Specify in the `noxconfig.py` the relative path to the project's source code in `Config.source`
     .. code-block:: python
+
         source: Path = Path("exasol/<project-source-folder>")
 2. Add the 'PRIVATE_SONAR_TOKEN' to the 'Organization secrets' in GitHub (this requires a person being a GitHub organization owner)
 3. Activate the `exasonarqubeprchecks App <https://github.com/apps/exasonarqubeprchecks>`_
 4. Create a project on https://sonar.exasol.com
 5. Add the following information to the project's file `pyproject.toml`
     .. code-block:: toml
+
         [tool.sonar]
         projectKey = "com.exasol:<project-key>"
         hostUrl = "https://sonar.exasol.com"
