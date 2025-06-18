@@ -1,4 +1,4 @@
-# 1.5.0 - 2025-06-17
+# 1.5.0 - 2025-06-18
 
 ## Summary
 This version of the PTB adds nox task `sonar:check`, see #451. This allows us to
