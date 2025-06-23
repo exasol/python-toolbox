@@ -58,7 +58,7 @@ pre-commit = ">=4"
 prysk = { extras = ["pytest-plugin"], version = ">0.17.0,<1" }
 pydantic = "^2.11.5"
 pylint = ">=2.15.4"
-pysonar = "^1.0.1.1548"
+pysonar = "^1.1.0.2035"
 pytest = ">=7.2.2,<9"
 pyupgrade = ">=2.38.2,<4.0.0"
 shibuya = ">=2024.5.14"
