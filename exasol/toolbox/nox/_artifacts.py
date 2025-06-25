@@ -1,10 +1,12 @@
 import json
+import os
 import re
 import shutil
 import sqlite3
 import sys
 from collections.abc import Iterable
 from pathlib import Path
+from typing import Optional
 
 import nox
 from nox import Session
@@ -186,7 +188,9 @@ def _prepare_coverage_xml(session: Session, source: Path) -> None:
     session.run(*command)
 
 
-def _upload_to_sonar(session: Session, sonar_token: str, config: Config) -> None:
+def _upload_to_sonar(
+    session: Session, sonar_token: Optional[str], config: Config
+) -> None:
     command = [
         "pysonar",
         "--sonar-token",
@@ -208,6 +212,6 @@ def _upload_to_sonar(session: Session, sonar_token: str, config: Config) -> None
 @nox.session(name="sonar:check", python=False)
 def upload_artifacts_to_sonar(session: Session) -> None:
     """Upload artifacts to sonar for analysis"""
-    sonar_token = session.posargs[0]
+    sonar_token = os.getenv("SONAR_TOKEN")
     _prepare_coverage_xml(session, PROJECT_CONFIG.source)
     _upload_to_sonar(session, sonar_token, PROJECT_CONFIG)
