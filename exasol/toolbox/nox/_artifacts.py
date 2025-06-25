@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import shutil
 import sqlite3
@@ -208,6 +209,6 @@ def _upload_to_sonar(session: Session, sonar_token: str, config: Config) -> None
 @nox.session(name="sonar:check", python=False)
 def upload_artifacts_to_sonar(session: Session) -> None:
     """Upload artifacts to sonar for analysis"""
-    sonar_token = session.posargs[0]
+    sonar_token = os.getenv("SONAR_TOKEN")
     _prepare_coverage_xml(session, PROJECT_CONFIG.source)
     _upload_to_sonar(session, sonar_token, PROJECT_CONFIG)
