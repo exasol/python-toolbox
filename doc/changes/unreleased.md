@@ -29,3 +29,6 @@ We recommend the following values be added:
 
 ## ✨ Features
 * #409: Doc link & checks
+
+## Security
+* #477: Switched `sonar:check` to use `SONAR_TOKEN` from the environment
