@@ -101,8 +101,8 @@ def _docs_list_links(doc_config: Path):
                 doc_config,
                 tmpdir,
             ],
-            capture_output= True,
-            text= True
+            capture_output=True,
+            text=True,
         )
         if sp.returncode >= 2:
             return sp.returncode, sp.stderr
@@ -116,17 +116,9 @@ def _docs_list_links(doc_config: Path):
                     file_links.append(line)
         file_links.sort(key=lambda file: file["filename"])
         return 0, "\n".join(
-                f"filename: {fl['filename']}:{fl['lineno']} -> uri: {fl['uri']}" for fl in file_links
-            )
-
-
-@nox.session(name="docs:links", python=False)
-def docs_list_links(session: Session) -> None:
-    """List all the links within the documentation."""
-    r_code, text = _docs_list_links(PROJECT_CONFIG.doc)
-    print(text)
-    if r_code != 0:
-        session.error()
+            f"filename: {fl['filename']}:{fl['lineno']} -> uri: {fl['uri']}"
+            for fl in file_links
+        )
 
 
 def _docs_links_check(doc_config: Path, args):
@@ -146,7 +138,18 @@ def _docs_links_check(doc_config: Path, args):
             dst = Path(args.output) / "link-check-output.json"
             shutil.copyfile(result_json, dst)
             print(f"file generated at path: {result_json.resolve()}")
-        return sp.returncode, None if sp.returncode >= 2 else (tmpdir / "output.txt").read_text()
+        return sp.returncode, (
+            None if sp.returncode >= 2 else (tmpdir / "output.txt").read_text()
+        )
+
+
+@nox.session(name="docs:links", python=False)
+def docs_list_links(session: Session) -> None:
+    """List all the links within the documentation."""
+    r_code, text = _docs_list_links(PROJECT_CONFIG.doc)
+    print(text)
+    if r_code != 0:
+        session.error()
 
 
 @nox.session(name="docs:links:check", python=False)
@@ -158,15 +161,15 @@ def docs_links_check(session: Session) -> None:
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
-        "-o", "--output", type=Path, help="path to output file", default=None
+        "-o", "--output", type=Path, help="path to copy the output json", default=None
     )
     args = parser.parse_args(session.posargs)
     r_code, problems = _docs_links_check(PROJECT_CONFIG.doc, args)
     if r_code >= 2:
         session.error(2)
     if r_code == 1 or problems != "":
-        escape_rot = "\033[31m"
-        print(escape_rot + "errors:")
+        escape_red = "\033[31m"
+        print(escape_red + "errors:")
         print(problems)
         session.error(1)
 

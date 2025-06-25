@@ -1,11 +1,16 @@
+import shutil
+from unittest.mock import (
+    MagicMock,
+    patch,
+)
+
 import pytest
-from unittest.mock import patch, MagicMock
+
 import exasol.toolbox.nox._documentation
 from exasol.toolbox.nox._documentation import (
+    _docs_links_check,
     _docs_list_links,
-    _docs_links_check
 )
-import shutil
 from noxconfig import Config
 
 
@@ -28,9 +33,10 @@ ____
 
    file"""
 
+
 @pytest.fixture()
 def expected1():
-        return """filename: file.rst:2 -> uri: https://examle.invalid"""
+    return """filename: file.rst:2 -> uri: https://examle.invalid"""
 
 
 def config(index, file, tmp_path):
@@ -55,27 +61,36 @@ def test_docs_links(index, file1, expected1, tmp_path):
 @pytest.mark.parametrize(
     "file2, expected2",
     [
-        (
-            "https://httpbin.org/status/200",
-            (0, "")
-        ),
+        ("https://httpbin.org/status/200", (0, "")),
         (
             "https://httpbin.org/status/301",
-            (0, "file.rst:1: [redirected with Found] https://httpbin.org/status/301 to https://httpbin.org/get\n")
+            (
+                0,
+                "file.rst:1: [redirected with Found] https://httpbin.org/status/301 to https://httpbin.org/get\n",
+            ),
         ),
         (
             "https://httpbin.org/status/302",
-            (0, "file.rst:1: [redirected with Found] https://httpbin.org/status/302 to https://httpbin.org/get\n")
+            (
+                0,
+                "file.rst:1: [redirected with Found] https://httpbin.org/status/302 to https://httpbin.org/get\n",
+            ),
         ),
         (
             "https://httpbin.org/status/303",
-            (0, "file.rst:1: [redirected with Found] https://httpbin.org/status/303 to https://httpbin.org/get\n")
+            (
+                0,
+                "file.rst:1: [redirected with Found] https://httpbin.org/status/303 to https://httpbin.org/get\n",
+            ),
         ),
         (
             "https://httpbin.org/status/404",
-            (1, "file.rst:1: [broken] https://httpbin.org/status/404: 404 Client Error: NOT FOUND for url: https://httpbin.org/status/404\n")
-        )
-    ]
+            (
+                1,
+                "file.rst:1: [broken] https://httpbin.org/status/404: 404 Client Error: NOT FOUND for url: https://httpbin.org/status/404\n",
+            ),
+        ),
+    ],
 )
 def test_docs_links_check(index, file2, expected2, tmp_path):
     config(index, file2, tmp_path)
