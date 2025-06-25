@@ -1,7 +1,7 @@
 ---
-name: 📝 Blank Issue 
+name: Blank Issue 
 about: Blank Issue
-title: 📝 <Insert Title>
+title: <Insert Title>
 labels: 
 assignees: ''
 

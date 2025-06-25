@@ -1,4 +1,4 @@
-# ✔ Checklist
+# Checklist
 
 * [ ] Have you updated the changelog?
 * [ ] Have you updated the cookiecutter-template?
