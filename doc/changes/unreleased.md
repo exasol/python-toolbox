@@ -15,9 +15,9 @@ options for the [Linkcheck Builder](https://www.sphinx-doc.org/en/master/usage/c
 
 We recommend the following values be added:
 
-    linkcheck_rate_limit_timeout = 40
-    linkcheck_timeout = 10
-    linkcheck_delay = 20
+    linkcheck_rate_limit_timeout = 60
+    linkcheck_timeout = 15
+    linkcheck_delay = 30
     linkcheck_retries = 2
     linkcheck_anchors = False
     linkcheck_ignore: list[str] = []

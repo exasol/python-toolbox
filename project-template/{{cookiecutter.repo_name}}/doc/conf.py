@@ -78,9 +78,9 @@ html_theme_options = {
 }
 
 # -- Configure link checking behavior  ----------------------------------------
-linkcheck_rate_limit_timeout = 40
-linkcheck_timeout = 10
-linkcheck_delay = 20
+linkcheck_rate_limit_timeout = 60
+linkcheck_timeout = 15
+linkcheck_delay = 30
 linkcheck_retries = 2
 linkcheck_anchors = False
 linkcheck_ignore: list[str] = []
