@@ -124,7 +124,7 @@ def _docs_list_links(doc_config: Path):
 def _docs_links_check(doc_config: Path, args):
     with tempfile.TemporaryDirectory() as path:
         tmpdir = Path(path)
-        sp = subprocess.run( # nosec
+        sp = subprocess.run(  # nosec
             [
                 "sphinx-build",
                 "-b",
