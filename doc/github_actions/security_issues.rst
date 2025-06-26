@@ -112,4 +112,4 @@ Ideas
 .. todo::
 
     Consider adapting common CVE report format as input, for additional details
-    `see here <https://github.com/CVEProject/cve-schema/blob/master/schema/v5.0/CVE_JSON_5.0_schema.json>`_.
+    `see here <https://github.com/CVEProject/cve-schema/blob/main/schema/CVE_Record_Format.json>`_.

@@ -38,6 +38,10 @@ jobs:
         run: |
           poetry run -- nox -s docs:build
 
+      - name: Link Check
+        run: |
+          poetry run -- nox -s docs:links:check
+
   build-matrix:
     name: Generate Build Matrix
     uses: ./.github/workflows/matrix-python.yml

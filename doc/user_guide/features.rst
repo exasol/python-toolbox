@@ -7,13 +7,13 @@ Uniform Project Layout
 PTB expects a default project layout following "convention over configuration" when possible and reasonable.
 See the cookie-cutter project template for details, which is part of the python-toolbox workspace and can be found in directory `project-template`.
 You can also generate a project from the template to explore the default structure.
-For more details on this, please check out section `"getting started" <getting_started.html>`_ section.
+For more details on this, please check out section :ref:`Getting Started` section.
 
 Nox
 ---
 
 The most central tool when interacting with the toolbox is :code:`nox`, which is the task runner used across all of Exasol's Python-based projects.
-The toolbox itself provides various standard tasks and a plugin mechanism to extend these tasks if needed. For more information regarding nox, please visit the `nox homepage <http://nox.thea.codes/en/stable/>`_.
+The toolbox itself provides various standard tasks and a plugin mechanism to extend these tasks if needed. For more information regarding nox, please visit the `nox homepage <https://nox.thea.codes/en/stable/>`_.
 
 Central files in regards to nox and the toolbox are:
 
