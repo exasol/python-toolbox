@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-import re
 import subprocess
-import sys
 from pathlib import Path
 from typing import Optional
 
 import tomlkit
 from pydantic import (
     BaseModel,
+    ConfigDict,
 )
 from tomlkit import TOMLDocument
 
@@ -16,22 +15,19 @@ from exasol.toolbox.util.dependencies.shared_models import Package
 
 
 class PoetryGroup(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
     name: str
     toml_section: Optional[str]
-
-    class Config:
-        frozen = True
 
 
 TRANSITIVE_GROUP = PoetryGroup(name="transitive", toml_section=None)
 
 
 class PoetryToml(BaseModel):
-    content: TOMLDocument
+    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
-    class Config:
-        frozen = True
-        arbitrary_types_allowed = True
+    content: TOMLDocument
 
     @classmethod
     def load_from_toml(cls, working_directory: Path) -> PoetryToml:
