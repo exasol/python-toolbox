@@ -4,7 +4,7 @@ sphinx
 sphinx-multiversion
 +++++++++++++++++++
 
-The `sphinx-multiversion` extension is a modified copy of `Holzhaus/sphinx-multiversion <https://github.com/sphinx-contrib/multiversion>`_. This copy was taken from version :code:`0.24.0`.
+The `sphinx-multiversion` extension is a modified copy of `sphinx-contrib/multiversion <https://github.com/sphinx-contrib/multiversion>`_. This copy was taken from version :code:`0.24.0`.
 
 It has been adjusted with minor code changes and modified defaults to work seamlessly with Exasol integration projects, which often require a specific project structure and layout. Additionally, it is designed to be used with an HTML theme that supports displaying and selecting multiple versions if the `versions` variable is set in the HTML context of sphinx. As of this writing, the theme used in conjunction with this modified version of `sphinx-multiversion` is `SHIBUYA <https://github.com/lepture/shibuya>`_, version :code:`2024.10.15`.
 

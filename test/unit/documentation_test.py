@@ -24,6 +24,7 @@ https://examle.invalid
 @pytest.fixture()
 def index():
     return """.. _Test:
+    
 Test
 ____
 
@@ -61,33 +62,26 @@ def test_docs_links(index, file1, expected1, tmp_path):
 @pytest.mark.parametrize(
     "file2, expected2",
     [
-        ("https://httpbin.org/status/200", (0, "")),
+        ("https://github.com/exasol/python-toolbox", (0, "")),
         (
-            "https://httpbin.org/status/301",
+            "http://nox.thea.codes/en/stable/",
             (
                 0,
-                "file.rst:1: [redirected with Found] https://httpbin.org/status/301 to https://httpbin.org/get\n",
+                "file.rst:1: [redirected with Found] http://nox.thea.codes/en/stable/ to https://nox.thea.codes/en/stable/\n",
             ),
         ),
         (
-            "https://httpbin.org/status/302",
-            (
-                0,
-                "file.rst:1: [redirected with Found] https://httpbin.org/status/302 to https://httpbin.org/get\n",
-            ),
+                "https://github.com/exasol/python-toolbox/pull",
+                (
+                        0,
+                        "file.rst:1: [redirected permanently] https://github.com/exasol/python-toolbox/pull to https://github.com/exasol/python-toolbox/pulls\n",
+                ),
         ),
         (
-            "https://httpbin.org/status/303",
-            (
-                0,
-                "file.rst:1: [redirected with Found] https://httpbin.org/status/303 to https://httpbin.org/get\n",
-            ),
-        ),
-        (
-            "https://httpbin.org/status/404",
+            "https://github.com/exasol/python-toolbox/asdf",
             (
                 1,
-                "file.rst:1: [broken] https://httpbin.org/status/404: 404 Client Error: NOT FOUND for url: https://httpbin.org/status/404\n",
+                "file.rst:1: [broken] https://github.com/exasol/python-toolbox/asdf: 404 Client Error: Not Found for url: https://github.com/exasol/python-toolbox/asdf\n",
             ),
         ),
     ],
