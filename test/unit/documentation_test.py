@@ -91,7 +91,4 @@ def test_docs_links_check(index, file2, expected2, tmp_path):
     args = MagicMock
     args.output = None
     actual = _docs_links_check(tmp_path / "doc", args)
-    print("______________________")
-    print(actual)
-    print("______________________")
     assert actual == expected2
