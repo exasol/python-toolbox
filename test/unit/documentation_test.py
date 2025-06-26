@@ -71,11 +71,11 @@ def test_docs_links(index, file1, expected1, tmp_path):
             ),
         ),
         (
-                "https://github.com/exasol/python-toolbox/pull",
-                (
-                        0,
-                        "file.rst:1: [redirected permanently] https://github.com/exasol/python-toolbox/pull to https://github.com/exasol/python-toolbox/pulls\n",
-                ),
+            "https://github.com/exasol/python-toolbox/pull",
+            (
+                0,
+                "file.rst:1: [redirected permanently] https://github.com/exasol/python-toolbox/pull to https://github.com/exasol/python-toolbox/pulls\n",
+            ),
         ),
         (
             "https://github.com/exasol/python-toolbox/asdf",
