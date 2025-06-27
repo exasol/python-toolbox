@@ -143,7 +143,7 @@ def _docs_links_check(doc_config: Path, args):
         )
 
 
-@nox.session(name="docs:links", python=False)
+@nox.session(name="links:list", python=False)
 def docs_list_links(session: Session) -> None:
     """List all the links within the documentation."""
     r_code, text = _docs_list_links(PROJECT_CONFIG.doc)
@@ -152,12 +152,12 @@ def docs_list_links(session: Session) -> None:
         session.error()
 
 
-@nox.session(name="docs:links:check", python=False)
+@nox.session(name="links:check", python=False)
 def docs_links_check(session: Session) -> None:
     """Checks whether all links in the documentation are accessible."""
     parser = argparse.ArgumentParser(
-        prog="nox -s docs:links:check",
-        usage="nox -s docs:links:check -- [-h] [-o |--output]",
+        prog="nox -s links:check",
+        usage="nox -s links:check -- [-h] [-o |--output]",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
