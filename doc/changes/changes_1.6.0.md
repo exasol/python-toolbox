@@ -5,10 +5,10 @@
 ### Links in the Documentation 
 This version of the PTB adds nox tasks to check links present in our documentation:
 
-    docs:link - List all the links within the documentation
-    docs:links:check - Checks whether all links in the documentation are accessible
+    links:list - List all the links within the documentation
+    links:check - Checks whether all links in the documentation are accessible
 
-`docs:links:check` is run in the CI `checks.yml`. If this step fails in the CI,
+`links:check` is run in the CI `checks.yml`. If this step fails in the CI,
 please check the output & manually resolve the issues. There might be some cases
 where you need to update your doc/conf.py with specific values for the allowed
 options for the [Linkcheck Builder](https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-the-linkcheck-builder).

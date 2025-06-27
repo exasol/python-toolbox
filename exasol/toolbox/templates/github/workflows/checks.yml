@@ -40,7 +40,7 @@ jobs:
 
       - name: Link Check
         run: |
-          poetry run -- nox -s docs:links:check
+          poetry run -- nox -s links:check
 
   build-matrix:
     name: Generate Build Matrix
