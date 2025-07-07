@@ -39,7 +39,7 @@ Issues = "https://github.com/exasol/python-toolbox/issues"
 Changelog = "https://exasol.github.io/python-toolbox/changelog.html"
 
 [tool.poetry.dependencies]
-bandit = { extras = ["toml"], version = "^1.7.9" }
+bandit = { extras = ["toml"], version = "^1.8.6" }
 black = ">=24.1.0"
 coverage = ">=6.4.4,<8.0.0"
 furo = ">=2022.9.15"
