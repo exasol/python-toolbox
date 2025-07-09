@@ -69,7 +69,6 @@ ignore_errors = true
 
 [[tool.mypy.overrides]]
 module = [
-    "tests.*",
     "test.*",
 ]
 ignore_errors = true
