@@ -4,14 +4,12 @@ from pathlib import Path
 import pytest
 
 
-# def run_with_check(command_list: list[str], cwd: Path):
-
-
 @pytest.fixture(scope="module")
 def poetry_path() -> str:
     result = subprocess.run(["which", "poetry"], capture_output=True, text=True)
     poetry_path = result.stdout.strip()
     return poetry_path
+
 
 @pytest.fixture(scope="module")
 def git_path() -> str:
