@@ -15,7 +15,7 @@ class TestSpecificNoxTasks:
     passes CI tests when a new project is created from it.
     """
     @staticmethod
-    def _command(poetry_path: str, task: str, add_ons: Union[list[str]|None]=None) -> list[str]:
+    def _command(poetry_path: str, task: str, add_ons: Union[list[str], None]=None) -> list[str]:
         base = [poetry_path, "run", "--", "nox", "-s", task]
         if add_ons:
             base = base + ["--"] + add_ons
