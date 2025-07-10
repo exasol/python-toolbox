@@ -16,7 +16,6 @@ def new_project(cwd):
     repo_name = "repo"
     package_name = "package"
 
-    subprocess.run(["pip", "install", "cookiecutter"], capture_output=True, check=True)
     subprocess.run(
         ["cookiecutter", Config.root / "project-template", "-o", cwd, "--no-input",
          f"project_name={project_name}", f"repo_name={repo_name}",
