@@ -48,7 +48,6 @@ def run_command(poetry_path, git_path, new_project):
 @pytest.fixture(scope="module")
 def pre_commit(run_command, new_project, poetry_path):
     run_command(command=["git", "init"])
-    run_command([poetry_path, "add", "pre-commit"])
     run_command([poetry_path, "install"])
     run_command([poetry_path, "run", "--", "pre-commit", "install"])
 
