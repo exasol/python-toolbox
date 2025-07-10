@@ -20,6 +20,15 @@ def git_path() -> str:
 
 @pytest.fixture(scope="module")
 def run_command(poetry_path, git_path, new_project):
+    """
+    Run subprocess command with captured output and a limited environment (env).
+
+    We restrict the environment as different systems & tools (i.e. PyCharm) include
+    environment variables which may supersede the ones provided here. In such cases,
+    this can lead to a breaking alteration in the PTB poetry environment. Thus,
+    we provide the minimum information needed to execute the pre-commit command.
+    """
+
     def _run_command_fixture(command, **kwargs):
         defaults = {
             "capture_output": True,
