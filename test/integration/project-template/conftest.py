@@ -20,8 +20,7 @@ def new_project(cwd):
     subprocess.run(
         ["cookiecutter", Config.root / "project-template", "-o", cwd, "--no-input",
          f"project_name={project_name}", f"repo_name={repo_name}",
-         f"package_name={package_name}", "author_full_name=tester",
-         "author_email=test@exasol.com"
+         f"package_name={package_name}",
          ], capture_output=True, check=True)
 
     return cwd / repo_name
