@@ -86,20 +86,18 @@ source = [
 [tool.coverage.report]
 fail_under = 15
 
-
 [tool.black]
 line-length = 88
 verbose = false
 include = "\\.pyi?$"
 
-
 [tool.isort]
 profile = "black"
 force_grid_wrap = 2
 
-
 [tool.pylint.master]
 fail-under = 7.5
+output-format = "colorized,json:.lint.json,text:.lint.txt"
 
 [tool.pylint.format]
 max-line-length = 88
