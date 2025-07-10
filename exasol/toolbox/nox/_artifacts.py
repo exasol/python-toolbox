@@ -195,9 +195,7 @@ def _prepare_coverage_xml(session: Session, source: Path) -> None:
         f"{source}/*",
         "--fail-under=0",
     ]
-    output = subprocess.run(
-        command, capture_output=True, text=True, check=False
-    )  # type: ignore
+    output = subprocess.run(command, capture_output=True, text=True, check=False)
 
     if output.returncode != 0:
         if output.stderr.strip() == "No data to report.":
