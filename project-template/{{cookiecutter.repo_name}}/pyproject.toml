@@ -24,7 +24,7 @@ homepage = "https://github.com/exasol/{{cookiecutter.repo_name}}"
 [tool.poetry.dependencies]
 
 [tool.poetry.group.dev.dependencies]
-exasol-toolbox = "^1.1.0"
+exasol-toolbox = "^1.6.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0"]
@@ -69,7 +69,6 @@ ignore_errors = true
 
 [[tool.mypy.overrides]]
 module = [
-    "tests.*",
     "test.*",
 ]
 ignore_errors = true

@@ -11,16 +11,6 @@ repos:
         entry: poetry run -- nox -s project:fix
         stages: [ pre-commit ]
 
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
-    hooks:
-      - id: check-yaml
-        stages: [ pre-commit ]
-      - id: end-of-file-fixer
-        stages: [ pre-commit ]
-      - id: trailing-whitespace
-        stages: [ pre-commit ]
-
   - repo: local
     hooks:
       - id: type-check
@@ -40,3 +30,13 @@ repos:
         language: system
         entry: poetry run -- nox -s lint:code
         stages: [ pre-push ]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+        stages: [ pre-commit ]
+      - id: end-of-file-fixer
+        stages: [ pre-commit ]
+      - id: trailing-whitespace
+        stages: [ pre-commit ]
