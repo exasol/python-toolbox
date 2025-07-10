@@ -185,7 +185,7 @@ def _copy_artifacts(source: Path, dest: Path, files: Iterable[str]):
 
 
 def _prepare_coverage_xml(session: Session, source: Path) -> None:
-    # we do not want to fail the coverage constraint for sonar, as sonar does this for us
+    # we do not want to fail the coverage constraint for Sonar, as Sonar does this for us
     command = [
         "coverage",
         "xml",
@@ -195,10 +195,12 @@ def _prepare_coverage_xml(session: Session, source: Path) -> None:
         f"{source}/*",
         "--fail-under=0",
     ]
-    output = subprocess.run(command, capture_output=True, text=True, check=False)
+    output = subprocess.run(
+        command, capture_output=True, text=True, check=False
+    )  # nosec
 
     if output.returncode != 0:
-        if output.stderr.strip() == "No data to report.":
+        if output.stdout.strip() == "No data to report.":
             # Assuming that previous steps passed in the CI, this indicates, as
             # is in the case for newly created projects that no coverage over the
             # `source` files was found. To allow Sonar to report, we create

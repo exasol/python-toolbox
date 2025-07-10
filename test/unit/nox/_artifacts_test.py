@@ -18,6 +18,7 @@ from exasol.toolbox.nox._artifacts import (
     ALL_LINT_FILES,
     COVERAGE_FILE,
     COVERAGE_TABLES,
+    COVERAGE_XML,
     LINT_JSON,
     LINT_JSON_ATTRIBUTES,
     LINT_TXT,
@@ -27,9 +28,11 @@ from exasol.toolbox.nox._artifacts import (
     _is_valid_lint_json,
     _is_valid_lint_txt,
     _is_valid_security_json,
+    _prepare_coverage_xml,
     check_artifacts,
     copy_artifacts,
 )
+from noxconfig import PROJECT_CONFIG
 
 
 @contextlib.contextmanager
@@ -50,6 +53,13 @@ def mock_session(path: Path, python_version: str, *files: str):
             file.parent.mkdir(parents=True, exist_ok=True)
             file.write_text(rel)
         yield Mock(posargs=[str(path)])
+
+
+def _create_coverage_file(path: Path, tables: set) -> None:
+    connection = sqlite3.connect(path)
+    cursor = connection.cursor()
+    for table in tables:
+        cursor.execute(f"CREATE TABLE IF NOT EXISTS {table} (test INTEGER)")
 
 
 @dataclass
@@ -218,16 +228,9 @@ class TestIsValidSecurityJson:
 
 
 class TestIsValidCoverage:
-    @staticmethod
-    def _create_coverage_file(path: Path, tables: set) -> None:
-        connection = sqlite3.connect(path)
-        cursor = connection.cursor()
-        for table in tables:
-            cursor.execute(f"CREATE TABLE IF NOT EXISTS {table} (test INTEGER)")
-
     def test_passes_when_as_expected(self, tmp_path):
         path = Path(tmp_path, COVERAGE_FILE)
-        self._create_coverage_file(path, COVERAGE_TABLES)
+        _create_coverage_file(path, COVERAGE_TABLES)
 
         result = _is_valid_coverage(path)
 
@@ -242,7 +245,7 @@ class TestIsValidCoverage:
     def test_database_missing_tables(self, tmp_path, capsys, missing_table):
         tables = COVERAGE_TABLES - missing_table
         path = Path(tmp_path, COVERAGE_FILE)
-        self._create_coverage_file(path, tables)
+        _create_coverage_file(path, tables)
 
         result = _is_valid_coverage(path)
 
@@ -303,3 +306,34 @@ class TestCopyArtifacts:
         )
         for f in [".lint.txt", ".lint.json", ".security.json"]:
             assert (tmp_path / f).exists()
+
+
+class TestPrepareCoverageXml:
+    def setup_method(self):
+        for path in [Path(COVERAGE_FILE), Path(COVERAGE_XML)]:
+            if path.exists():
+                path.unlink()
+
+    def teardown_method(self):
+        for path in [Path(COVERAGE_FILE), Path(COVERAGE_XML)]:
+            if path.exists():
+                path.unlink()
+
+    @staticmethod
+    def test_no_coverage_file():
+        _prepare_coverage_xml(Mock(), PROJECT_CONFIG.source)
+
+        assert Path(COVERAGE_XML).is_file()
+        assert Path(COVERAGE_XML).read_text() == ""
+        assert not Path(COVERAGE_FILE).is_file()
+
+    @staticmethod
+    def test_with_bad_coverage_file_still_raises_error():
+        _create_coverage_file(Path(COVERAGE_FILE), COVERAGE_TABLES)
+        session_mock = Mock()
+
+        _prepare_coverage_xml(session_mock, PROJECT_CONFIG.source)
+
+        assert Path(COVERAGE_FILE).is_file()
+        assert not Path(COVERAGE_XML).is_file()
+        assert session_mock.called_once()
