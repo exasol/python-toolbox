@@ -3,6 +3,7 @@ import os
 import re
 import shutil
 import sqlite3
+import subprocess
 import sys
 from collections.abc import Iterable
 from pathlib import Path
@@ -184,8 +185,29 @@ def _copy_artifacts(source: Path, dest: Path, files: Iterable[str]):
 
 
 def _prepare_coverage_xml(session: Session, source: Path) -> None:
-    command = ["coverage", "xml", "-o", COVERAGE_XML, "--include", f"{source}/*"]
-    session.run(*command)
+    # we do not want to fail the coverage constraint for sonar, as sonar does this for us
+    command = [
+        "coverage",
+        "xml",
+        "-o",
+        COVERAGE_XML,
+        "--include",
+        f"{source}/*",
+        "--fail-under=0",
+    ]
+    output = subprocess.run(
+        command, capture_output=True, text=True, check=False
+    )  # type: ignore
+
+    if output.returncode != 0:
+        if output.stderr.strip() == "No data to report.":
+            # Assuming that previous steps passed in the CI, this indicates, as
+            # is in the case for newly created projects that no coverage over the
+            # `source` files was found. To allow Sonar to report, we create
+            # a dummy file which will toss a warning but otherwise successfully execute.
+            Path(COVERAGE_XML).touch()
+        else:
+            session.error(output.returncode)
 
 
 def _upload_to_sonar(
