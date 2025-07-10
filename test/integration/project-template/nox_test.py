@@ -8,4 +8,5 @@ class TestSpecificNoxTasks:
     def test_lint_code(self, poetry_path, run_command):
         command = self._command(poetry_path, "lint:code")
         output = run_command(command, check=False)
+        assert "Session lint:code was successful." in output.stderr
         assert output.returncode == 0
