@@ -328,7 +328,7 @@ class TestPrepareCoverageXml:
         assert not Path(COVERAGE_FILE).is_file()
 
     @staticmethod
-    def test_with_bad_coverage_file_still_raises_error():
+    def test_with_bad_coverage_file_still_raises_error(capsys):
         _create_coverage_file(Path(COVERAGE_FILE), COVERAGE_TABLES)
         session_mock = Mock()
 
@@ -336,4 +336,3 @@ class TestPrepareCoverageXml:
 
         assert Path(COVERAGE_FILE).is_file()
         assert not Path(COVERAGE_XML).is_file()
-        assert session_mock.called_once()
