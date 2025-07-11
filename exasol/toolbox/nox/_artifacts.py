@@ -3,7 +3,7 @@ import os
 import re
 import shutil
 import sqlite3
-import subprocess
+import subprocess  # nosec
 import sys
 from collections.abc import Iterable
 from pathlib import Path
