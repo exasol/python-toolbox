@@ -309,30 +309,20 @@ class TestCopyArtifacts:
 
 
 class TestPrepareCoverageXml:
-    def setup_method(self):
-        for path in [Path(COVERAGE_FILE), Path(COVERAGE_XML)]:
-            if path.exists():
-                path.unlink()
-
-    def teardown_method(self):
-        for path in [Path(COVERAGE_FILE), Path(COVERAGE_XML)]:
-            if path.exists():
-                path.unlink()
-
     @staticmethod
-    def test_no_coverage_file():
+    def test_no_coverage_file_creates_dummy():
         _prepare_coverage_xml(Mock(), PROJECT_CONFIG.source)
 
-        assert Path(COVERAGE_XML).is_file()
+        assert Path(COVERAGE_XML).exists()
         assert Path(COVERAGE_XML).read_text() == ""
-        assert not Path(COVERAGE_FILE).is_file()
+        assert not Path(COVERAGE_FILE).exists()
 
     @staticmethod
-    def test_with_bad_coverage_file_still_raises_error(capsys):
+    def test_that_bad_coverage_file_still_raises_error(capsys):
         _create_coverage_file(Path(COVERAGE_FILE), COVERAGE_TABLES)
         session_mock = Mock()
 
         _prepare_coverage_xml(session_mock, PROJECT_CONFIG.source)
 
-        assert Path(COVERAGE_FILE).is_file()
-        assert not Path(COVERAGE_XML).is_file()
+        assert Path(COVERAGE_FILE).exists()
+        assert not Path(COVERAGE_XML).exists()
