@@ -37,8 +37,13 @@ class TestSpecificNoxTasks:
         run_command(test_unit)
         test_integration = self._command(poetry_path, "test:integration",["--coverage"])
         run_command(test_integration)
-        # we skip uploading & downloading artifacts, so the coverage combination is
-        # skipped here from `artifacts:copy`
+        # `artifacts:copy` is skipped here. This step has the pre-requisite that files
+        # were uploaded to & then downloaded from the GitHub run's artifacts.
+        # When these artifacts are downloaded, they end up in specific directories,
+        # `artifacts:copy` combines the fast & slow coverage files and also copies
+        # these downloaded files to be in the root directory. Thus, we skip this step
+        # as we would artificially be creating directories to copy the files back out of
+        # them.
 
         artifacts_validate = self._command(poetry_path, "artifacts:validate")
         output = run_command(artifacts_validate, check=False)
