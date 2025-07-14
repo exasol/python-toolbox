@@ -213,8 +213,8 @@ def _prepare_coverage_xml(session: Session, source: Path) -> None:
 
     if output.returncode != 0:
         if output.stdout.strip() == "No data to report.":
-            # Assuming that previous steps passed in the CI, this indicates, as
-            # is in the case for newly created projects that no coverage over the
+            # Assuming that previous steps passed in the CI, this indicates — as
+            # is in the case for newly created projects — that no coverage over the
             # `source` files was found. To allow Sonar to report, we create
             # a dummy file which will toss a warning but otherwise successfully execute.
             Path(COVERAGE_XML).touch()
