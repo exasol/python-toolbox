@@ -185,7 +185,19 @@ def _copy_artifacts(source: Path, dest: Path, files: Iterable[str]):
 
 
 def _prepare_coverage_xml(session: Session, source: Path) -> None:
-    # we do not want to fail the coverage constraint for Sonar, as Sonar does this for us
+    """
+    Prepare the coverage XML for input into Sonar
+
+    The coverage XML is used within Sonar to determine the overall coverage in our
+    project, as well as, the coverage associated with changes made in a PR. If the
+    coverage in our PR does not meet the set Sonar guidelines for that project,
+    then when the sonarqubecloud bot writes in the PR, it will indicate that the
+    coverage constraint was not met & block the PR from being merged. Thus, in the
+    preparation of the coverage XML, we set `--fail-under=0` so that this sub-step
+    will not fail prior to sending the data to Sonar. Otherwise, this sub-step would
+    fail whenever the `fail_under` in `[tool.coverage.report]` of the `pyproject.toml`
+    was not met.
+    """
     command = [
         "coverage",
         "xml",
