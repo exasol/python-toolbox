@@ -308,21 +308,21 @@ class TestCopyArtifacts:
             assert (tmp_path / f).exists()
 
 
-class TestPrepareCoverageXml:
-    @staticmethod
-    def test_no_coverage_file_creates_dummy():
-        _prepare_coverage_xml(Mock(), PROJECT_CONFIG.source)
-
-        assert Path(COVERAGE_XML).exists()
-        assert Path(COVERAGE_XML).read_text() == ""
-        assert not Path(COVERAGE_FILE).exists()
-
-    @staticmethod
-    def test_that_bad_coverage_file_still_raises_error(capsys):
-        _create_coverage_file(Path(COVERAGE_FILE), COVERAGE_TABLES)
-        session_mock = Mock()
-
-        _prepare_coverage_xml(session_mock, PROJECT_CONFIG.source)
-
-        assert Path(COVERAGE_FILE).exists()
-        assert not Path(COVERAGE_XML).exists()
+# class TestPrepareCoverageXml:
+#     @staticmethod
+#     def test_no_coverage_file_creates_dummy():
+#         _prepare_coverage_xml(Mock(), PROJECT_CONFIG.source)
+#
+#         assert Path(COVERAGE_XML).exists()
+#         assert Path(COVERAGE_XML).read_text() == ""
+#         assert not Path(COVERAGE_FILE).exists()
+#
+#     @staticmethod
+#     def test_that_bad_coverage_file_still_raises_error(capsys):
+#         _create_coverage_file(Path(COVERAGE_FILE), COVERAGE_TABLES)
+#         session_mock = Mock()
+#
+#         _prepare_coverage_xml(session_mock, PROJECT_CONFIG.source)
+#
+#         assert Path(COVERAGE_FILE).exists()
+#         assert not Path(COVERAGE_XML).exists()

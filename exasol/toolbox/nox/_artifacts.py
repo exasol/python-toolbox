@@ -207,19 +207,7 @@ def _prepare_coverage_xml(session: Session, source: Path) -> None:
         f"{source}/*",
         "--fail-under=0",
     ]
-    output = subprocess.run(
-        command, capture_output=True, text=True, check=False
-    )  # nosec
-
-    if output.returncode != 0:
-        if output.stdout.strip() == "No data to report.":
-            # Assuming that previous steps passed in the CI, this indicates — as
-            # is in the case for newly created projects — that no coverage over the
-            # `source` files was found. To allow Sonar to report, we create
-            # a dummy file which will toss a warning but otherwise successfully execute.
-            Path(COVERAGE_XML).touch()
-        else:
-            session.error(output.returncode)
+    session.run(*command)
 
 
 def _upload_to_sonar(
@@ -229,8 +217,6 @@ def _upload_to_sonar(
         "pysonar",
         "--sonar-token",
         sonar_token,
-        "--sonar-python-coverage-report-paths",
-        COVERAGE_XML,
         "--sonar-python-pylint-report-path",
         LINT_JSON,
         "--sonar-python-bandit-report-paths",
@@ -240,6 +226,9 @@ def _upload_to_sonar(
         "--sonar-sources",
         config.source,
     ]
+    if Path("dummy").exists():
+        command.extend(["--sonar-python-coverage-report-paths", COVERAGE_XML])
+
     session.run(*command)  # type: ignore
 
 
