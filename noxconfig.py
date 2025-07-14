@@ -51,8 +51,8 @@ class Config:
         "project-template",
         "idioms",
     )
-    python_versions: Iterable = ("3.9", "3.10", "3.11", "3.12", "3.13")
-    exasol_versions: Iterable = ("7.1.9",)
+    python_versions: Iterable[str] = ("3.9", "3.10", "3.11", "3.12", "3.13")
+    exasol_versions: Iterable[str] = ("7.1.9",)
     plugins: Iterable[object] = (UpdateTemplates,)
     # need --keep-runtime-typing, as pydantic with python3.9 does not accept str | None
     # format, and it is not resolved with from __future__ import annotations. pyupgrade
