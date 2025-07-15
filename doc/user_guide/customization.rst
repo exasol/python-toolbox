@@ -3,10 +3,23 @@ Customization
 
 .. _plugins:
 
+Nox Tasks `links:x`
+---------------------
+
+We have two nox tasks to check links present in our documentation:
+ * `links:list` - List all the links within the documentation
+ * `links:check` - Checks whether all links in the documentation are accessible
+
+`links:check` is run in the CI `checks.yml`. If this step fails in the CI, it will cause
+the build to break. Please check the output & manually resolve the issues. There might
+be some cases where you need to update your `doc/conf.py` with specific values for the allowed
+options for the [Linkcheck Builder](https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-the-linkcheck-builder).
+
+
 Nox Task Plugins
 ----------------
 
-Some Nox task allow for implementing custom hooks to be executed within the Nox workflow.
+Some Nox tasks allow for implementing custom hooks to be executed within the Nox workflow.
 To ensure a predictable environment, plugins should be written to handle exceptions gracefully.
 If a plugin encounters a critical situation where it cannot continue execution, it should call the ``error``
 method on the session object, effectively halting the execution process.
@@ -14,11 +27,11 @@ This action may have a widespread impact by forcibly stopping execution, potenti
 
 .. attention:: Doing a hard exit using ``session.error`` should be an measure of last resort.
 
-.. note:: 
+.. note::
 
-    Even though the plugin mechanism utilizes `pluggy <https://pluggy.readthedocs.io/en/stable/>`_ under the hood, it does 
-    not currently support all scenarios and features with which one may be familiar from pytest, or other tools and 
-    frameworks based on pluggy. Nevertheless, a look at pluggy's `documentation <https://pluggy.readthedocs.io/en/stable/>`_ 
+    Even though the plugin mechanism utilizes `pluggy <https://pluggy.readthedocs.io/en/stable/>`_ under the hood, it does
+    not currently support all scenarios and features with which one may be familiar from pytest, or other tools and
+    frameworks based on pluggy. Nevertheless, a look at pluggy's `documentation <https://pluggy.readthedocs.io/en/stable/>`_
     can definitely enhance understanding of the hook mechanism.
 
 
