@@ -188,7 +188,7 @@ def _copy_artifacts(source: Path, dest: Path, files: Iterable[str]):
 
 
 def _prepare_coverage_xml(
-    session: Session, source: Path, cwd: Union[Path | None] = None
+    session: Session, source: Path, cwd: Union[Path, None] = None
 ) -> None:
     """
     Prepare the coverage XML for input into Sonar
