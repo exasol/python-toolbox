@@ -120,3 +120,4 @@ sphinx-multiversion = 'exasol.toolbox.sphinx.multiversion:main'
 projectKey = "com.exasol:python-toolbox"
 hostUrl = "https://sonarcloud.io"
 organization = "exasol"
+exclusions = "exasol/toolbox/version.py"
