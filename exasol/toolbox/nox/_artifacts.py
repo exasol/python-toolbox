@@ -7,7 +7,10 @@ import subprocess  # nosec
 import sys
 from collections.abc import Iterable
 from pathlib import Path
-from typing import Optional
+from typing import (
+    Optional,
+    Union,
+)
 
 import nox
 from nox import Session
@@ -184,7 +187,9 @@ def _copy_artifacts(source: Path, dest: Path, files: Iterable[str]):
             print(f"File not found {path}", file=sys.stderr)
 
 
-def _prepare_coverage_xml(session: Session, source: Path) -> None:
+def _prepare_coverage_xml(
+    session: Session, source: Path, cwd: Union[Path | None] = None
+) -> None:
     """
     Prepare the coverage XML for input into Sonar
 
@@ -208,7 +213,7 @@ def _prepare_coverage_xml(session: Session, source: Path) -> None:
         f"{source}/*",
         "--fail-under=0",
     ]
-    output = subprocess.run(command, capture_output=True, text=True, cwd=source)
+    output = subprocess.run(command, capture_output=True, text=True, cwd=cwd)  # nosec
     if output.returncode != 0:
         if output.stdout.strip() == "No data to report.":
             # Assuming that previous steps passed in the CI, this indicates — as

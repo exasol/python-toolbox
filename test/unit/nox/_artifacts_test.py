@@ -361,7 +361,7 @@ class TestPrepareCoverageXml:
         coverage_db = tmp_path / COVERAGE_DB
         monkeypatch.setattr(_artifacts, "COVERAGE_XML", coverage_xml)
 
-        _prepare_coverage_xml(nox_session, tmp_path)
+        _prepare_coverage_xml(nox_session, tmp_path, cwd=tmp_path)
 
         assert not Path(coverage_db).exists()
         assert not Path(coverage_xml).exists()
@@ -378,7 +378,7 @@ class TestPrepareCoverageXml:
         with pytest.raises(
             _SessionQuit, match="doesn't seem to be a coverage data file"
         ):
-            _prepare_coverage_xml(nox_session, tmp_path)
+            _prepare_coverage_xml(nox_session, tmp_path, cwd=tmp_path)
 
         assert coverage_db.exists()
         assert not coverage_xml.exists()
