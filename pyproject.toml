@@ -47,7 +47,6 @@ importlib-resources = ">=5.12.0"
 import-linter = "^2.0"
 isort = "^6.0.1"
 jinja2 = "^3.1.6"
-lxml = "^5.4.0"
 mypy = ">=0.971"
 myst-parser = ">=2.0.0,<4"
 nox = ">=2022.8.7"
@@ -86,20 +85,18 @@ source = [
 [tool.coverage.report]
 fail_under = 15
 
-
 [tool.black]
 line-length = 88
 verbose = false
 include = "\\.pyi?$"
 
-
 [tool.isort]
 profile = "black"
 force_grid_wrap = 2
 
-
 [tool.pylint.master]
 fail-under = 7.5
+output-format = "colorized,json:.lint.json,text:.lint.txt"
 
 [tool.pylint.format]
 max-line-length = 88

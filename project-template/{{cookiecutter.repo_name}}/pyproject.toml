@@ -51,24 +51,19 @@ force_grid_wrap = 2
 [tool.pylint.master]
 fail-under = 5.0
 output-format = "colorized,json:.lint.json,text:.lint.txt"
-ignore = [
-    "noxfile.py",
-    "noxconfig.py",
-    "version.py",
-]
-ignore-paths = [
-    ".*/test/.*",
-]
+ignore = []
 
 [tool.pylint.format]
 max-line-length = 88
 max-module-lines = 800
-
-[tool.mypy]
-ignore_errors = true
 
 [[tool.mypy.overrides]]
 module = [
     "test.*",
 ]
 ignore_errors = true
+
+[tool.sonar]
+projectKey = "com.exasol:{{cookiecutter.repo_name}}"
+hostUrl = "https://sonarcloud.io"
+organization = "exasol"
