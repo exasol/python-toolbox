@@ -10,4 +10,4 @@
 
 ## Refactoring
 
-* #382: Updated pull_request_template.md to reflect checks we should regularly perform
+* #482: Updated pull_request_template.md to reflect checks we should regularly perform
