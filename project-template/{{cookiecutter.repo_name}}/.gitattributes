@@ -1,0 +1,2 @@
+poetry.lock linguist-generated=true
+exasol/{{cookiecutter.import_package}}/version.py linguist-generated=true

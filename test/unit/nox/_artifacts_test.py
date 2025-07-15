@@ -5,6 +5,7 @@ import sqlite3
 from dataclasses import dataclass
 from inspect import cleandoc
 from pathlib import Path
+from typing import Any
 from unittest import mock
 from unittest.mock import (
     Mock,
@@ -13,11 +14,23 @@ from unittest.mock import (
 )
 
 import pytest
+from nox import (
+    Session,
+    _options,
+    manifest,
+    virtualenv,
+)
+from nox.sessions import (
+    SessionRunner,
+    _SessionQuit,
+)
 
+from exasol.toolbox.nox import _artifacts
 from exasol.toolbox.nox._artifacts import (
     ALL_LINT_FILES,
-    COVERAGE_FILE,
+    COVERAGE_DB,
     COVERAGE_TABLES,
+    COVERAGE_XML,
     LINT_JSON,
     LINT_JSON_ATTRIBUTES,
     LINT_TXT,
@@ -27,6 +40,7 @@ from exasol.toolbox.nox._artifacts import (
     _is_valid_lint_json,
     _is_valid_lint_txt,
     _is_valid_security_json,
+    _prepare_coverage_xml,
     check_artifacts,
     copy_artifacts,
 )
@@ -50,6 +64,13 @@ def mock_session(path: Path, python_version: str, *files: str):
             file.parent.mkdir(parents=True, exist_ok=True)
             file.write_text(rel)
         yield Mock(posargs=[str(path)])
+
+
+def _create_coverage_file(path: Path, tables: set) -> None:
+    connection = sqlite3.connect(path)
+    cursor = connection.cursor()
+    for table in tables:
+        cursor.execute(f"CREATE TABLE IF NOT EXISTS {table} (test INTEGER)")
 
 
 @dataclass
@@ -218,16 +239,9 @@ class TestIsValidSecurityJson:
 
 
 class TestIsValidCoverage:
-    @staticmethod
-    def _create_coverage_file(path: Path, tables: set) -> None:
-        connection = sqlite3.connect(path)
-        cursor = connection.cursor()
-        for table in tables:
-            cursor.execute(f"CREATE TABLE IF NOT EXISTS {table} (test INTEGER)")
-
     def test_passes_when_as_expected(self, tmp_path):
-        path = Path(tmp_path, COVERAGE_FILE)
-        self._create_coverage_file(path, COVERAGE_TABLES)
+        path = Path(tmp_path, COVERAGE_DB)
+        _create_coverage_file(path, COVERAGE_TABLES)
 
         result = _is_valid_coverage(path)
 
@@ -241,8 +255,8 @@ class TestIsValidCoverage:
     )
     def test_database_missing_tables(self, tmp_path, capsys, missing_table):
         tables = COVERAGE_TABLES - missing_table
-        path = Path(tmp_path, COVERAGE_FILE)
-        self._create_coverage_file(path, tables)
+        path = Path(tmp_path, COVERAGE_DB)
+        _create_coverage_file(path, tables)
 
         result = _is_valid_coverage(path)
 
@@ -303,3 +317,68 @@ class TestCopyArtifacts:
         )
         for f in [".lint.txt", ".lint.json", ".security.json"]:
             assert (tmp_path / f).exists()
+
+
+class FakeEnv(mock.MagicMock):
+    # Extracted from nox testing
+    _get_env = virtualenv.VirtualEnv._get_env
+
+
+def make_fake_env(venv_backend: str = "venv", **kwargs: Any) -> FakeEnv:
+    # Extracted from nox testing
+    return FakeEnv(
+        spec=virtualenv.VirtualEnv,
+        env={},
+        venv_backend=venv_backend,
+        **kwargs,
+    )
+
+
+@pytest.fixture
+def nox_session(tmp_path):
+    # Extracted from nox testing
+    session_runner = SessionRunner(
+        name="test",
+        signatures=["test"],
+        func=mock.Mock(spec=["python"], python="3.10"),
+        global_config=_options.options.namespace(
+            posargs=[],
+            error_on_external_run=False,
+            install_only=False,
+            invoked_from=tmp_path,
+        ),
+        manifest=mock.create_autospec(manifest.Manifest),
+    )
+    session_runner.venv = make_fake_env(bin_paths=["/no/bin/for/you"])
+    session = Session(session_runner)
+    yield session
+
+
+class TestPrepareCoverageXml:
+    @staticmethod
+    def test_no_coverage_file_silently_passes(monkeypatch, tmp_path, nox_session):
+        coverage_xml = tmp_path / COVERAGE_XML
+        coverage_db = tmp_path / COVERAGE_DB
+        monkeypatch.setattr(_artifacts, "COVERAGE_XML", coverage_xml)
+
+        _prepare_coverage_xml(nox_session, tmp_path, cwd=tmp_path)
+
+        assert not Path(coverage_db).exists()
+        assert not Path(coverage_xml).exists()
+
+    @staticmethod
+    def test_that_bad_coverage_file_still_raises_error(
+        monkeypatch, tmp_path, nox_session
+    ):
+        coverage_xml = tmp_path / COVERAGE_XML
+        coverage_db = tmp_path / COVERAGE_DB
+        monkeypatch.setattr(_artifacts, "COVERAGE_XML", coverage_xml)
+        _create_coverage_file(coverage_db, COVERAGE_TABLES)
+
+        with pytest.raises(
+            _SessionQuit, match="doesn't seem to be a coverage data file"
+        ):
+            _prepare_coverage_xml(nox_session, tmp_path, cwd=tmp_path)
+
+        assert coverage_db.exists()
+        assert not coverage_xml.exists()

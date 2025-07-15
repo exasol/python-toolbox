@@ -204,7 +204,14 @@ We also need to configure settings for github-pages environment:
 8. Set up for Sonar
 +++++++++++++++++++
 PTB supports using SonarQube Cloud to analyze, visualize, & track linting, security, &
-coverage. In order to set it up, you'll need to do the following instructions.
+coverage. All of our Python projects are evaluated against the
+`Exasol Way <https://sonarcloud.io/organizations/exasol/quality_gates/show/AXxvLH-3BdtLlpiYmZhh>`__
+and subscribe to the
+`Clean as You Code <https://docs.sonarsource.com/sonarqube-server/9.8/user-guide/clean-as-you-code/>`__
+methodology, which means that SonarQube analysis will fail and, if its included in the branch protections, block a PR
+if code modified in that PR does not meet the standards of the Exasol Way.
+
+In order to set up Sonar, you will need to perform the following instructions.
 
 For a **public** project
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -223,6 +230,12 @@ For a **public** project
         hostUrl = "https://sonarcloud.io"
         organization = "exasol"
 6. Post-merge, update the branch protections to include SonarQube analysis
+
+  * This should only be done when tests exist for the project, & that the project is
+    at a state in which enforced code coverage would not be a burden. For new projects,
+    we recommend creating an issue to add the SonarQube analysis to the branch protections
+    at a later point. In such scenarios, SonarQube analysis will still report its analysis
+    results to the PR, but it will not prevent the PR from being merged.
 
 For a **private** project
 ^^^^^^^^^^^^^^^^^^^^^^^^^
