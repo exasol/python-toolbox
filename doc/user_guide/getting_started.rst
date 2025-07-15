@@ -230,6 +230,7 @@ For a **public** project
         hostUrl = "https://sonarcloud.io"
         organization = "exasol"
 6. Post-merge, update the branch protections to include SonarQube analysis
+
   * This should only be done when tests exist for the project, & that the project is
     at a state in which enforced code coverage would not be a burden. For new projects,
     we recommend creating an issue to add the SonarQube analysis to the branch protections
