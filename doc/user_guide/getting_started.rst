@@ -229,6 +229,7 @@ For a **public** project
         projectKey = "com.exasol:<project-key>"
         hostUrl = "https://sonarcloud.io"
         organization = "exasol"
+        exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
 6. Post-merge, update the branch protections to include SonarQube analysis
 
   * This should only be done when tests exist for the project, & that the project is
@@ -253,7 +254,14 @@ For a **private** project
         projectKey = "com.exasol:<project-key>"
         hostUrl = "https://sonar.exasol.com"
         organization = "exasol"
+        exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
 6. Post-merge, update the branch protections to include SonarQube analysis from exasonarqubeprchecks
+
+  * This should only be done when tests exist for the project, & that the project is
+    at a state in which enforced code coverage would not be a burden. For new projects,
+    we recommend creating an issue to add the SonarQube analysis to the branch protections
+    at a later point. In such scenarios, SonarQube analysis will still report its analysis
+    results to the PR, but it will not prevent the PR from being merged.
 
 9. Go 🥜
 +++++++++++++
