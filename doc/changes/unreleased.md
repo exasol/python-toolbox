@@ -1,5 +1,18 @@
 # Unreleased
 
+## Summary
+
+This version of the PTB resolves many bugfixes associated with the cookiecutter template
+and creating a new project that uses the PTB.
+
+If any directories or files specified in your `noxconfig.py` via `Config.source` should
+not be included in a Sonar analysis, it is recommended to add the following to
+your `pyproject.toml` under the `[tool.sonar]` section:
+
+```toml
+exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
+```
+
 ## Bugfixes
 
 * #489: Fixed .pre-commit-config.yaml to use existing nox tasks
