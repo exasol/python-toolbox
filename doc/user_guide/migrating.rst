@@ -152,14 +152,14 @@ _______
 
 4. Introduce GitHub Workflows
 -----------------------------
-Install the GitHub workflows provided by the :code:`python-toolbox` for futher details refer to the section :ref:`GitHub Workflows`.
+Install the GitHub workflows provided by the :code:`python-toolbox` for further details refer to the section :ref:`GitHub Workflows`.
 
 .. attention::
    This is just guidance. If you have a good understanding of the standard project setup, technologies, and tools used, feel free to diverge at any point or exercise your own judgment.
 
 
-Migration Progess
-+++++++++++++++++
+Migration Progress
+++++++++++++++++++
 
 Could be tracked in a format and based on the information listed in the real life example bellow.
 
@@ -218,15 +218,15 @@ Could be tracked in a format and based on the information listed in the real lif
       - ✓
       - ✓
       - ✓
-      - ✓/✗ partialy
+      - ✓/✗ partially
     * - `ITDE <https://github.com/exasol/integration-test-docker-environment>`_
       - ✓
       - ✓
       - ✓
       - ✓
       - ✓
-      - ✓/✗ partialy
-      - ✓/✗ partialy
+      - ✓/✗ partially
+      - ✓/✗ partially
     * - `schemas <https://github.com/exasol/schemas>`_
       - ✓
       - ✓
@@ -239,9 +239,9 @@ Could be tracked in a format and based on the information listed in the real lif
       - ✓
       - ✓
       - ✓
-      - ✓/✗ partialy
+      - ✓/✗ partially
       - ✓
-      - ✓/✗ partialy
+      - ✓/✗ partially
       - ✗
     * - `harlequin-exasol <https://github.com/Nicoretti/harlequin-exasol>`_
       - ✓
@@ -268,7 +268,7 @@ Could be tracked in a format and based on the information listed in the real lif
     * - PYPI
       - Project can be build and published to `PyPi`_
     * - Sphinx Docs
-      - The project doumentation is `Sphinx`_ based
+      - The project documentation is `Sphinx`_ based
     * - nox
       - The projects automated tasks are executed using the `Nox`_ task runner
     * - toolbox-tasks

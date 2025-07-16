@@ -44,3 +44,6 @@ The exasol-toolbox ships with various GitHub workflow templates. To leverage the
 ++++++++++++++++++++++++++++
 
 The best and most maintainable way to have solid branch protection (:code:`Settings/Branches/main`) is to require the workflow :code:`CI / Allow Merge` to pass successfully.
+
+.. note::
+   Setting the required status checks to pass before merging is only possible after running a CI build at **least once** on the affected branch.

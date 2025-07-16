@@ -67,3 +67,4 @@ ignore_errors = true
 projectKey = "com.exasol:{{cookiecutter.repo_name}}"
 hostUrl = "https://sonarcloud.io"
 organization = "exasol"
+exclusions = "exasol/{{cookiecutter.package_name}}/version.py"
