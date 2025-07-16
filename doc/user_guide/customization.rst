@@ -6,7 +6,7 @@ Customization
 Nox Tasks `links:x`
 ---------------------
 
-We have two nox tasks to check links present in our documentation:
+PTB offers two nox sessions to check hyperlinks in your documentation:
  * `links:list` - List all the links within the documentation
  * `links:check` - Checks whether all links in the documentation are accessible
 
