@@ -2,7 +2,7 @@
 
 ## Summary
 
-This version of the PTB resolves many bugfixes associated with the cookiecutter template
+This version of the PTB resolves many bugs associated with the cookiecutter template
 and creating a new project that uses the PTB.
 
 If any directories or files specified in your `noxconfig.py` via `Config.source` should
