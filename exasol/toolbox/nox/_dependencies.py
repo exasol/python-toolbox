@@ -12,10 +12,7 @@ from exasol.toolbox.util.dependencies.licenses import (
     licenses,
     packages_to_markdown,
 )
-from exasol.toolbox.util.dependencies.poetry_dependencies import (
-    PoetryDependencies,
-    PoetryToml,
-)
+from exasol.toolbox.util.dependencies.poetry_dependencies import get_dependencies
 
 
 class Audit:
@@ -86,12 +83,8 @@ class Audit:
 
 @nox.session(name="dependency:licenses", python=False)
 def dependency_licenses(session: Session) -> None:
-    """returns the packages and their licenses"""
-    working_directory = Path()
-    poetry_dep = PoetryToml.load_from_toml(working_directory=working_directory)
-    dependencies = PoetryDependencies(
-        groups=poetry_dep.groups, working_directory=working_directory
-    ).direct_dependencies
+    """Return the packages with their licenses"""
+    dependencies = get_dependencies(working_directory=Path())
     package_infos = licenses()
     print(packages_to_markdown(dependencies=dependencies, packages=package_infos))
 

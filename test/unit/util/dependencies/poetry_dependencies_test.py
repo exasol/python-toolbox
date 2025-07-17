@@ -6,8 +6,11 @@ from exasol.toolbox.util.dependencies.poetry_dependencies import (
     PoetryDependencies,
     PoetryGroup,
     PoetryToml,
+    get_dependencies,
+    get_dependencies_from_latest_tag,
 )
 from exasol.toolbox.util.dependencies.shared_models import Package
+from noxconfig import PROJECT_CONFIG
 
 MAIN_GROUP = PoetryGroup(name="main", toml_section="project.dependencies")
 DEV_GROUP = PoetryGroup(name="dev", toml_section="tool.poetry.group.dev.dependencies")
@@ -128,3 +131,19 @@ class TestPoetryDependencies:
         transitive = result.pop("transitive")
         assert len(transitive) > 0
         assert result == DIRECT_DEPENDENCIES
+
+
+def test_get_dependencies():
+    result = get_dependencies(PROJECT_CONFIG.root)
+
+    # if successful, no errors & should be non-empty dictionary
+    assert isinstance(result, dict)
+    assert result.keys()
+
+
+def test_get_dependencies_from_latest_tag():
+    result = get_dependencies_from_latest_tag()
+
+    # if successful, no errors & should be non-empty dictionary
+    assert isinstance(result, dict)
+    assert result.keys()
