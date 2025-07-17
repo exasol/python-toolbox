@@ -1,4 +1,4 @@
-import subprocess
+import subprocess  # nosec
 from functools import wraps
 from pathlib import Path
 
@@ -9,7 +9,7 @@ def run_command(func):
         command_list = func(*args, **kwargs).split()
         output = subprocess.run(
             command_list, capture_output=True, text=True, check=True
-        )
+        )  # nosec
         return output.stdout.strip()
 
     return wrapper
