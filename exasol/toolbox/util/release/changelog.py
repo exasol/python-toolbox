@@ -78,7 +78,7 @@ class Changelogs:
 
           1. Moves the contents of the `unreleased.md` to the `changes_<version>.md`
           2. Create a new `unreleased.md`
-          3. Updates the table of contents in the `change.md` with the new `changes_<version>.md`
+          3. Updates the table of contents in the `changelog.md` with the new `changes_<version>.md`
         """
 
         # create versioned changelog
