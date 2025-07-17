@@ -63,7 +63,7 @@ def changes_md(tmp_path, changelogs):
     """
     As some operations in Changelogs modify files, we need a reset per function
     """
-    changelogs.changes_md.write_text(CHANGES_CONTENTS)
+    changelogs.changelog_md.write_text(CHANGES_CONTENTS)
 
 
 @pytest.fixture
@@ -107,14 +107,14 @@ class TestChangelogs:
     def test_update_changelog_table_of_contents(changelogs, changes_md):
         changelogs._update_changelog_table_of_contents()
 
-        assert changelogs.changes_md.read_text() == ALTERED_CHANGES_CONTENTS
+        assert changelogs.changelog_md.read_text() == ALTERED_CHANGES_CONTENTS
 
     @staticmethod
     def test_update_changelogs_for_release(changelogs, unreleased_md, changes_md):
         changelogs.update_changelogs_for_release()
 
         # changes.md
-        assert changelogs.changes_md.read_text() == ALTERED_CHANGES_CONTENTS
+        assert changelogs.changelog_md.read_text() == ALTERED_CHANGES_CONTENTS
         # unreleased.md
         assert changelogs.unreleased_md.read_text() == UNRELEASED_TEXT
         # versioned.md

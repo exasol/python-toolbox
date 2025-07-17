@@ -14,7 +14,7 @@ class Changelogs:
         self.version = version
         self.unreleased_md: Path = changes_path / "unreleased.md"
         self.versioned_changelog_md: Path = changes_path / f"changes_{version}.md"
-        self.changes_md: Path = changes_path / "changes.md"
+        self.changelog_md: Path = changes_path / "changelog.md"
 
     def _create_new_unreleased(self):
         """
@@ -56,7 +56,7 @@ class Changelogs:
         before writing out to again.
         """
         updated_content = []
-        with self.changes_md.open(mode="r", encoding="utf-8") as f:
+        with self.changelog_md.open(mode="r", encoding="utf-8") as f:
             for line in f:
                 updated_content.append(line)
                 if line.startswith("* [unreleased]"):
@@ -67,10 +67,10 @@ class Changelogs:
                     updated_content.append(f"changes_{self.version}\n")
         updated_content_str = "".join(updated_content)
 
-        self.changes_md.write_text(updated_content_str)
+        self.changelog_md.write_text(updated_content_str)
 
     def get_changed_files(self) -> list[Path]:
-        return [self.unreleased_md, self.versioned_changelog_md, self.changes_md]
+        return [self.unreleased_md, self.versioned_changelog_md, self.changelog_md]
 
     def update_changelogs_for_release(self) -> None:
         """
