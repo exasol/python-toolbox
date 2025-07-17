@@ -1,6 +1,7 @@
 import pytest
 from packaging.version import Version
-from toolbox.util.git import Git
+
+from exasol.toolbox.util.git import Git
 
 POETRY_LOCK = "poetry.lock"
 
