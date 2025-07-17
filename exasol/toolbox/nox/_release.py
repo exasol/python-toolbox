@@ -19,6 +19,7 @@ from exasol.toolbox.release import (
     new_changes,
     new_unreleased,
 )
+from exasol.toolbox.util.git import Git
 from exasol.toolbox.util.version import (
     ReleaseTypes,
     Version,
@@ -26,7 +27,7 @@ from exasol.toolbox.util.version import (
 from noxconfig import PROJECT_CONFIG
 
 
-def _create_release_prepare_parser() -> argparse.ArgumentParser:
+def _create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="nox -s release:prepare",
         usage="nox -s release:prepare -- [-h] [-t | --type {major,minor,patch}]",
@@ -133,19 +134,17 @@ def prepare_release(session: Session) -> None:
     """
     Prepare the project for a new release.
     """
-    parser = _create_release_prepare_parser()
+    parser = _create_parser()
     args = parser.parse_args(session.posargs)
-
     new_version = Version.upgrade_version_from_poetry(args.type)
 
     if not args.no_branch and not args.no_add:
-        session.run("git", "switch", "-c", f"release/prepare-{new_version}")
-
-    pm = NoxTasks.plugin_manager(PROJECT_CONFIG)
+        Git.create_and_switch_to_branch(f"release/prepare-{new_version}")
 
     _ = _update_project_version(session, new_version)
     changelog, changes, unreleased = _update_changelog(new_version)
 
+    pm = NoxTasks.plugin_manager(PROJECT_CONFIG)
     pm.hook.prepare_release_update_version(
         session=session, config=PROJECT_CONFIG, version=new_version
     )

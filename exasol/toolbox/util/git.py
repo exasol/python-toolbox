@@ -44,3 +44,8 @@ class Git:
         contents = Git.read_file_from_tag(tag=tag, remote_file=remote_file)
         destination_filepath = destination_directory / remote_file
         destination_filepath.write_text(contents)
+
+    @staticmethod
+    @run_command
+    def create_and_switch_to_branch(branch_name: str) -> str:
+        return f"git switch -c {branch_name}"
