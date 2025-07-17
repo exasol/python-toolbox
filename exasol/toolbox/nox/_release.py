@@ -62,10 +62,6 @@ def _create_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _is_valid_version(old: Version, new: Version) -> bool:
-    return new >= old
-
-
 def _update_project_version(session: Session, version: Version) -> Version:
     session.run("poetry", "version", f"{version}")
     _version(session, Mode.Fix)
