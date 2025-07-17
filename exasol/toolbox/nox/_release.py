@@ -26,7 +26,7 @@ from exasol.toolbox.util.version import (
 from noxconfig import PROJECT_CONFIG
 
 
-def _create_parser() -> argparse.ArgumentParser:
+def _create_release_prepare_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="nox -s release:prepare",
         usage="nox -s release:prepare -- [-h] [-t | --type {major,minor,patch}]",
@@ -131,9 +131,9 @@ def _trigger_release() -> Version:
 @nox.session(name="release:prepare", python=False)
 def prepare_release(session: Session) -> None:
     """
-    Prepares the project for a new release.
+    Prepare the project for a new release.
     """
-    parser = _create_parser()
+    parser = _create_release_prepare_parser()
     args = parser.parse_args(session.posargs)
 
     new_version = Version.upgrade_version_from_poetry(args.type)
