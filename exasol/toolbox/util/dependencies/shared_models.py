@@ -4,12 +4,12 @@ from typing import Annotated
 
 from packaging.version import Version
 from pydantic import (
+    AfterValidator,
     BaseModel,
-    BeforeValidator,
     ConfigDict,
 )
 
-VERSION_TYPE = Annotated[Version, BeforeValidator(lambda v: Version(str(v)))]
+VERSION_TYPE = Annotated[str, AfterValidator(lambda v: Version(v))]
 
 
 class Package(BaseModel):
