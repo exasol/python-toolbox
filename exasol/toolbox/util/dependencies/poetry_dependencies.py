@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import subprocess
+import tempfile
 from pathlib import Path
 from typing import Optional
 
@@ -12,6 +13,7 @@ from pydantic import (
 from tomlkit import TOMLDocument
 
 from exasol.toolbox.util.dependencies.shared_models import Package
+from exasol.toolbox.util.git import Git
 
 
 class PoetryGroup(BaseModel):
@@ -21,6 +23,7 @@ class PoetryGroup(BaseModel):
     toml_section: Optional[str]
 
 
+PYPROJECT_TOML = "pyproject.toml"
 TRANSITIVE_GROUP = PoetryGroup(name="transitive", toml_section=None)
 
 
@@ -31,7 +34,7 @@ class PoetryToml(BaseModel):
 
     @classmethod
     def load_from_toml(cls, working_directory: Path) -> PoetryToml:
-        file_path = working_directory / "pyproject.toml"
+        file_path = working_directory / PYPROJECT_TOML
         if not file_path.exists():
             raise ValueError(f"File not found: {file_path}")
 
@@ -142,3 +145,21 @@ class PoetryDependencies(BaseModel):
                 transitive_dependencies.append(dep)
 
         return direct_dependencies | {TRANSITIVE_GROUP.name: transitive_dependencies}
+
+
+def get_dependencies(working_directory: Path) -> dict[str, list[Package]]:
+    poetry_dep = PoetryToml.load_from_toml(working_directory=working_directory)
+    return PoetryDependencies(
+        groups=poetry_dep.groups, working_directory=working_directory
+    ).direct_dependencies
+
+
+def get_dependencies_from_latest_tag() -> dict[str, list[Package]]:
+    latest_tag = Git.get_latest_tag()
+    with tempfile.TemporaryDirectory() as path:
+        tmpdir = Path(path)
+
+        Git.copy_remote_file_locally(latest_tag, "poetry.lock", tmpdir)
+        Git.copy_remote_file_locally(latest_tag, PYPROJECT_TOML, tmpdir)
+
+        return get_dependencies(working_directory=tmpdir)

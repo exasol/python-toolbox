@@ -13,12 +13,8 @@ from exasol.toolbox.nox._shared import (
     _version,
 )
 from exasol.toolbox.nox.plugin import NoxTasks
-from exasol.toolbox.release import (
-    extract_release_notes,
-    new_changelog,
-    new_changes,
-    new_unreleased,
-)
+from exasol.toolbox.util.git import Git
+from exasol.toolbox.util.release.changelog import Changelogs
 from exasol.toolbox.util.version import (
     ReleaseTypes,
     Version,
@@ -61,30 +57,10 @@ def _create_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _is_valid_version(old: Version, new: Version) -> bool:
-    return new >= old
-
-
 def _update_project_version(session: Session, version: Version) -> Version:
     session.run("poetry", "version", f"{version}")
     _version(session, Mode.Fix)
     return version
-
-
-def _update_changelog(version: Version) -> tuple[Path, Path, Path]:
-    unreleased = Path(PROJECT_CONFIG.root) / "doc" / "changes" / "unreleased.md"
-    changelog = Path(PROJECT_CONFIG.root) / "doc" / "changes" / f"changes_{version}.md"
-    changes = Path(PROJECT_CONFIG.root) / "doc" / "changes" / f"changelog.md"
-
-    changelog_content = extract_release_notes(unreleased)
-    changelog.write_text(new_changelog(version, changelog_content))
-
-    unreleased.write_text(new_unreleased())
-
-    changes_content = new_changes(changes, version)
-    changes.write_text(changes_content)
-
-    return changelog, changes, unreleased
 
 
 def _add_files_to_index(session: Session, files: list[Path]) -> None:
@@ -131,21 +107,24 @@ def _trigger_release() -> Version:
 @nox.session(name="release:prepare", python=False)
 def prepare_release(session: Session) -> None:
     """
-    Prepares the project for a new release.
+    Prepare the project for a new release.
     """
     parser = _create_parser()
     args = parser.parse_args(session.posargs)
-
     new_version = Version.upgrade_version_from_poetry(args.type)
 
     if not args.no_branch and not args.no_add:
-        session.run("git", "switch", "-c", f"release/prepare-{new_version}")
-
-    pm = NoxTasks.plugin_manager(PROJECT_CONFIG)
+        Git.create_and_switch_to_branch(f"release/prepare-{new_version}")
 
     _ = _update_project_version(session, new_version)
-    changelog, changes, unreleased = _update_changelog(new_version)
 
+    changelogs = Changelogs(
+        changes_path=PROJECT_CONFIG.doc / "changes", version=new_version
+    )
+    changelogs.update_changelogs_for_release()
+    changed_files = changelogs.get_changed_files()
+
+    pm = NoxTasks.plugin_manager(PROJECT_CONFIG)
     pm.hook.prepare_release_update_version(
         session=session, config=PROJECT_CONFIG, version=new_version
     )
@@ -153,18 +132,15 @@ def prepare_release(session: Session) -> None:
     if args.no_add:
         return
 
-    files = [
-        changelog,
-        unreleased,
-        changes,
+    changed_files += [
         PROJECT_CONFIG.root / "pyproject.toml",
         PROJECT_CONFIG.version_file,
     ]
     results = pm.hook.prepare_release_add_files(session=session, config=PROJECT_CONFIG)
-    files += [f for plugin_response in results for f in plugin_response]
+    changed_files += [f for plugin_response in results for f in plugin_response]
     _add_files_to_index(
         session,
-        files,
+        changed_files,
     )
     session.run("git", "commit", "-m", f"Prepare release {new_version}")
 
