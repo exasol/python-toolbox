@@ -58,31 +58,27 @@ SHARED_TEXT = cleandoc(
 )
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def changes_md(changelogs):
-    """
-    As some operations in Changelogs modify files, we need a reset per function
-    """
     changelogs.changelog_md.write_text(CHANGES_CONTENTS)
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def unreleased_md(changelogs):
-    """
-    As some operations in Changelogs modify files, we need a reset per function
-    """
     changelogs.unreleased_md.write_text(UNRELEASED_INITIAL_CONTENT + SHARED_TEXT)
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def changelogs(tmp_path) -> Changelogs:
-    """
-    As some operations in Changelogs modify files, we need a reset per function
-    """
     return Changelogs(changes_path=tmp_path, version=Version(major=1, minor=0, patch=0))
 
 
 class TestChangelogs:
+    """
+    As some methods in the class `Changelogs` modify files. The tests need to reset
+    these fixtures per function.
+    """
+
     @staticmethod
     def test_create_new_unreleased(changelogs):
         changelogs._create_new_unreleased()
