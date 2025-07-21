@@ -3,7 +3,7 @@ from inspect import cleandoc
 import pytest
 
 from exasol.toolbox.util.release.changelog import (
-    UNRELEASED_TEXT,
+    UNRELEASED_INITIAL_CONTENT,
     Changelogs,
 )
 from exasol.toolbox.util.version import Version
@@ -71,7 +71,7 @@ def unreleased_md(tmp_path, changelogs):
     """
     As some operations in Changelogs modify files, we need a reset per function
     """
-    changelogs.unreleased_md.write_text(UNRELEASED_TEXT + SHARED_TEXT)
+    changelogs.unreleased_md.write_text(UNRELEASED_INITIAL_CONTENT + SHARED_TEXT)
 
 
 @pytest.fixture
@@ -87,7 +87,7 @@ class TestChangelogs:
     def test_create_new_unreleased(changelogs):
         changelogs._create_new_unreleased()
 
-        assert changelogs.unreleased_md.read_text() == UNRELEASED_TEXT
+        assert changelogs.unreleased_md.read_text() == UNRELEASED_INITIAL_CONTENT
 
     @staticmethod
     def test_create_versioned_changelog(changelogs):
@@ -116,7 +116,7 @@ class TestChangelogs:
         # changes.md
         assert changelogs.changelog_md.read_text() == ALTERED_CHANGES_CONTENTS
         # unreleased.md
-        assert changelogs.unreleased_md.read_text() == UNRELEASED_TEXT
+        assert changelogs.unreleased_md.read_text() == UNRELEASED_INITIAL_CONTENT
         # versioned.md
         saved_text = changelogs.versioned_changelog_md.read_text()
         assert "1.0.0" in saved_text

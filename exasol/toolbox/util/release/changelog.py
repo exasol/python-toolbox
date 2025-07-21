@@ -6,7 +6,7 @@ from pathlib import Path
 
 from exasol.toolbox.util.version import Version
 
-UNRELEASED_TEXT = "# Unreleased\n"
+UNRELEASED_INITIAL_CONTENT = "# Unreleased\n"
 
 
 class Changelogs:
@@ -20,7 +20,7 @@ class Changelogs:
         """
         Write a new unreleased changelog file.
         """
-        self.unreleased_md.write_text(UNRELEASED_TEXT)
+        self.unreleased_md.write_text(UNRELEASED_INITIAL_CONTENT)
 
     def _create_versioned_changelog(self, content: str) -> None:
         """
