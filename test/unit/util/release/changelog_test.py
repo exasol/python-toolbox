@@ -8,64 +8,66 @@ from exasol.toolbox.util.release.changelog import (
 )
 from exasol.toolbox.util.version import Version
 
-CHANGES_CONTENTS = cleandoc(
-    """
-    # Changelog
 
-    * [unreleased](unreleased.md)
-    * [0.1.0](changes_0.1.0.md)
+class SampleContent:
+    changelog = cleandoc(
+        """
+        ## Added
+        * Added Awesome feature
 
-    ```{toctree}
-    ---
-    hidden:
-    ---
-    unreleased
-    changes_0.1.0
-    ```
-    """
-)
+        ## Changed
+        * Some behaviour
 
-ALTERED_CHANGES_CONTENTS = cleandoc(
-    """
-    # Changelog
+        ## Fixed
+        * Fixed nasty bug
+        """
+    )
+    changes = cleandoc(
+        """
+        # Changelog
 
-    * [unreleased](unreleased.md)
-    * [1.0.0](changes_1.0.0.md)
-    * [0.1.0](changes_0.1.0.md)
+        * [unreleased](unreleased.md)
+        * [0.1.0](changes_0.1.0.md)
 
-    ```{toctree}
-    ---
-    hidden:
-    ---
-    unreleased
-    changes_1.0.0
-    changes_0.1.0
-    ```
-    """
-)
+        ```{toctree}
+        ---
+        hidden:
+        ---
+        unreleased
+        changes_0.1.0
+        ```
+        """
+    )
+    altered_changes = cleandoc(
+        """
+        # Changelog
 
-SHARED_TEXT = cleandoc(
-    """
-    ## Added
-    * Added Awesome feature
+        * [unreleased](unreleased.md)
+        * [1.0.0](changes_1.0.0.md)
+        * [0.1.0](changes_0.1.0.md)
 
-    ## Changed
-    * Some behaviour
-
-    ## Fixed
-    * Fixed nasty bug
-    """
-)
+        ```{toctree}
+        ---
+        hidden:
+        ---
+        unreleased
+        changes_1.0.0
+        changes_0.1.0
+        ```
+        """
+    )
 
 
 @pytest.fixture(scope="function")
 def changes_md(changelogs):
-    changelogs.changelog_md.write_text(CHANGES_CONTENTS)
+    changelogs.changelog_md.write_text(SampleContent.changes)
 
 
 @pytest.fixture(scope="function")
 def unreleased_md(changelogs):
-    changelogs.unreleased_md.write_text(UNRELEASED_INITIAL_CONTENT + SHARED_TEXT)
+    changelogs.unreleased_md.write_text(
+        UNRELEASED_INITIAL_CONTENT + SampleContent.changelog
+    )
 
 
 @pytest.fixture(scope="function")
@@ -87,33 +89,33 @@ class TestChangelogs:
 
     @staticmethod
     def test_create_versioned_changelog(changelogs):
-        changelogs._create_versioned_changelog(SHARED_TEXT)
+        changelogs._create_versioned_changelog(SampleContent.changelog)
         saved_text = changelogs.versioned_changelog_md.read_text()
 
         assert "1.0.0" in saved_text
-        assert SHARED_TEXT in saved_text
+        assert SampleContent.changelog in saved_text
 
     @staticmethod
     def test_extract_unreleased_notes(changelogs, unreleased_md):
         result = changelogs._extract_unreleased_notes()
 
-        assert result == SHARED_TEXT + "\n"
+        assert result == SampleContent.changelog + "\n"
 
     @staticmethod
     def test_update_changelog_table_of_contents(changelogs, changes_md):
         changelogs._update_changelog_table_of_contents()
 
-        assert changelogs.changelog_md.read_text() == ALTERED_CHANGES_CONTENTS
+        assert changelogs.changelog_md.read_text() == SampleContent.altered_changes
 
     @staticmethod
     def test_update_changelogs_for_release(changelogs, unreleased_md, changes_md):
         changelogs.update_changelogs_for_release()
 
         # changes.md
-        assert changelogs.changelog_md.read_text() == ALTERED_CHANGES_CONTENTS
+        assert changelogs.changelog_md.read_text() == SampleContent.altered_changes
         # unreleased.md
         assert changelogs.unreleased_md.read_text() == UNRELEASED_INITIAL_CONTENT
         # versioned.md
         saved_text = changelogs.versioned_changelog_md.read_text()
         assert "1.0.0" in saved_text
-        assert SHARED_TEXT in saved_text
+        assert SampleContent.changelog in saved_text
