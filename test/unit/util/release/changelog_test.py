@@ -77,8 +77,10 @@ def changelogs(tmp_path) -> Changelogs:
 
 class TestChangelogs:
     """
-    As some methods in the class `Changelogs` modify files. The tests need to reset
-    these fixtures per function.
+    As some methods in the class `Changelogs` modify files, it is required that the
+    fixtures which create the sample files (changelog.md, unreleased.md, & changes_1.0.0.md)
+    reset per function and use `tmp_path`. By doing this, we ensure that the sample
+    are in their expected state for each test.
     """
 
     @staticmethod
