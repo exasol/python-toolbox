@@ -59,7 +59,7 @@ SHARED_TEXT = cleandoc(
 
 
 @pytest.fixture
-def changes_md(tmp_path, changelogs):
+def changes_md(changelogs):
     """
     As some operations in Changelogs modify files, we need a reset per function
     """
@@ -67,7 +67,7 @@ def changes_md(tmp_path, changelogs):
 
 
 @pytest.fixture
-def unreleased_md(tmp_path, changelogs):
+def unreleased_md(changelogs):
     """
     As some operations in Changelogs modify files, we need a reset per function
     """
