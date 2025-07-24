@@ -2,19 +2,26 @@ from __future__ import annotations
 
 from datetime import datetime
 from inspect import cleandoc
+from itertools import chain
 from pathlib import Path
 
+from exasol.toolbox.util.dependencies.poetry_dependencies import (
+    get_dependencies,
+    get_dependencies_from_latest_tag,
+)
+from exasol.toolbox.util.dependencies.track_changes import DependencyChanges
 from exasol.toolbox.util.version import Version
 
 UNRELEASED_INITIAL_CONTENT = "# Unreleased\n"
 
 
 class Changelogs:
-    def __init__(self, changes_path: Path, version: Version) -> None:
+    def __init__(self, changes_path: Path, source_path: Path, version: Version) -> None:
         self.version = version
         self.unreleased_md: Path = changes_path / "unreleased.md"
         self.versioned_changelog_md: Path = changes_path / f"changes_{version}.md"
         self.changelog_md: Path = changes_path / "changelog.md"
+        self.source_path: Path = source_path
 
     def _create_new_unreleased(self):
         """
@@ -22,22 +29,21 @@ class Changelogs:
         """
         self.unreleased_md.write_text(UNRELEASED_INITIAL_CONTENT)
 
-    def _create_versioned_changelog(self, content: str) -> None:
+    def _create_versioned_changelog(self, unreleased_content: str) -> None:
         """
         Create a changelog entry for a specific version.
 
         Args:
-            content: The content of the changelog entry.
+            unreleased_content: The content of the changelog entry.
 
         """
-        template = cleandoc(
-            f"""
-            # {self.version} - {datetime.today().strftime("%Y-%m-%d")}
+        template = f"# {self.version} - {datetime.today().strftime('%Y-%m-%d')}"
+        template += f"\n{unreleased_content}"
 
-            {content}
-            """
-        )
-        self.versioned_changelog_md.write_text(template)
+        if dependency_content := self._prepare_dependency_update():
+            template += f"\n## Dependency Updates\n{dependency_content}"
+
+        self.versioned_changelog_md.write_text(cleandoc(template))
 
     def _extract_unreleased_notes(self) -> str:
         """
@@ -49,6 +55,36 @@ class Changelogs:
         unreleased_content = cleandoc("".join(lines))
         unreleased_content += "\n"
         return unreleased_content
+
+    def _prepare_dependency_update(self) -> str:
+        old_dependencies_in_groups = get_dependencies_from_latest_tag()
+        current_dependencies_in_groups = get_dependencies(
+            working_directory=self.source_path
+        )
+
+        content = ""
+        # preserve order of keys from old group
+        groups = list(
+            dict.fromkeys(
+                chain(
+                    old_dependencies_in_groups.keys(),
+                    current_dependencies_in_groups.keys(),
+                )
+            )
+        )
+        for group in groups:
+            old_dependencies = old_dependencies_in_groups.get(group, {})
+            current_dependencies = current_dependencies_in_groups.get(group, {})
+            changes = DependencyChanges(
+                old_dependencies=old_dependencies,
+                current_dependencies=current_dependencies,
+            ).changes
+            if changes:
+                # nicer group heading
+                content += f"\n### `{group}`\n"
+                content += "\n".join(str(change) for change in changes)
+                content += "\n"
+        return content
 
     def _update_changelog_table_of_contents(self) -> None:
         """

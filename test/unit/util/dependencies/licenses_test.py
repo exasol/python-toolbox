@@ -9,13 +9,6 @@ from exasol.toolbox.util.dependencies.licenses import (
     _normalize,
     _packages_from_json,
 )
-from exasol.toolbox.util.dependencies.poetry_dependencies import PoetryGroup
-from exasol.toolbox.util.dependencies.shared_models import (
-    Package,
-)
-
-MAIN_GROUP = PoetryGroup(name="main", toml_section="project.dependencies")
-DEV_GROUP = PoetryGroup(name="dev", toml_section="tool.poetry.group.dev.dependencies")
 
 
 class TestPackageLicense:
@@ -101,15 +94,7 @@ def test_packages_from_json():
     }
 
 
-@pytest.fixture(scope="class")
-def dependencies():
-    return {
-        MAIN_GROUP.name: {"package1": Package(name="package1", version="0.1.0")},
-        DEV_GROUP.name: {"package2": Package(name="package2", version="0.2.0")},
-    }
-
-
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="module")
 def package_license_report(dependencies):
     licenses = {
         "package1": PackageLicense(
@@ -131,9 +116,9 @@ def package_license_report(dependencies):
 
 class TestPackageLicenseReport:
     @staticmethod
-    def test_format_group_table_header(package_license_report):
+    def test_format_group_table_header(package_license_report, main_group):
         result = package_license_report._format_group_table_header(
-            group=MAIN_GROUP.name
+            group=main_group.name
         )
 
         assert (
@@ -142,11 +127,11 @@ class TestPackageLicenseReport:
         )
 
     @staticmethod
-    def test_format_group_table(package_license_report, dependencies):
-        group_package_names = set(dependencies[MAIN_GROUP.name].keys())
+    def test_format_group_table(package_license_report, dependencies, main_group):
+        group_package_names = set(dependencies[main_group.name].keys())
 
         result = package_license_report._format_group_table(
-            group=MAIN_GROUP.name, group_package_names=group_package_names
+            group=main_group.name, group_package_names=group_package_names
         )
 
         assert result == (

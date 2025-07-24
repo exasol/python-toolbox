@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import subprocess
 import tempfile
+from collections import OrderedDict
 from pathlib import Path
 from typing import Optional
 
@@ -105,8 +106,10 @@ class PoetryDependencies(BaseModel):
         }
 
     @property
-    def direct_dependencies(self) -> dict[str, dict[NormalizedPackageStr, Package]]:
-        dependencies = {}
+    def direct_dependencies(
+        self,
+    ) -> OrderedDict[str, dict[NormalizedPackageStr, Package]]:
+        dependencies = OrderedDict()
         for group in self.groups:
             command = (
                 "poetry",
@@ -127,7 +130,7 @@ class PoetryDependencies(BaseModel):
         return dependencies
 
     @property
-    def all_dependencies(self) -> dict[str, dict[NormalizedPackageStr, Package]]:
+    def all_dependencies(self) -> OrderedDict[str, dict[NormalizedPackageStr, Package]]:
         command = ("poetry", "show", "--no-truncate")
         output = subprocess.run(
             command,
