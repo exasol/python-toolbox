@@ -142,7 +142,7 @@ class PackageLicenseReport:
         group_header = self._format_group_table_header(group=group)
 
         rows_text = ""
-        for package_name in group_package_names:
+        for package_name in sorted(group_package_names):
             if license_info := self.licenses.get(package_name):
                 rows_text += self._format_table_row(license_info=license_info)
 
