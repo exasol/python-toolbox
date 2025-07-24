@@ -158,7 +158,7 @@ class PoetryDependencies(BaseModel):
 
 def get_dependencies(
     working_directory: Path,
-) -> dict[str, dict[NormalizedPackageStr, Package]]:
+) -> OrderedDict[str, dict[NormalizedPackageStr, Package]]:
     poetry_dep = PoetryToml.load_from_toml(working_directory=working_directory)
     return PoetryDependencies(
         groups=poetry_dep.groups, working_directory=working_directory
@@ -166,7 +166,7 @@ def get_dependencies(
 
 
 def get_dependencies_from_latest_tag() -> (
-    dict[str, dict[NormalizedPackageStr, Package]]
+    OrderedDict[str, dict[NormalizedPackageStr, Package]]
 ):
     latest_tag = Git.get_latest_tag()
     with tempfile.TemporaryDirectory() as path:
