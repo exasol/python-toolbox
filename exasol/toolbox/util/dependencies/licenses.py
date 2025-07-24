@@ -2,13 +2,18 @@ from __future__ import annotations
 
 import subprocess
 import tempfile
+from dataclasses import dataclass
 from inspect import cleandoc
 from json import loads
 from typing import Optional
 
 from pydantic import field_validator
 
-from exasol.toolbox.util.dependencies.shared_models import Package
+from exasol.toolbox.util.dependencies.shared_models import (
+    NormalizedPackageStr,
+    Package,
+    normalize_package_name,
+)
 
 LICENSE_MAPPING_TO_ABBREVIATION = {
     "BSD License": "BSD",
@@ -88,20 +93,20 @@ def _normalize(_license: str) -> str:
     return LICENSE_MAPPING_TO_ABBREVIATION.get(_license, _license)
 
 
-def _packages_from_json(json: str) -> list[PackageLicense]:
+def _packages_from_json(json: str) -> dict[NormalizedPackageStr, PackageLicense]:
     packages = loads(json)
-    return [
-        PackageLicense(
+    return {
+        normalize_package_name(package["Name"]): PackageLicense(
             name=package["Name"],
             package_link=package["URL"],
             version=package["Version"],
             license=package["License"],
         )
         for package in packages
-    ]
+    }
 
 
-def licenses() -> list[PackageLicense]:
+def get_licenses() -> dict[NormalizedPackageStr, PackageLicense]:
     with tempfile.NamedTemporaryFile() as file:
         subprocess.run(
             [
@@ -117,62 +122,56 @@ def licenses() -> list[PackageLicense]:
         return _packages_from_json(file.read().decode())
 
 
-def packages_to_markdown(
-    dependencies: dict[str, list], packages: list[PackageLicense]
-) -> str:
-    def heading():
-        return "# Dependencies\n"
+@dataclass(frozen=True)
+class PackageLicenseReport:
+    dependencies: dict[str, dict[NormalizedPackageStr, Package]]
+    licenses: dict[NormalizedPackageStr, PackageLicense]
 
-    def dependency(
-        group: str,
-        group_packages: list[Package],
-        packages: list[PackageLicense],
-    ) -> str:
-        def _header(_group: str):
-            _group = "".join([word.capitalize() for word in _group.strip().split()])
-            text = f"## {_group} Dependencies\n"
-            text += "|Package|Version|License|\n"
-            text += "|---|---|---|\n"
-            return text
+    @staticmethod
+    def _format_group_table_header(group: str):
+        _group = "".join([word.capitalize() for word in group.strip().split()])
+        text = f"## `{group}` Dependencies\n"
+        text += "|Package|Version|License|\n"
+        text += "|---|---|---|\n"
+        return text
 
-        def _rows(
-            _group_packages: list[Package], _packages: list[PackageLicense]
-        ) -> str:
-            text = ""
-            for package in _group_packages:
-                consistent = filter(
-                    lambda elem: elem.normalized_name == package.normalized_name,
-                    _packages,
-                )
-                for content in consistent:
-                    if content.package_link:
-                        text += f"|[{content.name}]({content.package_link})"
-                    else:
-                        text += f"|{content.name}"
-                    text += f"|{content.version}"
-                    if content.license_link:
-                        text += f"|[{content.license}]({content.license_link})|\n"
-                    else:
-                        text += f"|{content.license}|\n"
-            text += "\n"
-            return text
+    def _format_group_table(
+        self, group: str, group_package_names: set[NormalizedPackageStr]
+    ):
+        group_header = self._format_group_table_header(group=group)
 
-        _template = cleandoc(
-            """
-            {header}{rows}
-        """
-        )
-        return _template.format(
-            header=_header(group), rows=_rows(group_packages, packages)
-        )
+        rows_text = ""
+        for package_name in group_package_names:
+            if license_info := self.licenses.get(package_name):
+                rows_text += self._format_table_row(license_info=license_info)
 
-    template = cleandoc(
-        """
-        {heading}{rows}
-    """
-    )
+        return f"""{group_header}{rows_text}\n"""
 
-    rows = ""
-    for group in dependencies:
-        rows += dependency(group, dependencies[group], packages)
-    return template.format(heading=heading(), rows=rows)
+    @staticmethod
+    def _format_table_row(license_info: PackageLicense) -> str:
+        text = ""
+        # column: package
+        if license_info.package_link:
+            text += f"|[{license_info.name}]({license_info.package_link})"
+        else:
+            text += f"|{license_info.name}"
+
+        # column: version
+        text += f"|{license_info.version}"
+
+        # column: license
+        if license_info.license_link:
+            text += f"|[{license_info.license}]({license_info.license_link})|"
+        else:
+            text += f"|{license_info.license}|"
+
+        return text + "\n"
+
+    def to_markdown(self) -> str:
+        rows = ""
+        for group in self.dependencies:
+            group_package_names = set(self.dependencies[group].keys())
+            rows += self._format_group_table(
+                group=group, group_package_names=group_package_names
+            )
+        return cleandoc(f"""# Dependencies\n\n{rows}""")
