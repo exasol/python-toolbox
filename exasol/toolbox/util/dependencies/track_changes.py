@@ -78,8 +78,8 @@ class DependencyChanges(BaseModel):
             return RemovedDependency.from_package(old_dependency)
         elif not old_dependency and current_dependency:
             return AddedDependency.from_package(current_dependency)
-        elif old_dependency.version != current_dependency.version:
-            return UpdatedDependency.from_package(old_dependency, current_dependency)
+        elif old_dependency.version != current_dependency.version:  # type: ignore
+            return UpdatedDependency.from_package(old_dependency, current_dependency)  # type: ignore
         # dependency was unchanged between versions
         return None
 
