@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import subprocess
 import tempfile
+from collections import OrderedDict
 from dataclasses import dataclass
 from inspect import cleandoc
 from json import loads
@@ -124,7 +125,7 @@ def get_licenses() -> dict[NormalizedPackageStr, PackageLicense]:
 
 @dataclass(frozen=True)
 class PackageLicenseReport:
-    dependencies: dict[str, dict[NormalizedPackageStr, Package]]
+    dependencies: OrderedDict[str, dict[NormalizedPackageStr, Package]]
     licenses: dict[NormalizedPackageStr, PackageLicense]
 
     @staticmethod
