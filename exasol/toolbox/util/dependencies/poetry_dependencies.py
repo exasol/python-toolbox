@@ -92,15 +92,15 @@ class PoetryDependencies(BaseModel):
             return None
         return Package(name=split_line[0], version=split_line[1])
 
-    def _extract_from_poetry_show(self, output_text: str) -> list[Package]:
-        return [
-            package
+    def _extract_from_poetry_show(self, output_text: str) -> dict[str, Package]:
+        return {
+            package.name: package
             for line in output_text.splitlines()
             if (package := self._extract_from_line(line))
-        ]
+        }
 
     @property
-    def direct_dependencies(self) -> dict[str, list[Package]]:
+    def direct_dependencies(self) -> dict[str, dict[str, Package]]:
         dependencies = {}
         for group in self.groups:
             command = (
@@ -122,7 +122,7 @@ class PoetryDependencies(BaseModel):
         return dependencies
 
     @property
-    def all_dependencies(self) -> dict[str, list[Package]]:
+    def all_dependencies(self) -> dict[str, dict[str, Package]]:
         command = ("poetry", "show", "--no-truncate")
         output = subprocess.run(
             command,
@@ -133,16 +133,17 @@ class PoetryDependencies(BaseModel):
         )
 
         direct_dependencies = self.direct_dependencies.copy()
-        transitive_dependencies = []
+
+        transitive_dependencies = {}
         names_direct_dependencies = {
-            dep.name
-            for group_list in direct_dependencies.values()
-            for dep in group_list
+            package_name
+            for group_list in direct_dependencies
+            for package_name in group_list
         }
         for line in output.stdout.splitlines():
             dep = self._extract_from_line(line=line)
             if dep and dep.name not in names_direct_dependencies:
-                transitive_dependencies.append(dep)
+                transitive_dependencies[dep.name] = dep
 
         return direct_dependencies | {TRANSITIVE_GROUP.name: transitive_dependencies}
 

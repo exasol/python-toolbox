@@ -23,9 +23,9 @@ ISORT = Package(name="isort", version="6.0.1")
 BLACK = Package(name="black", version="25.1.0")
 
 DIRECT_DEPENDENCIES = {
-    MAIN_GROUP.name: [PYLINT],
-    DEV_GROUP.name: [ISORT],
-    ANALYSIS_GROUP.name: [BLACK],
+    MAIN_GROUP.name: {PYLINT.name: PYLINT},
+    DEV_GROUP.name: {ISORT.name: ISORT},
+    ANALYSIS_GROUP.name: {BLACK.name: BLACK},
 }
 
 
