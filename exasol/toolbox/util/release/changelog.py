@@ -132,7 +132,7 @@ class Changelogs:
         """
         Rotates the changelogs as is needed for a release.
 
-          1. Moves the changes from the `unreleased.md` to the `changes_<version>.md`
+          1. Moves the contents from the `unreleased.md` to the `changes_<version>.md`
           2. Create a new file `unreleased.md`
           3. Updates the table of contents in the `changelog.md` with the new `changes_<version>.md`
         """
