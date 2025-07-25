@@ -24,7 +24,8 @@ class TestDependencyChanges:
     @staticmethod
     def test_removed_dependency():
         changes = DependencyChanges(
-            old_dependencies=SamplePackage().dependency_dict, current_dependencies={}
+            previous_dependencies=SamplePackage().dependency_dict,
+            current_dependencies={},
         )
 
         result = changes._categorize_change(SamplePackage.name)
@@ -35,7 +36,8 @@ class TestDependencyChanges:
     @staticmethod
     def test_added_dependency():
         changes = DependencyChanges(
-            old_dependencies={}, current_dependencies=SamplePackage().dependency_dict
+            previous_dependencies={},
+            current_dependencies=SamplePackage().dependency_dict,
         )
 
         result = changes._categorize_change(SamplePackage.name)
@@ -48,7 +50,7 @@ class TestDependencyChanges:
         old_package = Package(name=SamplePackage.name, version="24.1.0")
 
         changes = DependencyChanges(
-            old_dependencies={SamplePackage.name: old_package},
+            previous_dependencies={SamplePackage.name: old_package},
             current_dependencies=SamplePackage().dependency_dict,
         )
 
@@ -62,7 +64,7 @@ class TestDependencyChanges:
     @staticmethod
     def test_dependency_without_changes():
         changes = DependencyChanges(
-            old_dependencies=SamplePackage().dependency_dict,
+            previous_dependencies=SamplePackage().dependency_dict,
             current_dependencies=SamplePackage().dependency_dict,
         )
 
@@ -73,7 +75,7 @@ class TestDependencyChanges:
     @staticmethod
     def test_changes_with_no_changed_dependencies():
         changes = DependencyChanges(
-            old_dependencies=SamplePackage().dependency_dict,
+            previous_dependencies=SamplePackage().dependency_dict,
             current_dependencies=SamplePackage().dependency_dict,
         )
 
@@ -86,7 +88,7 @@ class TestDependencyChanges:
         current_dependencies[added_package.name] = added_package
 
         changes = DependencyChanges(
-            old_dependencies=SamplePackage().dependency_dict,
+            previous_dependencies=SamplePackage().dependency_dict,
             current_dependencies=current_dependencies,
         )
 

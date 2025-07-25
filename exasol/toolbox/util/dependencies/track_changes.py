@@ -68,21 +68,21 @@ class UpdatedDependency(DependencyChange):
 class DependencyChanges(BaseModel):
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
-    old_dependencies: dict[NormalizedPackageStr, Package]
+    previous_dependencies: dict[NormalizedPackageStr, Package]
     current_dependencies: dict[NormalizedPackageStr, Package]
 
     def _categorize_change(self, dependency_name: str) -> Union[DependencyChange, None]:
         """
         Categorize dependency change as removed, added, or updated.
         """
-        old_dependency = self.old_dependencies.get(dependency_name)
+        previous_dependency = self.previous_dependencies.get(dependency_name)
         current_dependency = self.current_dependencies.get(dependency_name)
-        if old_dependency and not current_dependency:
-            return RemovedDependency.from_package(old_dependency)
-        elif not old_dependency and current_dependency:
+        if previous_dependency and not current_dependency:
+            return RemovedDependency.from_package(previous_dependency)
+        elif not previous_dependency and current_dependency:
             return AddedDependency.from_package(current_dependency)
-        elif old_dependency.version != current_dependency.version:  # type: ignore
-            return UpdatedDependency.from_package(old_dependency, current_dependency)  # type: ignore
+        elif previous_dependency.version != current_dependency.version:  # type: ignore
+            return UpdatedDependency.from_package(previous_dependency, current_dependency)  # type: ignore
         # dependency was unchanged between versions
         return None
 
@@ -92,7 +92,7 @@ class DependencyChanges(BaseModel):
         Return dependency changes
         """
         all_dependencies = sorted(
-            self.old_dependencies.keys() | self.current_dependencies.keys()
+            self.previous_dependencies.keys() | self.current_dependencies.keys()
         )
         return [
             change_dependency

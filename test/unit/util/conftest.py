@@ -17,7 +17,7 @@ def dev_group():
 
 
 @pytest.fixture(scope="module")
-def old_dependencies(main_group, dev_group):
+def previous_dependencies(main_group, dev_group):
     deps = OrderedDict()
     deps[main_group.name] = {"package1": Package(name="package1", version="0.0.1")}
     return deps

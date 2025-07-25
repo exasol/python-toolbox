@@ -73,10 +73,10 @@ def unreleased_md(changelogs):
 
 
 @pytest.fixture(scope="function")
-def mock_dependencies(dependencies, old_dependencies):
+def mock_dependencies(dependencies, previous_dependencies):
     with mock.patch.multiple(
         "exasol.toolbox.util.release.changelog",
-        get_dependencies_from_latest_tag=lambda: old_dependencies,
+        get_dependencies_from_latest_tag=lambda: previous_dependencies,
         get_dependencies=lambda working_directory: dependencies,
     ):
         yield

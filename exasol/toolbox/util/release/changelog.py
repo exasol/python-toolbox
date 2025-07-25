@@ -57,7 +57,7 @@ class Changelogs:
         return unreleased_content
 
     def _prepare_dependency_update(self) -> str:
-        old_dependencies_in_groups = get_dependencies_from_latest_tag()
+        previous_dependencies_in_groups = get_dependencies_from_latest_tag()
         current_dependencies_in_groups = get_dependencies(
             working_directory=self.source_path
         )
@@ -67,16 +67,16 @@ class Changelogs:
         groups = list(
             dict.fromkeys(
                 chain(
-                    old_dependencies_in_groups.keys(),
+                    previous_dependencies_in_groups.keys(),
                     current_dependencies_in_groups.keys(),
                 )
             )
         )
         for group in groups:
-            old_dependencies = old_dependencies_in_groups.get(group, {})
+            previous_dependencies = previous_dependencies_in_groups.get(group, {})
             current_dependencies = current_dependencies_in_groups.get(group, {})
             changes = DependencyChanges(
-                old_dependencies=old_dependencies,
+                previous_dependencies=previous_dependencies,
                 current_dependencies=current_dependencies,
             ).changes
             if changes:
