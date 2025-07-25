@@ -17,6 +17,14 @@ UNRELEASED_INITIAL_CONTENT = "# Unreleased\n"
 
 class Changelogs:
     def __init__(self, changes_path: Path, root_path: Path, version: Version) -> None:
+        """
+        Args:
+            changes_path: directory containing the changelog, e.g. `doc/changes/`
+            root_path: root directory of the current project, containing file
+                `pyproject.toml`
+            version: the version to be used in the `changes_{version}.md` and listed in the `changelog.md`.
+        """
+
         self.version = version
         self.unreleased_md: Path = changes_path / "unreleased.md"
         self.versioned_changelog_md: Path = changes_path / f"changes_{version}.md"
