@@ -83,8 +83,8 @@ class DependencyChanges(BaseModel):
             return AddedDependency.from_package(current_dependency)
         elif previous_dependency.version != current_dependency.version:  # type: ignore
             return UpdatedDependency.from_package(
-                previous_dependency, current_dependency
-            )  # type: ignore
+                previous_dependency, current_dependency  # type: ignore
+            )
         # dependency was unchanged between versions
         return None
 

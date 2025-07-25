@@ -44,12 +44,13 @@ class Changelogs:
         Args:
             unreleased_content: the content of the (not yet versioned) changes
         """
-        template = f"# {self.version} - {datetime.today().strftime('%Y-%m-%d')}"
-        template += f"\n{unreleased_content}"
+        header = f"# {self.version} - {datetime.today().strftime('%Y-%m-%d')}"
 
-        if dependency_content := self._describe_dependency_changes():
-            template += f"\n## Dependency Updates\n{dependency_content}"
+        dependency_content = ""
+        if dependency_changes := self._describe_dependency_changes():
+            dependency_content = f"## Dependency Updates\n{dependency_changes}"
 
+        template = cleandoc(f"{header}\n{unreleased_content}\n{dependency_content}")
         self.versioned_changelog_md.write_text(cleandoc(template))
 
     def _extract_unreleased_notes(self) -> str:
@@ -60,8 +61,7 @@ class Changelogs:
             # skip header when reading in file, as contains # Unreleased
             lines = f.readlines()[1:]
         unreleased_content = cleandoc("".join(lines))
-        unreleased_content += "\n"
-        return unreleased_content
+        return unreleased_content + "\n"
 
     def _describe_dependency_changes(self) -> str:
         """
