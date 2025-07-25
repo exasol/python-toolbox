@@ -130,11 +130,15 @@ class PackageLicenseReport:
 
     @staticmethod
     def _format_group_table_header(group: str):
-        _group = "".join([word.capitalize() for word in group.strip().split()])
-        text = f"## `{group}` Dependencies\n"
-        text += "|Package|Version|License|\n"
-        text += "|---|---|---|\n"
-        return text
+        return (
+            cleandoc(
+                f"""## `{group}` Dependencies
+            |Package|Version|License|
+            |---|---|---|
+        """
+            )
+            + "\n"
+        )
 
     def _format_group_table(
         self, group: str, group_package_names: set[NormalizedPackageStr]
