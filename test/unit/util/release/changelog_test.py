@@ -144,6 +144,22 @@ class TestChangelogs:
         )
 
     @staticmethod
+    @pytest.mark.parametrize(
+        "groups,expected",
+        [
+            pytest.param(
+                {"dev", "abcd", "main"}, ["main", "abcd", "dev"], id="with_main"
+            ),
+            pytest.param(
+                {"dev", "abcd", "bacd"}, ["abcd", "bacd", "dev"], id="without_main"
+            ),
+        ],
+    )
+    def test_sort_groups(changelogs, groups, expected):
+        result = changelogs._sort_groups(groups)
+        assert result == expected
+
+    @staticmethod
     def test_update_changelog_table_of_contents(changelogs, changes_md):
         changelogs._update_changelog_table_of_contents()
 

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from datetime import datetime
 from inspect import cleandoc
-from itertools import chain
 from pathlib import Path
 
 from exasol.toolbox.util.dependencies.poetry_dependencies import (
@@ -75,16 +74,12 @@ class Changelogs:
         )
 
         changes_by_group: list[str] = []
-        # preserve order of keys from old group
-        groups = list(
-            dict.fromkeys(
-                chain(
-                    previous_dependencies_in_groups.keys(),
-                    current_dependencies_in_groups.keys(),
-                )
-            )
+        # dict.keys() returns a set
+        all_groups = (
+            previous_dependencies_in_groups.keys()
+            | current_dependencies_in_groups.keys()
         )
-        for group in groups:
+        for group in self._sort_groups(all_groups):
             previous_dependencies = previous_dependencies_in_groups.get(group, {})
             current_dependencies = current_dependencies_in_groups.get(group, {})
             changes = DependencyChanges(
@@ -95,6 +90,21 @@ class Changelogs:
                 changes_str = "\n".join(str(change) for change in changes)
                 changes_by_group.append(f"\n### `{group}`\n{changes_str}\n")
         return "".join(changes_by_group)
+
+    @staticmethod
+    def _sort_groups(groups: set[str]) -> list[str]:
+        """
+        Prepare a deterministic sorting for groups shown in the versioned changes file:
+            - `main` group should always be first
+            - remaining groups are sorted alphabetically
+        """
+        main = "main"
+        if main not in groups:
+            # sorted converts set to list
+            return sorted(groups)
+        remaining_groups = groups - {main}
+        # sorted converts set to list
+        return [main] + sorted(remaining_groups)
 
     def _update_changelog_table_of_contents(self) -> None:
         """
