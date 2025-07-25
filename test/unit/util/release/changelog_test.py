@@ -1,3 +1,4 @@
+from datetime import datetime
 from inspect import cleandoc
 from unittest import mock
 
@@ -161,7 +162,7 @@ class TestChangelogs:
         # versioned.md
         saved_text = changelogs.versioned_changelog_md.read_text()
         assert saved_text == cleandoc(
-            """# 1.0.0 - 2025-07-24
+            f"""# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
             ## Added
             * Added Awesome feature
 
@@ -178,7 +179,7 @@ class TestChangelogs:
 
             ### `dev`
             * Added dependency `package2:0.2.0`
-        """
+            """
         )
 
     @staticmethod
@@ -194,7 +195,7 @@ class TestChangelogs:
         # versioned.md
         saved_text = changelogs.versioned_changelog_md.read_text()
         assert saved_text == cleandoc(
-            """# 1.0.0 - 2025-07-24
+            f"""# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
             ## Added
             * Added Awesome feature
 
@@ -203,5 +204,5 @@ class TestChangelogs:
 
             ## Fixed
             * Fixed nasty bug
-        """
+            """
         )
