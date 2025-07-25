@@ -144,12 +144,12 @@ class PackageLicenseReport:
     ) -> str:
         group_header = self._format_group_table_header(group=group)
 
-        rows_text = ""
+        rows = []
         for package_name in sorted(group_package_names):
             if license_info := self.licenses.get(package_name):
-                rows_text += self._format_table_row(license_info=license_info)
+                rows.append(self._format_table_row(license_info=license_info))
 
-        return f"""{group_header}\n{rows_text}\n"""
+        return f"""{group_header}\n{''.join(rows)}\n"""
 
     @staticmethod
     def _format_table_row(license_info: PackageLicense) -> str:
@@ -164,10 +164,12 @@ class PackageLicenseReport:
         return f"|{row_package}|{license_info.version}|{row_license}|\n"
 
     def to_markdown(self) -> str:
-        rows = ""
+        rows = []
         for group in self.dependencies:
             group_package_names = set(self.dependencies[group].keys())
-            rows += self._format_group_table(
-                group=group, group_package_names=group_package_names
+            rows.append(
+                self._format_group_table(
+                    group=group, group_package_names=group_package_names
+                )
             )
-        return cleandoc(f"""# Dependencies\n\n{rows}""")
+        return cleandoc(f"""# Dependencies\n\n{''.join(rows)}""")
