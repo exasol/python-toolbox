@@ -10,7 +10,10 @@ from pydantic import (
     ConfigDict,
 )
 
-from exasol.toolbox.util.dependencies.shared_models import Package
+from exasol.toolbox.util.dependencies.shared_models import (
+    NormalizedPackageStr,
+    Package,
+)
 
 
 class DependencyChange(BaseModel):
@@ -65,8 +68,8 @@ class UpdatedDependency(DependencyChange):
 class DependencyChanges(BaseModel):
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
-    old_dependencies: dict
-    current_dependencies: dict
+    old_dependencies: dict[NormalizedPackageStr, Package]
+    current_dependencies: dict[NormalizedPackageStr, Package]
 
     def _categorize_change(self, dependency_name: str) -> Union[DependencyChange, None]:
         """
