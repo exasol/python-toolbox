@@ -45,12 +45,12 @@ class RemovedDependency(DependencyChange):
 
 
 class UpdatedDependency(DependencyChange):
-    old_version: Version
+    previous_version: Version
     current_version: Version
 
     def __str__(self) -> str:
         return (
-            f"* Updated dependency `{self.name}:{self.old_version}` "
+            f"* Updated dependency `{self.name}:{self.previous_version}` "
             f"to `{self.current_version}`"
         )
 
@@ -60,7 +60,7 @@ class UpdatedDependency(DependencyChange):
     ) -> UpdatedDependency:
         return cls(
             name=old_package.name,
-            old_version=old_package.version,
+            previous_version=old_package.version,
             current_version=current_package.version,
         )
 
