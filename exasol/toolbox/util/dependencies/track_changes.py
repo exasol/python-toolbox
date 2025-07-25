@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from typing import (
-    Union,
-)
+from typing import Optional
 
 from packaging.version import Version
 from pydantic import (
@@ -73,7 +71,7 @@ class DependencyChanges(BaseModel):
 
     def _categorize_change(
         self, dependency_name: NormalizedPackageStr
-    ) -> Union[DependencyChange, None]:
+    ) -> Optional[DependencyChange]:
         """
         Categorize dependency change as removed, added, or updated.
         """
@@ -84,7 +82,9 @@ class DependencyChanges(BaseModel):
         elif not previous_dependency and current_dependency:
             return AddedDependency.from_package(current_dependency)
         elif previous_dependency.version != current_dependency.version:  # type: ignore
-            return UpdatedDependency.from_package(previous_dependency, current_dependency)  # type: ignore
+            return UpdatedDependency.from_package(
+                previous_dependency, current_dependency
+            )  # type: ignore
         # dependency was unchanged between versions
         return None
 

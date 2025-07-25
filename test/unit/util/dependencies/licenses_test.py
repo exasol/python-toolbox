@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Optional
 
 import pytest
 
@@ -167,8 +167,8 @@ class TestPackageLicenseReport:
     )
     def test_format_table_row(
         package_license_report,
-        package_link: Union[str, None],
-        license_link: Union[str, None],
+        package_link: Optional[str],
+        license_link: Optional[str],
         expected,
     ):
         _license = PackageLicense(
