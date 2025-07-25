@@ -93,6 +93,7 @@ class DependencyChanges(BaseModel):
         """
         Return dependency changes
         """
+        # dict.keys() returns a set converted into a list by `sorted()`
         all_dependencies = sorted(
             self.previous_dependencies.keys() | self.current_dependencies.keys()
         )
