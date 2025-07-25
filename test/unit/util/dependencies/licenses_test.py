@@ -122,8 +122,7 @@ class TestPackageLicenseReport:
         )
 
         assert (
-            result
-            == "## `main` Dependencies\n|Package|Version|License|\n|---|---|---|\n"
+            result == "## `main` Dependencies\n|Package|Version|License|\n|---|---|---|"
         )
 
     @staticmethod

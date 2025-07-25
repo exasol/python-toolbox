@@ -130,14 +130,11 @@ class PackageLicenseReport:
 
     @staticmethod
     def _format_group_table_header(group: str) -> str:
-        return (
-            cleandoc(
-                f"""## `{group}` Dependencies
+        return cleandoc(
+            f"""## `{group}` Dependencies
             |Package|Version|License|
             |---|---|---|
-        """
-            )
-            + "\n"
+            """
         )
 
     def _format_group_table(
@@ -150,7 +147,7 @@ class PackageLicenseReport:
             if license_info := self.licenses.get(package_name):
                 rows_text += self._format_table_row(license_info=license_info)
 
-        return f"""{group_header}{rows_text}\n"""
+        return f"""{group_header}\n{rows_text}\n"""
 
     @staticmethod
     def _format_table_row(license_info: PackageLicense) -> str:
