@@ -13,7 +13,6 @@ from pydantic import field_validator
 from exasol.toolbox.util.dependencies.shared_models import (
     NormalizedPackageStr,
     Package,
-    normalize_package_name,
 )
 
 LICENSE_MAPPING_TO_ABBREVIATION = {
@@ -97,13 +96,16 @@ def _normalize(_license: str) -> str:
 def _packages_from_json(json: str) -> dict[NormalizedPackageStr, PackageLicense]:
     packages = loads(json)
     return {
-        normalize_package_name(package["Name"]): PackageLicense(
-            name=package["Name"],
-            package_link=package["URL"],
-            version=package["Version"],
-            license=package["License"],
-        )
+        package_license.normalized_name: package_license
         for package in packages
+        if (
+            package_license := PackageLicense(
+                name=package["Name"],
+                package_link=package["URL"],
+                version=package["Version"],
+                license=package["License"],
+            )
+        )
     }
 
 
