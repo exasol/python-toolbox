@@ -16,12 +16,12 @@ UNRELEASED_INITIAL_CONTENT = "# Unreleased\n"
 
 
 class Changelogs:
-    def __init__(self, changes_path: Path, source_path: Path, version: Version) -> None:
+    def __init__(self, changes_path: Path, root_path: Path, version: Version) -> None:
         self.version = version
         self.unreleased_md: Path = changes_path / "unreleased.md"
         self.versioned_changelog_md: Path = changes_path / f"changes_{version}.md"
         self.changelog_md: Path = changes_path / "changelog.md"
-        self.source_path: Path = source_path
+        self.root_path: Path = root_path
 
     def _create_new_unreleased(self):
         """
@@ -59,7 +59,7 @@ class Changelogs:
     def _prepare_dependency_update(self) -> str:
         previous_dependencies_in_groups = get_dependencies_from_latest_tag()
         current_dependencies_in_groups = get_dependencies(
-            working_directory=self.source_path
+            working_directory=self.root_path
         )
 
         content = ""

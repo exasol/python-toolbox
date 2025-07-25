@@ -98,7 +98,7 @@ def changelogs(tmp_path) -> Changelogs:
     changes_path.mkdir(parents=True)
     return Changelogs(
         changes_path=changes_path,
-        source_path=tmp_path,
+        root_path=tmp_path,
         version=Version(major=1, minor=0, patch=0),
     )
 

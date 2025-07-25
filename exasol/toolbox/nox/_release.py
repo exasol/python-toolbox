@@ -120,7 +120,7 @@ def prepare_release(session: Session) -> None:
 
     changelogs = Changelogs(
         changes_path=PROJECT_CONFIG.doc / "changes",
-        source_path=PROJECT_CONFIG.root,
+        root_path=PROJECT_CONFIG.root,
         version=new_version,
     )
     changelogs.update_changelogs_for_release()
