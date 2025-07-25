@@ -71,7 +71,9 @@ class DependencyChanges(BaseModel):
     previous_dependencies: dict[NormalizedPackageStr, Package]
     current_dependencies: dict[NormalizedPackageStr, Package]
 
-    def _categorize_change(self, dependency_name: str) -> Union[DependencyChange, None]:
+    def _categorize_change(
+        self, dependency_name: NormalizedPackageStr
+    ) -> Union[DependencyChange, None]:
         """
         Categorize dependency change as removed, added, or updated.
         """
