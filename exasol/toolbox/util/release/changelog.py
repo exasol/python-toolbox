@@ -19,10 +19,11 @@ class Changelogs:
     def __init__(self, changes_path: Path, root_path: Path, version: Version) -> None:
         """
         Args:
-            changes_path: directory containing the changelog, e.g. `doc/changes/`
+            changes_path: directory containing the changelog & changes files, e.g. `doc/changes/`
             root_path: root directory of the current project, containing file
                 `pyproject.toml`
-            version: the version to be used in the `changes_{version}.md` and listed in the `changelog.md`.
+            version: the version to be used in the versioned changes file and listed in
+                the `changelog.md`, which contains the index of the change log
         """
 
         self.version = version
@@ -39,23 +40,22 @@ class Changelogs:
 
     def _create_versioned_changelog(self, unreleased_content: str) -> None:
         """
-        Create a changelog entry for a specific version.
+        Create a versioned changes file.
 
         Args:
-            unreleased_content: The content of the changelog entry.
-
+            unreleased_content: the content of the (not yet versioned) changes
         """
         template = f"# {self.version} - {datetime.today().strftime('%Y-%m-%d')}"
         template += f"\n{unreleased_content}"
 
-        if dependency_content := self._prepare_dependency_update():
+        if dependency_content := self._describe_dependency_changes():
             template += f"\n## Dependency Updates\n{dependency_content}"
 
         self.versioned_changelog_md.write_text(cleandoc(template))
 
     def _extract_unreleased_notes(self) -> str:
         """
-        Extract release notes from `unreleased.md`.
+        Extract (not yet versioned) changes from `unreleased.md`.
         """
         with self.unreleased_md.open(mode="r", encoding="utf-8") as f:
             # skip header when reading in file, as contains # Unreleased
@@ -64,13 +64,17 @@ class Changelogs:
         unreleased_content += "\n"
         return unreleased_content
 
-    def _prepare_dependency_update(self) -> str:
+    def _describe_dependency_changes(self) -> str:
+        """
+        Describe the dependency changes between the latest tag and the current version
+        for use in the versioned changes file.
+        """
         previous_dependencies_in_groups = get_dependencies_from_latest_tag()
         current_dependencies_in_groups = get_dependencies(
             working_directory=self.root_path
         )
 
-        content = ""
+        changes_by_group: list[str] = []
         # preserve order of keys from old group
         groups = list(
             dict.fromkeys(
@@ -88,10 +92,9 @@ class Changelogs:
                 current_dependencies=current_dependencies,
             ).changes
             if changes:
-                content += f"\n### `{group}`\n"
-                content += "\n".join(str(change) for change in changes)
-                content += "\n"
-        return content
+                changes_str = "\n".join(str(change) for change in changes)
+                changes_by_group.append(f"\n### `{group}`\n{changes_str}\n")
+        return "".join(changes_by_group)
 
     def _update_changelog_table_of_contents(self) -> None:
         """
@@ -119,7 +122,7 @@ class Changelogs:
         """
         Rotates the changelogs as is needed for a release.
 
-          1. Moves the contents of the `unreleased.md` to the `changes_<version>.md`
+          1. Moves the changes from the `unreleased.md` to the `changes_<version>.md`
           2. Create a new file `unreleased.md`
           3. Updates the table of contents in the `changelog.md` with the new `changes_<version>.md`
         """

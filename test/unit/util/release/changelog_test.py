@@ -132,8 +132,8 @@ class TestChangelogs:
         assert result == SampleContent.changelog + "\n"
 
     @staticmethod
-    def test_prepare_dependency_update(changelogs, mock_dependencies):
-        result = changelogs._prepare_dependency_update()
+    def test_describe_dependency_changes(changelogs, mock_dependencies):
+        result = changelogs._describe_dependency_changes()
         assert result == (
             "\n"
             "### `main`\n"
