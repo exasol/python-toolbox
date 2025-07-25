@@ -47,17 +47,17 @@ class TestDependencyChanges:
 
     @staticmethod
     def test_updated_dependency():
-        old_package = Package(name=SamplePackage.name, version="24.1.0")
+        previous_package = Package(name=SamplePackage.name, version="24.1.0")
 
         changes = DependencyChanges(
-            previous_dependencies={SamplePackage.name: old_package},
+            previous_dependencies={SamplePackage.name: previous_package},
             current_dependencies=SamplePackage().dependency_dict,
         )
 
         result = changes._categorize_change(SamplePackage.name)
 
         assert result == UpdatedDependency.from_package(
-            old_package=old_package, current_package=SamplePackage().package
+            previous_package=previous_package, current_package=SamplePackage().package
         )
         assert str(result) == "* Updated dependency `black:24.1.0` to `25.1.0`"
 

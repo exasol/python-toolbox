@@ -56,11 +56,11 @@ class UpdatedDependency(DependencyChange):
 
     @classmethod
     def from_package(
-        cls, old_package: Package, current_package: Package
+        cls, previous_package: Package, current_package: Package
     ) -> UpdatedDependency:
         return cls(
-            name=old_package.name,
-            previous_version=old_package.version,
+            name=previous_package.name,
+            previous_version=previous_package.version,
             current_version=current_package.version,
         )
 
