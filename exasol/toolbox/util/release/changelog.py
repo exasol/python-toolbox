@@ -80,7 +80,6 @@ class Changelogs:
                 current_dependencies=current_dependencies,
             ).changes
             if changes:
-                # nicer group heading
                 content += f"\n### `{group}`\n"
                 content += "\n".join(str(change) for change in changes)
                 content += "\n"
