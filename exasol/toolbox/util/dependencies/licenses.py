@@ -154,23 +154,15 @@ class PackageLicenseReport:
 
     @staticmethod
     def _format_table_row(license_info: PackageLicense) -> str:
-        text = ""
-        # column: package
+        row_package = f"{license_info.name}"
         if license_info.package_link:
-            text += f"|[{license_info.name}]({license_info.package_link})"
-        else:
-            text += f"|{license_info.name}"
+            row_package = f"[{license_info.name}]({license_info.package_link})"
 
-        # column: version
-        text += f"|{license_info.version}"
-
-        # column: license
+        row_license = f"{license_info.license}"
         if license_info.license_link:
-            text += f"|[{license_info.license}]({license_info.license_link})|"
-        else:
-            text += f"|{license_info.license}|"
+            row_license = f"[{license_info.license}]({license_info.license_link})"
 
-        return text + "\n"
+        return f"|{row_package}|{license_info.version}|{row_license}|\n"
 
     def to_markdown(self) -> str:
         rows = ""
