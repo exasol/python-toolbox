@@ -129,7 +129,7 @@ class PackageLicenseReport:
     licenses: dict[NormalizedPackageStr, PackageLicense]
 
     @staticmethod
-    def _format_group_table_header(group: str):
+    def _format_group_table_header(group: str) -> str:
         return (
             cleandoc(
                 f"""## `{group}` Dependencies
@@ -142,7 +142,7 @@ class PackageLicenseReport:
 
     def _format_group_table(
         self, group: str, group_package_names: set[NormalizedPackageStr]
-    ):
+    ) -> str:
         group_header = self._format_group_table_header(group=group)
 
         rows_text = ""
