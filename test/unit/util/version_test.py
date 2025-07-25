@@ -24,7 +24,7 @@ def test_create_version_from_string(input, expected):
 
 
 @pytest.mark.parametrize(
-    "old_version,new_version,expected",
+    "previous_version,new_version,expected",
     [
         (Version(1, 2, 3), Version(1, 2, 4), True),
         (Version(1, 2, 3), Version(1, 3, 3), True),
@@ -34,8 +34,8 @@ def test_create_version_from_string(input, expected):
         (Version(1, 2, 3), Version(0, 3, 3), False),
     ],
 )
-def test_is_later_version(old_version, new_version, expected):
-    actual = new_version > old_version
+def test_is_later_version(previous_version, new_version, expected):
+    actual = new_version > previous_version
     assert expected == actual
 
 

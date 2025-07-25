@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Optional
 
 
 class TestSpecificNoxTasks:
@@ -14,8 +14,10 @@ class TestSpecificNoxTasks:
     both the relationships between nox tasks and ensuring that the project-template
     passes CI tests when a new project is created from it.
     """
+
     @staticmethod
-    def _command(poetry_path: str, task: str, add_ons: Union[list[str], None]=None) -> list[str]:
+    def _command(poetry_path: str, task: str,
+                 add_ons: Optional[list[str]] = None) -> list[str]:
         base = [poetry_path, "run", "--", "nox", "-s", task]
         if add_ons:
             base = base + ["--"] + add_ons
@@ -33,9 +35,10 @@ class TestSpecificNoxTasks:
         run_command(lint_code)
         lint_security = self._command(poetry_path, "lint:security")
         run_command(lint_security)
-        test_unit = self._command(poetry_path, "test:unit",["--coverage"])
+        test_unit = self._command(poetry_path, "test:unit", ["--coverage"])
         run_command(test_unit)
-        test_integration = self._command(poetry_path, "test:integration",["--coverage"])
+        test_integration = self._command(poetry_path, "test:integration",
+                                         ["--coverage"])
         run_command(test_integration)
         # `artifacts:copy` is skipped here. This step has the pre-requisite that files
         # were uploaded to & then downloaded from the GitHub run's artifacts.

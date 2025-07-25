@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import subprocess
 import tempfile
+from collections import OrderedDict
 from pathlib import Path
 from typing import Optional
 
@@ -12,7 +13,10 @@ from pydantic import (
 )
 from tomlkit import TOMLDocument
 
-from exasol.toolbox.util.dependencies.shared_models import Package
+from exasol.toolbox.util.dependencies.shared_models import (
+    NormalizedPackageStr,
+    Package,
+)
 from exasol.toolbox.util.git import Git
 
 
@@ -92,16 +96,20 @@ class PoetryDependencies(BaseModel):
             return None
         return Package(name=split_line[0], version=split_line[1])
 
-    def _extract_from_poetry_show(self, output_text: str) -> list[Package]:
-        return [
-            package
+    def _extract_from_poetry_show(
+        self, output_text: str
+    ) -> dict[NormalizedPackageStr, Package]:
+        return {
+            package.normalized_name: package
             for line in output_text.splitlines()
             if (package := self._extract_from_line(line))
-        ]
+        }
 
     @property
-    def direct_dependencies(self) -> dict[str, list[Package]]:
-        dependencies = {}
+    def direct_dependencies(
+        self,
+    ) -> OrderedDict[str, dict[NormalizedPackageStr, Package]]:
+        dependencies = OrderedDict()
         for group in self.groups:
             command = (
                 "poetry",
@@ -122,7 +130,7 @@ class PoetryDependencies(BaseModel):
         return dependencies
 
     @property
-    def all_dependencies(self) -> dict[str, list[Package]]:
+    def all_dependencies(self) -> OrderedDict[str, dict[NormalizedPackageStr, Package]]:
         command = ("poetry", "show", "--no-truncate")
         output = subprocess.run(
             command,
@@ -133,28 +141,33 @@ class PoetryDependencies(BaseModel):
         )
 
         direct_dependencies = self.direct_dependencies.copy()
-        transitive_dependencies = []
+
+        transitive_dependencies = {}
         names_direct_dependencies = {
-            dep.name
-            for group_list in direct_dependencies.values()
-            for dep in group_list
+            package_name
+            for group_list in direct_dependencies
+            for package_name in group_list
         }
         for line in output.stdout.splitlines():
             dep = self._extract_from_line(line=line)
             if dep and dep.name not in names_direct_dependencies:
-                transitive_dependencies.append(dep)
+                transitive_dependencies[dep.normalized_name] = dep
 
         return direct_dependencies | {TRANSITIVE_GROUP.name: transitive_dependencies}
 
 
-def get_dependencies(working_directory: Path) -> dict[str, list[Package]]:
+def get_dependencies(
+    working_directory: Path,
+) -> OrderedDict[str, dict[NormalizedPackageStr, Package]]:
     poetry_dep = PoetryToml.load_from_toml(working_directory=working_directory)
     return PoetryDependencies(
         groups=poetry_dep.groups, working_directory=working_directory
     ).direct_dependencies
 
 
-def get_dependencies_from_latest_tag() -> dict[str, list[Package]]:
+def get_dependencies_from_latest_tag() -> (
+    OrderedDict[str, dict[NormalizedPackageStr, Package]]
+):
     latest_tag = Git.get_latest_tag()
     with tempfile.TemporaryDirectory() as path:
         tmpdir = Path(path)

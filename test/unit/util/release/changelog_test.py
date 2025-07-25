@@ -1,4 +1,6 @@
+from datetime import datetime
 from inspect import cleandoc
+from unittest import mock
 
 import pytest
 
@@ -71,8 +73,34 @@ def unreleased_md(changelogs):
 
 
 @pytest.fixture(scope="function")
+def mock_dependencies(dependencies, previous_dependencies):
+    with mock.patch.multiple(
+        "exasol.toolbox.util.release.changelog",
+        get_dependencies_from_latest_tag=lambda: previous_dependencies,
+        get_dependencies=lambda working_directory: dependencies,
+    ):
+        yield
+
+
+@pytest.fixture(scope="function")
+def mock_no_dependencies():
+    with mock.patch.multiple(
+        "exasol.toolbox.util.release.changelog",
+        get_dependencies_from_latest_tag=lambda: {},
+        get_dependencies=lambda working_directory: {},
+    ):
+        yield
+
+
+@pytest.fixture(scope="function")
 def changelogs(tmp_path) -> Changelogs:
-    return Changelogs(changes_path=tmp_path, version=Version(major=1, minor=0, patch=0))
+    changes_path = tmp_path / "doc/changes"
+    changes_path.mkdir(parents=True)
+    return Changelogs(
+        changes_path=changes_path,
+        root_path=tmp_path,
+        version=Version(major=1, minor=0, patch=0),
+    )
 
 
 class TestChangelogs:
@@ -90,7 +118,7 @@ class TestChangelogs:
         assert changelogs.unreleased_md.read_text() == UNRELEASED_INITIAL_CONTENT
 
     @staticmethod
-    def test_create_versioned_changelog(changelogs):
+    def test_create_versioned_changelog(changelogs, mock_dependencies):
         changelogs._create_versioned_changelog(SampleContent.changelog)
         saved_text = changelogs.versioned_changelog_md.read_text()
 
@@ -104,13 +132,43 @@ class TestChangelogs:
         assert result == SampleContent.changelog + "\n"
 
     @staticmethod
+    def test_describe_dependency_changes(changelogs, mock_dependencies):
+        result = changelogs._describe_dependency_changes()
+        assert result == (
+            "\n"
+            "### `main`\n"
+            "* Updated dependency `package1:0.0.1` to `0.1.0`\n"
+            "\n"
+            "### `dev`\n"
+            "* Added dependency `package2:0.2.0`\n"
+        )
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "groups,expected",
+        [
+            pytest.param(
+                {"dev", "abcd", "main"}, ["main", "abcd", "dev"], id="with_main"
+            ),
+            pytest.param(
+                {"dev", "abcd", "bacd"}, ["abcd", "bacd", "dev"], id="without_main"
+            ),
+        ],
+    )
+    def test_sort_groups(changelogs, groups, expected):
+        result = changelogs._sort_groups(groups)
+        assert result == expected
+
+    @staticmethod
     def test_update_changelog_table_of_contents(changelogs, changes_md):
         changelogs._update_changelog_table_of_contents()
 
         assert changelogs.changelog_md.read_text() == SampleContent.altered_changes
 
     @staticmethod
-    def test_update_changelogs_for_release(changelogs, unreleased_md, changes_md):
+    def test_update_changelogs_for_release(
+        changelogs, mock_dependencies, unreleased_md, changes_md
+    ):
         changelogs.update_changelogs_for_release()
 
         # changes.md
@@ -119,5 +177,48 @@ class TestChangelogs:
         assert changelogs.unreleased_md.read_text() == UNRELEASED_INITIAL_CONTENT
         # versioned.md
         saved_text = changelogs.versioned_changelog_md.read_text()
-        assert "1.0.0" in saved_text
-        assert SampleContent.changelog in saved_text
+        assert saved_text == cleandoc(
+            f"""# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
+            ## Added
+            * Added Awesome feature
+
+            ## Changed
+            * Some behaviour
+
+            ## Fixed
+            * Fixed nasty bug
+
+            ## Dependency Updates
+
+            ### `main`
+            * Updated dependency `package1:0.0.1` to `0.1.0`
+
+            ### `dev`
+            * Added dependency `package2:0.2.0`
+            """
+        )
+
+    @staticmethod
+    def test_update_changelogs_for_release_with_no_dependencies(
+        changelogs, mock_no_dependencies, unreleased_md, changes_md
+    ):
+        changelogs.update_changelogs_for_release()
+
+        # changes.md
+        assert changelogs.changelog_md.read_text() == SampleContent.altered_changes
+        # unreleased.md
+        assert changelogs.unreleased_md.read_text() == UNRELEASED_INITIAL_CONTENT
+        # versioned.md
+        saved_text = changelogs.versioned_changelog_md.read_text()
+        assert saved_text == cleandoc(
+            f"""# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
+            ## Added
+            * Added Awesome feature
+
+            ## Changed
+            * Some behaviour
+
+            ## Fixed
+            * Fixed nasty bug
+            """
+        )

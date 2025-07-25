@@ -96,7 +96,6 @@ force_grid_wrap = 2
 
 [tool.pylint.master]
 fail-under = 7.5
-output-format = "colorized,json:.lint.json,text:.lint.txt"
 
 [tool.pylint.format]
 max-line-length = 88

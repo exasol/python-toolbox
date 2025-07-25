@@ -9,8 +9,8 @@ import nox
 from nox import Session
 
 from exasol.toolbox.util.dependencies.licenses import (
-    licenses,
-    packages_to_markdown,
+    PackageLicenseReport,
+    get_licenses,
 )
 from exasol.toolbox.util.dependencies.poetry_dependencies import get_dependencies
 
@@ -85,8 +85,11 @@ class Audit:
 def dependency_licenses(session: Session) -> None:
     """Return the packages with their licenses"""
     dependencies = get_dependencies(working_directory=Path())
-    package_infos = licenses()
-    print(packages_to_markdown(dependencies=dependencies, packages=package_infos))
+    licenses = get_licenses()
+    license_markdown = PackageLicenseReport(
+        dependencies=dependencies, licenses=licenses
+    )
+    print(license_markdown.to_markdown())
 
 
 @nox.session(name="dependency:audit", python=False)
