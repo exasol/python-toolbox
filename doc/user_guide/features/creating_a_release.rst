@@ -13,7 +13,7 @@ The ``release:prepare`` nox session affects the ``pyproject.toml``, ``version.py
 
   * Only direct dependencies are described, no transitive dependencies
   * Changes are detected by comparing the current content of file ``poetry.lock`` to the latest Git tag.
-* Updates the ``changelog.md`` list with the newly create versioned changes file
+* Updates the ``changelog.md`` list with the newly created versioned changes file
 * Commits the changes (can be skipped with ``--no-add``)
 * Pushes the changes and creates a PR (can be deactivated with ``--no-pr``)
 
