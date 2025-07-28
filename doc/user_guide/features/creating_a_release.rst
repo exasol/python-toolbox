@@ -18,13 +18,13 @@ The ``release:prepare`` nox session affects the ``pyproject.toml``, ``version.py
 * Pushes the changes and creates a PR (can be skipped with ``--no-pr``)
 
 After a PR is created, approved, & merged into the default branch. A developer can use
-the ``release:trigger`` nox session which:
+the nox session ``release:trigger`` nox session to:
 
-* Switches & pulls the changes from the default branch
-* Verifies that the version to be released does not already have a git tag or GitHub release
-* Creates a new tag & pushes it to the default branch, which will trigger the GitHub workflow ``cd.yml``
+* Switch to & pull the changes from the default branch
+* Verify that the version to be released does not already have a git tag or GitHub release
+* Create a new tag & push it to the default branch, which will trigger the GitHub workflow ``cd.yml``
 
-Simple instructions
+Simplified instructions
 -------------------
 
 #. Prepare the project for a new release:
