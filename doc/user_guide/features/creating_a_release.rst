@@ -1,5 +1,5 @@
-Create a release
-================
+Creating a release
+==================
 
 Preparing a release
 +++++++++++++++++++

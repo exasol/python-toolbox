@@ -6,8 +6,8 @@ Features
 .. toctree::
     :maxdepth: 2
 
-    create_a_release
     collecting_metrics
+    creating_a_release
 
 Uniform Project Layout
 ----------------------

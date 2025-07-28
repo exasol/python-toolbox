@@ -2,7 +2,7 @@
 
 ## Documentation
 
-* #504: Removed Issue Tracking & Style Guides
+* #504: Removed Issue Tracking & Style Guides, moved & updated "Create a release", moved & updated "Collecting metrics"
 
 ## Feature
 
