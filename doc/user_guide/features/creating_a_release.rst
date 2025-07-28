@@ -4,10 +4,10 @@ Creating a release
 Preparing a release
 +++++++++++++++++++
 
-The ``release:prepare`` nox session affects files in the ``doc/changes`` directory:
+The ``release:prepare`` nox session affects the ``pyproject.toml``, ``version.py``, and files in the ``doc/changes`` directory:
 
 * Creates & switches to a release branch (can be skipped with ``--no-branch``)
-* Updates the version in the ``pyproject.toml``
+* Updates the version in the ``pyproject.toml`` and ``version.py``
 * Moves the content of unreleased changes file ``unreleased.md`` to a versioned changes file ``changes_<version>.md``
 * Appends to the versioned changes file any direct dependency changes between the current ``poetry.lock`` and the one from the latest tag
 * Updates the ``changelog.md`` list with the newly create versioned changes file
