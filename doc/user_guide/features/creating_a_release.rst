@@ -15,7 +15,7 @@ The ``release:prepare`` nox session affects the ``pyproject.toml``, ``version.py
   * Changes are detected by comparing the current content of file ``poetry.lock`` to the latest Git tag.
 * Updates the ``changelog.md`` list with the newly created versioned changes file
 * Commits the changes (can be skipped with ``--no-add``)
-* Pushes the changes and creates a PR (can be deactivated with ``--no-pr``)
+* Pushes the changes and creates a PR (can be skipped with ``--no-pr``)
 
 After a PR is created, approved, & merged into the default branch. A developer can use
 the ``release:trigger`` nox session which:
