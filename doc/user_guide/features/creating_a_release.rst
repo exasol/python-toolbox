@@ -9,7 +9,10 @@ The ``release:prepare`` nox session affects the ``pyproject.toml``, ``version.py
 * Creates & switches to a release branch (can be skipped with ``--no-branch``)
 * Updates the version in the ``pyproject.toml`` and ``version.py``
 * Moves the content of unreleased changes file ``unreleased.md`` to a versioned changes file ``changes_<version>.md``
-* Appends to the versioned changes file any direct dependency changes between the current ``poetry.lock`` and the one from the latest tag
+* Adds a description of dependency changes to the versioned changes file:
+
+  * Only direct dependencies are described, no transitive dependencies
+  * Changes are detected by comparing the current content of file ``poetry.lock`` to the latest Git tag.
 * Updates the ``changelog.md`` list with the newly create versioned changes file
 * Commits the changes (can be skipped with ``--no-add``)
 * Pushes the changes and creates a PR (can be deactivated with ``--no-pr``)
