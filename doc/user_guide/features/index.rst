@@ -6,7 +6,7 @@ Features
 .. toctree::
     :maxdepth: 2
 
-    how_to_release
+    create_a_release
     collecting_metrics
 
 Uniform Project Layout
