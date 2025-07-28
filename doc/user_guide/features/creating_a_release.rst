@@ -24,9 +24,6 @@ the ``release:trigger`` nox session which:
 Simple instructions
 -------------------
 
-The ``release:trigger`` nox session
-
-
 #. Prepare the project for a new release:
 
     .. code-block:: shell
