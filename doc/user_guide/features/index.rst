@@ -13,7 +13,7 @@ Uniform Project Layout
 ----------------------
 
 The PTB expects a default project layout following "convention over configuration" wherever possible and reasonable.
-See the cookie-cutter project template, which can be found in directory `project-template`, for more details.
+See the cookiecutter project template, which can be found in directory `project-template`, for more details.
 For more details on this, please check out section :ref:`Getting Started` section.
 
 Nox
@@ -24,8 +24,8 @@ The toolbox itself provides various standard tasks and a plugin mechanism to ext
 
 Central files in regards to nox and the toolbox are:
 
-- `noxfile.py`: Standard nox configuration/setup file
-- `noxconfig.py`: Exasol-specific file containing additional information needed by the standard tasks of the toolbox
+- ``noxfile.py``: Standard nox configuration/setup file
+- ``noxconfig.py``: Exasol-specific file containing additional information needed by the standard tasks of the toolbox
 
 Important Nox Commands
 ^^^^^^^^^^^^^^^^^^^^^^
