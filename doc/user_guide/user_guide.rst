@@ -7,9 +7,7 @@
     :maxdepth: 2
 
     getting_started
-    features
+    features/index
     workflows
     customization
     migrating
-    how_to_release
-    collecting_metrics

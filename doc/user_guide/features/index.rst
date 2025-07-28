@@ -1,5 +1,13 @@
+.. _features:
+
 Features
 ========
+
+.. toctree::
+    :maxdepth: 2
+
+    how_to_release
+    collecting_metrics
 
 Uniform Project Layout
 ----------------------
