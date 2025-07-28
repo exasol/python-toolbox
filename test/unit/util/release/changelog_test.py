@@ -177,8 +177,10 @@ class TestChangelogs:
         assert changelogs.unreleased_md.read_text() == UNRELEASED_INITIAL_CONTENT
         # versioned.md
         saved_text = changelogs.versioned_changelog_md.read_text()
-        assert saved_text == cleandoc(
-            f"""# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
+        assert (
+            saved_text
+            == cleandoc(
+                f"""# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
             ## Added
             * Added Awesome feature
 
@@ -196,6 +198,8 @@ class TestChangelogs:
             ### `dev`
             * Added dependency `package2:0.2.0`
             """
+            )
+            + "\n"
         )
 
     @staticmethod
@@ -210,8 +214,10 @@ class TestChangelogs:
         assert changelogs.unreleased_md.read_text() == UNRELEASED_INITIAL_CONTENT
         # versioned.md
         saved_text = changelogs.versioned_changelog_md.read_text()
-        assert saved_text == cleandoc(
-            f"""# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
+        assert (
+            saved_text
+            == cleandoc(
+                f"""# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
             ## Added
             * Added Awesome feature
 
@@ -221,4 +227,6 @@ class TestChangelogs:
             ## Fixed
             * Fixed nasty bug
             """
+            )
+            + "\n"
         )
