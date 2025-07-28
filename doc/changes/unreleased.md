@@ -1,5 +1,9 @@
 # Unreleased
 
+## Documentation
+
+* #504: Removed Issue Tracking & Style Guides
+
 ## Feature
 
 * #382: Added onto nox session `release:prepare` to append dependency changes between current and latest tag
