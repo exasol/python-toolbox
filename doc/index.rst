@@ -31,12 +31,6 @@ Documentation of the Exasol-Toolbox
 
         Custom GitHub Actions providing functionality that is commonly needed in our projects.
 
-    .. grid-item-card:: :octicon:`cpu` API Reference
-        :link: api
-        :link-type: ref
-
-        Detailed descriptions, syntax, and usage examples for the API provided by this project.
-
     .. grid-item-card:: :octicon:`repo` Design Document
         :link: design_document
         :link-type: ref
@@ -64,7 +58,6 @@ Documentation of the Exasol-Toolbox
    developer_guide/developer_guide
    tools
    github_actions/github_actions
-   api
    metrics
    faq
    changes/changelog
