@@ -9,9 +9,9 @@ Deploying documentation
     multiversion
     troubleshooting
 
-In the PTB, we use sphinx to build and validate the contents of a project's
-documentation. All documentation is provided in the ``doc`` directory, primarily as
-``rst`` files. The ``doc/conf.py`` acts as the configuration file for building the
+The PTB uses ref:`sphinx <https://www.sphinx-doc.org/>`__ to build and validate the contents 
+of your project's documentation. PTB expects the project's documentation in directory ``doc``,
+primarily as ``rst`` files. The ``doc/conf.py`` acts as the configuration file for building the
 documentation.
 
 Many of the nox session checks are executed in the ``checks.yml`` so that alterations
