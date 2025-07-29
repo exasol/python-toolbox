@@ -1,7 +1,7 @@
-.. _building_documentation:
+.. _deploying_documentation:
 
-Building documentation
-======================
+Deploying documentation
+=======================
 
 .. toctree::
     :maxdepth: 2
@@ -12,7 +12,7 @@ Building documentation
 In the PTB, we use sphinx to build and validate the contents of a project's
 documentation. All documentation is provided in the ``doc`` directory, primarily as
 ``rst`` files. The ``doc/conf.py`` acts as the configuration file for building the
-documentation, and a default one is provided in the cookiecutter project template.
+documentation.
 
 Many of the nox session checks are executed in the ``checks.yml`` so that alterations
 in the documentation can be directly attributed (and, if needed, fixed) in the relevant
@@ -34,3 +34,37 @@ PR. The final building & serving of the documentation happens in the ``gh-pages.
 +--------------------------+------------------+----------------------------------------+
 | ``links:list``           | No               | Lists all links in the documentation   |
 +--------------------------+------------------+----------------------------------------+
+
+.. _documentation_configuration:
+
+Configuration
++++++++++++++
+
+``doc/conf.py``
+^^^^^^^^^^^^^^^
+A default ``doc/conf.py`` is provided in the cookiecutter project template. If your
+project's needs deviates, please refer to:
+
+* the `general sphinx documentation <https://www.sphinx-doc.org/en/master/>`__.
+* specifically to the `Linkcheck Builder <https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-the-linkcheck-builder>`__
+  for ``links:check`` and ``links:list``.
+
+``gh-pages.yml``
+^^^^^^^^^^^^^^^^
+Within the ``gh-pages.yml``, we use the GitHub ``upload-pages-artifact`` and ``deploy-pages``
+actions. In order to properly deploy your pages, you will need to manually reconfigure the GitHub
+Pages settings for the repo:
+
+#. Go to the affected repo's GitHub page
+#. Select 'Settings'
+#. Scroll down & select 'Pages'
+#. Within the 'Build and deployment' section, change 'Source' to 'GitHub Actions'.
+
+You also need to configure settings for the `github-pages` environment:
+
+#. Go to the affected repo's GitHub page
+#. Select 'Settings'
+#. Scroll down & select 'Environment'
+#. Click on 'github-pages'
+#. In the 'Deployment branches and tags', click 'Add deployment branch or tag rule'
+#. Select 'Ref type' to be 'Tag' and set the 'Name pattern' to `[0-9]*.[0-9]*.[0-9]*` (or whatever matches that repo's tags)

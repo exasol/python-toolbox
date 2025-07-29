@@ -163,23 +163,8 @@ forward, and you just can use the example ``noxfile.py`` below.
 
 6. Set up deploying documentation (optional)
 ++++++++++++++++++++++++++++++++++++++++++++
-Within the ``gh-pages.yml``, we use the GitHub ``upload-pages-artifact`` and ``deploy-pages``
-actions. In order to properly deploy your pages, you'll need to reconfigure the GitHub
-Pages settings for the repo:
 
-#. Go to the affected repo's GitHub page
-#. Select 'Settings'
-#. Scroll down & select 'Pages'
-#. Within the 'Build and deployment' section, change 'Source' to 'GitHub Actions'.
-
-We also need to configure settings for github-pages environment:
-
-#. Go to the affected repo's GitHub page
-#. Select 'Settings'
-#. Scroll down & select 'Environment'
-#. Click on 'github-pages'
-#. In the 'Deployment branches and tags', click 'Add deployment branch or tag rule'
-#. Select 'Ref type' to be 'Tag' and set the 'Name pattern' to `[0-9]*.[0-9]*.[0-9]*` (or whatever matches that repo's tags)
+See :ref:`documentation_configuration` for the required steps.
 
 7. Set up for Sonar
 +++++++++++++++++++
