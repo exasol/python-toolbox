@@ -89,5 +89,6 @@ linkcheck_allowed_redirects = {
     # All HTTP redirections from the source URI to
     # the canonical URI will be treated as "working".
     r"https://github\.com/.*": r"https://github\.com/login*",
+    r"https://www.sphinx-doc\.org/.*": r"https://www.sphinx-doc\.org/en/master/.*",
     r"https://sonarcloud\.io.*": r"https://www.sonarsource\.com/products/sonarcloud/.*",
 }

@@ -3,19 +3,6 @@ Customization
 
 .. _plugins:
 
-Nox Tasks `links:x`
----------------------
-
-PTB offers two nox sessions to check hyperlinks in your documentation:
- * `links:list` - List all the links within the documentation
- * `links:check` - Checks whether all links in the documentation are accessible
-
-`links:check` is run in the CI `checks.yml`. If this step fails in the CI, it will cause
-the build to break. Please check the output & manually resolve the issues. There might
-be some cases where you need to update your `doc/conf.py` with specific values for the allowed
-options for the [Linkcheck Builder](https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-the-linkcheck-builder).
-
-
 Nox Task Plugins
 ----------------
 
