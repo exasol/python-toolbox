@@ -60,7 +60,7 @@ are summarized into reports:
 
 #. SonarQube analysis
     This summarization tool feeds into a feature-rich UI provided by
-    `Sonar <https://docs.sonarsource.com/sonarqube-server>`__. The total coverage
+    `Sonar <https://docs.sonarsource.com/sonarqube-server/latest/>`__. The total coverage
     is calculated as a percentage and visually displayed per line on the altered code.
     Security & linting issues are displayed in a list with links to the code & textual
     descriptions on why they should be fixed and how they can be fixed. Additionally,
