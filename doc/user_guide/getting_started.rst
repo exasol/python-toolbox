@@ -75,7 +75,7 @@ List all available nox tasks:
 Integrating Exasol-Toolbox into your Project
 --------------------------------------------
 
-#. Add the toolbox as dependency
+1. Add the toolbox as dependency
 ++++++++++++++++++++++++++++++++
 
 .. code-block:: shell
