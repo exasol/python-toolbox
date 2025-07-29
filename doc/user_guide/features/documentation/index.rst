@@ -11,8 +11,8 @@ Building documentation
 
 In the PTB, we use sphinx to build and validate the contents of a project's
 documentation. All documentation is provided in the ``doc`` directory, primarily as
-`rst` files. The ``doc/conf.py`` acts as the configuration file for building the
-documentation.
+``rst`` files. The ``doc/conf.py`` acts as the configuration file for building the
+documentation, and a default one is provided in the cookiecutter project template.
 
 Many of the nox session checks are executed in the ``checks.yml`` so that alterations
 in the documentation can be directly attributed (and, if needed, fixed) in the relevant
