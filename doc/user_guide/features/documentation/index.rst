@@ -9,7 +9,7 @@ Deploying documentation
     multiversion
     troubleshooting
 
-The PTB uses ref:`sphinx <https://www.sphinx-doc.org/>`__ to build and validate the contents 
+The PTB uses ref:`sphinx <https://www.sphinx-doc.org/>`__ to build and validate the contents
 of your project's documentation. PTB expects the project's documentation in directory ``doc``,
 primarily as ``rst`` files. The ``doc/conf.py`` acts as the configuration file for building the
 documentation.
@@ -42,8 +42,8 @@ Configuration
 
 ``doc/conf.py``
 ^^^^^^^^^^^^^^^
-A default ``doc/conf.py`` is provided in the cookiecutter project template. If your
-project's needs deviates, please refer to:
+The PTB's cookiecutter project template already provides a file ``doc/conf.py`` with
+default content. If your project needs adjustment, please refer to:
 
 * the `general sphinx documentation <https://www.sphinx-doc.org/en/master/>`__.
 * specifically to the `Linkcheck Builder <https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-the-linkcheck-builder>`__
@@ -52,7 +52,7 @@ project's needs deviates, please refer to:
 ``gh-pages.yml``
 ^^^^^^^^^^^^^^^^
 GitHub workflow ``gh-pages.yml`` uses actions ``upload-pages-artifact`` and ``deploy-pages``.
-In order to properly deploy your generated documentation, you will need to manually 
+In order to properly deploy your generated documentation, you will need to manually
 reconfigure the GitHub Pages settings for the repo:
 
 #. Go to the affected repo's GitHub page
