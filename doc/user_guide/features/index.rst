@@ -8,6 +8,7 @@ Features
 
     collecting_metrics
     creating_a_release
+    documentation/index
 
 Uniform Project Layout
 ----------------------
