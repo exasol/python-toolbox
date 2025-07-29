@@ -14,9 +14,9 @@ of your project's documentation. PTB expects the project's documentation in dire
 primarily as ``rst`` files. The ``doc/conf.py`` acts as the configuration file for building the
 documentation.
 
-Many of the nox session checks are executed in the ``checks.yml`` so that alterations
-in the documentation can be directly attributed (and, if needed, fixed) in the relevant
-PR. The final building & serving of the documentation happens in the ``gh-pages.yml``.
+GitHub workflow ``checks.yml`` also runs the checks for the documention.
+This enables updating and fixing the documentation together with other changes in the same pull request.
+The final building & serving of the documentation happens in GitHub workflow ``gh-pages.yml``.
 
 +--------------------------+------------------+----------------------------------------+
 | Nox session              | CI Usage         | Action                                 |
