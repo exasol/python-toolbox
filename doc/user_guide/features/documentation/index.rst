@@ -51,9 +51,9 @@ project's needs deviates, please refer to:
 
 ``gh-pages.yml``
 ^^^^^^^^^^^^^^^^
-Within the ``gh-pages.yml``, we use the GitHub ``upload-pages-artifact`` and ``deploy-pages``
-actions. In order to properly deploy your pages, you will need to manually reconfigure the GitHub
-Pages settings for the repo:
+GitHub workflow ``gh-pages.yml`` uses actions ``upload-pages-artifact`` and ``deploy-pages``.
+In order to properly deploy your generated documentation, you will need to manually 
+reconfigure the GitHub Pages settings for the repo:
 
 #. Go to the affected repo's GitHub page
 #. Select 'Settings'
