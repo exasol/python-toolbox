@@ -5,5 +5,4 @@ Modules
     :maxdepth: 2
 
     sphinx/sphinx
-    nox
     nox_tasks
