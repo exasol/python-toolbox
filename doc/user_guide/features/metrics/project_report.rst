@@ -22,9 +22,8 @@ The definitions used for evaluating the quality of the Python code is defined in
 
 Metrics schema
 ++++++++++++++
-The metrics schema has been established to provide a unified approach for metrics and
-reporting across our projects. More details on its motivation, development, & usage
-can be found in the following resources:
+The PTB supports the uniform json schema for metrics used by all projects 
+of the Exasol Product Integration Team:
 
 * `Exasol Schemas`_
 * `Metrics Schema`_
