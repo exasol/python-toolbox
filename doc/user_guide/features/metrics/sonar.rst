@@ -3,18 +3,16 @@
 SonarQube analysis
 ==================
 
-The PTB supports using SonarQube Cloud to analyze, visualize, & track linting, security,
-& coverage. All of our Python projects should be evaluated against the `Exasol Way`_
-and subscribe to the
+The PTB supports using `SonarQube Cloud <https://docs.sonarsource.com/sonarqube-server/latest/>`__
+to analyze, visualize, & track linting, security, & coverage. All of our Python projects
+should be evaluated against the `Exasol Way`_ and subscribe to the
 `Clean as You Code <https://docs.sonarsource.com/sonarqube-server/9.8/user-guide/clean-as-you-code/>`__
-methodology. If code modified in a PR does not satisfy the aforementioned criteria, we
-will receive a failing (red) SonarQube analysis.
+methodology. If code modified in a PR does not satisfy the aforementioned criteria, the
+SonarQube analysis fails.
 
-Additionally, per project, we enact a GitHub bot (differs based on :ref:`configuration`,
-which reports the status of the Sonar analysis into a PR as a stylized comment and as
-a workflow result. Depending on the overall state of a project (i.e. new vs established),
-we can require the passing of the workflow result in the branch protections, which means
-that a passing Sonar analysis would be required for merging a PR.
+The PTB includes instructions to set up a GitHub bot to display the results of the
+Sonar analysis in your pull requests as a stylized comment and workflow result.
+Section :ref:`configuration` gives instructions for public and private repositories.
 
 .. _configuration:
 
