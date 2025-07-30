@@ -27,7 +27,7 @@ of the Exasol Product Integration Team:
 * `Metrics Schema Project`_
 
 The Integration team runs regular aggregation of the metrics from all projects into a centralized data sink
-as decribed in the company Wiki.
+as described in the company Wiki.
 
 Development
 -----------

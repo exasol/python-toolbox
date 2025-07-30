@@ -14,7 +14,7 @@ of your project's documentation. PTB expects the project's documentation in dire
 primarily as ``rst`` files. The ``doc/conf.py`` acts as the configuration file for building the
 documentation.
 
-GitHub workflow ``checks.yml`` also runs the checks for the documention.
+GitHub workflow ``checks.yml`` also runs the checks for the documentation.
 This enables updating and fixing the documentation together with other changes in the same pull request.
 The final building & serving of the documentation happens in GitHub workflow ``gh-pages.yml``.
 
