@@ -24,7 +24,7 @@ Configuration
 .. _configure_sonar_public_project:
 
 **Public** GitHub repository
-^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 1. Specify in the ``noxconfig.py`` the relative path to the project's source code in ``Config.source``
     .. code-block:: python
 
@@ -51,7 +51,7 @@ Configuration
 .. _configure_sonar_private_project:
 
 **Private** GitHub repository
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. note::
     As of 2025-07-29, we do not currently have a private project configured. Thus,
     these instructions should be scrutinized and refined upon the configuration of one.
