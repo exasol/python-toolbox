@@ -32,10 +32,8 @@ A GitHub Admin will need to:
 #. **Post-merge**: update the branch protections to include SonarQube analysis.
 
   * This should only be done when tests exist for the project, & that the project is
-    at a state in which enforced code coverage would not be a burden. For new projects,
-    we recommend creating an issue to add the SonarQube analysis to the branch protections
-    at a later point. In such scenarios, SonarQube analysis will still report its analysis
-    results to the PR, but it will not prevent the PR from being merged.
+    at a state in which enforced code coverage would not be a burden. If you do
+    not enact branch protections, it is recommended to create an issue to do so later.
 
 In Sonar
 """"""""
@@ -76,10 +74,8 @@ A GitHub Admin will need to:
 #. **Post-merge**: update the branch protections to include SonarQube analysis.
 
   * This should only be done when tests exist for the project, & that the project is
-    at a state in which enforced code coverage would not be a burden. For new projects,
-    we recommend creating an issue to add the SonarQube analysis to the branch protections
-    at a later point. In such scenarios, SonarQube analysis will still report its analysis
-    results to the PR, but it will not prevent the PR from being merged.
+    at a state in which enforced code coverage would not be a burden. If you do
+    not enact branch protections, it is recommended to create an issue to do so later.
 
 In Sonar
 """"""""
