@@ -50,7 +50,7 @@ Configuration
 
 .. _configure_sonar_private_project:
 
-**Private** project
+**Private** GitHub repository
 ^^^^^^^^^^^^^^^^^^^
 .. note::
     As of 2025-07-29, we do not currently have a private project configured. Thus,
