@@ -7,10 +7,10 @@ Collecting metrics
     project_report
     sonar
 
-.. _direct_metrics:
+.. _generated_metrics:
 
-Direct metrics
-++++++++++++++
+Generated metrics
++++++++++++++++++
 
 The PTB allows you to collect various metrics on the quality of your project
 regarding Coverage, Security, and Static Code Analysis.
@@ -48,7 +48,7 @@ The GitHub workflows of your project can:
 Reporting metrics
 +++++++++++++++++
 
-Currently, the PTB offers two methods to aggregate the :ref:`direct_metrics`
+Currently, the PTB offers two methods to aggregate the :ref:`generated_metrics`
 into a report:
 
 #. the nox session ``project:report``
@@ -59,7 +59,7 @@ into a report:
     `Sonar <https://docs.sonarsource.com/sonarqube-server/latest/>`__. For further
     details, see :ref:`sonarqube_analysis`
 
-Both of these reporting options require that the generated files from the :ref:`direct_metrics`
+Both of these reporting options require that the generated files from the :ref:`generated_metrics`
 are existing and in the expected formats. As we have metrics for different Python
 versions, we pass on the metrics associated with the Python version named first in
 attribute ``python_versions`` of class ``Config`` to the reporting metrics tools.

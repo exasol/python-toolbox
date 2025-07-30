@@ -3,7 +3,7 @@
 ``project:report``
 ==================
 The nox session ``project:report`` provides an overall coverage percentage,
-maintainability grade, and security grade based on the :ref:`direct_metrics` collected.
+maintainability grade, and security grade based on the :ref:`generated_metrics` collected.
 The definitions used for evaluating the quality of the Python code is defined in the
 `metrics.py`_ file, and the required fields are specified by the code-agnostic
 :ref:`metrics_schema` for Exasol. This nox session can return its analysis in two forms:
@@ -22,7 +22,7 @@ The definitions used for evaluating the quality of the Python code is defined in
 
 Metrics schema
 ++++++++++++++
-The PTB supports the uniform json schema for metrics used by all projects 
+The PTB supports the uniform json schema for metrics used by all projects
 of the Exasol Product Integration Team:
 
 * `Exasol Schemas`_
