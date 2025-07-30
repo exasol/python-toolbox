@@ -60,11 +60,11 @@ into a report:
     details, see :ref:`sonarqube_analysis`
 
 Both of these reporting options require that the generated files from the :ref:`generated_metrics`
-are existing and in the expected formats. As we have metrics for different Python
-versions, we pass on the metrics associated with the Python version named first in
-attribute ``python_versions`` of class ``Config`` to the reporting metrics tools.
+are existing and in the expected formats. As there are metrics for different Python
+versions, the PTB uses only the metrics associated with the Python version named first
+in the attribute ``python_versions`` of class ``Config`` to the reporting metrics tools.
 
-To perform this validation, we have defined two nox sessions. Due to the direct
+To perform this validation, there are two nox sessions. Due to the direct
 dependence on the nox session ``project:report`` and SonarQube Analysis on the
 aforementioned nox sessions, all of these are executed in succession in the CI's ``report.yml``.
 
