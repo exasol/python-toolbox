@@ -62,8 +62,8 @@ In the code
 **Private** GitHub repository
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. note::
-    As of 2025-07-29, we do not currently have a private project configured. Thus,
-    these instructions should be scrutinized and refined upon the configuration of one.
+    As of 2025-07-29, these instructions have not been used. Thus, they should be
+    scrutinized and refined when they are used to configure a private repository.
 
 In GitHub
 """""""""
