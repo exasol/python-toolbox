@@ -48,8 +48,8 @@ The GitHub workflows of your project can:
 Reporting metrics
 +++++++++++++++++
 
-Currently, within the PTB, we offer two methods by which the :ref:`direct_metrics`
-are summarized into reports:
+Currently, the PTB offers two methods to aggregate the :ref:`direct_metrics`
+into a report:
 
 #. the nox session ``project:report``
     This summarization tool can generate either a JSON or markdown summary where
