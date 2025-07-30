@@ -83,7 +83,7 @@ aforementioned nox sessions, all of these are executed in succession in the CI's
 |                          |   (unit, integration ...)                                |
 |                          | * Copies downloaded artifacts to their parent directory  |
 +--------------------------+----------------------------------------------------------+
-| ``artifacts:validate``   | * Verifies that the ``.lint.json``, ``.lint.json``,      |
+| ``artifacts:validate``   | * Verifies that the ``.lint.json``, ``.lint.txt``,       |
 |                          |   ``.security.json``, and ``.coverage`` are present      |
 |                          | * Checks that each file contains the expected attributes |
 |                          |   for that file type                                     |
