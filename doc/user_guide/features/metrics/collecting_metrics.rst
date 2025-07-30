@@ -30,7 +30,7 @@ files and based on a selected external Python tool.
 | ``test:integration -- --coverage`` | ``.coverage``               | ``coverage`` |
 +------------------------------------+-----------------------------+--------------+
 
-These metrics are computed for each point in your build matrix, e.g. for each
+These metrics are computed for each element in your build matrix, e.g. for each
 Python version defined in the file ``noxconfig.py``:
 
 .. code-block:: python

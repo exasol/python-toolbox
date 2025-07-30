@@ -2,18 +2,15 @@
 
 ``project:report``
 ==================
-The nox session ``project:report`` provides an overall coverage percentage,
-maintainability grade, and security grade based on the :ref:`generated_metrics` collected.
-The definitions used for evaluating the quality of the Python code is defined in the
-`metrics.py`_ file, and the required fields are specified by the code-agnostic
-:ref:`metrics_schema` for Exasol. This nox session can return its analysis in two forms:
+After collecting the metrics described in by :ref:`generated_metrics`, you can use the
+nox session ``project:report`` to create a report using one of the following formats:
 
 * JSON
-    This directly meets the requirements for the :ref:`metrics_schema`. In our CI runs,
-    a JSON is created & uploaded as an artifact, which can be downloaded later by the
-    crawler project.
+    This format is usually used in the CI. The created JSON file is uploaded as an
+    artifact, which can be downloaded and aggregated for multiple projects
+    (see :ref:`metrics_schema`).
 * markdown
-    This is displayed in the GitHub Action's Summary for a given CI run. Displaying
+    This is displayed in the GitHub Action's summary for a given CI run. Displaying
     this content per CI run gives the developer immediate feedback as to how the code
     quality has changed between code modifications.
 
