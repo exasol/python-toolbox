@@ -166,67 +166,13 @@ forward, and you just can use the example ``noxfile.py`` below.
 
 See :ref:`documentation_configuration` for the required steps.
 
-7. Set up for Sonar
-+++++++++++++++++++
-PTB supports using SonarQube Cloud to analyze, visualize, & track linting, security, &
-coverage. All of our Python projects are evaluated against the
-`Exasol Way <https://sonarcloud.io/organizations/exasol/quality_gates/show/AXxvLH-3BdtLlpiYmZhh>`__
-and subscribe to the
-`Clean as You Code <https://docs.sonarsource.com/sonarqube-server/9.8/user-guide/clean-as-you-code/>`__
-methodology, which means that SonarQube analysis will fail and, if its included in the branch protections, block a PR
-if code modified in that PR does not meet the standards of the Exasol Way.
+7. Set up Sonar
++++++++++++++++
 
-In order to set up Sonar, you will need to perform the following instructions.
+Look at the configuration of Sonar for a:
 
-For a **public** project
-^^^^^^^^^^^^^^^^^^^^^^^^
-1. Specify in the `noxconfig.py` the relative path to the project's source code in `Config.source`
-    .. code-block:: python
-
-        source: Path = Path("exasol/<project-source-folder>")
-2. Add the 'SONAR_TOKEN' to the 'Organization secrets' in GitHub (this requires a person being a GitHub organization owner)
-3. Activate the `SonarQubeCloud App <https://github.com/apps/sonarqubecloud>`_
-4. Create a project on SonarCloud
-5. Add the following information to the project's file `pyproject.toml`
-    .. code-block:: toml
-
-        [tool.sonar]
-        projectKey = "com.exasol:<project-key>"
-        hostUrl = "https://sonarcloud.io"
-        organization = "exasol"
-        exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
-6. Post-merge, update the branch protections to include SonarQube analysis
-
-  * This should only be done when tests exist for the project, & that the project is
-    at a state in which enforced code coverage would not be a burden. For new projects,
-    we recommend creating an issue to add the SonarQube analysis to the branch protections
-    at a later point. In such scenarios, SonarQube analysis will still report its analysis
-    results to the PR, but it will not prevent the PR from being merged.
-
-For a **private** project
-^^^^^^^^^^^^^^^^^^^^^^^^^
-1. Specify in the `noxconfig.py` the relative path to the project's source code in `Config.source`
-    .. code-block:: python
-
-        source: Path = Path("exasol/<project-source-folder>")
-2. Add the 'PRIVATE_SONAR_TOKEN' to the 'Organization secrets' in GitHub (this requires a person being a GitHub organization owner)
-3. Activate the `exasonarqubeprchecks App <https://github.com/apps/exasonarqubeprchecks>`_
-4. Create a project on https://sonar.exasol.com
-5. Add the following information to the project's file `pyproject.toml`
-    .. code-block:: toml
-
-        [tool.sonar]
-        projectKey = "com.exasol:<project-key>"
-        hostUrl = "https://sonar.exasol.com"
-        organization = "exasol"
-        exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
-6. Post-merge, update the branch protections to include SonarQube analysis from exasonarqubeprchecks
-
-  * This should only be done when tests exist for the project, & that the project is
-    at a state in which enforced code coverage would not be a burden. For new projects,
-    we recommend creating an issue to add the SonarQube analysis to the branch protections
-    at a later point. In such scenarios, SonarQube analysis will still report its analysis
-    results to the PR, but it will not prevent the PR from being merged.
+* :ref:`configure_sonar_public_project`
+* :ref:`configure_sonar_private_project`
 
 8. Go 🥜
 +++++++++++++

@@ -6,7 +6,7 @@ Features
 .. toctree::
     :maxdepth: 2
 
-    collecting_metrics
+    metrics/collecting_metrics
     creating_a_release
     documentation/index
 
