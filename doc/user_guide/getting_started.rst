@@ -166,8 +166,8 @@ forward, and you just can use the example ``noxfile.py`` below.
 
 See :ref:`documentation_configuration` for the required steps.
 
-7. Set up for Sonar
-+++++++++++++++++++
+7. Set up Sonar
++++++++++++++++
 
 Look at the configuration of Sonar for a:
 
