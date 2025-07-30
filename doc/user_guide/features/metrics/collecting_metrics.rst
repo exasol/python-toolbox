@@ -52,20 +52,12 @@ Currently, the PTB offers two methods to aggregate the :ref:`direct_metrics`
 into a report:
 
 #. the nox session ``project:report``
-    This summarization tool can generate either a JSON or markdown summary where
-    it provides an overall coverage percentage, maintainability grade, and security
-    grade. The generated JSON follows a code-agnostic format which can be used
-    for code quality analysis across Exasol. The markdown summary can be displayed in
-    the GitHub Action's Summary for a given CI run. For more information, see :ref:`project_report`.
+    This is an Exasol-specific summarization tool. For more information, see :ref:`project_report`.
 
 #. SonarQube analysis
     This summarization tool feeds into a feature-rich UI provided by
-    `Sonar <https://docs.sonarsource.com/sonarqube-server/latest/>`__. The total coverage
-    is calculated as a percentage and visually displayed per line on the altered code.
-    Security & linting issues are displayed in a list with links to the code & textual
-    descriptions on why they should be fixed and how they can be fixed. Additionally,
-    this information can be paired per project with a bot, which reports the code
-    quality analysis results within a PR. For further details, see :ref:`sonarqube_analysis`
+    `Sonar <https://docs.sonarsource.com/sonarqube-server/latest/>`__. For further
+    details, see :ref:`sonarqube_analysis`
 
 Both of these reporting options require that the generated files from the :ref:`direct_metrics`
 are existing and in the expected formats. As we have metrics for different Python

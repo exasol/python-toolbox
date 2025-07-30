@@ -8,7 +8,7 @@ The PTB supports using SonarQube Cloud to analyze, visualize, & track linting, s
 and subscribe to the
 `Clean as You Code <https://docs.sonarsource.com/sonarqube-server/9.8/user-guide/clean-as-you-code/>`__
 methodology. If code modified in a PR does not satisfy the aforementioned criteria, we
-will receiving a failing (red) SonarQube analysis.
+will receive a failing (red) SonarQube analysis.
 
 Additionally, per project, we enact a GitHub bot (differs based on :ref:`configuration`,
 which reports the status of the Sonar analysis into a PR as a stylized comment and as
