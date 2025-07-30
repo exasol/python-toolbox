@@ -29,9 +29,8 @@ of the Exasol Product Integration Team:
 * `Metrics Schema`_
 * `Metrics Schema Project`_
 
-For our open-source projects, there is a scheduled job that regularly collects metrics
-from projects. This data is then aggregated and added to a central data store. For more
-details, please refer to the crawler project documentation.
+The Integration team runs regular aggregation of the metrics from all projects into a centralized data sink
+as decribed in the company Wiki.
 
 Development
 -----------
