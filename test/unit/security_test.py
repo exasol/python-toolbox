@@ -46,18 +46,18 @@ class TestCreateSecurityIssue:
             (
                 cleandoc(
                     """
-                                ## Summary
-                                Random Multiline
-                                Description
-                                ;)
+                                    ## Summary
+                                    Random Multiline
+                                    Description
+                                    ;)
 
-                                CVE: CVE-2023-39410
-                                CWE: CWE-XYZ
+                                    CVE: CVE-2023-39410
+                                    CWE: CWE-XYZ
 
-                                ## References
-                                - https://www.example.com
-                                - https://www.foobar.com
-                                """
+                                    ## References
+                                    - https://www.example.com
+                                    - https://www.foobar.com
+                                    """
                 ),
                 security.Issue(
                     cve="CVE-2023-39410",
@@ -411,30 +411,30 @@ def test_format_jsonl_removes_newline():
     [
         (
             """{
-    "results": [
-        {
-            "code": "1 import subprocess\\n2 from typing import Iterable\\n3 \\n",
-            "col_offset": 12,
-            "end_col_offset": 17,
-            "filename": "/home/test/python-toolbox/exasol/toolbox/git.py",
-            "issue_confidence": "HIGH",
-            "issue_cwe": {
-                "id": 78,
-                "link": "https://cwe.mitre.org/data/definitions/78.html"
-            },
-            "issue_severity": "LOW",
-            "issue_text": "Consider possible security implications associated with the subprocess module.",
-            "line_number": 53,
-            "line_range": [
-                1
-            ],
-            "more_info": "https://bandit.readthedocs.io/en/1.7.10/blacklists/blacklist_imports.html#b404-import-subprocess",
-            "test_id": "B404",
-            "test_name": "blacklist"
-        }
-    ]
-}
-            """,
+        "results": [
+            {
+                "code": "1 import subprocess\\n2 from typing import Iterable\\n3 \\n",
+                "col_offset": 12,
+                "end_col_offset": 17,
+                "filename": "/home/test/python-toolbox/exasol/toolbox/git.py",
+                "issue_confidence": "HIGH",
+                "issue_cwe": {
+                    "id": 78,
+                    "link": "https://cwe.mitre.org/data/definitions/78.html"
+                },
+                "issue_severity": "LOW",
+                "issue_text": "Consider possible security implications associated with the subprocess module.",
+                "line_number": 53,
+                "line_range": [
+                    1
+                ],
+                "more_info": "https://bandit.readthedocs.io/en/1.7.10/blacklists/blacklist_imports.html#b404-import-subprocess",
+                "test_id": "B404",
+                "test_name": "blacklist"
+            }
+        ]
+    }
+                """,
             {
                 "file_name": "exasol/toolbox/git.py",
                 "line": 53,
@@ -526,11 +526,8 @@ class TestFromPipAudit:
         assert actual == set()
 
     @staticmethod
-    def test_convert_vulnerability_to_issue(
-        pip_audit_report, pip_audit_jinja2_issue, pip_audit_cryptography_issue
-    ):
-        audit_json = json.dumps(pip_audit_report)
-        expected = {pip_audit_jinja2_issue, pip_audit_cryptography_issue}
-
-        actual = set(security.from_pip_audit(audit_json))
-        assert actual == expected
+    def test_convert_vulnerability_to_issue(sample_vulnerability):
+        actual = set(
+            security.from_pip_audit(sample_vulnerability.nox_dependencies_audit)
+        )
+        assert actual == {sample_vulnerability.security_issue}
