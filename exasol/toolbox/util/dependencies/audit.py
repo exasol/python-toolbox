@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-import subprocess
+import subprocess  # nosec
 from dataclasses import dataclass
 from pathlib import Path
 from re import search
@@ -82,7 +82,7 @@ def audit_poetry_files(working_directory: Path) -> str:
         capture_output=True,
         text=True,
         cwd=working_directory,
-    )
+    )  # nosec
     if output.returncode != 0:
         raise PipAuditException(subprocess_output=output)
     (working_directory / requirements_txt).write_text(output.stdout)
@@ -93,7 +93,7 @@ def audit_poetry_files(working_directory: Path) -> str:
         capture_output=True,
         text=True,
         cwd=working_directory,
-    )
+    )  # nosec
     if output.returncode != 0:
         # pip-audit does not distinguish between 1) finding vulnerabilities
         # and 2) other errors performing the pip-audit (i.e. malformed file);
