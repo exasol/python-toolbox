@@ -20,6 +20,13 @@ def create_poetry_project(tmp_path, sample_vulnerability):
         ],
         cwd=poetry_root_dir,
     )
+
+    poetry_export = """[tool.poetry.requires - plugins]
+    poetry - plugin - export = ">=1.8"
+    """
+    with (poetry_root_dir / "pyproject.toml").open("a") as f:
+        f.write(poetry_export)
+
     return poetry_root_dir
 
 
