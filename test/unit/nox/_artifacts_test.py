@@ -5,7 +5,6 @@ import sqlite3
 from dataclasses import dataclass
 from inspect import cleandoc
 from pathlib import Path
-from typing import Any
 from unittest import mock
 from unittest.mock import (
     Mock,
@@ -14,14 +13,7 @@ from unittest.mock import (
 )
 
 import pytest
-from nox import (
-    Session,
-    _options,
-    manifest,
-    virtualenv,
-)
 from nox.sessions import (
-    SessionRunner,
     _SessionQuit,
 )
 
@@ -317,41 +309,6 @@ class TestCopyArtifacts:
         )
         for f in [".lint.txt", ".lint.json", ".security.json"]:
             assert (tmp_path / f).exists()
-
-
-class FakeEnv(mock.MagicMock):
-    # Extracted from nox testing
-    _get_env = virtualenv.VirtualEnv._get_env
-
-
-def make_fake_env(venv_backend: str = "venv", **kwargs: Any) -> FakeEnv:
-    # Extracted from nox testing
-    return FakeEnv(
-        spec=virtualenv.VirtualEnv,
-        env={},
-        venv_backend=venv_backend,
-        **kwargs,
-    )
-
-
-@pytest.fixture
-def nox_session(tmp_path):
-    # Extracted from nox testing
-    session_runner = SessionRunner(
-        name="test",
-        signatures=["test"],
-        func=mock.Mock(spec=["python"], python="3.10"),
-        global_config=_options.options.namespace(
-            posargs=[],
-            error_on_external_run=False,
-            install_only=False,
-            invoked_from=tmp_path,
-        ),
-        manifest=mock.create_autospec(manifest.Manifest),
-    )
-    session_runner.venv = make_fake_env(bin_paths=["/no/bin/for/you"])
-    session = Session(session_runner)
-    yield session
 
 
 class TestPrepareCoverageXml:
