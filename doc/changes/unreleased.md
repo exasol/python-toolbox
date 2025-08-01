@@ -2,8 +2,9 @@
 
 ## Summary
 
-With the refactoring of the `dependency:audit`, we
-`poetry self add poetry-plugin-export`
+With the refactoring of the `dependency:audit`, we use `poetry export`. For how it can
+be added (project-specific or globally), see the
+[poetry export documentation](https://github.com/python-poetry/poetry-plugin-export).
 
 ## Refactoring
 
