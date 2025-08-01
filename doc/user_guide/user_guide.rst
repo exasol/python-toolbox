@@ -6,6 +6,7 @@
 .. toctree::
     :maxdepth: 2
 
+    dependencies
     getting_started
     features/index
     workflows
