@@ -47,6 +47,7 @@ jobs:
           include-hidden-files: true
 
   runner-images:
+    name: List Runner Images
     runs-on: ubuntu-24.04
     steps:
       - id: generate
@@ -60,6 +61,8 @@ jobs:
       runners: ${{ steps.generate.outputs.runners }}
 
   Verify-pipx-Installation:
+    # This Job verifies if pipx installation is successful on each of the
+    # selected GitHub Runners.
     needs: runner-images
     name: Install Pipx on ${{ matrix.runner }}
     strategy:
