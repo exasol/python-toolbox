@@ -46,19 +46,6 @@ jobs:
           path: .coverage
           include-hidden-files: true
 
-  runner-images:
-    name: List Runner Images
-    runs-on: ubuntu-24.04
-    steps:
-      - id: generate
-        run: |
-          echo runners=$(jq -n '$ARGS.positional' --args \
-            ubuntu-24.04 \
-            int-linux-x64-4core-gpu-t4-ubuntu24.04-1 \
-            int-linux-x64-4core-ubuntu24.04-1 \
-          ) >> "$GITHUB_OUTPUT"
-    outputs:
-      runners: ${{ steps.generate.outputs.runners }}
 
   Verify-pipx-Installation:
     # This Job verifies if pipx installation is successful on each of the
@@ -68,7 +55,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: ${{ fromJSON(needs.runner-images.outputs.runners) }}
+        runner:
+          - ubuntu-24.04
+          - ubuntu-22.04
+          - int-linux-x64-4core-gpu-t4-ubuntu24.04-1
+          - int-linux-x64-4core-ubuntu24.04-1
+          - int-linux-x64-2core-ubuntu24.04-1
     runs-on:
       labels: ${{ matrix.runner }}
 
@@ -79,5 +71,5 @@ jobs:
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
 
-      - name: Pipx version
-        run: pipx --version
+      - name: Poetry version
+        run: poetry --version
