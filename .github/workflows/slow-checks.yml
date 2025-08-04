@@ -50,8 +50,6 @@ jobs:
   Verify-pipx-Installation:
     # This Job verifies if pipx installation is successful on each of the
     # selected GitHub Runners.
-    needs: runner-images
-    name: Install Pipx on ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
@@ -61,6 +59,7 @@ jobs:
           - int-linux-x64-4core-gpu-t4-ubuntu24.04-1
           - int-linux-x64-4core-ubuntu24.04-1
           - int-linux-x64-2core-ubuntu24.04-1
+    name: Install Pipx on ${{ matrix.runner }}
     runs-on:
       labels: ${{ matrix.runner }}
 
