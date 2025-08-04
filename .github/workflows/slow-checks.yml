@@ -45,3 +45,36 @@ jobs:
           name: coverage-python${{ matrix.python-version }}-slow
           path: .coverage
           include-hidden-files: true
+
+  runner-images:
+    runs-on: ubuntu-24.04
+    steps:
+      - id: generate
+        run: |
+          echo runners=$(jq -n '$ARGS.positional' --args \
+            ubuntu-24.04 \
+            int-linux-x64-4core-gpu-t4-ubuntu24.04-1 \
+            int-linux-x64-4core-ubuntu24.04-1 \
+          ) >> "$GITHUB_OUTPUT"
+    outputs:
+      runners: ${{ steps.generate.outputs.runners }}
+
+  Verify-pipx-Installation:
+    needs: runner-images
+    name: Install Pipx on ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: ${{ fromJSON(needs.runner-images.outputs.runners) }}
+    runs-on:
+      labels: ${{ matrix.runner }}
+
+    steps:
+
+      - name: Setup Python & Poetry Environment
+        uses: ./.github/actions/python-environment
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Pipx version
+        run: pipx --version
