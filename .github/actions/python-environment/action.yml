@@ -35,7 +35,7 @@ runs:
     - name: Set up pipx if not present
       shell: bash
       run: |
-        sudo apt update && sudo apt install -y pipx && pipx install poetry
+        sudo apt update && sudo apt install -y pipx
         python3 -m pipx ensurepath
         echo "$HOME/.local/bin" >> $GITHUB_PATH
 
