@@ -47,7 +47,7 @@ jobs:
           include-hidden-files: true
 
 
-  Verify-pipx-Installation:
+  Verify-Poetry-Installation:
     # This Job verifies if pipx installation is successful on each of the
     # selected GitHub Runners.
     strategy:
