@@ -70,11 +70,11 @@ jobs:
       labels: ${{ matrix.runner }}
 
     steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
-        with:
-          python-version: ${{ matrix.python-version }}
 
       - name: Pipx version
         run: pipx --version
