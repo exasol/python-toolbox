@@ -32,16 +32,6 @@ runs:
   using: "composite"
   steps:
 
-    - name: Set up pipx if not present
-      shell: bash
-      run: |
-        sudo apt update && sudo apt install -y pipx
-        python3 -m pipx ensurepath
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-    - name: Set up Poetry (${{ inputs.poetry-version }})
-      shell: bash
-      run: pipx install poetry==${{ inputs.poetry-version }}
 
     - name: Set up Python (${{ inputs.python-version}})
       uses: actions/setup-python@v5
@@ -49,21 +39,9 @@ runs:
         python-version: ${{ inputs.python-version }}
         cache: ${{ inputs.use-cache == 'true' && 'poetry' || '' }}
 
-    - name: Setup Poetry environment
+    - name: Set up Poetry (${{ inputs.poetry-version }})
       shell: bash
-      working-directory: ${{ inputs.working-directory }}
-      run: |
-        echo "$PYTHON_BINARY"
-        "$PYTHON_BINARY" --version
-        
-        PYTHON_PATH="$(which $PYTHON_BINARY)"
-        
-        echo poetry env use "$PYTHON_PATH"
-        poetry env use -vvv "$PYTHON_PATH"
-        poetry env info
-        poetry run python --version
-      env:
-        PYTHON_BINARY: "python${{ inputs.python-version }}"
+      run: pipx install poetry==${{ inputs.poetry-version }}
 
     - name: Poetry install with extras
       working-directory: ${{ inputs.working-directory }}
