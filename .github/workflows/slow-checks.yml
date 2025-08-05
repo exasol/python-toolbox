@@ -80,5 +80,6 @@ jobs:
 
       - name: Validate Python version
         run: |
-          poetry run python --version
+          poetry run which python
+          poetry env list
           poetry run python --version | grep "${{ matrix.python-version }}"
