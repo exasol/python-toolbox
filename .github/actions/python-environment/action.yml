@@ -50,7 +50,7 @@ runs:
         echo "export PATH="$HOME/.local/bin:$PATH"" >> "$HOME/.bashrc"
         echo "export PATH="$HOME/.local/bin:$PATH"" >> "$HOME/.profile"
         echo "export PATH="$HOME/.local/bin:$PATH"" >> "$HOME/.bash_profile"
-        sudo echo "export PATH="$HOME/.local/bin:$PATH"" >> "/etc/profile"
+        sudo echo "export PATH="$HOME/.local/bin:$PATH"" | sudo tee -a /etc/profile
         
         echo BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK 1
         source "$HOME/.bashrc"
