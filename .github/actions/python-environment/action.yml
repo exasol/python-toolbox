@@ -47,11 +47,10 @@ runs:
       shell: bash
       run: |
         POETRY_VERSION="${{ inputs.poetry-version }}"
-        POETRY_HOME=/usr/loca/bin
+        POETRY_HOME=/usr/local/bin
         curl -sSL https://install.python-poetry.org | sudo python3 -
         echo "$PATH"
         poetry --version
-        
 
 
     - name: Poetry install with extras
