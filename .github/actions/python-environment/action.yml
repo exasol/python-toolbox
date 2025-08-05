@@ -39,9 +39,14 @@ runs:
         python-version: ${{ inputs.python-version }}
         cache: ${{ inputs.use-cache == 'true' && 'poetry' || '' }}
 
+    - name: Ensure curl
+      shell: bash
+      run: sudo apt update && sudo apt install -y curl
+
+
     - name: Set up Poetry (${{ inputs.poetry-version }})
       shell: bash
-      run: pipx install poetry==${{ inputs.poetry-version }}
+      run: curl -sSL https://install.python-poetry.org | POETRY_VERSION=${{ inputs.poetry-version }} python3 -
 
     - name: Poetry install with extras
       working-directory: ${{ inputs.working-directory }}
