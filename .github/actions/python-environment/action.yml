@@ -11,7 +11,7 @@ inputs:
   poetry-version:
     description: 'Poetry version to use'
     required: true
-    default: "2.1.4"
+    default: "2.1.2"
 
   working-directory:
     description: 'Working directory to use'
