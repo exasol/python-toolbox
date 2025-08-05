@@ -45,7 +45,7 @@ runs:
 
     - name: Set up Poetry (${{ inputs.poetry-version }})
       shell: bash
-      run: curl -sSL https://install.python-poetry.org | POETRY_HOME=/usr/local/bin POETRY_VERSION=${{ inputs.poetry-version }} python3 -
+      run: curl -sSL https://install.python-poetry.org | POETRY_HOME=/usr/local/bin POETRY_VERSION=${{ inputs.poetry-version }} sudo python3 -
 
     - name: Poetry install with extras
       working-directory: ${{ inputs.working-directory }}
