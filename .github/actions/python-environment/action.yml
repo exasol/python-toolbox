@@ -52,6 +52,7 @@ runs:
         echo "export PATH="$HOME/.local/bin:$PATH"" >> "$HOME/.bash_profile"
         
         echo BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK 1
+        source "$HOME/.bashrc"
       env:
         PYTHON_BINARY: "python${{ inputs.python-version }}"
 
