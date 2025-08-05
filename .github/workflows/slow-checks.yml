@@ -47,3 +47,30 @@ jobs:
           name: coverage-python${{ matrix.python-version }}-slow
           path: .coverage
           include-hidden-files: true
+
+
+  Verify-Poetry-Installation:
+    # This Job verifies if pipx installation is successful on each of the
+    # selected GitHub Runners.
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - ubuntu-22.04
+          - int-linux-x64-4core-gpu-t4-ubuntu24.04-1
+          - int-linux-x64-4core-ubuntu24.04-1
+          - int-linux-x64-2core-ubuntu24.04-1
+    name: Install Pipx on ${{ matrix.runner }}
+    runs-on:
+      labels: ${{ matrix.runner }}
+
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python & Poetry Environment
+        uses: ./.github/actions/python-environment
+
+      - name: Poetry version
+        run: poetry --version

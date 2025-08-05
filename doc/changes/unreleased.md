@@ -8,4 +8,5 @@ be added (project-specific or globally), see the
 
 ## Refactoring
 
+* #525: Added tests for installing `pipx` on different GitHub runners
 * #517: Refactored `dependency:audit` & split up to support upcoming work
