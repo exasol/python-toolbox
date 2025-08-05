@@ -32,24 +32,22 @@ runs:
   using: "composite"
   steps:
 
+    - name: Set up pipx if not present
+      shell: bash
+      run: |
+        python3 -m pip install --break-system-packages --upgrade pipx || python3 -m pip install --upgrade pipx  
+        python3 -m pipx ensurepath
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Set up Poetry (${{ inputs.poetry-version }})
+      shell: bash
+      run: pipx install poetry==${{ inputs.poetry-version }}
 
     - name: Set up Python (${{ inputs.python-version}})
       uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
         cache: ${{ inputs.use-cache == 'true' && 'poetry' || '' }}
-
-    - name: Ensure curl
-      shell: bash
-      run: sudo apt update && sudo apt install -y curl
-
-    - name: Set up Poetry (${{ inputs.poetry-version }})
-      shell: bash
-      run: |
-        curl -sSL https://install.python-poetry.org | POETRY_VERSION="${{ inputs.poetry-version }}" POETRY_HOME=/usr/local sudo -E python3 -
-        echo "$PATH"
-        poetry --version
-
 
     - name: Poetry install with extras
       working-directory: ${{ inputs.working-directory }}
@@ -60,10 +58,3 @@ runs:
         else
           poetry install
         fi
-
-    - name: Validate Poetry environment
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      run: |
-        poetry run python --version
-        poetry run python --version | grep "${{ inputs.python-version }}"
