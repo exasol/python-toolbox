@@ -40,12 +40,12 @@ runs:
 
     - name: Ensure curl
       shell: bash
-      run: sudo apt update && sudo apt install -y curl
+      run: sudo apt update && sudo apt install -y wget
 
     - name: Set up Poetry (${{ inputs.poetry-version }})
       shell: bash
       run: |
-        wget  --https-only -O - https://install.python-poetry.org | POETRY_VERSION="${{ inputs.poetry-version }}" "$PYTHON_BINARY" -
+        wget --tries=10 --retry-delay 10 --retry-connrefused --https-only -O - https://install.python-poetry.org | POETRY_VERSION="${{ inputs.poetry-version }}" "$PYTHON_BINARY" -
         echo "$HOME/.local/bin" >> $GITHUB_PATH
       env:
         PYTHON_BINARY: "python${{ inputs.python-version }}"
