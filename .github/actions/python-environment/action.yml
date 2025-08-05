@@ -50,6 +50,8 @@ runs:
         echo "export PATH="$HOME/.local/bin:$PATH"" >> "$HOME/.bashrc"
         echo "export PATH="$HOME/.local/bin:$PATH"" >> "$HOME/.profile"
         echo "export PATH="$HOME/.local/bin:$PATH"" >> "$HOME/.bash_profile"
+        
+        echo BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK 1
       env:
         PYTHON_BINARY: "python${{ inputs.python-version }}"
 
@@ -57,6 +59,10 @@ runs:
       id: poetry-env-path
       shell: bash
       run: |
+        echo BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK 2
+        cat "$HOME/.bashrc"
+        echo BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK 3
+        
         POETRY_ENV_PATH=$(poetry config virtualenvs.path)
         echo "POETRY_ENV_PATH=$POETRY_ENV_PATH" >>  $GITHUB_OUTPUT
 
