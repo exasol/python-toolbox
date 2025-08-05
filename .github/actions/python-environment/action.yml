@@ -45,7 +45,8 @@ runs:
     - name: Set up Poetry (${{ inputs.poetry-version }})
       shell: bash
       run: |
-        curl -sSL https://install.python-poetry.org | POETRY_VERSION="${{ inputs.poetry-version }}" "$PYTHON_BINARY" -
+        wget  --https-only -O /tmp/install_poetry.py https://install.python-poetry.org 
+        POETRY_VERSION="${{ inputs.poetry-version }}" "$PYTHON_BINARY" /tmp/install_poetry.py 
         echo "$HOME/.local/bin" >> $GITHUB_PATH
       env:
         PYTHON_BINARY: "python${{ inputs.python-version }}"
