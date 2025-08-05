@@ -47,6 +47,7 @@ runs:
       run: |
         curl -sSL https://install.python-poetry.org | POETRY_VERSION="${{ inputs.poetry-version }}" "$PYTHON_BINARY" -
         echo "export PATH="/home/runner/.local/bin:$PATH"" >> "$HOME/.bashrc"
+        echo "export PATH="/home/runner/.local/bin:$PATH"" >> "$HOME/.profile"
       env:
         PYTHON_BINARY: "python${{ inputs.python-version }}"
 
