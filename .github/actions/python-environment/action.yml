@@ -56,7 +56,8 @@ runs:
         echo "$PYTHON_BINARY"
         "$PYTHON_BINARY" --version
         PYTHON_PATH="$(which $PYTHON_BINARY)"
-        poetry env use "$PYTHON_BINARY"
+        echo poetry env use "$PYTHON_BINARY"
+        poetry env use --no-cache "$PYTHON_BINARY"
         poetry env info
         poetry run python --version
       env:
