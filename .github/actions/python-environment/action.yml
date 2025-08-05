@@ -49,6 +49,15 @@ runs:
         python-version: ${{ inputs.python-version }}
         cache: ${{ inputs.use-cache == 'true' && 'poetry' || '' }}
 
+    - name: Setup Poetry environment
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        PYTHON_PATH="$(which $PYTHON_BINARY)"
+        poetry env use "$PYTHON_PATH"
+      env:
+        PYTHON_BINARY: "python${{ inputs.poetry-version }}"
+
     - name: Poetry install with extras
       working-directory: ${{ inputs.working-directory }}
       shell: bash
