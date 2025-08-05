@@ -58,7 +58,7 @@ runs:
         echo "POETRY_ENV_PATH=$POETRY_ENV_PATH" >>  $GITHUB_OUTPUT
 
     - name: Cache Poetry environment
-      if: ${{ inputs.use-cache == 'true' }}
+      if: inputs.use-cache == 'true'
       id: cache-poetry-env
       uses: actions/cache@v4
       with:
