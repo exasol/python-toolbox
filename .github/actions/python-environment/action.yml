@@ -63,7 +63,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: ${{ steps.poetry-env-path.outputs.POETRY_ENV_PATH }}
-        key: poetry-env-${{ runner.os }}-${{ runner.os }}-${{ inputs.poetry-version }}-${{ inputs.python-version }}-${{ inputs.extras }}
+        key: poetry-env-${{ runner.os }}-${{ runner.os }}-${{ runner.name }}-${{ inputs.poetry-version }}-${{ inputs.python-version }}-${{ inputs.extras }}
 
     - name: Poetry install with extras
       if: inputs.use-cache != 'true' || steps.cache-poetry-env.outputs.cache-hit != 'true'
