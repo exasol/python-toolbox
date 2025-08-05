@@ -11,7 +11,7 @@ inputs:
   poetry-version:
     description: 'Poetry version to use'
     required: true
-    default: "2.1.2"
+    default: "2.1.4"
 
   working-directory:
     description: 'Working directory to use'
@@ -46,13 +46,27 @@ runs:
       shell: bash
       run: |
         curl -sSL https://install.python-poetry.org | POETRY_VERSION="${{ inputs.poetry-version }}" "$PYTHON_BINARY" -
-        sudo ln -s /home/runner/.local/bin/poetry /usr/local/bin/poetry
-        echo "$PATH"
-        poetry --version
+        echo PATH="$PATH:$HOME/.local/bin/ >> $HOME
       env:
         PYTHON_BINARY: "python${{ inputs.python-version }}"
 
+    - name: Find Poetry environment path
+      id: poetry-env-path
+      shell: bash
+      run: |
+        POETRY_ENV_PATH=$(poetry config virtualenvs.path)
+        echo "POETRY_ENV_PATH=$POETRY_ENV_PATH" >>  $GITHUB_OUTPUT
+
+    - name: Cache Poetry environment
+      if: ${{ inputs.use-cache == 'true' }}
+      id: cache-poetry-env
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.poetry-env-path.outputs.POETRY_ENV_PATH }}
+        key: poetry-env-${{ runner.os }}-${{ runner.os }}-${{ inputs.poetry-version }}-${{ inputs.python-version }}-${{ inputs.extras }}
+
     - name: Poetry install with extras
+      if: inputs.use-cache != 'true' || steps.cache-poetry-env.outputs.cache-hit != 'true'
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
