@@ -74,4 +74,4 @@ runs:
     - name: Validate Poetry environment
       working-directory: ${{ inputs.working-directory }}
       shell: bash
-      run: poetry run python --version | grep ${{ inputs.python-version }}"
+      run: poetry run python --version | grep "${{ inputs.python-version }}"
