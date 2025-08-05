@@ -58,7 +58,7 @@ runs:
         PYTHON_PATH="$(which $PYTHON_BINARY)"
         poetry env use "$PYTHON_PATH"
       env:
-        PYTHON_BINARY: "python${{ inputs.poetry-version }}"
+        PYTHON_BINARY: "python${{ inputs.python-version }}"
 
     - name: Poetry install with extras
       working-directory: ${{ inputs.working-directory }}
