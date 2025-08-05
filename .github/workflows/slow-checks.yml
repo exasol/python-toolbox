@@ -74,7 +74,6 @@ jobs:
         uses: ./.github/actions/python-environment
         with:
           python-version: "${{ matrix.python-version }}"
-          use-cache: 'false'
 
       - name: Poetry version
         run: poetry --version
