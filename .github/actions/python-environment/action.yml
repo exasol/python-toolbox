@@ -46,7 +46,9 @@ runs:
     - name: Set up Poetry (${{ inputs.poetry-version }})
       shell: bash
       run: |
-        curl -sSL https://install.python-poetry.org | POETRY_VERSION="${{ inputs.poetry-version }}" POETRY_HOME=/usr/local sudo -E "$PYTHON_BINARY" -
+        PYTHON_PATH=$(which $PYTHON_BINARY)
+        $PYTHON_PATH --version
+        curl -sSL https://install.python-poetry.org | POETRY_VERSION="${{ inputs.poetry-version }}" POETRY_HOME=/usr/local sudo -E "$PYTHON_PATH" -
         echo "$PATH"
         poetry --version
       env:
