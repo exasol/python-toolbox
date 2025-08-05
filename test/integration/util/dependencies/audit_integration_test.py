@@ -8,18 +8,19 @@ from exasol.toolbox.util.dependencies.audit import audit_poetry_files
 
 
 @pytest.fixture
-def create_poetry_project(tmp_path, sample_vulnerability):
+def create_poetry_project(tmp_path, sample_vulnerability, poetry_path):
     project_name = "vulnerability"
-    subprocess.run(["poetry", "new", project_name], cwd=tmp_path)
+    subprocess.run([poetry_path, "new", project_name], cwd=tmp_path, env={})
 
     poetry_root_dir = tmp_path / project_name
     subprocess.run(
         [
-            "poetry",
+            poetry_path,
             "add",
             f"{sample_vulnerability.package_name}=={sample_vulnerability.version}",
         ],
         cwd=poetry_root_dir,
+        env={},
     )
 
     poetry_export = cleandoc(
@@ -33,8 +34,9 @@ def create_poetry_project(tmp_path, sample_vulnerability):
         f.write(poetry_export)
 
     subprocess.run(
-        ["poetry", "install"],
+        [poetry_path, "install"],
         cwd=poetry_root_dir,
+        env={},
     )
 
     return poetry_root_dir
