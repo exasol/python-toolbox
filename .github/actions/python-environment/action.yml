@@ -57,6 +57,7 @@ runs:
         "$PYTHON_BINARY" --version
         PYTHON_PATH="$(which $PYTHON_BINARY)"
         poetry env use "$PYTHON_PATH"
+        poetry run python --version
       env:
         PYTHON_BINARY: "python${{ inputs.python-version }}"
 
@@ -69,3 +70,8 @@ runs:
         else
           poetry install
         fi
+
+    - name: Validate Poetry environment
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: poetry run python --version | grep ${{ inputs.python-version }}"
