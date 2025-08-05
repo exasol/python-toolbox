@@ -56,7 +56,7 @@ runs:
         echo "$PYTHON_BINARY"
         "$PYTHON_BINARY" --version
         PYTHON_PATH="$(which $PYTHON_BINARY)"
-        poetry env use "$PYTHON_PATH"
+        poetry env use "$PYTHON_BINARY"
         poetry run python --version
       env:
         PYTHON_BINARY: "python${{ inputs.python-version }}"
