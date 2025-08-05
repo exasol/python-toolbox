@@ -48,7 +48,7 @@ runs:
       run: |
         POETRY_VERSION="${{ inputs.poetry-version }}"
         POETRY_HOME=/usr/local/bin
-        curl -sSL https://install.python-poetry.org | sudo python3 -
+        curl -sSL https://install.python-poetry.org | sudo -E python3 -
         echo "$PATH"
         poetry --version
 
