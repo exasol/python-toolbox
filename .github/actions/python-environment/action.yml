@@ -57,7 +57,7 @@ runs:
         "$PYTHON_BINARY" --version
         
         PYTHON_PATH="$(which $PYTHON_BINARY)"
-        PYTHON_DIR="$(basename $PYTHON_PATH) 
+        PYTHON_DIR="$(basename $PYTHON_PATH)"
         export PATH="$PYTHON_DIR:$PATH"
         
         echo poetry env use "$PYTHON_BINARY"
