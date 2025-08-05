@@ -46,8 +46,8 @@ runs:
       shell: bash
       run: |
         curl -sSL https://install.python-poetry.org | POETRY_VERSION="${{ inputs.poetry-version }}" "$PYTHON_BINARY" -
-        sudo echo "PATH="$HOME/.local/bin:$PATH"" | sudo tee -a /etc/environment
-        
+        sudo echo "PATH=$HOME/.local/bin:$PATH" | sudo tee -a /etc/environment
+        export PATH="$HOME/.local/bin:$PATH"
         echo BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK 1
       env:
         PYTHON_BINARY: "python${{ inputs.python-version }}"
