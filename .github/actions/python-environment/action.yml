@@ -62,7 +62,8 @@ runs:
         echo BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK 2
         cat "$HOME/.bashrc"
         echo BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK 3
-        
+        echo $PATH
+        echo BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK BREAK 4
         POETRY_ENV_PATH=$(poetry config virtualenvs.path)
         echo "POETRY_ENV_PATH=$POETRY_ENV_PATH" >>  $GITHUB_OUTPUT
 
