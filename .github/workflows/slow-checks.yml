@@ -60,7 +60,6 @@ jobs:
           - int-linux-x64-4core-ubuntu24.04-1
           - int-linux-x64-2core-ubuntu24.04-1
         python-version:
-          - "3.9"
           - "3.10"
           - "3.11"
           - "3.12"
@@ -73,7 +72,7 @@ jobs:
       - name: SCM Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python & Poetry Environment
+      - name: Set up Python & Poetry Environment
         uses: ./.github/actions/python-environment
         with:
           python-version: "${{ matrix.python-version }}"

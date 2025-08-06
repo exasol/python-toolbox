@@ -38,7 +38,7 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
 
-    - name: Ensure curl
+    - name: Ensure wget
       shell: bash
       run: sudo apt update && sudo apt install -y wget
 
@@ -74,6 +74,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
+        EXTRAS=$(echo "${{ inputs.extras }}" | tr -d ' ')
         if [[ -n "$EXTRAS" ]]; then
           poetry install --extras "$EXTRAS"
         else
