@@ -11,7 +11,7 @@ inputs:
   poetry-version:
     description: 'Poetry version to use'
     required: true
-    default: "2.1.2"
+    default: "2.1.4"
 
   working-directory:
     description: 'Working directory to use'
@@ -32,29 +32,61 @@ runs:
   using: "composite"
   steps:
 
-    - name: Set up pipx if not present
-      shell: bash
-      run: |
-        sudo apt update && sudo apt install -y pipx
-        python3 -m pipx ensurepath
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-    - name: Set up Poetry (${{ inputs.poetry-version }})
-      shell: bash
-      run: pipx install poetry==${{ inputs.poetry-version }}
 
     - name: Set up Python (${{ inputs.python-version}})
       uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
-        cache: ${{ inputs.use-cache == 'true' && 'poetry' || '' }}
+
+    - name: Ensure wget
+      shell: bash
+      run: sudo apt update && sudo apt install -y wget
+
+    - name: Set up Poetry (${{ inputs.poetry-version }})
+      shell: bash
+      run: |
+        wget --tries=10 --waitretry 10 --retry-connrefused --https-only -O - https://install.python-poetry.org | POETRY_VERSION="${{ inputs.poetry-version }}" "$PYTHON_BINARY" -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+      env:
+        PYTHON_BINARY: "python${{ inputs.python-version }}"
+
+    - name: Setup cache variables
+      id: setup-cache-variables
+      shell: bash
+      run: |
+        echo "ImageOS=$ImageOS"
+        echo "ImageVersion=$ImageVersion"
+        POETRY_ENV_PATH=$(poetry config virtualenvs.path)
+        POETRY_SHA=$(sha256sum poetry.lock | awk '{print $1}') #Remove trailing filename
+        echo "POETRY_ENV_PATH=$POETRY_ENV_PATH" >>  $GITHUB_OUTPUT
+        echo "IMAGE_OS=$ImageOS" >> $GITHUB_OUTPUT
+        echo "IMAGE_VERSION=$ImageVersion" >> $GITHUB_OUTPUT
+        echo "POETRY_SHA=$POETRY_SHA" >> $GITHUB_OUTPUT
+        
+
+    - name: Cache Poetry environment
+      if: inputs.use-cache == 'true'
+      id: cache-poetry-env
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.setup-cache-variables.outputs.POETRY_ENV_PATH }}
+        key: poetry-env-${{ steps.setup-cache-variables.outputs.POETRY_SHA }}-${{ steps.setup-cache-variables.outputs.IMAGE_OS }}-${{ steps.setup-cache-variables.outputs.IMAGE_VERSION }}-${{ runner.arch }}-${{ inputs.poetry-version }}-${{ inputs.python-version }}-${{ inputs.extras }}
 
     - name: Poetry install with extras
+      if: inputs.use-cache != 'true' || steps.cache-poetry-env.outputs.cache-hit != 'true'
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
+        EXTRAS=$(echo "${{ inputs.extras }}" | tr -d ' ')
         if [[ -n "$EXTRAS" ]]; then
           poetry install --extras "$EXTRAS"
         else
           poetry install
         fi
+
+    - name: Validate Poetry environment
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        poetry run python --version
+        poetry run python --version | grep "${{ inputs.python-version }}"

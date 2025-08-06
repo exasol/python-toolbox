@@ -1,5 +1,5 @@
 # Unreleased
 
-## Refactorings
+## Bugfixes
 
-* #525: Added tests for installing `pipx` on different GitHub runners
+* #527: Use correct Python version in actions/python-environment 
