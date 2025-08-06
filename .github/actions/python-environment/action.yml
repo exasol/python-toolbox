@@ -57,7 +57,7 @@ runs:
         echo "ImageOS=$ImageOS"
         echo "ImageVersion=$ImageVersion"
         POETRY_ENV_PATH=$(poetry config virtualenvs.path)
-        POETRY_SHA=$((sha256sum poetry.lock | awk '{print $1}') #Remove trailing filename
+        POETRY_SHA=$(sha256sum poetry.lock | awk '{print $1}') #Remove trailing filename
         echo "POETRY_ENV_PATH=$POETRY_ENV_PATH" >>  $GITHUB_OUTPUT
         echo "IMAGE_OS=$ImageOS" >> $GITHUB_OUTPUT
         echo "IMAGE_VERSION=$ImageVersion" >> $GITHUB_OUTPUT
