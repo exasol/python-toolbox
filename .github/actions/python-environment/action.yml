@@ -57,9 +57,12 @@ runs:
         echo "ImageOS=$ImageOS"
         echo "ImageVersion=$ImageVersion"
         POETRY_ENV_PATH=$(poetry config virtualenvs.path)
+        POETRY_SHA=$((sha256sum poetry.lock | awk '{print $1}') #Remove trailing filename
         echo "POETRY_ENV_PATH=$POETRY_ENV_PATH" >>  $GITHUB_OUTPUT
         echo "IMAGE_OS=$ImageOS" >> $GITHUB_OUTPUT
         echo "IMAGE_VERSION=$ImageVersion" >> $GITHUB_OUTPUT
+        echo "POETRY_SHA=$POETRY_SHA" >> $GITHUB_OUTPUT
+        
 
     - name: Cache Poetry environment
       if: inputs.use-cache == 'true'
@@ -67,7 +70,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: ${{ steps.setup-cache-variables.outputs.POETRY_ENV_PATH }}
-        key: poetry-env-${{ steps.setup-cache-variables.outputs.IMAGE_OS }}-${{ steps.setup-cache-variables.outputs.IMAGE_VERSION }}-${{ inputs.poetry-version }}-${{ inputs.python-version }}-${{ inputs.extras }}
+        key: poetry-env-${{ steps.setup-cache-variables.outputs.POETRY_SHA }}-${{ steps.setup-cache-variables.outputs.IMAGE_OS }}-${{ steps.setup-cache-variables.outputs.IMAGE_VERSION }}-${{ runner.arch }}-${{ inputs.poetry-version }}-${{ inputs.python-version }}-${{ inputs.extras }}
 
     - name: Poetry install with extras
       if: inputs.use-cache != 'true' || steps.cache-poetry-env.outputs.cache-hit != 'true'
