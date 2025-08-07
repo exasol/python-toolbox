@@ -166,7 +166,7 @@ def from_pip_audit(report: str) -> Iterable[Issue]:
               "GHSA-cpwx-vrp4-4pq7",
               "CVE-2025-27516"
             ],
-            "description": "An oversight in how the Jinja sandboxed environment interacts with the\n`|attr` filter allows an attacker that controls the content of a template\nto execute arbitrary Python code."
+            "description": "An oversight ..."
           }
         ]
 
