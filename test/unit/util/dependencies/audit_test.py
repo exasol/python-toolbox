@@ -82,7 +82,11 @@ class TestAuditPoetryFiles:
         mock_pip_audit = MagicMock(CompletedProcess)
         mock_pip_audit.returncode = 1
         mock_pip_audit.stdout = ""
-        mock_pip_audit.stderr = "ERROR:pip_audit._cli:Failed to upgrade `pip`: ['/tmp/tmpjcn9gz0d/bin/python', '-m', 'pip', 'install', '--upgrade', 'pip', 'wheel', 'setuptools'"
+        mock_pip_audit.stderr = (
+            "ERROR:pip_audit._cli:Failed to upgrade `pip`:"
+            " ['/tmp/tmpjcn9gz0d/bin/python', '-m', 'pip', 'install',"
+            " '--upgrade', 'pip', 'wheel', 'setuptools']"
+        )
 
         mock_run.side_effect = [
             mock_poetry_export,  # poetry export passes
