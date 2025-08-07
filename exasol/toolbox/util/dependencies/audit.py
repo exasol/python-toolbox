@@ -68,7 +68,7 @@ def audit_poetry_files(working_directory: Path) -> str:
     Audit the `pyproject.toml` and `poetry.lock` files
 
     pip-audit evaluates installed packages. This is to provide
-    additional security features beyond seeing if a given package
+    additional security-related information beyond seeing if a given package
     has a known vulnerability. Thus, to audit our `pyproject.toml` and
     `poetry.lock` files without altering a locally sourced poetry environment,
     this function first exports the locked packages to a requirements.txt file.
