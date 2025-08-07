@@ -157,32 +157,38 @@ def from_pip_audit(report: str) -> Iterable[Issue]:
      - the same vulnerability ID (CVE, PYSEC, GHSA, etc.) is present across
      multiple coordinates.
 
-    Input:
-        '{"dependencies": [{"name": "<package_name>", "version": "<package_version>",
-        "vulns": [{"id": "<vuln_id>", "fix_versions": ["<fix_version>"],
-        "aliases": ["<vuln_id2>"], "description": "<vuln_description>"}]}]}'
+    Input as string:
+        [
+          {
+            "name": "jinja2",
+            "version": "3.1.5",
+            "refs": [
+              "GHSA-cpwx-vrp4-4pq7",
+              "CVE-2025-27516"
+            ],
+            "description": "An oversight ..."
+          }
+        ]
+
 
     Args:
         report:
             the JSON output of `nox -s dependency:audit` provided as a str
     """
-    report_dict = json.loads(report)
-    dependencies = report_dict.get("dependencies", [])
-    for dependency in dependencies:
-        package = dependency["name"]
-        for v in dependency["vulns"]:
-            refs = [v["id"]] + v["aliases"]
-            cves, cwes, links = identify_pypi_references(
-                references=refs, package_name=package
+    vulnerabilities = json.loads(report)
+
+    for vulnerability in vulnerabilities:
+        cves, cwes, links = identify_pypi_references(
+            references=vulnerability["refs"], package_name=vulnerability["name"]
+        )
+        if cves:
+            yield Issue(
+                cve=sorted(cves)[0],
+                cwe="None" if not cwes else ", ".join(cwes),
+                description=vulnerability["description"],
+                coordinates=f"{vulnerability['name']}:{vulnerability['version']}",
+                references=tuple(links),
             )
-            if cves:
-                yield Issue(
-                    cve=sorted(cves)[0],
-                    cwe="None" if not cwes else ", ".join(cwes),
-                    description=v["description"],
-                    coordinates=f"{package}:{dependency['version']}",
-                    references=tuple(links),
-                )
 
 
 @dataclass(frozen=True)
