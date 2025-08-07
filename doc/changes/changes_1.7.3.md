@@ -2,3 +2,8 @@
 ## Bugfixes
 
 * #523: Fixed `pipx` installation for older versions of `pip`
+
+## Refactorings
+
+* #525: Added tests for installing `pipx` on different GitHub runners
+
