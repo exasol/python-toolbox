@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess  # nosec
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from re import search
@@ -85,15 +86,19 @@ def audit_poetry_files(working_directory: Path) -> str:
     )  # nosec
     if output.returncode != 0:
         raise PipAuditException(subprocess_output=output)
-    (working_directory / requirements_txt).write_text(output.stdout)
 
-    command = ["pip-audit", "-r", requirements_txt, "-f", "json"]
-    output = subprocess.run(
-        command,
-        capture_output=True,
-        text=True,
-        cwd=working_directory,
-    )  # nosec
+    with tempfile.TemporaryDirectory() as path:
+        tmpdir = Path(path)
+        (tmpdir / requirements_txt).write_text(output.stdout)
+
+        command = ["pip-audit", "-r", requirements_txt, "-f", "json"]
+        output = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            cwd=tmpdir,
+        )  # nosec
+
     if output.returncode != 0:
         # pip-audit does not distinguish between 1) finding vulnerabilities
         # and 2) other errors performing the pip-audit (i.e. malformed file);

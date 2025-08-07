@@ -8,7 +8,6 @@ odbcconfig/odbcinst.ini
 
 .coverage
 .sonar
-requirements.txt
 
 _build/
 
