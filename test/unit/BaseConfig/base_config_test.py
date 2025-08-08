@@ -1,14 +1,14 @@
-from exasol.toolbox.BaseConfig import BaseConfig, str_like_version_validation
-import pytest
 import pydantic
+import pytest
+
+from exasol.toolbox.BaseConfig import (
+    BaseConfig,
+    str_like_version_validation,
+)
+
 
 @pytest.mark.parametrize(
-    "versions",
-    (
-        ["$.2.3"],
-        ["1.f.1"],
-        ["1.1.1", "1.2.3", "2.3.4", "2.3.7", "1.1.1.1"]
-    )
+    "versions", (["$.2.3"], ["1.f.1"], ["1.1.1", "1.2.3", "2.3.4", "2.3.7", "1.1.1.1"])
 )
 def test_str_like_version_validation(versions):
     with pytest.raises(ValueError):
