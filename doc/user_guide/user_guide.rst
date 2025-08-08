@@ -6,10 +6,9 @@
 .. toctree::
     :maxdepth: 2
 
+    dependencies
     getting_started
-    features
+    features/index
     workflows
     customization
     migrating
-    how_to_release
-    collecting_metrics

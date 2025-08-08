@@ -1,9 +1,9 @@
 # Unreleased
 
-## Feature
-
-* #382: Added onto nox session `release:prepare` to append dependency changes between current and latest tag
+With the refactoring of the `dependency:audit`, we use `poetry export`. For how it can
+be added (project-specific or globally), see the
+[poetry export documentation](https://github.com/python-poetry/poetry-plugin-export).
 
 ## Refactoring
 
-* #498: Centralized changelog code relevant for `release:trigger` & robustly tested
+* #517: Refactored `dependency:audit` & split up to support upcoming work

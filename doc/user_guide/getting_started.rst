@@ -69,18 +69,6 @@ List all available nox tasks:
 
     nox -l
 
-Build and open the documentation:
-
-.. code-block:: shell
-
-    nox -s docs:build  docs:open
-
-Execute the unit tests of the project:
-
-.. code-block:: shell
-
-    nox -s test:unit
-
 
 .. _existing:
 
@@ -94,18 +82,10 @@ Integrating Exasol-Toolbox into your Project
 
     poetry add --group dev exasol-toolbox
 
-2. Fine tune the .gitignore file
-+++++++++++++++++++++++++++++++++
-Add the standard documentation output folder (*.html-documentation*) to the *.gitignore*.
-
-.. code-block:: shell
-
-    echo ".html-documentation" >> .gitignore && git add .gitignore && git commit -m "Add documentation build folder to .gitignore"
-
-3. Provide a project configuration
+2. Provide a project configuration
 ++++++++++++++++++++++++++++++++++
 Make sure you provide the required configuration. Configuration for the exasol-toolbox gets provided by creating
-a *noxconfig.py* file in the workspace root. This file should contain at least
+a ``noxconfig.py`` file in the workspace root. This file should contain at least
 a single module constant with the name **PROJECT_CONFIG** pointing to an object,
 which is required to to provide the following attributes:
 
@@ -127,9 +107,9 @@ Alternatively you can use the *noxconfig.py* file bellow and adjust the value of
 .. literalinclude:: ../../noxconfig.py
    :language: python3
 
-4. Configure the tooling
+3. Configure the tooling
 ++++++++++++++++++++++++
-In order to make all standard task work properly, you need add the configuration settings below to your *pyproject.toml*,
+In order to make all standard task work properly, you need add the configuration settings below to your ``pyproject.toml``,
 and adjust the following settings to your project needs:
 
 * coverage
@@ -144,11 +124,11 @@ and adjust the following settings to your project needs:
     :language: toml
     :start-after: # Tooling
 
-5. Make the toolbox tasks available
+4. Make the toolbox tasks available
 +++++++++++++++++++++++++++++++++++
-In order to use the standard toolbox task via nox, just import them in your *noxfile.py*.
-If you only need the standard tasks provided by the toolbox, your *noxfile.py* is straight
-forward, and you just can use the example *noxfile.py* below.
+In order to use the standard toolbox task via nox, just import them in your ``noxfile.py``.
+If you only need the standard tasks provided by the toolbox, your ``noxfile.py`` is straight
+forward, and you just can use the example ``noxfile.py`` below.
 
 .. literalinclude:: ../../noxfile.py
    :language: python3
@@ -163,7 +143,7 @@ forward, and you just can use the example *noxfile.py* below.
 
 
 
-6. Set up the pre-commit hooks [optional]
+5. Set up the pre-commit hooks [optional]
 +++++++++++++++++++++++++++++++++++++++++
 
 #. Add a :code:`.pre-commit-config.yaml` file to your project root
@@ -181,91 +161,22 @@ forward, and you just can use the example *noxfile.py* below.
 
 .. _toolbox tasks:
 
-7. Set up for deploying documentation (optional)
-++++++++++++++++++++++++++++++++++++++++++++++++
-Within the `gh-pages.yml`, we use the GitHub `upload-pages-artifact` and `deploy-pages`
-actions. In order to properly deploy your pages, you'll need to reconfigure the GitHub
-Pages settings for the repo:
+6. Set up deploying documentation (optional)
+++++++++++++++++++++++++++++++++++++++++++++
 
-1. Go to the affected repo's GitHub page
-2. Select 'Settings'
-3. Scroll down & select 'Pages'
-4. Within the 'Build and deployment' section, change 'Source' to 'GitHub Actions'.
+See :ref:`documentation_configuration` for the required steps.
 
-We also need to configure settings for github-pages environment:
+7. Set up Sonar
++++++++++++++++
 
-1. Go to the affected repo's GitHub page
-2. Select 'Settings'
-3. Scroll down & select 'Environment'
-4. Click on 'github-pages'
-5. In the 'Deployment branches and tags', click 'Add deployment branch or tag rule'
-6. Select 'Ref type' to be 'Tag' and set the 'Name pattern' to `[0-9]*.[0-9]*.[0-9]*` (or whatever matches that repo's tags)
+Look at the configuration of Sonar for a:
 
-8. Set up for Sonar
-+++++++++++++++++++
-PTB supports using SonarQube Cloud to analyze, visualize, & track linting, security, &
-coverage. All of our Python projects are evaluated against the
-`Exasol Way <https://sonarcloud.io/organizations/exasol/quality_gates/show/AXxvLH-3BdtLlpiYmZhh>`__
-and subscribe to the
-`Clean as You Code <https://docs.sonarsource.com/sonarqube-server/9.8/user-guide/clean-as-you-code/>`__
-methodology, which means that SonarQube analysis will fail and, if its included in the branch protections, block a PR
-if code modified in that PR does not meet the standards of the Exasol Way.
+* :ref:`configure_sonar_public_project`
+* :ref:`configure_sonar_private_project`
 
-In order to set up Sonar, you will need to perform the following instructions.
-
-For a **public** project
-^^^^^^^^^^^^^^^^^^^^^^^^
-1. Specify in the `noxconfig.py` the relative path to the project's source code in `Config.source`
-    .. code-block:: python
-
-        source: Path = Path("exasol/<project-source-folder>")
-2. Add the 'SONAR_TOKEN' to the 'Organization secrets' in GitHub (this requires a person being a GitHub organization owner)
-3. Activate the `SonarQubeCloud App <https://github.com/apps/sonarqubecloud>`_
-4. Create a project on SonarCloud
-5. Add the following information to the project's file `pyproject.toml`
-    .. code-block:: toml
-
-        [tool.sonar]
-        projectKey = "com.exasol:<project-key>"
-        hostUrl = "https://sonarcloud.io"
-        organization = "exasol"
-        exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
-6. Post-merge, update the branch protections to include SonarQube analysis
-
-  * This should only be done when tests exist for the project, & that the project is
-    at a state in which enforced code coverage would not be a burden. For new projects,
-    we recommend creating an issue to add the SonarQube analysis to the branch protections
-    at a later point. In such scenarios, SonarQube analysis will still report its analysis
-    results to the PR, but it will not prevent the PR from being merged.
-
-For a **private** project
-^^^^^^^^^^^^^^^^^^^^^^^^^
-1. Specify in the `noxconfig.py` the relative path to the project's source code in `Config.source`
-    .. code-block:: python
-
-        source: Path = Path("exasol/<project-source-folder>")
-2. Add the 'PRIVATE_SONAR_TOKEN' to the 'Organization secrets' in GitHub (this requires a person being a GitHub organization owner)
-3. Activate the `exasonarqubeprchecks App <https://github.com/apps/exasonarqubeprchecks>`_
-4. Create a project on https://sonar.exasol.com
-5. Add the following information to the project's file `pyproject.toml`
-    .. code-block:: toml
-
-        [tool.sonar]
-        projectKey = "com.exasol:<project-key>"
-        hostUrl = "https://sonar.exasol.com"
-        organization = "exasol"
-        exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
-6. Post-merge, update the branch protections to include SonarQube analysis from exasonarqubeprchecks
-
-  * This should only be done when tests exist for the project, & that the project is
-    at a state in which enforced code coverage would not be a burden. For new projects,
-    we recommend creating an issue to add the SonarQube analysis to the branch protections
-    at a later point. In such scenarios, SonarQube analysis will still report its analysis
-    results to the PR, but it will not prevent the PR from being merged.
-
-9. Go 🥜
+8. Go 🥜
 +++++++++++++
-You are ready to use the toolbox. With *nox -l* you can list all available tasks.
+You are ready to use the toolbox. With ``nox -l`` you can list all available tasks.
 
 .. code-block:: console
 
