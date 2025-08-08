@@ -11,19 +11,25 @@ def cwd(tmp_path_factory):
     return tmp_path_factory.mktemp("project_template_test")
 
 
+@pytest.fixture(scope="session")
+def config():
+    return Config()
+
+
 @pytest.fixture(scope="session", autouse=True)
-def new_project(cwd):
+def new_project(cwd, config):
     project_name = "project"
     repo_name = "repo"
     package_name = "package"
 
     subprocess.run(
-        ["cookiecutter", Config.root / "project-template", "-o", cwd, "--no-input",
+        ["cookiecutter", config.root / "project-template", "-o", cwd, "--no-input",
          f"project_name={project_name}", f"repo_name={repo_name}",
          f"package_name={package_name}",
          ], capture_output=True, check=True)
 
     return cwd / repo_name
+
 
 @pytest.fixture(scope="session", autouse=True)
 def poetry_install(run_command, poetry_path):

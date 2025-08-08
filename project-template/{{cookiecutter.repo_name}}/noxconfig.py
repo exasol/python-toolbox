@@ -5,8 +5,7 @@ from pathlib import Path
 from typing import Iterable
 
 
-@dataclass(frozen=True)
-class Config:
+class Config():
     root: Path = Path(__file__).parent
     doc: Path = Path(__file__).parent / "doc"
     source: Path = Path("exasol/{{cookiecutter.package_name}}")
