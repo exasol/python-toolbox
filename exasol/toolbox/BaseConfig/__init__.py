@@ -9,8 +9,8 @@ from typing import (
 from pydantic import (
     AfterValidator,
     BaseModel,
+    ConfigDict,
     computed_field,
-    ConfigDict
 )
 from pydantic.dataclasses import dataclass
 
