@@ -37,7 +37,7 @@ Use the following command to create a new project:
 .. code-block:: shell
 
    cookiecutter https://github.com/exasol/python-toolbox.git \
-     --directory project-template
+    --checkout <latest-tag> --directory project-template
 
 **2. Follow the interactive project setup prompt**
 
