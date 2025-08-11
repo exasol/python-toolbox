@@ -6,7 +6,7 @@ be added (project-specific or globally), see the
 
 ## Feature
 
-* #469: Altered slow-checks.yml to ask for manual approval before and separately from the integration tests
+* #469: Moved manual approval for slow tests to merge-gate.yml
 
 ## Refactoring
 
