@@ -7,3 +7,7 @@ be added (project-specific or globally), see the
 ## Refactoring
 
 * #517: Refactored `dependency:audit` & split up to support upcoming work
+
+## Bugfix
+
+* #533: Fixed project-template tests to run with unreleased PTB to better detect issues pre-release
