@@ -173,6 +173,9 @@ jobs:
     steps:
       - name: SCM Checkout
         uses: actions/checkout@v4
+        # The PTB has unit tests which require the fetch-depth to be 0.
+        with:
+          fetch-depth: 0
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
