@@ -29,6 +29,10 @@ def new_project(cwd):
 @pytest.fixture(scope="session", autouse=True)
 def poetry_install(run_command, poetry_path):
     run_command([poetry_path, "install"])
+    # The tests want to verify the current branch of the PTB incl. its cookiecutter
+    # template before releasing the PTB. The following command therefore modifies the
+    # dependency to the PTB itself in the pyproject.toml file by replacing the latest
+    # released PTB version with the current checked-out branch in PROJECT_CONFIG.root:
     run_command([poetry_path, "add", "--group", "dev", PROJECT_CONFIG.root])
 
 
