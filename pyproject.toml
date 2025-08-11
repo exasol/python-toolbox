@@ -54,7 +54,6 @@ pip-audit = "^2.7.3"
 pip-licenses = "^5.0.0"
 pluggy = "^1.5.0"
 pre-commit = ">=4"
-prysk = { extras = ["pytest-plugin"], version = ">0.17.0,<1" }
 pydantic = "^2.11.5"
 pylint = ">=2.15.4"
 pysonar = "^1.0.1.1548"
