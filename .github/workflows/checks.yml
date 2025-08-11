@@ -4,7 +4,6 @@ on:
   workflow_call:
 
 jobs:
-
   Version-Check:
     name: Version
     runs-on: ubuntu-24.04
@@ -43,6 +42,11 @@ jobs:
         run: |
           poetry run -- nox -s links:check
 
+  build-matrix:
+    name: Generate Build Matrix
+    uses: ./.github/workflows/matrix-python.yml
+    permissions:
+      contents: read
 
   Changelog:
     name: Changelog Update Check
@@ -60,12 +64,6 @@ jobs:
       - name: Run changelog update check
         run: poetry run -- nox -s changelog:updated
 
-  build-matrix:
-    name: Generate Build Matrix
-    uses: ./.github/workflows/matrix-python.yml
-    permissions:
-      contents: read
-
   Lint:
     name: Linting (Python-${{ matrix.python-version }})
     needs: [ Version-Check, build-matrix ]
@@ -75,7 +73,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
-
     steps:
       - name: SCM Checkout
         uses: actions/checkout@v4
@@ -128,6 +125,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
+
     steps:
       - name: SCM Checkout
         uses: actions/checkout@v4
@@ -175,8 +173,6 @@ jobs:
     steps:
       - name: SCM Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment

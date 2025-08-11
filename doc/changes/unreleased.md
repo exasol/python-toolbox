@@ -4,6 +4,10 @@ With the refactoring of the `dependency:audit`, we use `poetry export`. For how 
 be added (project-specific or globally), see the
 [poetry export documentation](https://github.com/python-poetry/poetry-plugin-export).
 
+## Feature
+
+* #469: Altered slow-checks.yml to ask for manual approval before and separately from the integration tests
+
 ## Refactoring
 
 * #517: Refactored `dependency:audit` & split up to support upcoming work
