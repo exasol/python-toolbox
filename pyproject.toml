@@ -40,7 +40,7 @@ Changelog = "https://exasol.github.io/python-toolbox/changelog.html"
 
 [tool.poetry.dependencies]
 bandit = { extras = ["toml"], version = "^1.7.9" }
-black = ">=24.1.0"
+black = ">=24.1.0,<26"
 coverage = ">=6.4.4,<8.0.0"
 furo = ">=2022.9.15"
 importlib-resources = ">=5.12.0"
