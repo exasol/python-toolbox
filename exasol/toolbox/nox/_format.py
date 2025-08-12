@@ -47,6 +47,6 @@ def fix(session: Session) -> None:
 
 @nox.session(name="project:format", python=False)
 def fmt_check(session: Session) -> None:
-    """Checks the project for correct formatting"""
+    """Checks the project for correct formatting_code"""
     py_files = python_files(PROJECT_CONFIG.root)
     _code_format(session=session, mode=Mode.Check, files=py_files)

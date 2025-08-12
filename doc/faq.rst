@@ -18,30 +18,3 @@ There are several methods to configure your shell:
     3. Alternatively, tools like `direnv <https://direnv.net>`_ can be used.
 
 .. _faq_failing_format_check:
-
-Format Still Fails After Running ``project:fix``
-------------------------------------------------
-
-If running the following sequence of commands results in ``project:format`` failing with an error during the execution of ``isort``:
-
-#. Run ``project:fix``
-#. Run ``project:format``
-
-It is very likely that you did not configure ``isort`` and/or ``black`` appropriately in your ``pyproject.toml`` file.
-
-Ensure ``isort`` is configured with compatibility for ``black``:
-
-.. code-block:: toml
-
-    [tool.isort]
-    profile = "black"
-    force_grid_wrap = 2
-
-Additionally, your black configuration should look similar to this:
-
-.. code-block:: toml
-
-    [tool.black]
-    line-length = 88
-    verbose = false
-    include = "\\.pyi?$"
