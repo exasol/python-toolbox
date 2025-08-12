@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import subprocess
 from collections.abc import Iterable
 from pathlib import Path
 
@@ -27,22 +28,25 @@ def _code_format(session: Session, mode: Mode, directory: Path) -> None:
     session.run(*command("black"), directory)
 
 
-def _pyupgrade(session: Session, config: Config, files: Iterable[str]) -> None:
+def _pyupgrade(session: Session, config: Config) -> None:
+    py_files = python_files(config.root)
     pyupgrade_args = getattr(config, "pyupgrade_args", _PYUPGRADE_ARGS)
-    session.run(
-        "pyupgrade",
-        *pyupgrade_args,
-        "--exit-zero-even-if-changed",
-        *files,
+
+    command = ["pyupgrade", *pyupgrade_args, "--exit-zero-even-if-changed"]
+    result = subprocess.run(
+        command + [*py_files], capture_output=True, text=True, check=True
     )
+
+    session.run("echo", " ".join(command) + f" *py_files({config.root})")
+    if result.stderr:
+        print(result.stderr.strip())
 
 
 @nox.session(name="project:fix", python=False)
 def fix(session: Session) -> None:
     """Runs all automated fixes on the code base"""
-    py_files = python_files(PROJECT_CONFIG.root)
     _version(session, Mode.Fix)
-    _pyupgrade(session, config=PROJECT_CONFIG, files=py_files)
+    _pyupgrade(session, config=PROJECT_CONFIG)
     _code_format(session, Mode.Fix, PROJECT_CONFIG.root)
 
 
