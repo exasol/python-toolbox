@@ -7,10 +7,15 @@ be added (project-specific or globally), see the
 ## Feature
 
 * #469: Moved manual approval for slow tests to merge-gate.yml
+* #544: Added ruff to `project:fix` and `project:format` for handling unused imports
 
 ## Refactoring
 
 * #517: Refactored `dependency:audit` & split up to support upcoming work
+
+## Documentation
+
+* #544: Added documentation on code formatting nox sessions (i.e. `project:fix`, `project:format`)
 
 ## Bugfix
 
