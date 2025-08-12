@@ -18,10 +18,19 @@ def new_project(cwd):
     package_name = "package"
 
     subprocess.run(
-        ["cookiecutter", PROJECT_CONFIG.root / "project-template", "-o", cwd, "--no-input",
-         f"project_name={project_name}", f"repo_name={repo_name}",
-         f"package_name={package_name}",
-         ], capture_output=True, check=True)
+        [
+            "cookiecutter",
+            PROJECT_CONFIG.root / "project-template",
+            "-o",
+            cwd,
+            "--no-input",
+            f"project_name={project_name}",
+            f"repo_name={repo_name}",
+            f"package_name={package_name}",
+        ],
+        capture_output=True,
+        check=True,
+    )
 
     return cwd / repo_name
 
@@ -61,7 +70,6 @@ def run_command(poetry_path, git_path, new_project):
             "cwd": new_project,
             "env": {"PATH": f"{Path(git_path).parent}:{Path(poetry_path).parent}"},
             "text": True,
-
         }
         config = {**defaults, **kwargs}
 

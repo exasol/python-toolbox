@@ -17,7 +17,9 @@ class Config:
         / "version.py"
     )
     path_filters: Iterable[str] = ()
-    pyupgrade_args: Iterable[str] = ("--py{{cookiecutter.python_version_min | replace('.', '')}}-plus",)
+    pyupgrade_args: Iterable[str] = (
+        "--py{{cookiecutter.python_version_min | replace('.', '')}}-plus",
+    )
     plugins: Iterable[object] = ()
 
 

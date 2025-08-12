@@ -10,9 +10,17 @@ def pre_commit(run_command, new_project, poetry_path):
 class TestPreCommitConfig:
     @staticmethod
     def _command(poetry_path: str, stage: str) -> list[str]:
-        return [poetry_path, "run", "--", "pre-commit", "run", "--hook-stage", stage,
-                "--files",
-                "exasol/package/version.py"]
+        return [
+            poetry_path,
+            "run",
+            "--",
+            "pre-commit",
+            "run",
+            "--hook-stage",
+            stage,
+            "--files",
+            "exasol/package/version.py",
+        ]
 
     def test_stage_pre_commit(self, pre_commit, poetry_path, run_command):
         command = self._command(poetry_path, "pre-commit")
