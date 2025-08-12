@@ -19,8 +19,6 @@ from tempfile import TemporaryDirectory
 from typing import (
     Any,
     Callable,
-    Dict,
-    List,
     Optional,
     Union,
 )
