@@ -46,18 +46,18 @@ class TestCreateSecurityIssue:
             (
                 cleandoc(
                     """
-                        ## Summary
-                        Random Multiline
-                        Description
-                        ;)
+                            ## Summary
+                            Random Multiline
+                            Description
+                            ;)
 
-                        CVE: CVE-2023-39410
-                        CWE: CWE-XYZ
+                            CVE: CVE-2023-39410
+                            CWE: CWE-XYZ
 
-                        ## References
-                        - https://www.example.com
-                        - https://www.foobar.com
-                        """
+                            ## References
+                            - https://www.example.com
+                            - https://www.foobar.com
+                            """
                 ),
                 security.Issue(
                     cve="CVE-2023-39410",
@@ -275,34 +275,31 @@ def test_format_jsonl_removes_newline():
 
 
 @pytest.mark.parametrize(
-    "json_file,expected",
+    "json_input,expected",
     [
         (
-            """{
-            "results": [
-                {
-                    "code": "1 import subprocess\\n2 from typing import Iterable\\n3 \\n",
-                    "col_offset": 12,
-                    "end_col_offset": 17,
-                    "filename": "/home/test/python-toolbox/exasol/toolbox/git.py",
-                    "issue_confidence": "HIGH",
-                    "issue_cwe": {
-                        "id": 78,
-                        "link": "https://cwe.mitre.org/data/definitions/78.html"
-                    },
-                    "issue_severity": "LOW",
-                    "issue_text": "Consider possible security implications associated with the subprocess module.",
-                    "line_number": 53,
-                    "line_range": [
-                        1
-                    ],
-                    "more_info": "https://bandit.readthedocs.io/en/1.7.10/blacklists/blacklist_imports.html#b404-import-subprocess",
-                    "test_id": "B404",
-                    "test_name": "blacklist"
-                }
-            ]
-        }
-                    """,
+            {
+                "results": [
+                    {
+                        "code": "1 import subprocess\\n2 from typing import Iterable\\n3 \\n",
+                        "col_offset": 12,
+                        "end_col_offset": 17,
+                        "filename": "/home/test/python-toolbox/exasol/toolbox/git.py",
+                        "issue_confidence": "HIGH",
+                        "issue_cwe": {
+                            "id": 78,
+                            "link": "https://cwe.mitre.org/data/definitions/78.html",
+                        },
+                        "issue_severity": "LOW",
+                        "issue_text": "Consider possible security implications associated with the subprocess module.",
+                        "line_number": 53,
+                        "line_range": [1],
+                        "more_info": "https://bandit.readthedocs.io/en/1.7.10/blacklists/blacklist_imports.html#b404-import-subprocess",
+                        "test_id": "B404",
+                        "test_name": "blacklist",
+                    }
+                ]
+            },
             {
                 "file_name": "exasol/toolbox/git.py",
                 "line": 53,
@@ -318,7 +315,8 @@ def test_format_jsonl_removes_newline():
         )
     ],
 )
-def test_from_json(json_file, expected):
+def test_from_json(json_input, expected):
+    json_file = json.dumps(json_input)
     actual = security.from_json(json_file, pathlib.Path("/home/test/python-toolbox"))
     expected_issue = security.SecurityIssue(
         file_name=expected["file_name"],
