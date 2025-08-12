@@ -8,6 +8,7 @@ be added (project-specific or globally), see the
 
 * #469: Moved manual approval for slow tests to merge-gate.yml
 * #544: Added ruff to `project:fix` and `project:format` for handling unused imports
+* #364: Reduced output from `project:fix` and `project:format`
 
 ## Refactoring
 

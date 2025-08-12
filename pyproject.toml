@@ -90,6 +90,9 @@ fail_under = 15
 line-length = 88
 verbose = false
 include = "\\.pyi?$"
+exclude = '''
+project-template/{{cookiecutter.repo_name}}/test/unit/unit_smoke_test.py
+'''
 
 [tool.isort]
 profile = "black"
