@@ -11,7 +11,7 @@ be added (project-specific or globally), see the
 ## Refactoring
 
 * #517: Refactored `dependency:audit` & split up to support upcoming work
-* Updated dependencies (removed unused `prysk`)
+* #541: Refactored test code using `prysk` and removed `prysk` as a dependency
 
 ## Bugfix
 
