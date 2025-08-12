@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from exasol.toolbox.tools.issue import CLI
 
 
@@ -71,14 +73,20 @@ class TestInstallIssue:
 
 class TestUpdateIssue:
     @staticmethod
-    def test_default_wants_user_interaction(cli_runner, tmp_path):
+    def test_when_file_does_not_previously_exist(cli_runner, tmp_path):
+        result = cli_runner.invoke(CLI, ["update", "bug", str(tmp_path)])
+
+        assert result.exit_code == 0
+        assert result.output.strip() == f"Updated bug in \n{tmp_path}/bug.md"
+
+    @staticmethod
+    def test_with_existing_file(cli_runner, tmp_path):
         # set up with file in tmp_path so bug files are the same
         cli_runner.invoke(CLI, ["install", "bug", str(tmp_path)])
 
-        result = cli_runner.invoke(CLI, ["update", "bug", str(tmp_path)])
+        with patch("typer.confirm", return_value=False):
+            result = cli_runner.invoke(CLI, ["update", "bug", str(tmp_path)])
 
-        assert result.exit_code == 1
-        assert (
-            result.output.strip()
-            == "issue <bug> already exists, show diff? [y/N]:Aborted."
-        )
+        assert result.exit_code == 0
+        # files are identical, so no output expected
+        assert result.output.strip() == ""

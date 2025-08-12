@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from exasol.toolbox.tools.workflow import CLI
 
 
@@ -95,14 +97,20 @@ class TestInstallWorkflow:
 
 class TestUpdateWorkflow:
     @staticmethod
-    def test_default_wants_user_interaction(cli_runner, tmp_path):
+    def test_when_file_does_not_previously_exist(cli_runner, tmp_path):
+        result = cli_runner.invoke(CLI, ["update", "checks", str(tmp_path)])
+
+        assert result.exit_code == 0
+        assert result.output.strip() == f"Updated checks in \n{tmp_path}/checks.yml"
+
+    @staticmethod
+    def test_with_existing_file(cli_runner, tmp_path):
         # set up with file in tmp_path so checks files are the same
         cli_runner.invoke(CLI, ["install", "checks", str(tmp_path)])
 
-        result = cli_runner.invoke(CLI, ["update", "checks", str(tmp_path)])
+        with patch("typer.confirm", return_value=False):
+            result = cli_runner.invoke(CLI, ["update", "checks", str(tmp_path)])
 
-        assert result.exit_code == 1
-        assert (
-            result.output.strip()
-            == "workflow <checks> already exists, show diff? [y/N]:Aborted."
-        )
+        assert result.exit_code == 0
+        # files are identical, so no output expected
+        assert result.output.strip() == ""
