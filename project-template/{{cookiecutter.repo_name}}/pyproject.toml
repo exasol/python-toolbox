@@ -62,6 +62,19 @@ module = [
 ]
 ignore_errors = true
 
+[tool.ruff]
+exclude = []
+
+[tool.ruff.lint]
+extend-ignore = [
+    "E",      # Syntax errors
+    "F",      # Pyflakes rules (excluding F401)
+    "UP",     # pyupgrade rules
+    "D",      # Docstring rules
+]
+extend-select = ["F401"]
+unfixable = []
+
 [tool.sonar]
 projectKey = "com.exasol:{{cookiecutter.repo_name}}"
 hostUrl = "https://sonarcloud.io"
