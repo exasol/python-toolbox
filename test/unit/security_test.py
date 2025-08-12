@@ -46,18 +46,18 @@ class TestCreateSecurityIssue:
             (
                 cleandoc(
                     """
-                            ## Summary
-                            Random Multiline
-                            Description
-                            ;)
+                    ## Summary
+                    Random Multiline
+                    Description
+                    ;)
 
-                            CVE: CVE-2023-39410
-                            CWE: CWE-XYZ
+                    CVE: CVE-2023-39410
+                    CWE: CWE-XYZ
 
-                            ## References
-                            - https://www.example.com
-                            - https://www.foobar.com
-                            """
+                    ## References
+                    - https://www.example.com
+                    - https://www.foobar.com
+                    """
                 ),
                 security.Issue(
                     cve="CVE-2023-39410",
