@@ -38,24 +38,29 @@ deterministic manner.
 `pre-commit`
 ++++++++++++
 
+.. _formatting_configuration:
 
 Configuration
 +++++++++++++
+black
+^^^^^
 
+Your ``black`` configuration should look similar to this:
 
+.. literalinclude:: ../../../../project-template/{{cookiecutter.repo_name}}/pyproject.toml
+  :language: toml
+  :start-at: [tool.black]
+  :end-before: [tool.isort]
+
+isort
+^^^^^
 Ensure ``isort`` is configured with compatibility for ``black``:
 
-.. code-block:: toml
+.. literalinclude:: ../../../../project-template/{{cookiecutter.repo_name}}/pyproject.toml
+  :language: toml
+  :start-at: [tool.isort]
+  :end-before: [tool.pylint.master]
 
-    [tool.isort]
-    profile = "black"
-    force_grid_wrap = 2
-
-Additionally, your black configuration should look similar to this:
-
-.. code-block:: toml
-
-    [tool.black]
-    line-length = 88
-    verbose = false
-    include = "\\.pyi?$"
+pyupgrade
+^^^^^^^^^
+No initial configuration of ``pyupgrade`` is required.

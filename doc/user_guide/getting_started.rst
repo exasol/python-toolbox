@@ -91,54 +91,38 @@ Integrating Exasol-Toolbox into your Project
 2. Provide a project configuration
 ++++++++++++++++++++++++++++++++++
 Make sure you provide the required configuration. Configuration for the exasol-toolbox gets provided by creating
-a ``noxconfig.py`` file in the workspace root. This file should contain at least
-a single module constant with the name **PROJECT_CONFIG** pointing to an object,
-which is required to to provide the following attributes:
-
-* .. py:attribute:: root
-    :type: Path
-
-* .. py:attribute:: doc
-    :type: Path
-
-* .. py:attribute:: version_file
-    :type: Path
-
-Alternatively you can use the *noxconfig.py* file bellow and adjust the value of the attributes if needed:
+a ``noxconfig.py`` file in the workspace root. This file should be similar to the
+example shown below.
 
 .. note::
 
-   Be aware that the plugin definitions are completely optional. For further details on plugins, see the customization section.
+   For further details on plugins, see the customization section.
 
-.. literalinclude:: ../../noxconfig.py
+.. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/noxconfig.py
    :language: python3
 
 3. Configure the tooling
 ++++++++++++++++++++++++
-In order to make all standard task work properly, you need add the configuration settings below to your ``pyproject.toml``,
-and adjust the following settings to your project needs:
+Configuration values for the tooling should be defined in the ``pyproject.toml``.
+Copy the example below & adapt it for your project's specific needs.
 
-* coverage
-    - source
-    - fail_under
-* pylint
-    - fail-under
-* mypy (overrides)
-    - module
+.. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/pyproject.toml
+  :language: toml
+  :start-after: # Tooling
 
-.. literalinclude:: ../../pyproject.toml
-    :language: toml
-    :start-after: # Tooling
+For further reference, see the specific configurations for:
+
+* :ref:`formatting code <formatting_configuration>`
+
 
 4. Make the toolbox tasks available
 +++++++++++++++++++++++++++++++++++
-In order to use the standard toolbox task via nox, just import them in your ``noxfile.py``.
-If you only need the standard tasks provided by the toolbox, your ``noxfile.py`` is straight
-forward, and you just can use the example ``noxfile.py`` below.
+To use the standard toolbox task via nox, just import them in your ``noxfile.py``.
+If you only need the standard tasks provided by the toolbox, your ``noxfile.py`` is
+straightforward, and you just can use the example ``noxfile.py`` below.
 
-.. literalinclude:: ../../noxfile.py
+.. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/noxfile.py
    :language: python3
-   :end-before: # entry point for debugging
 
 
 .. attention::
@@ -147,8 +131,6 @@ forward, and you just can use the example ``noxfile.py`` below.
 
     For additional information on resolving this issue, please :ref:`refer to <faq_no_module_noxconfig>`.
 
-
-
 5. Set up the pre-commit hooks [optional]
 +++++++++++++++++++++++++++++++++++++++++
 
@@ -156,7 +138,7 @@ forward, and you just can use the example ``noxfile.py`` below.
 
     If you want to reuse Nox tasks in the pre-commit hooks, feel free to get some inspiration from the Python toolbox itself:
 
-    .. literalinclude:: ../../.pre-commit-config.yaml
+    .. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/.pre-commit-config.yaml
        :language: yaml
 
 #. Enable pre-commit hooks for your workspace

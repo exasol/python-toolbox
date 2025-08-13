@@ -11,8 +11,8 @@ If when you execute:
 #. Run ``project:format``
 
 you receive an error from ``project:format`` (i.e. ``isort`` or ``black``), it it
-likely that you need to update your configuration to align with :ref:formatting_code.
-# TODO REFERENCE
+likely that you need to update your configuration to align with
+:ref:`formatting_configuration`.
 
 The automatic formatting is doing x, but we shouldn't do that because of y
 ---------------------------------------------------------------------------
@@ -42,20 +42,20 @@ might want to ignore automatically applied formatting.
 In the ``checks.yml``, ``project:format`` wants me to reformat code I did not modify
 ------------------------------------------------------------------------------------
 
-This is likely due to one of our tools (i.e. `black`) being upgraded. Within the
-`pyproject.toml` of the PTB, dependencies are specified to allow
-compatible versions or a restricted version range (i.e., `^6.0.1`, `>=24.1.0,<26.0.0`).
+This is likely due to one of our tools (i.e. ``black``) being upgraded. Within the
+``pyproject.toml`` of the PTB, dependencies are specified to allow
+compatible versions or a restricted version range (i.e., ``^6.0.1``, ``>=24.1.0,<26.0.0``).
 Such specifications should restrict major reformatting changes to coincide only with a
 new major version of the PTB. However, sometimes a tool's versioning may not properly
 adhere to semantic versioning.
 
 If you encounter this scenario, please:
 
-#. Ensure that your `pyproject.toml` has the PTB restricted to compatible versions
-   (i.e., `^1.7.0`).
+#. Ensure that your ``pyproject.toml`` has the PTB restricted to compatible versions
+   (i.e., ``^1.7.0``).
 #. Identify which tool is trying to reformat files that you did not modify.
-#. Reset your `poetry.lock` to align with what's in the project's **default branch**.
-#. More selectively update your `poetry.lock` with `poetry update <package-name>`.
+#. Reset your ``poetry.lock`` to align with what's in the project's **default branch**.
+#. More selectively update your ``poetry.lock`` with `poetry update <package-name>`.
 #. Share with your team which tool & version led to the unexpected changes. So that
    other PTB users do not experience the same difficulties, we will update the PTB with
    a patch version to avoid this tool's version and later do a major release to better
