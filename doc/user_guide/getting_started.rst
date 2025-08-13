@@ -165,33 +165,3 @@ Look at the configuration of Sonar for a:
 8. Go 🥜
 +++++++++++++
 You are ready to use the toolbox. With ``nox -l`` you can list all available tasks.
-
-.. code-block:: console
-
-    $ nox -l
-    Sessions defined in <PATH_TO_YOUR_PROJECT>/noxfile.py:
-
-    * project:fix -> Runs all automated fixes on the code base
-    - project:check -> Runs all available checks on the project
-    - project:report -> Collects and generates metrics summary for the workspace
-    - test:unit -> Runs all unit tests
-    - test:integration -> Runs the all integration tests
-    - test:coverage -> Runs all tests (unit + integration) and reports the code coverage
-    - lint:code -> Runs the static code analyzer on the project
-    - lint:typing -> Runs the type checker on the project
-    - lint:security -> Runs the security linter on the project
-    - lint:dependencies -> Checks if only valid sources of dependencies are used
-    - docs:multiversion -> Builds the multiversion project documentation
-    - docs:build -> Builds the project documentation
-    - docs:open -> Opens the built project documentation
-    - docs:clean -> Removes the documentations build folder
-    - release:prepare -> Prepares the project for a new release.
-
-    sessions marked with * are selected, sessions marked with - are skipped.
-
-
-Enjoy!
-
-.. note::
-
-    The targets and their names may change over time, so the list below may not be up to date, as it is not automatically generated yet. Therefore, if you find discrepancies, please `submit a quick PR <https://github.com/exasol/python-toolbox/compare>`_ to address them.
