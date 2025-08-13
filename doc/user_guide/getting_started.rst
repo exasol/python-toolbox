@@ -147,7 +147,6 @@ straightforward, and you just can use the example ``noxfile.py`` below.
 
         poetry run -- pre-commit install --hook-type pre-commit --hook-type pre-push
 
-.. _toolbox tasks:
 
 6. Set up deploying documentation (optional)
 ++++++++++++++++++++++++++++++++++++++++++++
