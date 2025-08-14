@@ -70,7 +70,7 @@ def update_issue(
         help="target directory to install the issue to.",
     ),
     confirm: bool = typer.Option(
-        False, help="Automatically confirm overwritting exsisting issue(s)"
+        False, help="Automatically confirm overwriting existing issue(s)"
     ),
 ) -> None:
     """Similar to install but checks for existing issues and shows diff"""
