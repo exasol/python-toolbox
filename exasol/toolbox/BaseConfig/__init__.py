@@ -1,9 +1,6 @@
 from collections.abc import Iterable
-from dataclasses import dataclass
-from pathlib import Path
 from typing import (
     Annotated,
-    Optional,
 )
 
 from pydantic import (
@@ -12,7 +9,6 @@ from pydantic import (
     ConfigDict,
     computed_field,
 )
-from pydantic.dataclasses import dataclass
 
 from exasol.toolbox.util.version import Version
 
@@ -42,12 +38,12 @@ class BaseConfig(BaseModel):
     ] = ["7.1.9"]
     model_config = ConfigDict(frozen=True)
 
-    @computed_field
+    @computed_field  # type: ignore[misc]
     @property
     def min_py_version(self) -> str:
         return str(min([Version.from_string(v) for v in self.python_versions]))
 
-    @computed_field
+    @computed_field  # type: ignore[misc]
     @property
     def max_py_version(self) -> str:
         return str(max([Version.from_string(v) for v in self.python_versions]))
