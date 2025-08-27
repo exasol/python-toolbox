@@ -102,9 +102,12 @@ def _trigger_release() -> Version:
     run("git", "tag", str(release_version))
     run("git", "push", "origin", str(release_version))
 
-    if hasattr(PROJECT_CONFIG, "create_major_version_tags") and PROJECT_CONFIG.create_major_version_tags:
+    if (
+        hasattr(PROJECT_CONFIG, "create_major_version_tags")
+        and PROJECT_CONFIG.create_major_version_tags
+    ):
         major_release_version = f"v{release_version.major}"
-        run("git", "tag", "-f",  str(major_release_version))
+        run("git", "tag", "-f", str(major_release_version))
         run("git", "push", "-f", "origin", str(major_release_version))
 
     return release_version
