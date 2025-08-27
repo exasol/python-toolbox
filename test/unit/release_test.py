@@ -1,7 +1,7 @@
 from subprocess import CalledProcessError
 from unittest.mock import (
     MagicMock,
-    patch,
+    patch, call,
 )
 
 import pytest
@@ -10,12 +10,14 @@ from exasol.toolbox.nox._release import (
     ReleaseError,
     _trigger_release,
 )
+from exasol.toolbox.util.version import Version
+import noxconfig
 
 
 @pytest.fixture(scope="class")
 def mock_from_poetry():
     with patch(
-        "exasol.toolbox.nox._release.Version.from_poetry", return_value="0.3.0"
+        "exasol.toolbox.nox._release.Version.from_poetry", return_value=Version(major=0,minor=3,patch=0)
     ) as mock_obj:
         yield mock_obj
 
@@ -38,6 +40,45 @@ class TestTriggerReleaseWithMocking:
 
         with patch("subprocess.run", side_effect=simulate_pass):
             result = _trigger_release()
+        assert result == mock_from_poetry.return_value
+
+
+    def test_creates_major_version_tag(self, mock_from_poetry):
+        def simulate_pass(args, **kwargs):
+            return self._get_subprocess_run_mock(args)
+
+        with patch("subprocess.run", side_effect=simulate_pass) as subprocess_mock:
+            result = _trigger_release()
+            assert subprocess_mock.mock_calls == [call(('git', 'remote', 'show', 'origin'), capture_output=True, text=True, check=True),
+                                                    call(('git', 'checkout', 'main'), capture_output=True, text=True, check=True),
+                                                    call(('git', 'pull'), capture_output=True, text=True, check=True),
+                                                    call(('git', 'tag', '--list'), capture_output=True, text=True, check=True),
+                                                    call(('gh', 'release', 'list'), capture_output=True, text=True, check=True),
+                                                    call(('git', 'tag', '0.3.0'), capture_output=True, text=True, check=True),
+                                                    call(('git', 'push', 'origin', '0.3.0'), capture_output=True, text=True, check=True),
+                                                    call(('git', 'tag', '-f', 'v0'), capture_output=True, text=True, check=True),
+                                                    call(('git', 'push', '-f', 'origin', 'v0'), capture_output=True, text=True, check=True)]
+        assert result == mock_from_poetry.return_value
+
+    @pytest.fixture
+    def mock_project_config(self, monkeypatch):
+        class DummyConfig:
+            pass
+        monkeypatch.setattr(noxconfig, "PROJECT_CONFIG", DummyConfig())
+
+    def test_not_creates_major_version_tag(self, mock_from_poetry, mock_project_config):
+        def simulate_pass(args, **kwargs):
+            return self._get_subprocess_run_mock(args)
+
+        with patch("subprocess.run", side_effect=simulate_pass) as subprocess_mock:
+            result = _trigger_release()
+            assert subprocess_mock.mock_calls == [call(('git', 'remote', 'show', 'origin'), capture_output=True, text=True, check=True),
+                                                    call(('git', 'checkout', 'main'), capture_output=True, text=True, check=True),
+                                                    call(('git', 'pull'), capture_output=True, text=True, check=True),
+                                                    call(('git', 'tag', '--list'), capture_output=True, text=True, check=True),
+                                                    call(('gh', 'release', 'list'), capture_output=True, text=True, check=True),
+                                                    call(('git', 'tag', '0.3.0'), capture_output=True, text=True, check=True),
+                                                    call(('git', 'push', 'origin', '0.3.0'), capture_output=True, text=True, check=True)]
         assert result == mock_from_poetry.return_value
 
     @pytest.mark.parametrize(
