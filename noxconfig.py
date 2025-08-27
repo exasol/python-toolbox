@@ -50,7 +50,7 @@ class Config:
         "metrics-schema",
         "project-template",
         "idioms",
-        ".github/actions/python-environment/ext",
+        ".github",
     )
     python_versions: Iterable[str] = ("3.9", "3.10", "3.11", "3.12", "3.13")
     exasol_versions: Iterable[str] = ("7.1.9",)

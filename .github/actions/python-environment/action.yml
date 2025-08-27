@@ -45,7 +45,7 @@ runs:
     - name: Set up Poetry (${{ inputs.poetry-version }})
       shell: bash
       run: |
-        POETRY_VERSION="${{ inputs.poetry-version }}" "$PYTHON_BINARY" ./.github/actions/python-environment/ext/get_poetry.py
+        POETRY_VERSION="${{ inputs.poetry-version }}" "$PYTHON_BINARY" "${{ github.action_path }}/ext/get_poetry.py"
         echo "$HOME/.local/bin" >> $GITHUB_PATH
       env:
         PYTHON_BINARY: "python${{ inputs.python-version }}"
