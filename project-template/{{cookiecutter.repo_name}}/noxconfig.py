@@ -3,9 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
+from exasol.toolbox.BaseConfig import BaseConfig
 
 
-class Config():
+class Config(BaseConfig):
     root: Path = Path(__file__).parent
     doc: Path = Path(__file__).parent / "doc"
     source: Path = Path("exasol/{{cookiecutter.package_name}}")
