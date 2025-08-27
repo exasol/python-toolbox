@@ -8,6 +8,7 @@ from pathlib import Path
 import nox
 from nox import Session
 
+import noxconfig
 from exasol.toolbox.nox._shared import (
     Mode,
     _version,
@@ -19,7 +20,6 @@ from exasol.toolbox.util.version import (
     ReleaseTypes,
     Version,
 )
-import noxconfig
 
 
 def _create_parser() -> argparse.ArgumentParser:
@@ -147,7 +147,9 @@ def prepare_release(session: Session) -> None:
         noxconfig.PROJECT_CONFIG.root / "pyproject.toml",
         noxconfig.PROJECT_CONFIG.version_file,
     ]
-    results = pm.hook.prepare_release_add_files(session=session, config=noxconfig.PROJECT_CONFIG)
+    results = pm.hook.prepare_release_add_files(
+        session=session, config=noxconfig.PROJECT_CONFIG
+    )
     changed_files += [f for plugin_response in results for f in plugin_response]
     _add_files_to_index(
         session,
