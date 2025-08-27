@@ -249,7 +249,7 @@ def issues_to_markdown(issues: Iterable[SecurityIssue]) -> str:
 
 
 def security_issue_title(issue: Issue) -> str:
-    return f"🔐 {issue.cve}: {issue.coordinates}"
+    return f"{issue.cve}: {issue.coordinates}"
 
 
 def security_issue_body(issue: Issue) -> str:

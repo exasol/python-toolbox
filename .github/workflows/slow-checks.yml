@@ -4,23 +4,18 @@ on:
   workflow_call:
 
 jobs:
-
   build-matrix:
     name: Generate Build Matrix
     uses: ./.github/workflows/matrix-all.yml
     permissions:
       contents: read
 
-  Tests:
+  tests:
     name: Integration-Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
     needs: [ build-matrix ]
     runs-on: ubuntu-24.04
     permissions:
       contents: read
-    # Even though the environment "manual-approval" will be created automatically,
-    # it still needs to be configured to require interactive review.
-    # See project settings on GitHub (Settings / Environments / manual-approval).
-    environment: manual-approval
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
@@ -47,7 +42,7 @@ jobs:
           include-hidden-files: true
 
 
-  Verify-Poetry-Installation:
+  verify-poetry-installation:
     # This Job verifies if pipx installation is successful on each of the
     # selected GitHub Runners.
     strategy:
