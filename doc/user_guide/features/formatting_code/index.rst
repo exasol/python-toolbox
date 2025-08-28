@@ -45,7 +45,7 @@ deterministic manner.
 pre-commit
 ++++++++++++
 
-`Pre-commit <https://pre-commit.com/>` is a framework that automatically runs
+`Pre-commit <https://pre-commit.com/>`__ is a framework that automatically runs
 configurable checks and fixes on code before Git commits and pushes.
 Included in the cookiecutter project template is a ``.pre-commit-config.yaml``, which
 uses the formatting :ref:`formatting_sessions`. For information on configuring and
