@@ -8,6 +8,7 @@ from pathlib import Path
 
 from exasol.toolbox.nox.plugin import hookimpl
 from exasol.toolbox.tools.replace_version import update_github_yml
+from exasol.toolbox.util.version import Version
 
 
 class UpdateTemplates:
@@ -25,7 +26,7 @@ class UpdateTemplates:
         return [f for f in gh_actions.rglob("*") if f.is_file()]
 
     @hookimpl
-    def prepare_release_update_version(self, session, config, version):
+    def prepare_release_update_version(self, session, config, version: Version) -> None:
         for workflow in self.template_workflows:
             update_github_yml(workflow, version)
 
@@ -50,6 +51,7 @@ class Config:
         "metrics-schema",
         "project-template",
         "idioms",
+        ".github",
     )
     python_versions: Iterable[str] = ("3.9", "3.10", "3.11", "3.12", "3.13")
     exasol_versions: Iterable[str] = ("7.1.9",)
@@ -58,6 +60,7 @@ class Config:
     # format, and it is not resolved with from __future__ import annotations. pyupgrade
     # will keep switching Optional[str] to str | None leading to issues.
     pyupgrade_args: Iterable[str] = ("--py39-plus", "--keep-runtime-typing")
+    create_major_version_tags = True
 
 
 PROJECT_CONFIG = Config()

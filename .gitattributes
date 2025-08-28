@@ -1,3 +1,4 @@
 poetry.lock linguist-generated=true
 exasol/toolbox/version.py linguist-generated=true
 doc/changes/changelog.md linguist-generated=true
+.github/actions/python-environment/ext/get_poetry.py linguist-generated=true
