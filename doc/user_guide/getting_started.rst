@@ -134,18 +134,7 @@ straightforward, and you just can use the example ``noxfile.py`` below.
 5. Set up the pre-commit hooks [optional]
 +++++++++++++++++++++++++++++++++++++++++
 
-#. Add a :code:`.pre-commit-config.yaml` file to your project root
-
-    If you want to reuse Nox sessions in the pre-commit hooks, feel free to get some inspiration from the Python toolbox itself:
-
-    .. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/.pre-commit-config.yaml
-       :language: yaml
-
-#. Enable pre-commit hooks for your workspace
-
-    .. code-block:: shell
-
-        poetry run -- pre-commit install --hook-type pre-commit --hook-type pre-push
+See :ref:`pre-commit_configuration` for the required steps.
 
 
 6. Set up deploying documentation (optional)

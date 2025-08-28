@@ -40,12 +40,36 @@ deterministic manner.
 |                    |                  | need to be re-formatted            |
 +--------------------+------------------+------------------------------------+
 
-`pre-commit`
+.. _pre_commit:
+
+pre-commit
 ++++++++++++
 
-.. _formatting_configuration:
+`Pre-commit <https://pre-commit.com/>` is a framework that automatically runs
+configurable checks and fixes on code before Git commits and pushes.
+Included in the cookiecutter project template is a ``.pre-commit-config.yaml``, which
+uses the formatting :ref:`formatting_sessions`. For information on configuring and
+setting it up see :ref:`pre-commit_configuration`.
 
-TODO
+Once it's ready to use, the process is:
+
+#. Make your code changes
+#. ``git add -u`` and ``git commit -m "<message>"``
+#. pre-commit performs checks on the changed files and produces an output like
+
+    .. code-block:: bash
+
+        code-format..........................................(no files to check)Skipped
+        check yaml...........................................(no files to check)Skipped
+        fix end of files.........................................................Passed
+        trim trailing whitespace.................................................Passed
+
+   * If all steps pass, then no action is needed.
+   * If a step fails, then check the output further. If it was an automatic fix, then
+     just add the altered file to your commit and execute your ``git commit`` line again.
+     Otherwise, you will need to take on manual intervention.
+
+.. _formatting_configuration:
 
 Configuration
 +++++++++++++
@@ -73,6 +97,24 @@ Ensure ``isort`` is configured with compatibility for ``black``:
 
 For further configuration options, see
 `isort options <https://pycqa.github.io/isort/docs/configuration/options.html>`__.
+
+.. _pre-commit_configuration:
+
+pre-commit
+^^^^^^^^^^
+#. Add a :code:`.pre-commit-config.yaml` file to your project root
+
+    Feel free to get some inspiration from the Python toolbox itself:
+
+    .. literalinclude:: ../../../../project-template/{{cookiecutter.repo_name}}/.pre-commit-config.yaml
+       :language: yaml
+
+#. Enable pre-commit hooks for your workspace
+
+    .. code-block:: shell
+
+        poetry run -- pre-commit install --hook-type pre-commit --hook-type pre-push
+
 
 pyupgrade
 ^^^^^^^^^
