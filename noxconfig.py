@@ -38,6 +38,18 @@ class UpdateTemplates:
         return self.template_workflows + self.actions
 
 
+#BaseConfig
+    # Includes validation of the Exasol/Python version format and max/min Python version.
+    # Use
+    #   Project_Config = BaseConfig()
+    # modify
+    #   Project_Config = BaseConfig(python_versions=["3.12"])
+    # expand (Do not overwrite the attributes of BaseConfig)
+    #   class ProjectConfig(BaseConfig):
+    #       extra_data: list[str] = ["data"]
+
+
+
 class Config(BaseConfig):
     """Project specific configuration used by nox infrastructure"""
 

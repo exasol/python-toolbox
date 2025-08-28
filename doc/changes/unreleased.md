@@ -1,6 +1,6 @@
 # Unreleased
 
-Verification of the Python and Exasol version format of the config by adding a BaseConfig class. To Use:
+Verification of the Python/Exasol version format of the config by adding a BaseConfig class. To Use:
     
     #Use
         Project_Config = BaseConfig()
@@ -8,9 +8,9 @@ Verification of the Python and Exasol version format of the config by adding a B
         Project_Config = BaseConfig(python_versions=["3.12"])
     #expand
         class ProjectConfig(BaseConfig):
-        extra_data: list[str] = ["data"]
+            extra_data: list[str] = ["data"]
 
-Project_Config = ProjectConfig()
+        Project_Config = ProjectConfig()
 
 ## Feature
 
