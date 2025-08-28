@@ -68,7 +68,7 @@ class Replacements(Enum):
         pattern=Pattern(
             match_pattern="exasol/python-toolbox/.github/[^/]+/[^/]+",
             break_pattern="@",
-            version_pattern=r"[0-9]+\.[0-9]+\.[0-9]+",
+            version_pattern=r"v[0-9]+",
         ),
         version_string_modifier=major_version_modifier,
     )
