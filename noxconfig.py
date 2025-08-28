@@ -8,6 +8,7 @@ from pathlib import Path
 
 from exasol.toolbox.nox.plugin import hookimpl
 from exasol.toolbox.tools.replace_version import update_github_yml
+from exasol.toolbox.util.version import Version
 
 
 class UpdateTemplates:
@@ -25,7 +26,7 @@ class UpdateTemplates:
         return [f for f in gh_actions.rglob("*") if f.is_file()]
 
     @hookimpl
-    def prepare_release_update_version(self, session, config, version):
+    def prepare_release_update_version(self, session, config, version: Version) -> None:
         for workflow in self.template_workflows:
             update_github_yml(workflow, version)
 
