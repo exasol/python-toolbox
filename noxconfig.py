@@ -39,7 +39,6 @@ class UpdateTemplates:
 
 
 # BaseConfig
-#   - Includes validation of the Exasol/Python version format and max/min Python version.
 #   - Use
 #       Project_Config = BaseConfig()
 #   - modify
