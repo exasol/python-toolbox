@@ -32,8 +32,6 @@ As a first step, it is generally advisable to introduce `Nox`_ as a task runner 
 -----------------------------------
 This can be done incrementally for different checks of your project, such as *project*, *test*, *linting*, *documentation*, and *other* tasks.
 As the tasks can be split into roughly five groups, it likely makes sense to integrate at least one group at a time.
-For more details on the current tasks and groups, refer to: :ref:`toolbox tasks`.
-
 
 Overloading a Task
 __________________

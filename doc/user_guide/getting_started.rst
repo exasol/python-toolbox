@@ -69,7 +69,7 @@ Install all necessary project and development dependencies for the project:
 
 **4. Start using your project**
 
-List all available nox tasks:
+List all available nox sessions:
 
 .. code-block:: shell
 
@@ -115,10 +115,10 @@ For further reference, see the specific configurations for:
 * :ref:`formatting code <formatting_configuration>`
 
 
-4. Make the toolbox tasks available
-+++++++++++++++++++++++++++++++++++
-To use the standard toolbox task via nox, just import them in your ``noxfile.py``.
-If you only need the standard tasks provided by the toolbox, your ``noxfile.py`` is
+4. Make the toolbox sessions available
+++++++++++++++++++++++++++++++++++++++
+To use the standard toolbox session via nox, just import them in your ``noxfile.py``.
+If you only need the standard sessions provided by the toolbox, your ``noxfile.py`` is
 straightforward, and you just can use the example ``noxfile.py`` below.
 
 .. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/noxfile.py
@@ -127,7 +127,7 @@ straightforward, and you just can use the example ``noxfile.py`` below.
 
 .. attention::
 
-    Keep in mind that the current path may not be included in the :code:`PYTHONPATH`, depending on the operating system you are using. This is explained in more detail in this resource: https://fedoraproject.org/wiki/Changes/PythonSafePath. Thus, it might be necessary to properly set the :code:`PYTHONPATH` before running nox. This is because our nox tasks expect the `noxconfig` module to be located within the python path.
+    Keep in mind that the current path may not be included in the :code:`PYTHONPATH`, depending on the operating system you are using. This is explained in more detail in this resource: https://fedoraproject.org/wiki/Changes/PythonSafePath. Thus, it might be necessary to properly set the :code:`PYTHONPATH` before running nox. This is because our nox sessions expect the `noxconfig` module to be located within the python path.
 
     For additional information on resolving this issue, please :ref:`refer to <faq_no_module_noxconfig>`.
 
@@ -136,7 +136,7 @@ straightforward, and you just can use the example ``noxfile.py`` below.
 
 #. Add a :code:`.pre-commit-config.yaml` file to your project root
 
-    If you want to reuse Nox tasks in the pre-commit hooks, feel free to get some inspiration from the Python toolbox itself:
+    If you want to reuse Nox sessions in the pre-commit hooks, feel free to get some inspiration from the Python toolbox itself:
 
     .. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/.pre-commit-config.yaml
        :language: yaml
@@ -163,4 +163,4 @@ Look at the configuration of Sonar for a:
 
 8. Go 🥜
 +++++++++++++
-You are ready to use the toolbox. With ``nox -l`` you can list all available tasks.
+You are ready to use the toolbox. With ``nox -l`` you can list all available sessions.

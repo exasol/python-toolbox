@@ -1,7 +1,6 @@
 Troubleshooting
 ===============
 
-
 Formatting still fails after running ``project:fix``
 ----------------------------------------------------
 

@@ -3,7 +3,6 @@
 :octicon:`question` FAQ
 =======================
 
-
 .. _faq_no_module_noxconfig:
 
 No Module Named 'noxconfig'
@@ -16,5 +15,3 @@ There are several methods to configure your shell:
     1. For a one-time setup: :code:`PYTHONPATH=\`pwd\` nox -s task`
     2. For a general setup: :code:`export PYTHONPATH=`pwd``
     3. Alternatively, tools like `direnv <https://direnv.net>`_ can be used.
-
-.. _faq_failing_format_check:
