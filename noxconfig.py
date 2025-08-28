@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-from dataclasses import dataclass
 from pathlib import Path
 
-from exasol.toolbox.BaseConfig import BaseConfig
+from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox.plugin import hookimpl
 from exasol.toolbox.tools.replace_version import update_github_yml
 
