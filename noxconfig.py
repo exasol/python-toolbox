@@ -68,7 +68,6 @@ class Config(BaseConfig):
     # format, and it is not resolved with from __future__ import annotations. pyupgrade
     # will keep switching Optional[str] to str | None leading to issues.
     pyupgrade_args: Iterable[str] = ("--py39-plus", "--keep-runtime-typing")
-    create_major_version_tags = True
 
 
-PROJECT_CONFIG = Config()
+PROJECT_CONFIG = Config(create_major_version_tags=True)

@@ -51,6 +51,10 @@ class BaseConfig(BaseModel):
         default=("7.1.9",),
         description="Exasol versions to use in running CI workflows for integration tests using the DB",
     )
+    create_major_version_tags: bool = Field(
+        default=False,
+        description="If true, creates also the major version tags (v*) automatically",
+    )
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
     @computed_field  # type: ignore[misc]
