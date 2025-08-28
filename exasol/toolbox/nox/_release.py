@@ -8,7 +8,6 @@ from pathlib import Path
 import nox
 from nox import Session
 
-import noxconfig
 from exasol.toolbox.nox._shared import (
     Mode,
     _version,
@@ -20,6 +19,7 @@ from exasol.toolbox.util.version import (
     ReleaseTypes,
     Version,
 )
+from noxconfig import PROJECT_CONFIG
 
 
 def _create_parser() -> argparse.ArgumentParser:
@@ -72,7 +72,7 @@ class ReleaseError(Exception):
     """Error during trigger release"""
 
 
-def _trigger_release() -> Version:
+def _trigger_release(project_config) -> Version:
     def run(*args: str):
         try:
             return subprocess.run(
@@ -103,8 +103,8 @@ def _trigger_release() -> Version:
     run("git", "push", "origin", str(release_version))
 
     if (
-        hasattr(noxconfig.PROJECT_CONFIG, "create_major_version_tags")
-        and noxconfig.PROJECT_CONFIG.create_major_version_tags
+        hasattr(project_config, "create_major_version_tags")
+        and project_config.create_major_version_tags
     ):
         major_release_version = f"v{release_version.major}"
         run("git", "tag", "-f", str(major_release_version))
@@ -128,28 +128,26 @@ def prepare_release(session: Session) -> None:
     _ = _update_project_version(session, new_version)
 
     changelogs = Changelogs(
-        changes_path=noxconfig.PROJECT_CONFIG.doc / "changes",
-        root_path=noxconfig.PROJECT_CONFIG.root,
+        changes_path=PROJECT_CONFIG.doc / "changes",
+        root_path=PROJECT_CONFIG.root,
         version=new_version,
     )
     changelogs.update_changelogs_for_release()
     changed_files = changelogs.get_changed_files()
 
-    pm = NoxTasks.plugin_manager(noxconfig.PROJECT_CONFIG)
+    pm = NoxTasks.plugin_manager(PROJECT_CONFIG)
     pm.hook.prepare_release_update_version(
-        session=session, config=noxconfig.PROJECT_CONFIG, version=new_version
+        session=session, config=PROJECT_CONFIG, version=new_version
     )
 
     if args.no_add:
         return
 
     changed_files += [
-        noxconfig.PROJECT_CONFIG.root / "pyproject.toml",
-        noxconfig.PROJECT_CONFIG.version_file,
+        PROJECT_CONFIG.root / "pyproject.toml",
+        PROJECT_CONFIG.version_file,
     ]
-    results = pm.hook.prepare_release_add_files(
-        session=session, config=noxconfig.PROJECT_CONFIG
-    )
+    results = pm.hook.prepare_release_add_files(session=session, config=PROJECT_CONFIG)
     changed_files += [f for plugin_response in results for f in plugin_response]
     _add_files_to_index(
         session,
@@ -172,4 +170,4 @@ def prepare_release(session: Session) -> None:
 @nox.session(name="release:trigger", python=False)
 def trigger_release(session: Session) -> None:
     """trigger an automatic project release"""
-    print(f"new version: {_trigger_release()}")
+    print(f"new version: {_trigger_release(PROJECT_CONFIG)}")

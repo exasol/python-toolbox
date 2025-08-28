@@ -41,7 +41,7 @@ class TestTriggerReleaseWithMocking:
             return self._get_subprocess_run_mock(args)
 
         with patch("subprocess.run", side_effect=simulate_pass):
-            result = _trigger_release()
+            result = _trigger_release(noxconfig.PROJECT_CONFIG)
         assert result == mock_from_poetry.return_value
 
     def test_creates_major_version_tag(self, mock_from_poetry):
@@ -49,7 +49,7 @@ class TestTriggerReleaseWithMocking:
             return self._get_subprocess_run_mock(args)
 
         with patch("subprocess.run", side_effect=simulate_pass) as subprocess_mock:
-            result = _trigger_release()
+            result = _trigger_release(noxconfig.PROJECT_CONFIG)
             assert subprocess_mock.mock_calls == [
                 call(
                     ("git", "remote", "show", "origin"),
@@ -97,19 +97,15 @@ class TestTriggerReleaseWithMocking:
             ]
         assert result == mock_from_poetry.return_value
 
-    @pytest.fixture
-    def mock_project_config(self, monkeypatch):
+    def test_not_creates_major_version_tag(self, mock_from_poetry):
         class DummyConfig:
             pass
 
-        monkeypatch.setattr(noxconfig, "PROJECT_CONFIG", DummyConfig())
-
-    def test_not_creates_major_version_tag(self, mock_from_poetry, mock_project_config):
         def simulate_pass(args, **kwargs):
             return self._get_subprocess_run_mock(args)
 
         with patch("subprocess.run", side_effect=simulate_pass) as subprocess_mock:
-            result = _trigger_release()
+            result = _trigger_release(DummyConfig)
             assert subprocess_mock.mock_calls == [
                 call(
                     ("git", "remote", "show", "origin"),
@@ -167,7 +163,7 @@ class TestTriggerReleaseWithMocking:
 
         with patch("subprocess.run", side_effect=simulate_fail):
             with pytest.raises(ReleaseError) as ex:
-                _trigger_release()
+                _trigger_release(noxconfig.PROJECT_CONFIG)
         assert str(error_cmd) in str(ex)
 
     def test_default_branch_could_not_be_found(self, mock_from_poetry):
@@ -178,7 +174,7 @@ class TestTriggerReleaseWithMocking:
 
         with patch("subprocess.run", side_effect=simulate_fail):
             with pytest.raises(ReleaseError) as ex:
-                _trigger_release()
+                _trigger_release(noxconfig.PROJECT_CONFIG)
         assert "default branch could not be found" in str(ex)
 
     def test_tag_already_exists(self, mock_from_poetry):
@@ -191,7 +187,7 @@ class TestTriggerReleaseWithMocking:
 
         with patch("subprocess.run", side_effect=simulate_fail):
             with pytest.raises(ReleaseError) as ex:
-                _trigger_release()
+                _trigger_release(noxconfig.PROJECT_CONFIG)
         assert f"tag {version} already exists" in str(ex)
 
     def test_release_already_exists(self, mock_from_poetry):
@@ -204,5 +200,5 @@ class TestTriggerReleaseWithMocking:
 
         with patch("subprocess.run", side_effect=simulate_fail):
             with pytest.raises(ReleaseError) as ex:
-                _trigger_release()
+                _trigger_release(noxconfig.PROJECT_CONFIG)
         assert f"release {version} already exists" in str(ex)
