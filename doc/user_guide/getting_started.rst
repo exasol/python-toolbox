@@ -69,7 +69,7 @@ Install all necessary project and development dependencies for the project:
 
 **4. Start using your project**
 
-List all available nox tasks:
+List all available nox sessions:
 
 .. code-block:: shell
 
@@ -91,81 +91,51 @@ Integrating Exasol-Toolbox into your Project
 2. Provide a project configuration
 ++++++++++++++++++++++++++++++++++
 Make sure you provide the required configuration. Configuration for the exasol-toolbox gets provided by creating
-a ``noxconfig.py`` file in the workspace root. This file should contain at least
-a single module constant with the name **PROJECT_CONFIG** pointing to an object,
-which is required to to provide the following attributes:
-
-* .. py:attribute:: root
-    :type: Path
-
-* .. py:attribute:: doc
-    :type: Path
-
-* .. py:attribute:: version_file
-    :type: Path
-
-Alternatively you can use the *noxconfig.py* file bellow and adjust the value of the attributes if needed:
+a ``noxconfig.py`` file in the workspace root. This file should be similar to the
+example shown below.
 
 .. note::
 
-   Be aware that the plugin definitions are completely optional. For further details on plugins, see the customization section.
+   For further details on plugins, see the customization section.
 
-.. literalinclude:: ../../noxconfig.py
+.. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/noxconfig.py
    :language: python3
 
 3. Configure the tooling
 ++++++++++++++++++++++++
-In order to make all standard task work properly, you need add the configuration settings below to your ``pyproject.toml``,
-and adjust the following settings to your project needs:
+Configuration values for the tooling should be defined in the ``pyproject.toml``.
+Copy the example below & adapt it for your project's specific needs.
 
-* coverage
-    - source
-    - fail_under
-* pylint
-    - fail-under
-* mypy (overrides)
-    - module
+.. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/pyproject.toml
+  :language: toml
+  :start-after: # Tooling
 
-.. literalinclude:: ../../pyproject.toml
-    :language: toml
-    :start-after: # Tooling
+For further reference, see the specific configurations for:
 
-4. Make the toolbox tasks available
-+++++++++++++++++++++++++++++++++++
-In order to use the standard toolbox task via nox, just import them in your ``noxfile.py``.
-If you only need the standard tasks provided by the toolbox, your ``noxfile.py`` is straight
-forward, and you just can use the example ``noxfile.py`` below.
+* :ref:`formatting code <formatting_configuration>`
 
-.. literalinclude:: ../../noxfile.py
+
+4. Make the toolbox sessions available
+++++++++++++++++++++++++++++++++++++++
+To use the standard toolbox session via nox, just import them in your ``noxfile.py``.
+If you only need the standard sessions provided by the toolbox, your ``noxfile.py`` is
+straightforward, and you just can use the example ``noxfile.py`` below.
+
+.. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/noxfile.py
    :language: python3
-   :end-before: # entry point for debugging
 
 
 .. attention::
 
-    Keep in mind that the current path may not be included in the :code:`PYTHONPATH`, depending on the operating system you are using. This is explained in more detail in this resource: https://fedoraproject.org/wiki/Changes/PythonSafePath. Thus, it might be necessary to properly set the :code:`PYTHONPATH` before running nox. This is because our nox tasks expect the `noxconfig` module to be located within the python path.
+    Keep in mind that the current path may not be included in the :code:`PYTHONPATH`, depending on the operating system you are using. This is explained in more detail in this resource: https://fedoraproject.org/wiki/Changes/PythonSafePath. Thus, it might be necessary to properly set the :code:`PYTHONPATH` before running nox. This is because our nox sessions expect the `noxconfig` module to be located within the python path.
 
     For additional information on resolving this issue, please :ref:`refer to <faq_no_module_noxconfig>`.
-
-
 
 5. Set up the pre-commit hooks [optional]
 +++++++++++++++++++++++++++++++++++++++++
 
-#. Add a :code:`.pre-commit-config.yaml` file to your project root
+See :ref:`pre-commit_configuration` for the required steps.
 
-    If you want to reuse Nox tasks in the pre-commit hooks, feel free to get some inspiration from the Python toolbox itself:
-
-    .. literalinclude:: ../../.pre-commit-config.yaml
-       :language: yaml
-
-#. Enable pre-commit hooks for your workspace
-
-    .. code-block:: shell
-
-        poetry run -- pre-commit install --hook-type pre-commit --hook-type pre-push
-
-.. _toolbox tasks:
 
 6. Set up deploying documentation (optional)
 ++++++++++++++++++++++++++++++++++++++++++++
@@ -182,34 +152,4 @@ Look at the configuration of Sonar for a:
 
 8. Go 🥜
 +++++++++++++
-You are ready to use the toolbox. With ``nox -l`` you can list all available tasks.
-
-.. code-block:: console
-
-    $ nox -l
-    Sessions defined in <PATH_TO_YOUR_PROJECT>/noxfile.py:
-
-    * project:fix -> Runs all automated fixes on the code base
-    - project:check -> Runs all available checks on the project
-    - project:report -> Collects and generates metrics summary for the workspace
-    - test:unit -> Runs all unit tests
-    - test:integration -> Runs the all integration tests
-    - test:coverage -> Runs all tests (unit + integration) and reports the code coverage
-    - lint:code -> Runs the static code analyzer on the project
-    - lint:typing -> Runs the type checker on the project
-    - lint:security -> Runs the security linter on the project
-    - lint:dependencies -> Checks if only valid sources of dependencies are used
-    - docs:multiversion -> Builds the multiversion project documentation
-    - docs:build -> Builds the project documentation
-    - docs:open -> Opens the built project documentation
-    - docs:clean -> Removes the documentations build folder
-    - release:prepare -> Prepares the project for a new release.
-
-    sessions marked with * are selected, sessions marked with - are skipped.
-
-
-Enjoy!
-
-.. note::
-
-    The targets and their names may change over time, so the list below may not be up to date, as it is not automatically generated yet. Therefore, if you find discrepancies, please `submit a quick PR <https://github.com/exasol/python-toolbox/compare>`_ to address them.
+You are ready to use the toolbox. With ``nox -l`` you can list all available sessions.

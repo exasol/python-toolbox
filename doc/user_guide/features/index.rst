@@ -9,6 +9,7 @@ Features
     metrics/collecting_metrics
     creating_a_release
     documentation/index
+    formatting_code/index
     managing_dependencies
 
 Uniform Project Layout
