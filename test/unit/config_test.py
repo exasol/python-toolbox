@@ -52,9 +52,9 @@ class BaseConfigExpansion(BaseConfig):
     expansion1: str = "test1"
 
 
-def test_expansion_validation():
+def test_expansion_validation_fails_for_invalid_version():
     with pytest.raises(ValueError):
-        _ = BaseConfigExpansion(python_versions=("1.f.0",))
+        BaseConfigExpansion(python_versions=("1.f.0",))
 
 
 def test_min_py_version():
