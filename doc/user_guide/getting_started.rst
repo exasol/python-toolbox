@@ -131,8 +131,8 @@ straightforward, and you just can use the example ``noxfile.py`` below.
 
     For additional information on resolving this issue, please :ref:`refer to <faq_no_module_noxconfig>`.
 
-5. Set up the pre-commit hooks [optional]
-+++++++++++++++++++++++++++++++++++++++++
+5. Set up the GitHub ``pre-commit`` hooks [optional]
+++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 See :ref:`pre-commit_configuration` for the required steps.
 

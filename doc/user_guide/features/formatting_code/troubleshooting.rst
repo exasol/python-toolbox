@@ -1,3 +1,5 @@
+.. _formatting_troubleshooting:
+
 Troubleshooting
 ===============
 
