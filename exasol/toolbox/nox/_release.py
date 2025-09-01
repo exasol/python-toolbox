@@ -72,7 +72,7 @@ class ReleaseError(Exception):
     """Error during trigger release"""
 
 
-def _trigger_release() -> Version:
+def _trigger_release(project_config) -> Version:
     def run(*args: str):
         try:
             return subprocess.run(
@@ -91,7 +91,7 @@ def _trigger_release() -> Version:
     run("git", "checkout", default_branch)
     run("git", "pull")
 
-    release_version = Version.from_poetry()
+    release_version: Version = Version.from_poetry()
     print(f"release version: {release_version}")
 
     if re.search(rf"{release_version}", run("git", "tag", "--list")):
@@ -101,6 +101,15 @@ def _trigger_release() -> Version:
 
     run("git", "tag", str(release_version))
     run("git", "push", "origin", str(release_version))
+
+    if (
+        hasattr(project_config, "create_major_version_tags")
+        and project_config.create_major_version_tags
+    ):
+        major_release_version = f"v{release_version.major}"
+        run("git", "tag", "-f", str(major_release_version))
+        run("git", "push", "-f", "origin", str(major_release_version))
+
     return release_version
 
 
@@ -161,4 +170,4 @@ def prepare_release(session: Session) -> None:
 @nox.session(name="release:trigger", python=False)
 def trigger_release(session: Session) -> None:
     """trigger an automatic project release"""
-    print(f"new version: {_trigger_release()}")
+    print(f"new version: {_trigger_release(PROJECT_CONFIG)}")

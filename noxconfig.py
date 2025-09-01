@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-from dataclasses import dataclass
 from pathlib import Path
 
+from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox.plugin import hookimpl
 from exasol.toolbox.tools.replace_version import update_github_yml
+from exasol.toolbox.util.version import Version
 
 
 class UpdateTemplates:
@@ -25,7 +26,7 @@ class UpdateTemplates:
         return [f for f in gh_actions.rglob("*") if f.is_file()]
 
     @hookimpl
-    def prepare_release_update_version(self, session, config, version):
+    def prepare_release_update_version(self, session, config, version: Version) -> None:
         for workflow in self.template_workflows:
             update_github_yml(workflow, version)
 
@@ -37,8 +38,17 @@ class UpdateTemplates:
         return self.template_workflows + self.actions
 
 
-@dataclass(frozen=True)
-class Config:
+# BaseConfig
+#   - Use
+#       Project_Config = BaseConfig()
+#   - modify
+#       Project_Config = BaseConfig(python_versions=["3.12"])
+#   - expand (Do not overwrite the attributes of BaseConfig)
+#       class ProjectConfig(BaseConfig):
+#           extra_data: list[str] = ["data"]
+
+
+class Config(BaseConfig):
     """Project specific configuration used by nox infrastructure"""
 
     root: Path = Path(__file__).parent
@@ -50,9 +60,8 @@ class Config:
         "metrics-schema",
         "project-template",
         "idioms",
+        ".github",
     )
-    python_versions: Iterable[str] = ("3.9", "3.10", "3.11", "3.12", "3.13")
-    exasol_versions: Iterable[str] = ("7.1.9",)
     plugins: Iterable[object] = (UpdateTemplates,)
     # need --keep-runtime-typing, as pydantic with python3.9 does not accept str | None
     # format, and it is not resolved with from __future__ import annotations. pyupgrade
@@ -60,4 +69,4 @@ class Config:
     pyupgrade_args: Iterable[str] = ("--py39-plus", "--keep-runtime-typing")
 
 
-PROJECT_CONFIG = Config()
+PROJECT_CONFIG = Config(create_major_version_tags=True)

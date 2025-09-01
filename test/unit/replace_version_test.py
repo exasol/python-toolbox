@@ -4,14 +4,15 @@ from exasol.toolbox.tools.replace_version import (
     _update_line_with_version,
     update_versions,
 )
+from exasol.toolbox.util.version import Version
 
 
 @pytest.mark.parametrize(
     "line,expected",
     [
         pytest.param(
-            "exasol/python-toolbox/.github/actions/python-environment@1.0.0",
-            "exasol/python-toolbox/.github/actions/python-environment@2.0.0",
+            "exasol/python-toolbox/.github/actions/python-environment@v1",
+            "exasol/python-toolbox/.github/actions/python-environment@v2",
             id="github_action",
         ),
         pytest.param(
@@ -27,7 +28,7 @@ from exasol.toolbox.tools.replace_version import (
     ],
 )
 def test_update_line_with_version(line: str, expected: str):
-    actual = _update_line_with_version(line=line, version="2.0.0")
+    actual = _update_line_with_version(line=line, version=Version(2, 0, 0))
     assert actual == expected
 
 
@@ -35,8 +36,8 @@ def test_update_line_with_version(line: str, expected: str):
     "line_to_change, expected",
     [
         pytest.param(
-            "exasol/python-toolbox/.github/actions/python-environment@1.0.0",
-            "exasol/python-toolbox/.github/actions/python-environment@2.0.0",
+            "exasol/python-toolbox/.github/actions/python-environment@v1",
+            "exasol/python-toolbox/.github/actions/python-environment@v2",
             id="github_action",
         ),
         pytest.param(
@@ -55,5 +56,5 @@ def test_update_versions(line_to_change, expected):
     lines = dummy_lines + [line_to_change]
     expected_lines = dummy_lines + [expected]
 
-    actual = update_versions(lines=lines, version="2.0.0")
+    actual = update_versions(lines=lines, version=Version(2, 0, 0))
     assert actual == expected_lines
