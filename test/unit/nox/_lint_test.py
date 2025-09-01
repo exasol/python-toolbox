@@ -1,6 +1,7 @@
 import pytest
 from nox.command import CommandFailed
-from toolbox.nox._lint import dist_check
+
+from exasol.toolbox.nox._lint import dist_check
 
 
 class TestDistributionCheck:

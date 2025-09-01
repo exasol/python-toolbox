@@ -37,6 +37,14 @@ Preparing a release
     * Verify that the version to be released does not already have a git tag or GitHub release
     * Create a new tag & push it to the default branch, which will trigger the GitHub workflow ``cd.yml``
 
+    Additionally, if enabled in your project config, the task will create an additional tag with pattern ``v<MAJOR_VERSION>``.
+    This is especially useful if other projects use Github actions of your project, for example:
+
+    .. code-block:: yaml
+
+        uses: exasol/your_project/.github/actions/your_action@v1
+
+    Your ``PROJECT_CONFIG`` needs to have the flag ``create_major_version_tags=True``.
 
 What to do if the release failed?
 +++++++++++++++++++++++++++++++++
