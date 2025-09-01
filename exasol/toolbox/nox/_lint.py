@@ -181,6 +181,9 @@ def import_lint(session: Session) -> None:
 
 @nox.session(name="lint:build-packages", python=False)
 def dist_check(session: Session) -> None:
-    """Checks whether your distribution’s long description will render correctly on PyPI"""
-    session.run("poetry", "build")
-    session.run("twine", "check", "./dist/*")
+    """Checks whether your distribution’s long description will render correctly on PyPI
+
+    This has more robust checks for rst documentation than markdown.
+    """
+    session.run("poetry", "build", "--project", PROJECT_CONFIG.root)
+    session.run("twine", "check", PROJECT_CONFIG.root / "./dist/*")
