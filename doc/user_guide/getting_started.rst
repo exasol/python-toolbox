@@ -5,25 +5,19 @@ Getting Started
 
 Your usage of the `exasol-toolbox` will likely fall into one of two scenarios:
 
-#. Integration into an existing project.
-
-    If this is your situation, proceed to the section titled :ref:`Integrating Exasol-Toolbox into your Project <existing>`.
-
-#. Creation of a new project.
-
-    If you are starting a new project, please read the section :ref:`Create a New Project with Exasol-Toolbox Support <new project>`.
+#. :ref:`existing`
+#. :ref:`new project`
 
 .. _new project:
 
-Create a New Project with Exasol-Toolbox Support
--------------------------------------------------
+Creating a New Project with Exasol-Toolbox Support
+--------------------------------------------------
 
 .. important::
 
-    To establish a new project with toolbox support, you need to have `Cookiecutter <https://www.cookiecutter.io>`_ installed.
+    To establish a new project with toolbox support, you need to have `Cookiecutter <https://www.cookiecutter.io>`_ installed:
 
-    **TL;DR:**
-        :code:`pipx install cookiecutter`
+    :code:`pip install cookiecutter`
 
 
 **1. Create a new project**
@@ -59,7 +53,8 @@ Generate a poetry environment for the project:
 
 .. code-block:: shell
 
-    poetry shell
+    # An example python_version value is python3.10
+    poetry env use <python_version>
 
 Install all necessary project and development dependencies for the project:
 
@@ -81,8 +76,8 @@ List all available nox sessions:
 Integrating Exasol-Toolbox into your Project
 --------------------------------------------
 
-1. Add the toolbox as dependency
-++++++++++++++++++++++++++++++++
+1. Add the toolbox as a dependency
+++++++++++++++++++++++++++++++++++
 
 .. code-block:: shell
 
@@ -98,21 +93,23 @@ example shown below.
 
    For further details on plugins, see the customization section.
 
-.. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/noxconfig.py
-   :language: python3
+.. collapse:: noxconfig.py
+
+    .. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/noxconfig.py
+       :language: python3
 
 3. Configure the tooling
 ++++++++++++++++++++++++
 Configuration values for the tooling should be defined in the ``pyproject.toml``.
 Copy the example below & adapt it for your project's specific needs.
 
-.. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/pyproject.toml
-  :language: toml
-  :start-after: # Tooling
+.. collapse:: pyproject.toml (tool specific configuration)
 
-For further reference, see the specific configurations for:
+    .. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/pyproject.toml
+      :language: toml
+      :start-after: # Tooling
 
-* :ref:`formatting code <formatting_configuration>`
+For further reference, see the :ref:`formatting code configuration <formatting_configuration>` section.
 
 
 4. Make the toolbox sessions available
@@ -121,26 +118,22 @@ To use the standard toolbox session via nox, just import them in your ``noxfile.
 If you only need the standard sessions provided by the toolbox, your ``noxfile.py`` is
 straightforward, and you just can use the example ``noxfile.py`` below.
 
-.. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/noxfile.py
-   :language: python3
+.. collapse:: noxfile.py
 
+    .. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/noxfile.py
+       :language: python3
 
-.. attention::
-
-    Keep in mind that the current path may not be included in the :code:`PYTHONPATH`, depending on the operating system you are using. This is explained in more detail in this resource: https://fedoraproject.org/wiki/Changes/PythonSafePath. Thus, it might be necessary to properly set the :code:`PYTHONPATH` before running nox. This is because our nox sessions expect the `noxconfig` module to be located within the python path.
-
-    For additional information on resolving this issue, please :ref:`refer to <faq_no_module_noxconfig>`.
 
 5. Set up the GitHub ``pre-commit`` hooks [optional]
 ++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-See :ref:`pre-commit_configuration` for the required steps.
+See the :ref:`pre-commit configuration <pre-commit_configuration>` section for the required steps.
 
 
 6. Set up deploying documentation (optional)
 ++++++++++++++++++++++++++++++++++++++++++++
 
-See :ref:`documentation_configuration` for the required steps.
+See the :ref:`documentation configuration <documentation_configuration>` section for the required steps.
 
 7. Set up Sonar
 +++++++++++++++
