@@ -9,7 +9,7 @@ Features
     metrics/collecting_metrics
     creating_a_release
     documentation/index
-    github_hooks/index
+    git_hooks/index
     formatting_code/index
     managing_dependencies
 

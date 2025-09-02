@@ -1,17 +1,17 @@
-.. _github_hooks:
+.. _git_hooks:
 
-Enabling GitHub Hooks
-=====================
+Enabling Git Hooks
+==================
 
 .. toctree::
     :maxdepth: 2
 
     troubleshooting
 
-GitHub hooks are automated scripts that run at specific points during Git's execution,
+Git hooks are automated scripts that run at specific points during Git's execution,
 allowing developers to enforce quality standards, automate tasks, and customize Git's
 behavior. The PTB uses the `pre-commit <https://pre-commit.com/>`__ framework to
-define common GitHub hooks for Git commits and pushes. The configuration for
+define common Git hooks for Git commits and pushes. The configuration for
 ``pre-commit``  is provided in a ``.pre-commit-config.yaml`` file and described in
 :ref:`pre-commit_configuration`.
 
