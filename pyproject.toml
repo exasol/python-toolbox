@@ -53,7 +53,7 @@ nox = ">=2022.8.7"
 pip-audit = "^2.7.3"
 pip-licenses = "^5.0.0"
 pluggy = "^1.5.0"
-pre-commit = ">=4"
+pre-commit = ">=4,<5"
 pydantic = "^2.11.5"
 pylint = ">=2.15.4"
 pysonar = "^1.0.1.1548"
@@ -64,6 +64,7 @@ sphinx = ">=5.3,<8"
 sphinx-copybutton = "^0.5.0"
 sphinx-inline-tabs = "^2023.4.21"
 sphinx-design = ">=0.5.0,<1"
+sphinx-toolbox = "^4.0.0"
 typer = { extras = ["all"], version = ">=0.7.0" }
 twine = "^6.1.0"
 
@@ -75,7 +76,6 @@ cookiecutter = "^2.6.0"
 requires = ["poetry-core>=2.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-# Tooling
 [tool.coverage.run]
 relative_files = true
 source = [
