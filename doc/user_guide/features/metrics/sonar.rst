@@ -3,7 +3,7 @@
 SonarQube analysis
 ==================
 
-The PTB supports using `SonarQube Cloud <https://docs.sonarsource.com/sonarqube-server/latest/>`__
+The PTB supports using `SonarQube Cloud <https://docs.sonarsource.com/sonarqube-server>`__
 to analyze, visualize, & track linting, security, & coverage. All of our Python projects
 should be evaluated against the `Exasol Way`_ and subscribe to the
 `Clean as You Code <https://docs.sonarsource.com/sonarqube-server/9.8/user-guide/clean-as-you-code/>`__

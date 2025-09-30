@@ -56,7 +56,7 @@ into a report:
 
 #. SonarQube analysis
     This summarization tool feeds into a feature-rich UI provided by
-    `Sonar <https://docs.sonarsource.com/sonarqube-server/latest/>`__. For further
+    `Sonar <https://docs.sonarsource.com/sonarqube-server>`__. For further
     details, see :ref:`sonarqube_analysis`
 
 Both of these reporting options require that the generated files from the :ref:`generated_metrics`
