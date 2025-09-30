@@ -177,13 +177,3 @@ def import_lint(session: Session) -> None:
             "Please make sure you have a configuration file for the importlinter"
         )
     _import_lint(session=session, path=path)
-
-
-@nox.session(name="lint:build-packages", python=False)
-def dist_check(session: Session) -> None:
-    """Checks whether your distribution’s long description will render correctly on PyPI
-
-    This has more robust checks for rst documentation than markdown.
-    """
-    session.run("poetry", "build", "--project", PROJECT_CONFIG.root)
-    session.run("twine", "check", PROJECT_CONFIG.root / "./dist/*")

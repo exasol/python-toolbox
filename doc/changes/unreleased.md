@@ -29,4 +29,4 @@ PROJECT_CONFIG = Config(python_versions=(...), exasol_versions=(...), create_maj
 
 * #465: Created BaseConfig class to better synchronize attributes needed for the PTB's
   growing functionalities
-* #494: Created check of built packages
+* #494: Created check of built packages with nox session ``package:check``:
