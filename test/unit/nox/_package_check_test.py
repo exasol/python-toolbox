@@ -1,14 +1,19 @@
-import pytest
+import shutil
+from pathlib import Path
 from unittest.mock import (
     MagicMock,
     patch,
 )
-from nox.command import CommandFailed
-import shutil
-from pathlib import Path
 
-from exasol.toolbox.nox._package import package_check, PROJECT_CONFIG
+import pytest
+from nox.command import CommandFailed
+
 from exasol.toolbox.config import BaseConfig
+from exasol.toolbox.nox._package import (
+    PROJECT_CONFIG,
+    package_check,
+)
+
 
 class TestDistributionCheck:
     @staticmethod
@@ -28,7 +33,9 @@ class TestDistributionCheck:
         shutil.copyfile(PROJECT_CONFIG.root / "README.rst", package_readme)
         shutil.copytree(PROJECT_CONFIG.root / "doc/changes", package / "doc/changes")
         shutil.copyfile(PROJECT_CONFIG.root / "LICENSE", package / "LICENSE")
-        shutil.copyfile(PROJECT_CONFIG.root / "pyproject.toml", package / "pyproject.toml")
+        shutil.copyfile(
+            PROJECT_CONFIG.root / "pyproject.toml", package / "pyproject.toml"
+        )
         old = "- `Python <https://www.python.org/>`__ >= 3.9"
         error = "- `Python <https://www.python.org/>`__ >= 3.9"
         readme = package_readme.read_text().splitlines()
