@@ -178,7 +178,7 @@ jobs:
 
   Tests:
     name: Unit-Tests (Python-${{ matrix.python-version }})
-    needs: [ Build-Packages ]
+    needs: [ Build-Packages, build-matrix ]
     runs-on: ubuntu-24.04
     permissions:
       contents: read
