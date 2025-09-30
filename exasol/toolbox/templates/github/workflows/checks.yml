@@ -162,7 +162,7 @@ jobs:
 
   Build-Packages:
     name: Build Package Check
-    needs: [ Documentation, Lint, Type-Check, Security, Format, build-matrix ]
+    needs: [ Documentation, Lint, Type-Check, Security, Format ]
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -174,11 +174,11 @@ jobs:
         uses: exasol/python-toolbox/.github/actions/python-environment@v1
 
       - name: Run Distribution Check
-        run: poetry run -- nox -s lint:build-packages
+        run: poetry run -- nox -s package:check
 
   Tests:
     name: Unit-Tests (Python-${{ matrix.python-version }})
-    needs: [ Documentation, Lint, Type-Check, Security, Format, build-matrix, Build-Packages ]
+    needs: [ Build-Packages ]
     runs-on: ubuntu-24.04
     permissions:
       contents: read

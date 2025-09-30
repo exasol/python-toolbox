@@ -1,14 +1,19 @@
-import pytest
+import shutil
+from pathlib import Path
 from unittest.mock import (
     MagicMock,
     patch,
 )
-from nox.command import CommandFailed
-import shutil
-from pathlib import Path
 
-from exasol.toolbox.nox._package import package_check, PROJECT_CONFIG
+import pytest
+from nox.command import CommandFailed
+
 from exasol.toolbox.config import BaseConfig
+from exasol.toolbox.nox._package import (
+    PROJECT_CONFIG,
+    package_check,
+)
+
 
 class TestDistributionCheck:
     @staticmethod
@@ -17,23 +22,23 @@ class TestDistributionCheck:
 
     @staticmethod
     def test_raises_non_zero_exist_with_readme_error(nox_session, tmp_path):
-        # TODOs
-        # 1. copy package files to a temp directory
-        # 2. mock/alter the path for the function you need to use for testing
-        # 3. modify rst file to have a broken link like is in this commit:
-        #     - `Python <https://www.python.org/`__ >= 3.9
         package = Path(tmp_path)
         package_readme = package / "README.rst"
+
+        # copy over `packages` and `include` from `pyproject.toml` to for `poetry build`
         shutil.copytree(PROJECT_CONFIG.root / "exasol", package / "exasol")
         shutil.copyfile(PROJECT_CONFIG.root / "README.rst", package_readme)
         shutil.copytree(PROJECT_CONFIG.root / "doc/changes", package / "doc/changes")
         shutil.copyfile(PROJECT_CONFIG.root / "LICENSE", package / "LICENSE")
-        shutil.copyfile(PROJECT_CONFIG.root / "pyproject.toml", package / "pyproject.toml")
-        old = "- `Python <https://www.python.org/>`__ >= 3.9"
-        error = "- `Python <https://www.python.org/>`__ >= 3.9"
-        readme = package_readme.read_text().splitlines()
-        error_readme = [error if old in line else line for line in readme]
-        package_readme.write_text("/n".join(error_readme))
+        shutil.copyfile(
+            PROJECT_CONFIG.root / "pyproject.toml", package / "pyproject.toml"
+        )
+
+        # create an error in readme.rst
+        not_closed_link_error = "- `Python <https://www.python.org/`__ >= 3.9"
+        package_readme.open(mode="a").write(not_closed_link_error)
+
+        # use of the folder with errors in the nox -s package:check function
         config = BaseConfig()
         mock = MagicMock(spec=BaseConfig, wraps=config)
         mock.root = package
