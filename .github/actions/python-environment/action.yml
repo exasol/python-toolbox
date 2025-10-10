@@ -73,7 +73,6 @@ runs:
         key: poetry-env-${{ steps.setup-cache-variables.outputs.POETRY_SHA }}-${{ steps.setup-cache-variables.outputs.IMAGE_OS }}-${{ steps.setup-cache-variables.outputs.IMAGE_VERSION }}-${{ runner.arch }}-${{ inputs.poetry-version }}-${{ inputs.python-version }}-${{ inputs.extras }}
 
     - name: Poetry install with extras
-      if: inputs.use-cache != 'true' || steps.cache-poetry-env.outputs.cache-hit != 'true'
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
