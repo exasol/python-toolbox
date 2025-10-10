@@ -1,5 +1,7 @@
 # Unreleased
 
+New `BasConfig` class and improved Setup Python Github Action.
+
 ## BaseConfig class for PTB attributes
 
 The BaseConfig class was introduced in this version. This class is used to consolidate
