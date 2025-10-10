@@ -52,3 +52,9 @@ class TestSpecificNoxTasks:
         output = run_command(artifacts_validate, check=False)
 
         assert output.returncode == 0
+
+    def test_package_check(self, poetry_path, run_command):
+        package_check = self._command(poetry_path, "package:check")
+        output = run_command(package_check)
+
+        assert output.returncode == 0
