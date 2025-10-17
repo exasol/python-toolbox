@@ -25,7 +25,7 @@
 🔌️ Prerequisites
 ----------------
 
-- [Python](https://www.python.org/) >= 3.9
+- `Python <https://www.python.org/>`__ >= 3.9
 
 💾 Installation
 ---------------
@@ -35,7 +35,7 @@
     pip install {{cookiecutter.pypi_package_name}}
 
 
-## 📚 Documentation
--------------------
+📚 Documentation
+----------------
 
-For futher details, checkout the latest `documentation <https://exasol.github.io/{{cookiecutter.repo_name}}/>`_.
+For futher details, checkout the latest `documentation <https://exasol.github.io/{{cookiecutter.repo_name}}/>`__.
