@@ -7,7 +7,7 @@ authors = [
     { name = "Nicola Coretti", email = "nicola.coretti@exasol.com" },
     { name = "Ariel Schulz", email = "ariel.schulz@exasol.com" },
 ]
-readme = "README.md"
+readme = "README.rst"
 license = "MIT"
 keywords = [
     "nox",
@@ -66,6 +66,7 @@ sphinx-inline-tabs = "^2023.4.21"
 sphinx-design = ">=0.5.0,<1"
 sphinx-toolbox = "^4.0.0"
 typer = { extras = ["all"], version = ">=0.7.0" }
+twine = "^6.1.0"
 
 [tool.poetry.group.dev.dependencies]
 autoimport = "^1.4.0"
