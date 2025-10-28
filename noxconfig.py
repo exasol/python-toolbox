@@ -69,4 +69,9 @@ class Config(BaseConfig):
     pyupgrade_args: Iterable[str] = ("--py39-plus", "--keep-runtime-typing")
 
 
-PROJECT_CONFIG = Config(create_major_version_tags=True)
+PROJECT_CONFIG = Config(
+    create_major_version_tags=True,
+    # The PTB does not have integration tests run with an Exasol DB,
+    # so for running in the CI, we take the first element.
+    exasol_versions=(BaseConfig().exasol_versions[0],),
+)
