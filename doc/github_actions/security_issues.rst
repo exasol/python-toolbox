@@ -26,10 +26,10 @@ Example Usage
 
         steps:
           - name: SCM Checkout
-            uses: actions/checkout@v4
+            uses: actions/checkout@v5
 
           - name: Report Security Issues
-            uses: exasol/python-toolbox/.github/actions/security-issues@0.6.1
+            uses: exasol/python-toolbox/.github/actions/security-issues@v1
             with:
               format: "maven"
               command: "cat maven-cve-report.json"
