@@ -1,4 +1,9 @@
 # 1.11.0 - 2025-10-28
+
+With the addition of the nox session `package:check`, it's recommended to
+switch a README.md to README.rst. The underlying package `twine` which is used
+in that check performs more checks for rst files.
+
 ## Feature
 
 * #494: Created check of built packages with nox session `package:check`
