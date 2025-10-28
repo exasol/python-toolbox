@@ -6,7 +6,9 @@
 
 ## Refactoring
 
-* #578: Updated actions/checkout to [v5](https://github.com/actions/checkout/releases/tag/v5.0.0), which uses node 24
+* #578: Updated GitHub actions which now use node 24:
+   * actions/checkout to [v5](https://github.com/actions/checkout/releases/tag/v5.0.0)
+   * actions/download-artifact to [v6](https://github.com/actions/download-artifact/releases/tag/v6.0.0)
 
 ## Security
 
