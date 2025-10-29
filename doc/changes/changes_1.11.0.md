@@ -1,4 +1,4 @@
-# 1.11.0 - 2025-10-28
+# 1.11.0 - 2025-10-29
 
 With the addition of the nox session `package:check`, it's recommended to
 switch a README.md to README.rst. The underlying package `twine` which is used
