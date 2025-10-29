@@ -8,7 +8,7 @@
   "author_full_name": "Exasol AG",
   "author_email": "opensource@exasol.com",
   "project_short_tag": "",
-  "python_version_min": "3.9",
+  "python_version_min": "3.10",
   "license_year": "{% now 'utc', '%Y' %}",
   "__repo_name_slug": "{{cookiecutter.package_name}}",
   "__package_name_slug": "{{cookiecutter.package_name}}",
