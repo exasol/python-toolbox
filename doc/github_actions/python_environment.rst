@@ -49,10 +49,10 @@ Example Usage
 
         steps:
           - name: SCM Checkout
-            uses: actions/checkout@v4
+            uses: actions/checkout@v5
 
           - name: Setup Python & Poetry Environment
-            uses: exasol/python-toolbox/.github/actions/python-environment@1.1.0
+            uses: exasol/python-toolbox/.github/actions/python-environment@v1
             with:
               python-version: 3.12
               poetry-version: 2.1.2
