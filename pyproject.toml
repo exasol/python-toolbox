@@ -1,7 +1,7 @@
 [project]
 name = "exasol-toolbox"
-version = "1.11.0"
-requires-python = ">=3.9,<4.0"
+version = "1.12.0"
+requires-python = ">=3.9.2,<4.0"
 description = "Your one-stop solution for managing all standard tasks and core workflows of your Python project."
 authors = [
     { name = "Nicola Coretti", email = "nicola.coretti@exasol.com" },
