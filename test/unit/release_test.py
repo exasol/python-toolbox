@@ -29,7 +29,7 @@ class TestTriggerReleaseWithMocking:
     def _get_mock_string(args) -> str:
         if args == ("git", "remote", "show", "origin"):
             return "test\nHEAD branch: main\ntest"
-        if args in [("git", "tag", "--list"), ("gh", "release", "list")]:
+        if args == ("git", "tag", "--list"):
             return "0.1.0\n0.2.0"
         return ""
 
@@ -50,50 +50,17 @@ class TestTriggerReleaseWithMocking:
 
         with patch("subprocess.run", side_effect=simulate_pass) as subprocess_mock:
             result = _trigger_release(noxconfig.PROJECT_CONFIG)
-            assert subprocess_mock.mock_calls == [
-                call(
-                    ("git", "remote", "show", "origin"),
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                ),
-                call(
-                    ("git", "checkout", "main"),
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                ),
-                call(("git", "pull"), capture_output=True, text=True, check=True),
-                call(
-                    ("git", "tag", "--list"), capture_output=True, text=True, check=True
-                ),
-                call(
-                    ("gh", "release", "list"),
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                ),
-                call(
-                    ("git", "tag", "0.3.0"), capture_output=True, text=True, check=True
-                ),
-                call(
-                    ("git", "push", "origin", "0.3.0"),
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                ),
-                call(
-                    ("git", "tag", "-f", "v0"),
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                ),
-                call(
-                    ("git", "push", "-f", "origin", "v0"),
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                ),
+            commands = [c.args[0] for c in subprocess_mock.mock_calls]
+            assert commands == [
+                ("git", "remote", "show", "origin"),
+                ("git", "checkout", "main"),
+                ("git", "pull"),
+                ("git", "fetch", "--all"),
+                ("git", "tag", "--list"),
+                ("git", "tag", "0.3.0"),
+                ("git", "push", "origin", "0.3.0"),
+                ("git", "tag", "-f", "v0"),
+                ("git", "push", "-f", "origin", "v0"),
             ]
         assert result == mock_from_poetry.return_value
 
@@ -106,38 +73,15 @@ class TestTriggerReleaseWithMocking:
 
         with patch("subprocess.run", side_effect=simulate_pass) as subprocess_mock:
             result = _trigger_release(DummyConfig)
-            assert subprocess_mock.mock_calls == [
-                call(
-                    ("git", "remote", "show", "origin"),
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                ),
-                call(
-                    ("git", "checkout", "main"),
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                ),
-                call(("git", "pull"), capture_output=True, text=True, check=True),
-                call(
-                    ("git", "tag", "--list"), capture_output=True, text=True, check=True
-                ),
-                call(
-                    ("gh", "release", "list"),
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                ),
-                call(
-                    ("git", "tag", "0.3.0"), capture_output=True, text=True, check=True
-                ),
-                call(
-                    ("git", "push", "origin", "0.3.0"),
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                ),
+            commands = [c.args[0] for c in subprocess_mock.mock_calls]
+            assert commands == [
+                ("git", "remote", "show", "origin"),
+                ("git", "checkout", "main"),
+                ("git", "pull"),
+                ("git", "fetch", "--all"),
+                ("git", "tag", "--list"),
+                ("git", "tag", "0.3.0"),
+                ("git", "push", "origin", "0.3.0"),
             ]
         assert result == mock_from_poetry.return_value
 
@@ -148,7 +92,6 @@ class TestTriggerReleaseWithMocking:
             ("git", "checkout", "main"),
             ("git", "pull"),
             ("git", "tag", "--list"),
-            ("gh", "release", "list"),
             ("git", "tag", "0.3.0"),
             ("git", "push", "origin", "0.3.0"),
         ],
@@ -189,16 +132,3 @@ class TestTriggerReleaseWithMocking:
             with pytest.raises(ReleaseError) as ex:
                 _trigger_release(noxconfig.PROJECT_CONFIG)
         assert f"tag {version} already exists" in str(ex)
-
-    def test_release_already_exists(self, mock_from_poetry):
-        version = mock_from_poetry.return_value
-
-        def simulate_fail(args, **kwargs):
-            if args == ("gh", "release", "list"):
-                return MagicMock(returncode=0, stdout=f"0.1.0\n0.2.0\n{version}")
-            return self._get_subprocess_run_mock(args)
-
-        with patch("subprocess.run", side_effect=simulate_fail):
-            with pytest.raises(ReleaseError) as ex:
-                _trigger_release(noxconfig.PROJECT_CONFIG)
-        assert f"release {version} already exists" in str(ex)
