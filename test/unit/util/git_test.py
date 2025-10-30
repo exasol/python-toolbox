@@ -31,6 +31,6 @@ class TestGit:
     def test_checkout(tmp_path, read_file_from_tag):
         tag = Git.get_latest_tag()
         dest = tmp_path / POETRY_LOCK
-        Git.checkout(tag=tag, source=POETRY_LOCK, dest = dest)
+        Git.checkout(tag=tag, source=POETRY_LOCK, dest=dest)
         result = dest.read_text()
         assert result == read_file_from_tag

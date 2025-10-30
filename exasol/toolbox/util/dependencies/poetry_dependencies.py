@@ -83,7 +83,7 @@ class PoetryToml(BaseModel):
         return tuple(groups)
 
 
-def run_command(*args: str, cwd: Path|None=None) -> subprocess.CompletedProcess:
+def run_command(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess:
     return subprocess.run(args, capture_output=True, text=True, cwd=cwd, check=True)
 
 
