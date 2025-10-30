@@ -28,12 +28,9 @@ class TestGit:
         assert read_file_from_tag != ""
 
     @staticmethod
-    def test_copy_remote_file_locally(tmp_path, read_file_from_tag):
-        latest_tag = Git.get_latest_tag()
-
-        Git.copy_remote_file_locally(
-            tag=latest_tag, remote_file=POETRY_LOCK, destination_directory=tmp_path
-        )
-
-        result = (tmp_path / POETRY_LOCK).read_text()
+    def test_checkout(tmp_path, read_file_from_tag):
+        tag = Git.get_latest_tag()
+        dest = tmp_path / POETRY_LOCK
+        Git.checkout(tag=tag, source=POETRY_LOCK, dest = dest)
+        result = dest.read_text()
         assert result == read_file_from_tag

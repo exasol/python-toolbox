@@ -18,6 +18,7 @@ from exasol.toolbox.util.dependencies.shared_models import (
     Package,
 )
 from exasol.toolbox.util.git import Git
+from noxconfig import PROJECT_CONFIG
 
 
 class PoetryGroup(BaseModel):
@@ -82,6 +83,10 @@ class PoetryToml(BaseModel):
         return tuple(groups)
 
 
+def run_command(*args: str, cwd: Path|None=None) -> subprocess.CompletedProcess:
+    return subprocess.run(args, capture_output=True, text=True, cwd=cwd, check=True)
+
+
 class PoetryDependencies(BaseModel):
     groups: tuple[PoetryGroup, ...]
     working_directory: Path
@@ -111,44 +116,34 @@ class PoetryDependencies(BaseModel):
     ) -> OrderedDict[str, dict[NormalizedPackageStr, Package]]:
         dependencies = OrderedDict()
         for group in self.groups:
-            command = (
+            proc = run_command(
                 "poetry",
                 "show",
                 "--top-level",
                 f"--only={group.name}",
                 "--no-truncate",
-            )
-            output = subprocess.run(
-                command,
-                capture_output=True,
-                text=True,
                 cwd=self.working_directory,
-                check=True,
             )
-            result = self._extract_from_poetry_show(output_text=output.stdout)
+            result = self._extract_from_poetry_show(output_text=proc.stdout)
             dependencies[group.name] = result
         return dependencies
 
     @property
     def all_dependencies(self) -> OrderedDict[str, dict[NormalizedPackageStr, Package]]:
-        command = ("poetry", "show", "--no-truncate")
-        output = subprocess.run(
-            command,
-            capture_output=True,
-            text=True,
+        proc = run_command(
+            "poetry",
+            "show",
+            "--no-truncate",
             cwd=self.working_directory,
-            check=True,
         )
-
         direct_dependencies = self.direct_dependencies.copy()
-
         transitive_dependencies = {}
         names_direct_dependencies = {
             package_name
             for group_list in direct_dependencies
             for package_name in group_list
         }
-        for line in output.stdout.splitlines():
+        for line in proc.stdout.splitlines():
             dep = self._extract_from_line(line=line)
             if dep and dep.name not in names_direct_dependencies:
                 transitive_dependencies[dep.normalized_name] = dep
@@ -169,10 +164,9 @@ def get_dependencies_from_latest_tag() -> (
     OrderedDict[str, dict[NormalizedPackageStr, Package]]
 ):
     latest_tag = Git.get_latest_tag()
+    dir = PROJECT_CONFIG.root.relative_to(Git.toplevel())
     with tempfile.TemporaryDirectory() as path:
         tmpdir = Path(path)
-
-        Git.copy_remote_file_locally(latest_tag, "poetry.lock", tmpdir)
-        Git.copy_remote_file_locally(latest_tag, PYPROJECT_TOML, tmpdir)
-
+        for file in ("poetry.lock", PYPROJECT_TOML):
+            Git.checkout(latest_tag, dir / file, tmpdir / file)
         return get_dependencies(working_directory=tmpdir)

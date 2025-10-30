@@ -34,17 +34,20 @@ class Git:
         return ["git", "cat-file", "blob", f"{tag}:{remote_file}"]
 
     @staticmethod
-    def copy_remote_file_locally(
-        tag: str, remote_file: str, destination_directory: Path
-    ) -> None:
+    def checkout(tag: str, source: Path, dest: Path) -> None:
         """
-        Copy the contents of the specified file `remote_file` at the point in time
-        specified by git tag `tag` and copy it into the local `destination_directory/remote_file`.
+        Copy the specified file `source` at the point in time specified by
+        git tag `tag` to file `dest` within the local filesystem.
         """
-        contents = Git.read_file_from_tag(tag=tag, remote_file=remote_file)
-        (destination_directory / remote_file).write_text(contents)
+        contents = Git.read_file_from_tag(tag=tag, remote_file=source)
+        dest.write_text(contents)
 
     @staticmethod
     @run_command
     def create_and_switch_to_branch(branch_name: str):
         return ["git", "switch", "-c", branch_name]
+
+    @staticmethod
+    @run_command
+    def toplevel() -> str:
+        return ["git", "rev-parse", "--show-toplevel"]
