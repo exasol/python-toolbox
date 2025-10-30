@@ -49,5 +49,5 @@ class Git:
 
     @staticmethod
     @run_command
-    def toplevel() -> str:
+    def toplevel():
         return ["git", "rev-parse", "--show-toplevel"]
