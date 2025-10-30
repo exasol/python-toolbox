@@ -1,6 +1,7 @@
 import subprocess  # nosec
 from functools import wraps
 from pathlib import Path
+from typing import Union
 
 
 def run_command(func):
@@ -26,25 +27,28 @@ class Git:
 
     @staticmethod
     @run_command
-    def read_file_from_tag(tag: str, remote_file: str):
+    def read_file_from_tag(tag: str, path: Union[Path, str]):
         """
-        Read the contents of the specified file `remote_file` at the point in time
-        specified by git tag `tag`.
+        Read the contents of the specified file `path` at the point in
+        time specified by git tag `tag`.
         """
-        return ["git", "cat-file", "blob", f"{tag}:{remote_file}"]
+        return ["git", "cat-file", "blob", f"{tag}:{path}"]
 
     @staticmethod
-    def copy_remote_file_locally(
-        tag: str, remote_file: str, destination_directory: Path
-    ) -> None:
+    def checkout(tag: str, source: Path, dest: Path) -> None:
         """
-        Copy the contents of the specified file `remote_file` at the point in time
-        specified by git tag `tag` and copy it into the local `destination_directory/remote_file`.
+        Copy the specified file `source` at the point in time specified by
+        git tag `tag` to file `dest` within the local filesystem.
         """
-        contents = Git.read_file_from_tag(tag=tag, remote_file=remote_file)
-        (destination_directory / remote_file).write_text(contents)
+        contents = Git.read_file_from_tag(tag=tag, path=source)
+        dest.write_text(contents)
 
     @staticmethod
     @run_command
     def create_and_switch_to_branch(branch_name: str):
         return ["git", "switch", "-c", branch_name]
+
+    @staticmethod
+    @run_command
+    def toplevel():
+        return ["git", "rev-parse", "--show-toplevel"]
