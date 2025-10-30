@@ -94,10 +94,9 @@ def _trigger_release(project_config) -> Version:
     release_version: Version = Version.from_poetry()
     print(f"release version: {release_version}")
 
+    run("git", "fetch", "--all")
     if re.search(rf"{release_version}", run("git", "tag", "--list")):
         raise ReleaseError(f"tag {release_version} already exists")
-    if re.search(rf"{release_version}", run("gh", "release", "list")):
-        raise ReleaseError(f"release {release_version} already exists")
 
     run("git", "tag", str(release_version))
     run("git", "push", "origin", str(release_version))
