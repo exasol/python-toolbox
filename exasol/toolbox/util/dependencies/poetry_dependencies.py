@@ -84,7 +84,9 @@ class PoetryToml(BaseModel):
 
 
 def run_command(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess:
-    return subprocess.run(args, capture_output=True, text=True, cwd=cwd, check=True)
+    return subprocess.run(
+        args, capture_output=True, text=True, cwd=cwd, check=True
+    )  # nosec: B603 - risk of untrusted input for subprocess call is accepted
 
 
 class PoetryDependencies(BaseModel):
