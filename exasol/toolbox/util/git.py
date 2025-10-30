@@ -1,6 +1,7 @@
 import subprocess  # nosec
 from functools import wraps
 from pathlib import Path
+from typing import Union
 
 
 def run_command(func):
@@ -26,7 +27,7 @@ class Git:
 
     @staticmethod
     @run_command
-    def read_file_from_tag(tag: str, path: Path | str):
+    def read_file_from_tag(tag: str, path: Union[Path,str]):
         """
         Read the contents of the specified file `path` at the point in
         time specified by git tag `tag`.
