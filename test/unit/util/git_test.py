@@ -13,7 +13,7 @@ def latest_tag() -> str:
 
 @pytest.fixture(scope="module")
 def read_file_from_tag(latest_tag) -> str:
-    return Git.read_file_from_tag(tag=latest_tag, remote_file=POETRY_LOCK)
+    return Git.read_file_from_tag(tag=latest_tag, path=POETRY_LOCK)
 
 
 class TestGit:

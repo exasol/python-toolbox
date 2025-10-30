@@ -26,12 +26,12 @@ class Git:
 
     @staticmethod
     @run_command
-    def read_file_from_tag(tag: str, remote_file: str):
+    def read_file_from_tag(tag: str, path: Path | str):
         """
-        Read the contents of the specified file `remote_file` at the point in time
-        specified by git tag `tag`.
+        Read the contents of the specified file `path` at the point in
+        time specified by git tag `tag`.
         """
-        return ["git", "cat-file", "blob", f"{tag}:{remote_file}"]
+        return ["git", "cat-file", "blob", f"{tag}:{path}"]
 
     @staticmethod
     def checkout(tag: str, source: Path, dest: Path) -> None:
@@ -39,7 +39,7 @@ class Git:
         Copy the specified file `source` at the point in time specified by
         git tag `tag` to file `dest` within the local filesystem.
         """
-        contents = Git.read_file_from_tag(tag=tag, remote_file=source)
+        contents = Git.read_file_from_tag(tag=tag, path=source)
         dest.write_text(contents)
 
     @staticmethod

@@ -164,9 +164,9 @@ def get_dependencies_from_latest_tag() -> (
     OrderedDict[str, dict[NormalizedPackageStr, Package]]
 ):
     latest_tag = Git.get_latest_tag()
-    directory = PROJECT_CONFIG.root.relative_to(Git.toplevel())
+    path = PROJECT_CONFIG.root.relative_to(Git.toplevel())
     with tempfile.TemporaryDirectory() as path:
         tmpdir = Path(path)
         for file in ("poetry.lock", PYPROJECT_TOML):
-            Git.checkout(latest_tag, dir / file, tmpdir / file)
+            Git.checkout(latest_tag, path / file, tmpdir / file)
         return get_dependencies(working_directory=tmpdir)
