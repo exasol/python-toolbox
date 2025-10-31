@@ -52,17 +52,18 @@ runs:
 
     - name: Setup cache variables
       id: setup-cache-variables
+      working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
         echo "ImageOS=$ImageOS"
         echo "ImageVersion=$ImageVersion"
         POETRY_ENV_PATH=$(poetry config virtualenvs.path)
-        POETRY_SHA=$(sha256sum poetry.lock | awk '{print $1}') #Remove trailing filename
-        echo "POETRY_ENV_PATH=$POETRY_ENV_PATH" >>  $GITHUB_OUTPUT
+        POETRY_SHA=$(cat pyproject.toml poetry.lock | sha256sum | cut -f 1 -d " ") #Remove trailing dash
+        # output to GITHUB_OUTPUT
         echo "IMAGE_OS=$ImageOS" >> $GITHUB_OUTPUT
         echo "IMAGE_VERSION=$ImageVersion" >> $GITHUB_OUTPUT
+        echo "POETRY_ENV_PATH=$POETRY_ENV_PATH" >>  $GITHUB_OUTPUT
         echo "POETRY_SHA=$POETRY_SHA" >> $GITHUB_OUTPUT
-        
 
     - name: Cache Poetry environment
       if: inputs.use-cache == 'true'

@@ -39,7 +39,7 @@ runs:
     - name: Install Python Toolbox / Security tool
       shell: bash
       run: |
-        pip install exasol-toolbox==1.12.0
+        pip install exasol-toolbox==1.13.0
 
     - name: Create Security Issue Report
       shell: bash
