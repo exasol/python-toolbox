@@ -52,6 +52,7 @@ runs:
 
     - name: Setup cache variables
       id: setup-cache-variables
+      working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
         echo "ImageOS=$ImageOS"
@@ -62,7 +63,7 @@ runs:
         echo "IMAGE_OS=$ImageOS" >> $GITHUB_OUTPUT
         echo "IMAGE_VERSION=$ImageVersion" >> $GITHUB_OUTPUT
         echo "POETRY_SHA=$POETRY_SHA" >> $GITHUB_OUTPUT
-        
+
 
     - name: Cache Poetry environment
       if: inputs.use-cache == 'true'
