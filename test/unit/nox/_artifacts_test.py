@@ -51,6 +51,7 @@ def mock_check_artifacts_session(
 def mock_session(path: Path, python_version: str, *files: str):
     with patch("exasol.toolbox.nox._artifacts.PROJECT_CONFIG") as config:
         config.python_versions = [python_version]
+        config.minimum_python_version = python_version
         for rel in files:
             file = path / rel
             file.parent.mkdir(parents=True, exist_ok=True)
