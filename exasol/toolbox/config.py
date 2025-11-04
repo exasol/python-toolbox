@@ -61,3 +61,16 @@ class BaseConfig(BaseModel):
         costly to run the tests for all `python_versions` or we need a single metric.
         """
         return str(min([Version.from_string(v) for v in self.python_versions]))
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def pyupgrade_argument(self) -> tuple[str, ...]:
+        """
+        Default argument to :func:`exasol.toolbox._format._pyupgrade`.
+
+        It uses the minimum Python version to ensure compatibility with all supported
+        versions of a project.
+        """
+        version_parts = self.minimum_python_version.split(".")[:2]
+        version_number = "".join(version_parts)
+        return (f"--py{version_number}-plus",)
