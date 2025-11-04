@@ -59,4 +59,4 @@ def test_expansion_validation_fails_for_invalid_version():
 
 def test_min_py_version():
     conf = BaseConfig(python_versions=("5.5.5", "1.1.1", "9.9.9"))
-    assert conf.min_py_version == "1.1.1"
+    assert conf.minimum_python_version == "1.1.1"

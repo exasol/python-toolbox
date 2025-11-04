@@ -53,7 +53,7 @@ class BaseConfig(BaseModel):
 
     @computed_field  # type: ignore[misc]
     @property
-    def min_py_version(self) -> str:
+    def minimum_python_version(self) -> str:
         """
         Minimum Python version declared from the `python_versions` list
 

@@ -4,23 +4,13 @@ import logging
 import nox
 from nox import Session
 
+from exasol.toolbox.nox._shared import check_for_config_attribute
 from noxconfig import (
     PROJECT_CONFIG,
     Config,
 )
 
 _log = logging.getLogger(__name__)
-
-
-def check_for_config_attribute(config: Config, attribute: str):
-    if not hasattr(config, attribute):
-        raise AttributeError(
-            "in the noxconfig.py file, the class Config should inherit "
-            "from `exasol.toolbox.config.BaseConfig`. This is used to "
-            f"set the default `{attribute}`. If the allowed "
-            f"`{attribute} needs to differ in your project, you can "
-            "set it in the PROJECT_CONFIG statement."
-        )
 
 
 def _python_matrix(config: Config):
