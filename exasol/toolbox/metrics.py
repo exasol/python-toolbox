@@ -4,6 +4,7 @@ import re
 import subprocess
 import sys
 from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import (
     asdict,
     dataclass,
@@ -18,7 +19,6 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import (
     Any,
-    Callable,
     Dict,
     List,
     Optional,
@@ -101,7 +101,7 @@ class Report:
     technical_debt: Rating
 
 
-def total_coverage(file: Union[str, Path]) -> float:
+def total_coverage(file: str | Path) -> float:
     with TemporaryDirectory() as tmpdir:
         tmp_dir = Path(tmpdir)
         report = tmp_dir / "coverage.json"
@@ -133,8 +133,8 @@ def total_coverage(file: Union[str, Path]) -> float:
         return total
 
 
-def _static_code_analysis(file: Union[str, Path]) -> Rating:
-    def pylint(f: Union[str, Path]) -> Rating:
+def _static_code_analysis(file: str | Path) -> Rating:
+    def pylint(f: str | Path) -> Rating:
         expr = re.compile(r"^Your code has been rated at (\d+.\d+)/.*", re.MULTILINE)
         with open(f, encoding="utf-8") as results:
             data = results.read()
@@ -154,7 +154,7 @@ def _static_code_analysis(file: Union[str, Path]) -> Rating:
     return pylint_score
 
 
-def maintainability(file: Union[str, Path]) -> Rating:
+def maintainability(file: str | Path) -> Rating:
     return _static_code_analysis(file)
 
 
@@ -162,7 +162,7 @@ def reliability() -> Rating:
     return Rating.NotAvailable
 
 
-def security(file: Union[str, Path]) -> Rating:
+def security(file: str | Path) -> Rating:
     with open(file) as json_file:
         security_lint = json.load(json_file)
     return Rating.bandit_rating(_bandit_scoring(security_lint["results"]))
@@ -198,10 +198,10 @@ def technical_debt() -> Rating:
 
 def create_report(
     commit: str,
-    date: Optional[datetime.datetime] = None,
-    coverage_report: Union[str, Path] = ".coverage",
-    pylint_report: Union[str, Path] = ".lint.txt",
-    bandit_report: Union[str, Path] = ".security.json",
+    date: datetime.datetime | None = None,
+    coverage_report: str | Path = ".coverage",
+    pylint_report: str | Path = ".lint.txt",
+    bandit_report: str | Path = ".security.json",
 ) -> Report:
     return Report(
         commit=commit,
@@ -254,7 +254,7 @@ def _rating_color(value: Rating) -> str:
 
 @color.register(float)
 @color.register(int)
-def _coverage_color(value: Union[float, int]) -> str:
+def _coverage_color(value: float | int) -> str:
     if 0 <= value < 20:
         return _rating_color(Rating.F)
     elif 20 <= value < 50:

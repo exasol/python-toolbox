@@ -185,7 +185,7 @@ def _copy_artifacts(source: Path, dest: Path, files: Iterable[str]):
 
 
 def _prepare_coverage_xml(
-    session: Session, source: Path, cwd: Optional[Path] = None
+    session: Session, source: Path, cwd: Path | None = None
 ) -> None:
     """
     Prepare the coverage XML for input into Sonar
@@ -225,9 +225,7 @@ def _prepare_coverage_xml(
         session.error(output.returncode, output.stdout, output.stderr)
 
 
-def _upload_to_sonar(
-    session: Session, sonar_token: Optional[str], config: Config
-) -> None:
+def _upload_to_sonar(session: Session, sonar_token: str | None, config: Config) -> None:
     command = [
         "pysonar",
         "--sonar-token",

@@ -41,21 +41,21 @@ LICENSE_MAPPING_TO_URL = {
 
 
 class PackageLicense(Package):
-    package_link: Optional[str]
+    package_link: str | None
     license: str
 
     @field_validator("package_link", mode="before")
-    def map_unknown_to_none(cls, v) -> Optional[str]:
+    def map_unknown_to_none(cls, v) -> str | None:
         if v == "UNKNOWN":
             return None
         return v
 
     @field_validator("license", mode="before")
-    def map_to_normalized_values(cls, v) -> Optional[str]:
+    def map_to_normalized_values(cls, v) -> str | None:
         return _normalize(v)
 
     @property
-    def license_link(self) -> Optional[str]:
+    def license_link(self) -> str | None:
         return LICENSE_MAPPING_TO_URL.get(self.license, None)
 
 
