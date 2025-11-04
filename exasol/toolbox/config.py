@@ -60,7 +60,10 @@ class BaseConfig(BaseModel):
         This is used in specific testing scenarios where it would be either
         costly to run the tests for all `python_versions` or we need a single metric.
         """
-        return str(min([Version.from_string(v) for v in self.python_versions]))
+        versioned = [Version.from_string(v) for v in self.python_versions]
+        min_version = min(versioned)
+        index_min_version = versioned.index(min_version)
+        return self.python_versions[index_min_version]
 
     @computed_field  # type: ignore[misc]
     @property

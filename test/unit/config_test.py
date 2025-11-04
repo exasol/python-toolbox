@@ -58,8 +58,8 @@ def test_expansion_validation_fails_for_invalid_version():
 
 
 def test_minimum_python_version():
-    conf = BaseConfig(python_versions=("5.5.5", "1.1.1", "9.9.9"))
-    assert conf.minimum_python_version == "1.1.1"
+    conf = BaseConfig(python_versions=("5.5.5", "1.10", "9.9.9"))
+    assert conf.minimum_python_version == "1.10"
 
 
 @pytest.mark.parametrize("minimum_python_version", ["3.10", "3.10.5"])
