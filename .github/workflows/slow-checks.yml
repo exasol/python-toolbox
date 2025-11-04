@@ -56,7 +56,7 @@ jobs:
           - int-linux-x64-4core-ubuntu24.04-1
           - int-linux-x64-2core-ubuntu24.04-1
         python-version: ${{ fromJson(needs.build-matrix.outputs.matrix).python-version }}
-    name: Install Pipx on ${{ matrix.runner }} with Python "${{ matrix.python-version }}"
+    name: Install Pipx on ${{ matrix.runner }} (Python-${{ matrix.python-version }})
     runs-on:
       labels: ${{ matrix.runner }}
 
