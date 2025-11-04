@@ -55,7 +55,7 @@ class Vulnerability(Package):
         )
 
     @property
-    def security_issue_entry(self) -> dict[str, Union[str, list[str]]]:
+    def security_issue_entry(self) -> dict[str, str | list[str]]:
         return {
             "name": self.name,
             "version": str(self.version),
@@ -141,7 +141,7 @@ class Vulnerabilities(BaseModel):
         return Vulnerabilities(vulnerabilities=vulnerabilities)
 
     @property
-    def security_issue_dict(self) -> list[dict[str, Union[str, list[str]]]]:
+    def security_issue_dict(self) -> list[dict[str, str | list[str]]]:
         return [
             vulnerability.security_issue_entry for vulnerability in self.vulnerabilities
         ]

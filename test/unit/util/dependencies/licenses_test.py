@@ -167,8 +167,8 @@ class TestPackageLicenseReport:
     )
     def test_format_table_row(
         package_license_report,
-        package_link: Optional[str],
-        license_link: Optional[str],
+        package_link: str | None,
+        license_link: str | None,
         expected,
     ):
         _license = PackageLicense(

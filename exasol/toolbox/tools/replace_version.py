@@ -1,9 +1,9 @@
 import re
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import (
-    Callable,
     Optional,
 )
 
@@ -54,7 +54,7 @@ class GithubActionsReplacement:
         self.pattern = pattern
         self.version_string_modifier = version_string_modifier
 
-    def replace_version(self, line: str, version: Version) -> Optional[str]:
+    def replace_version(self, line: str, version: Version) -> str | None:
         match = re.search(self.pattern.full_pattern, line)
         if match:
             return self.pattern.replace_version(

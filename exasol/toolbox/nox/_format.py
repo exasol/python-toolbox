@@ -8,14 +8,13 @@ from nox import Session
 from exasol.toolbox.nox._shared import (
     Mode,
     _version,
+    check_for_config_attribute,
     python_files,
 )
 from noxconfig import (
     PROJECT_CONFIG,
     Config,
 )
-
-_PYUPGRADE_ARGS = ("--py39-plus",)
 
 
 def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
@@ -27,10 +26,10 @@ def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
 
 
 def _pyupgrade(session: Session, config: Config, files: Iterable[str]) -> None:
-    pyupgrade_args = getattr(config, "pyupgrade_args", _PYUPGRADE_ARGS)
+    check_for_config_attribute(config, "pyupgrade_argument")
     session.run(
         "pyupgrade",
-        *pyupgrade_args,
+        *config.pyupgrade_argument,
         "--exit-zero-even-if-changed",
         *files,
     )

@@ -15,12 +15,24 @@ from typing import Any
 
 from nox import Session
 
-from noxconfig import PROJECT_CONFIG
+from noxconfig import (
+    PROJECT_CONFIG,
+    Config,
+)
 
 DEFAULT_PATH_FILTERS = {"dist", ".eggs", "venv", ".poetry"}
 DOCS_OUTPUT_DIR = ".html-documentation"
 
-MINIMUM_PYTHON_VERSION = "3.9"
+
+def check_for_config_attribute(config: Config, attribute: str):
+    if not hasattr(config, attribute):
+        raise AttributeError(
+            "in the noxconfig.py file, the class Config should inherit "
+            "from `exasol.toolbox.config.BaseConfig`. This is used to "
+            f"set the default `{attribute}`. If the allowed "
+            f"`{attribute} needs to differ in your project and is an "
+            "input parameter (not property), you can set it in the PROJECT_CONFIG statement."
+        )
 
 
 class Mode(Enum):

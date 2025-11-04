@@ -11,6 +11,7 @@ from nox import Session
 from exasol.toolbox.nox._shared import (
     Mode,
     _version,
+    check_for_config_attribute,
 )
 from exasol.toolbox.nox.plugin import NoxTasks
 from exasol.toolbox.util.git import Git
@@ -101,10 +102,8 @@ def _trigger_release(project_config) -> Version:
     run("git", "tag", str(release_version))
     run("git", "push", "origin", str(release_version))
 
-    if (
-        hasattr(project_config, "create_major_version_tags")
-        and project_config.create_major_version_tags
-    ):
+    check_for_config_attribute(project_config, "create_major_version_tags")
+    if project_config.create_major_version_tags:
         major_release_version = f"v{release_version.major}"
         run("git", "tag", "-f", str(major_release_version))
         run("git", "push", "-f", "origin", str(major_release_version))

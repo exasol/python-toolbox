@@ -71,7 +71,7 @@ class DependencyChanges(BaseModel):
 
     def _categorize_change(
         self, dependency_name: NormalizedPackageStr
-    ) -> Optional[DependencyChange]:
+    ) -> DependencyChange | None:
         """
         Categorize dependency change as removed, added, or updated.
         """

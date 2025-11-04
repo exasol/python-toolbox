@@ -25,7 +25,7 @@ class SampleVulnerability:
     )
 
     @property
-    def pip_audit_vuln_entry(self) -> dict[str, Union[str, list[str]]]:
+    def pip_audit_vuln_entry(self) -> dict[str, str | list[str]]:
         return {
             "id": self.vulnerability_id,
             "fix_versions": [self.fix_version],
@@ -60,7 +60,7 @@ class SampleVulnerability:
         return json.dumps([self.security_issue_entry], indent=2) + "\n"
 
     @property
-    def security_issue_entry(self) -> dict[str, Union[str, list[str]]]:
+    def security_issue_entry(self) -> dict[str, str | list[str]]:
         return {
             "name": self.package_name,
             "version": self.version,

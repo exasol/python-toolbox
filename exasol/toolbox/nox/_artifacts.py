@@ -12,7 +12,7 @@ from typing import Optional
 import nox
 from nox import Session
 
-from exasol.toolbox.nox._shared import MINIMUM_PYTHON_VERSION
+from exasol.toolbox.nox._shared import check_for_config_attribute
 from noxconfig import (
     PROJECT_CONFIG,
     Config,
@@ -159,8 +159,8 @@ def copy_artifacts(session: Session) -> None:
 
 
 def _python_version_suffix() -> str:
-    versions = getattr(PROJECT_CONFIG, "python_versions", None)
-    pivot = versions[0] if versions else MINIMUM_PYTHON_VERSION
+    check_for_config_attribute(PROJECT_CONFIG, "minimum_python_version")
+    pivot = PROJECT_CONFIG.minimum_python_version
     return f"-python{pivot}"
 
 
@@ -185,7 +185,7 @@ def _copy_artifacts(source: Path, dest: Path, files: Iterable[str]):
 
 
 def _prepare_coverage_xml(
-    session: Session, source: Path, cwd: Optional[Path] = None
+    session: Session, source: Path, cwd: Path | None = None
 ) -> None:
     """
     Prepare the coverage XML for input into Sonar
@@ -225,9 +225,7 @@ def _prepare_coverage_xml(
         session.error(output.returncode, output.stdout, output.stderr)
 
 
-def _upload_to_sonar(
-    session: Session, sonar_token: Optional[str], config: Config
-) -> None:
+def _upload_to_sonar(session: Session, sonar_token: str | None, config: Config) -> None:
     command = [
         "pysonar",
         "--sonar-token",

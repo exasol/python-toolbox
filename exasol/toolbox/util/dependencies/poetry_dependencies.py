@@ -25,7 +25,7 @@ class PoetryGroup(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     name: str
-    toml_section: Optional[str]
+    toml_section: str | None
 
 
 PYPROJECT_TOML = "pyproject.toml"
@@ -50,7 +50,7 @@ class PoetryToml(BaseModel):
         except Exception as e:
             raise ValueError(f"Error reading file: {str(e)}")
 
-    def get_section_dict(self, section: str) -> Optional[dict]:
+    def get_section_dict(self, section: str) -> dict | None:
         current = self.content.copy()
         for section in section.split("."):
             if section not in current:
@@ -94,7 +94,7 @@ class PoetryDependencies(BaseModel):
     working_directory: Path
 
     @staticmethod
-    def _extract_from_line(line: str) -> Optional[Package]:
+    def _extract_from_line(line: str) -> Package | None:
         # remove (!) from line as indicates not installed in environment,
         # which could occur for optional dependencies
         split_line = line.replace("(!)", "").strip().split(maxsplit=2)

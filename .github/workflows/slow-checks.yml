@@ -43,6 +43,7 @@ jobs:
 
 
   verify-poetry-installation:
+    needs: [ build-matrix ]
     # This Job verifies if pipx installation is successful on each of the
     # selected GitHub Runners.
     strategy:
@@ -54,12 +55,8 @@ jobs:
           - int-linux-x64-4core-gpu-t4-ubuntu24.04-1
           - int-linux-x64-4core-ubuntu24.04-1
           - int-linux-x64-2core-ubuntu24.04-1
-        python-version:
-          - "3.10"
-          - "3.11"
-          - "3.12"
-          - "3.13"
-    name: Install Pipx on ${{ matrix.runner }} with Python "${{ matrix.python-version }}"
+        python-version: ${{ fromJson(needs.build-matrix.outputs.matrix).python-version }}
+    name: Install Pipx on ${{ matrix.runner }} (Python-${{ matrix.python-version }})
     runs-on:
       labels: ${{ matrix.runner }}
 

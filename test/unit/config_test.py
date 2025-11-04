@@ -57,6 +57,12 @@ def test_expansion_validation_fails_for_invalid_version():
         BaseConfigExpansion(python_versions=("1.f.0",))
 
 
-def test_min_py_version():
-    conf = BaseConfig(python_versions=("5.5.5", "1.1.1", "9.9.9"))
-    assert conf.min_py_version == "1.1.1"
+def test_minimum_python_version():
+    conf = BaseConfig(python_versions=("5.5.5", "1.10", "9.9.9"))
+    assert conf.minimum_python_version == "1.10"
+
+
+@pytest.mark.parametrize("minimum_python_version", ["3.10", "3.10.5"])
+def test_pyupgrade_argument(minimum_python_version):
+    conf = BaseConfig(python_versions=("3.11", minimum_python_version, "3.12"))
+    assert conf.pyupgrade_argument == ("--py310-plus",)

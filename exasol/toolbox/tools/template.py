@@ -86,8 +86,8 @@ def diff_template(template: str, dest: Path, pkg: str, template_type: str) -> No
 
 def _install_template(
     template_type: str,
-    src: Union[str, Path],
-    dest: Union[str, Path],
+    src: str | Path,
+    dest: str | Path,
     exists_ok: bool = False,
 ) -> None:
     src, dest = Path(src), Path(dest)
