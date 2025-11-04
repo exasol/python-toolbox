@@ -25,7 +25,7 @@
 🔌️ Prerequisites
 -----------------
 
-- `Python <https://www.python.org/>`__ >= 3.9
+- `Python <https://www.python.org/>`__ >= 3.10
 
 💾 Installation
 ---------------

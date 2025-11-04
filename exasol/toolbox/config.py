@@ -37,13 +37,7 @@ class BaseConfig(BaseModel):
     """
 
     python_versions: tuple[ValidVersionStr, ...] = Field(
-        default=(
-            "3.9",
-            "3.10",
-            "3.11",
-            "3.12",
-            "3.13",
-        ),
+        default=("3.10", "3.11", "3.12", "3.13", "3.14"),
         description="Python versions to use in running CI workflows",
     )
 
