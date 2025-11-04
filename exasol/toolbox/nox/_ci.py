@@ -11,32 +11,26 @@ from noxconfig import (
 
 _log = logging.getLogger(__name__)
 
-_PYTHON_VERSIONS = ["3.9", "3.10", "3.11", "3.12"]
-_EXASOL_VERSIONS = ["7.1.9"]
+
+def check_for_config_attribute(config: Config, attribute: str):
+    if not hasattr(config, attribute):
+        raise AttributeError(
+            "in the noxconfig.py file, the class Config should inherit "
+            "from `exasol.toolbox.config.BaseConfig`. This is used to "
+            f"set the default `{attribute}`. If the allowed "
+            f"`{attribute} needs to differ in your project, you can "
+            "set it in the PROJECT_CONFIG statement."
+        )
 
 
 def _python_matrix(config: Config):
-    attr = "python_versions"
-    python_versions = getattr(config, attr, _PYTHON_VERSIONS)
-    if not hasattr(config, attr):
-        _log.warning(
-            "Config does not contain '%s' setting. Using default: %s",
-            attr,
-            _PYTHON_VERSIONS,
-        )
-    return {"python-version": python_versions}
+    check_for_config_attribute(config=config, attribute="python_versions")
+    return {"python-version": config.python_versions}
 
 
 def _exasol_matrix(config: Config):
-    attr = "exasol_versions"
-    exasol_versions = getattr(config, attr, _EXASOL_VERSIONS)
-    if not hasattr(config, attr):
-        _log.warning(
-            "Config does not contain '%s' setting. Using default: %s",
-            attr,
-            _EXASOL_VERSIONS,
-        )
-    return {"exasol-version": exasol_versions}
+    check_for_config_attribute(config=config, attribute="exasol_versions")
+    return {"exasol-version": config.exasol_versions}
 
 
 @nox.session(name="matrix:python", python=False)
