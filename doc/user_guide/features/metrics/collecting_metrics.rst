@@ -31,13 +31,7 @@ files and based on a selected external Python tool.
 +------------------------------------+-----------------------------+--------------+
 
 These metrics are computed for each element in your build matrix, e.g. for each
-Python version defined in the file ``noxconfig.py``:
-
-.. code-block:: python
-
-    @dataclass(frozen=True)
-    class Config:
-        python_versions = ["3.9", "3.10", "3.11", "3.12", "3.13"]
+Python version defined in the `PROJECT_CONFIG` of the ``noxconfig.py`` file.
 
 The GitHub workflows of your project can:
 
