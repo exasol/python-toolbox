@@ -1,8 +1,14 @@
+from collections.abc import Iterable
+from dataclasses import dataclass
+from pathlib import Path
+
 import pytest
 
 import noxconfig
+from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._shared import (
     DEFAULT_PATH_FILTERS,
+    check_for_config_attribute,
     python_files,
 )
 
@@ -52,3 +58,35 @@ def test_python_files(
     actual = python_files(tmp_directory)
     assert len(actual) == 1
     assert "toolbox-dummy" in actual[0]
+
+
+@dataclass(frozen=True)
+class PreviousConfig:
+    root: Path = Path(__file__).parent
+    doc: Path = Path(__file__).parent / "doc"
+    source: Path = Path("exasol/toolbox")
+    version_file: Path = Path(__file__).parent / "exasol" / "toolbox" / "version.py"
+    path_filters: Iterable[str] = ()
+    pyupgrade_args: Iterable[str] = ("--py310-plus",)
+    plugins = []
+
+
+# attributes + properties
+MIGRATED_VALUES = [
+    *BaseConfig.model_fields.keys(),
+    *BaseConfig.model_computed_fields.keys(),
+]
+
+
+class TestCheckForConfigAttribute:
+
+    @pytest.mark.parametrize("attribute", MIGRATED_VALUES)
+    def test_old_implementation_raises_error(self, attribute):
+        with pytest.raises(
+            AttributeError, match="from `exasol.toolbox.config.BaseConfig`"
+        ):
+            check_for_config_attribute(PreviousConfig(), attribute=attribute)
+
+    @pytest.mark.parametrize("attribute", MIGRATED_VALUES)
+    def test_current_implementation_passes(self, attribute):
+        check_for_config_attribute(BaseConfig(), attribute=attribute)
