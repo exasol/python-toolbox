@@ -3,8 +3,9 @@ from __future__ import annotations
 import subprocess
 import tempfile
 from collections import OrderedDict
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
+from typing import Final
 
 import tomlkit
 from pydantic import (
@@ -28,7 +29,16 @@ class PoetryGroup(BaseModel):
     toml_section: str | None
 
 
-PYPROJECT_TOML = "pyproject.toml"
+@dataclass(frozen=True)
+class PoetryFiles:
+    pyproject_toml: Final[str] = "pyproject.toml"
+    poetry_lock: Final[str] = "poetry.lock"
+
+    @property
+    def files(self) -> tuple[str, ...]:
+        return tuple(self.__dict__.values())
+
+
 TRANSITIVE_GROUP = PoetryGroup(name="transitive", toml_section=None)
 
 
@@ -39,7 +49,7 @@ class PoetryToml(BaseModel):
 
     @classmethod
     def load_from_toml(cls, working_directory: Path) -> PoetryToml:
-        file_path = working_directory / PYPROJECT_TOML
+        file_path = working_directory / PoetryFiles.pyproject_toml
         if not file_path.exists():
             raise ValueError(f"File not found: {file_path}")
 
@@ -169,6 +179,6 @@ def get_dependencies_from_latest_tag() -> (
     path = PROJECT_CONFIG.root.relative_to(Git.toplevel())
     with tempfile.TemporaryDirectory() as tmpdir_str:
         tmpdir = Path(tmpdir_str)
-        for file in ("poetry.lock", PYPROJECT_TOML):
+        for file in PoetryFiles().files:
             Git.checkout(latest_tag, path / file, tmpdir / file)
         return get_dependencies(working_directory=tmpdir)

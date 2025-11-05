@@ -11,6 +11,7 @@ import tomlkit
 from nox import Session
 
 from exasol.toolbox.nox._shared import python_files
+from exasol.toolbox.util.dependencies.poetry_dependencies import PoetryFiles
 from noxconfig import PROJECT_CONFIG
 
 
@@ -140,7 +141,7 @@ def security_lint(session: Session) -> None:
 @nox.session(name="lint:dependencies", python=False)
 def dependency_check(session: Session) -> None:
     """Checks if only valid sources of dependencies are used"""
-    content = Path(PROJECT_CONFIG.root, "pyproject.toml").read_text()
+    content = Path(PROJECT_CONFIG.root, PoetryFiles.pyproject_toml).read_text()
     dependencies = Dependencies.parse(content)
     console = rich.console.Console()
     if illegal := dependencies.illegal:
