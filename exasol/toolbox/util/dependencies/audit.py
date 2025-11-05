@@ -63,6 +63,7 @@ class Vulnerability(Package):
             "version": str(self.version),
             "refs": [self.id] + self.aliases,
             "description": self.description,
+            "coordinates": self.coordinates,
         }
 
 

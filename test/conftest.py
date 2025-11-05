@@ -66,6 +66,7 @@ class SampleVulnerability:
             "version": self.version,
             "refs": [self.vulnerability_id, self.cve_id],
             "description": self.description,
+            "coordinates": f"{self.package_name}:{self.version}",
         }
 
     @property

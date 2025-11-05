@@ -186,7 +186,7 @@ def from_pip_audit(report: str) -> Iterable[Issue]:
                 cve=sorted(cves)[0],
                 cwe="None" if not cwes else ", ".join(cwes),
                 description=vulnerability["description"],
-                coordinates=f"{vulnerability['name']}:{vulnerability['version']}",
+                coordinates=vulnerability["coordinates"],
                 references=tuple(links),
             )
 

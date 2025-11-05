@@ -49,6 +49,11 @@ class TestPackage:
         dep = Package(name=name, version="0.1.0")
         assert dep.normalized_name == expected
 
+    @staticmethod
+    def test_coordinates():
+        dep = Package(name="numpy", version="0.1.0")
+        assert dep.coordinates == "numpy:0.1.0"
+
 
 def test_poetry_files_from_latest_tag():
     latest_tag = Git.get_latest_tag()

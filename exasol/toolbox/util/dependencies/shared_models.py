@@ -30,11 +30,22 @@ def normalize_package_name(package_name: str) -> NormalizedPackageStr:
     return NormalizedPackageStr(package_name.lower().replace("_", "-"))
 
 
+def create_coordinates(package_name: str, version: str | Version) -> str:
+    """
+    Create a naming convention for combining a package name and its version
+    """
+    return f"{package_name}:{version}"
+
+
 class Package(BaseModel):
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
     name: str
     version: VERSION_TYPE
+
+    @property
+    def coordinates(self):
+        return create_coordinates(package_name=self.name, version=self.version)
 
     @property
     def normalized_name(self) -> NormalizedPackageStr:
