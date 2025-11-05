@@ -1,7 +1,13 @@
 from __future__ import annotations
 
+import tempfile
+from collections.abc import Generator
+from contextlib import contextmanager
+from dataclasses import dataclass
+from pathlib import Path
 from typing import (
     Annotated,
+    Final,
     NewType,
 )
 
@@ -11,6 +17,9 @@ from pydantic import (
     BaseModel,
     ConfigDict,
 )
+
+from exasol.toolbox.util.git import Git
+from noxconfig import PROJECT_CONFIG
 
 NormalizedPackageStr = NewType("NormalizedPackageStr", str)
 
@@ -30,3 +39,25 @@ class Package(BaseModel):
     @property
     def normalized_name(self) -> NormalizedPackageStr:
         return normalize_package_name(self.name)
+
+
+@dataclass(frozen=True)
+class PoetryFiles:
+    pyproject_toml: Final[str] = "pyproject.toml"
+    poetry_lock: Final[str] = "poetry.lock"
+
+    @property
+    def files(self) -> tuple[str, ...]:
+        return tuple(self.__dict__.values())
+
+
+@contextmanager
+def poetry_files_from_latest_tag() -> Generator[Path]:
+    """Context manager to set up a temporary directory with poetry files from the latest tag"""
+    latest_tag = Git.get_latest_tag()
+    path = PROJECT_CONFIG.root.relative_to(Git.toplevel())
+    with tempfile.TemporaryDirectory() as tmpdir_str:
+        tmp_dir = Path(tmpdir_str)
+        for file in PoetryFiles().files:
+            Git.checkout(latest_tag, path / file, tmp_dir / file)
+        yield tmp_dir

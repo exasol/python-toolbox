@@ -8,12 +8,14 @@ from pathlib import Path
 from re import search
 from typing import (
     Any,
-    Union,
 )
 
 from pydantic import BaseModel
 
-from exasol.toolbox.util.dependencies.shared_models import Package
+from exasol.toolbox.util.dependencies.shared_models import (
+    Package,
+    poetry_files_from_latest_tag,
+)
 
 PIP_AUDIT_VULNERABILITY_PATTERN = (
     r"^Found \d+ known vulnerabilit\w{1,3} in \d+ package\w?$"
@@ -145,3 +147,8 @@ class Vulnerabilities(BaseModel):
         return [
             vulnerability.security_issue_entry for vulnerability in self.vulnerabilities
         ]
+
+
+def get_vulnerabilities_from_latest_tag():
+    with poetry_files_from_latest_tag() as tmp_dir:
+        return Vulnerabilities.load_from_pip_audit(working_directory=tmp_dir)

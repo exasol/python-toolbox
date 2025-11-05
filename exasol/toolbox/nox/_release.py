@@ -14,7 +14,7 @@ from exasol.toolbox.nox._shared import (
     check_for_config_attribute,
 )
 from exasol.toolbox.nox.plugin import NoxTasks
-from exasol.toolbox.util.dependencies.poetry_dependencies import PoetryFiles
+from exasol.toolbox.util.dependencies.shared_models import PoetryFiles
 from exasol.toolbox.util.git import Git
 from exasol.toolbox.util.release.changelog import Changelogs
 from exasol.toolbox.util.version import (

@@ -11,7 +11,7 @@ import tomlkit
 from nox import Session
 
 from exasol.toolbox.nox._shared import python_files
-from exasol.toolbox.util.dependencies.poetry_dependencies import PoetryFiles
+from exasol.toolbox.util.dependencies.shared_models import PoetryFiles
 from noxconfig import PROJECT_CONFIG
 
 
