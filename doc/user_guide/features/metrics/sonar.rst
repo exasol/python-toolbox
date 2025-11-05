@@ -61,6 +61,16 @@ In the code
         organization = "exasol"
         exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
 
+.. note::
+  With the value of ``exclusions``, you can exclude files and directories of your
+  project from Sonar's analysis:
+
+    * You can use wildcards, e.g. ``<root>/dir/*.py`` or ``<root>/**/*.py``
+    * Multiple exclusions can be comma-separated (as shown above).
+    * For excluding arbitrary directories and files below a specific directory, please use two asterisks, e.g. ``root/abc/**``.
+
+    See the `Sonar Matching Patterns`_ for more details.
+
 .. _configure_sonar_private_project:
 
 **Private** GitHub repository
@@ -107,3 +117,14 @@ In the code
         exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
 
 .. _Exasol Way: https://sonarcloud.io/organizations/exasol/quality_gates/show/AXxvLH-3BdtLlpiYmZhh
+.. _Sonar Matching Patterns: https://docs.sonarsource.com/sonarqube-server/project-administration/setting-analysis-scope/defining-matching-patterns
+
+.. note::
+  With the value of ``exclusions``, you can exclude files and directories of your
+  project from Sonar's analysis:
+
+    * You can use wildcards, e.g. ``<root>/dir/*.py`` or ``<root>/**/*.py``
+    * Multiple exclusions can be comma-separated (as shown above).
+    * For excluding arbitrary directories and files below a specific directory, please use two asterisks, e.g. ``root/abc/**``.
+
+    See the `Sonar Matching Patterns`_ for more details.
