@@ -19,10 +19,6 @@ Section :ref:`configuration` gives instructions for public and private repositor
 Configuration
 +++++++++++++
 
-.. note::
-   For additional configuration information, see
-   `Sonar's analysis parameters <https://docs.sonarsource.com/sonarqube-server/2025.1/analyzing-source-code/analysis-parameters>`__ page.
-
 .. _configure_sonar_public_project:
 
 **Public** GitHub repository
@@ -62,14 +58,8 @@ In the code
         exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
 
 .. note::
-  With the value of ``exclusions``, you can exclude files and directories of your
-  project from Sonar's analysis:
+    For more information, see the :ref:`General remarks <configuration_general_remarks>` section.
 
-    * You can use wildcards, e.g. ``<root>/dir/*.py`` or ``<root>/**/*.py``
-    * Multiple exclusions can be comma-separated (as shown above).
-    * For excluding arbitrary directories and files below a specific directory, please use two asterisks, e.g. ``root/abc/**``.
-
-    See the `Sonar Matching Patterns`_ for more details.
 
 .. _configure_sonar_private_project:
 
@@ -116,15 +106,29 @@ In the code
         organization = "exasol"
         exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
 
+.. note::
+    For more information, see the :ref:`General remarks <configuration_general_remarks>` section.
+
 .. _Exasol Way: https://sonarcloud.io/organizations/exasol/quality_gates/show/AXxvLH-3BdtLlpiYmZhh
 .. _Sonar Matching Patterns: https://docs.sonarsource.com/sonarqube-server/project-administration/setting-analysis-scope/defining-matching-patterns
 
-.. note::
-  With the value of ``exclusions``, you can exclude files and directories of your
-  project from Sonar's analysis:
+.. _configuration_general_remarks:
 
-    * You can use wildcards, e.g. ``<root>/dir/*.py`` or ``<root>/**/*.py``
-    * Multiple exclusions can be comma-separated (as shown above).
-    * For excluding arbitrary directories and files below a specific directory, please use two asterisks, e.g. ``root/abc/**``.
+General remarks
+^^^^^^^^^^^^^^^^^^^
+For additional configuration information, see `Sonar's analysis parameters <https://docs.sonarsource.com/sonarqube-server/2025.1/analyzing-source-code/analysis-parameters>`__ page.
 
-    See the `Sonar Matching Patterns`_ for more details.
+``exclusions``
+""""""""""""""
+With the value of ``exclusions``, you can exclude files and directories of your
+project from Sonar's analysis:
+
+* You can use wildcards, e.g. ``<root>/dir/*.py`` or ``<root>/**/*.py``
+* Multiple exclusions can be comma-separated (as shown above).
+* For excluding arbitrary directories and files below a specific directory, please use two asterisks, e.g. ``root/abc/**``.
+
+See the `Sonar Matching Patterns`_ for more details.
+
+By default, the nox session ``sonar:check`` only analyses the source code,
+as specified by the ``PROJECT_CONFIG.source``, so directories outside of this
+are already excluded from being analyzed.
