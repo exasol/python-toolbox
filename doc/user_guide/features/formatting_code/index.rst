@@ -44,6 +44,7 @@ deterministic manner.
 
 Configuration
 +++++++++++++
+
 black
 ^^^^^
 
@@ -59,6 +60,7 @@ For further configuration options, see
 
 isort
 ^^^^^
+
 Ensure ``isort`` is configured with compatibility for ``black``:
 
 .. literalinclude:: ../../../../project-template/{{cookiecutter.repo_name}}/pyproject.toml
@@ -72,9 +74,10 @@ For further configuration options, see
 
 pyupgrade
 ^^^^^^^^^
-No initial configuration of ``pyupgrade`` is required.
 
-For individual configuration, see the
-`pyupgrade CLI options <https://pypi.org/project/pyupgrade/>`__. These can
-be passed to the :ref:`formatting_sessions` via the ``pyupgrade_args``
-attribute of the :class:`noxconfig.Config`.
+No initial configuration of ``pyupgrade`` is required. By default, this is
+configured to be derived from the minimum Python version that your project supports
+and is defined in the :meth:`exasol.toolbox.config.BaseConfig.pyupgrade_argument`.
+
+For further configuration options, see the
+`pyupgrade documentation <https://pypi.org/project/pyupgrade/>`__.
