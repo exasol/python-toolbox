@@ -10,6 +10,7 @@ from exasol.toolbox.util.dependencies.audit import (
     PipAuditException,
     Vulnerabilities,
     Vulnerability,
+    VulnerabilitySource,
     audit_poetry_files,
     get_vulnerabilities,
     get_vulnerabilities_from_latest_tag,
@@ -136,6 +137,21 @@ class TestVulnerabilities:
         )
         result = vulnerabilities.security_issue_dict
         assert result == [sample_vulnerability.security_issue_entry]
+
+
+@pytest.mark.parametrize(
+    "prefix,expected",
+    [
+        pytest.param("DUMMY", None, id="without_a_matching_prefix_returns_none"),
+        pytest.param(
+            f"{VulnerabilitySource.CWE.value.lower()}-1234",
+            VulnerabilitySource.CWE,
+            id="with_matching_prefix_returns_vulnerability_source",
+        ),
+    ],
+)
+def test_from_prefix(prefix: str, expected):
+    assert VulnerabilitySource.from_prefix(prefix) == expected
 
 
 class TestGetVulnerabilities:
