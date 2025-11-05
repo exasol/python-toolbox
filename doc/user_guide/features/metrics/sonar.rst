@@ -19,6 +19,10 @@ Section :ref:`configuration` gives instructions for public and private repositor
 Configuration
 +++++++++++++
 
+.. note::
+   For additional configuration information, see
+   `Sonar's analysis parameters <https://docs.sonarsource.com/sonarqube-server/2025.1/analyzing-source-code/analysis-parameters>`__ page.
+
 .. _configure_sonar_public_project:
 
 **Public** GitHub repository
