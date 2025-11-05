@@ -105,19 +105,14 @@ def from_maven(report: str) -> Iterable[Issue]:
             )
 
 
-def identify_pypi_references(
-    references: list[str], package_name: str
-) -> tuple[list[str], list[str], list[str]]:
+def identify_pypi_references(references: list[str]) -> tuple[list[str], list[str]]:
     refs: dict = {k: [] for k in VulnerabilitySource}
-    links = []
     for reference in references:
         if source := VulnerabilitySource.from_prefix(reference.upper()):
             refs[source].append(reference)
-            links.append(source.get_link(package=package_name, vuln_id=reference))
     return (
         refs[VulnerabilitySource.CVE],
         refs[VulnerabilitySource.CWE],
-        links,
     )
 
 
@@ -142,6 +137,11 @@ def from_pip_audit(report: str) -> Iterable[Issue]:
               "CVE-2025-27516"
             ],
             "description": "An oversight ..."
+            "coordinates": "jinja2:3.1.5",
+            "references": [
+              "https://github.com/advisories/GHSA-cpwx-vrp4-4pq7",
+              "https://nvd.nist.gov/vuln/detail/CVE-2025-27516"
+            ]
           }
         ]
 
@@ -153,8 +153,8 @@ def from_pip_audit(report: str) -> Iterable[Issue]:
     vulnerabilities = json.loads(report)
 
     for vulnerability in vulnerabilities:
-        cves, cwes, links = identify_pypi_references(
-            references=vulnerability["refs"], package_name=vulnerability["name"]
+        cves, cwes = identify_pypi_references(
+            references=vulnerability["refs"],
         )
         if cves:
             yield Issue(
@@ -162,7 +162,7 @@ def from_pip_audit(report: str) -> Iterable[Issue]:
                 cwe="None" if not cwes else ", ".join(cwes),
                 description=vulnerability["description"],
                 coordinates=vulnerability["coordinates"],
-                references=tuple(links),
+                references=tuple(vulnerability["references"]),
             )
 
 

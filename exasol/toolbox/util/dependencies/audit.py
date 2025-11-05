@@ -84,13 +84,26 @@ class Vulnerability(Package):
         )
 
     @property
+    def references(self) -> list[str]:
+        return [self.id] + self.aliases
+
+    @property
+    def reference_links(self) -> tuple[str, ...]:
+        return tuple(
+            source.get_link(package=self.name, vuln_id=reference)
+            for reference in self.references
+            if (source := VulnerabilitySource.from_prefix(reference.upper()))
+        )
+
+    @property
     def security_issue_entry(self) -> dict[str, str | list[str]]:
         return {
             "name": self.name,
             "version": str(self.version),
-            "refs": [self.id] + self.aliases,
+            "refs": self.references,
             "description": self.description,
             "coordinates": self.coordinates,
+            "references": self.reference_links,
         }
 
 

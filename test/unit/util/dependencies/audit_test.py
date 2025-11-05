@@ -47,6 +47,44 @@ class TestVulnerability:
             == sample_vulnerability.security_issue_entry
         )
 
+    @staticmethod
+    @pytest.mark.parametrize(
+        "reference, expected",
+        [
+            pytest.param(
+                "CVE-2025-27516",
+                "https://nvd.nist.gov/vuln/detail/CVE-2025-27516",
+                id="CVE",
+            ),
+            pytest.param(
+                "CWE-611",
+                "https://cwe.mitre.org/data/definitions/611.html",
+                id="CWE",
+            ),
+            pytest.param(
+                "GHSA-cpwx-vrp4-4pq7",
+                "https://github.com/advisories/GHSA-cpwx-vrp4-4pq7",
+                id="GHSA",
+            ),
+            pytest.param(
+                "PYSEC-2025-9",
+                "https://github.com/pypa/advisory-database/blob/main/vulns/jinja2/PYSEC-2025-9.yaml",
+                id="PYSEC",
+            ),
+        ],
+    )
+    def test_reference_links(sample_vulnerability, reference: str, expected: list[str]):
+        result = Vulnerability(
+            name=sample_vulnerability.package_name,
+            version=sample_vulnerability.version,
+            id=reference,
+            aliases=[],
+            fix_versions=[sample_vulnerability.fix_version],
+            description=sample_vulnerability.description,
+        )
+
+        assert result.reference_links == (expected,)
+
 
 class TestAuditPoetryFiles:
     @staticmethod
