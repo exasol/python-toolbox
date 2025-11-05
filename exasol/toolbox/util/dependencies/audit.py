@@ -149,6 +149,12 @@ class Vulnerabilities(BaseModel):
         ]
 
 
+def get_vulnerabilities(working_directory: Path) -> list[Vulnerability]:
+    return Vulnerabilities.load_from_pip_audit(
+        working_directory=working_directory
+    ).vulnerabilities
+
+
 def get_vulnerabilities_from_latest_tag():
     with poetry_files_from_latest_tag() as tmp_dir:
-        return Vulnerabilities.load_from_pip_audit(working_directory=tmp_dir)
+        return get_vulnerabilities(working_directory=tmp_dir)

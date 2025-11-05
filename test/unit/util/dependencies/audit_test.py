@@ -11,7 +11,10 @@ from exasol.toolbox.util.dependencies.audit import (
     Vulnerabilities,
     Vulnerability,
     audit_poetry_files,
+    get_vulnerabilities,
+    get_vulnerabilities_from_latest_tag,
 )
+from noxconfig import PROJECT_CONFIG
 
 
 @pytest.fixture
@@ -133,3 +136,29 @@ class TestVulnerabilities:
         )
         result = vulnerabilities.security_issue_dict
         assert result == [sample_vulnerability.security_issue_entry]
+
+
+class TestGetVulnerabilities:
+    def test_with_mock(self, sample_vulnerability):
+        with mock.patch(
+            "exasol.toolbox.util.dependencies.audit.audit_poetry_files",
+            return_value=sample_vulnerability.pip_audit_json,
+        ):
+            result = get_vulnerabilities(PROJECT_CONFIG.root)
+
+        # if successful, no errors & should be 1 due to mock
+        assert isinstance(result, list)
+        assert len(result) == 1
+
+
+class TestGetVulnerabilitiesFromLatestTag:
+    def test_with_mock(self, sample_vulnerability):
+        with mock.patch(
+            "exasol.toolbox.util.dependencies.audit.audit_poetry_files",
+            return_value=sample_vulnerability.pip_audit_json,
+        ):
+            result = get_vulnerabilities_from_latest_tag()
+
+        # if successful, no errors & should be 1 due to mock
+        assert isinstance(result, list)
+        assert len(result) == 1
