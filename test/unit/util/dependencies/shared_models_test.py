@@ -6,7 +6,10 @@ from pydantic_core._pydantic_core import ValidationError
 from exasol.toolbox.util.dependencies.shared_models import (
     VERSION_TYPE,
     Package,
+    PoetryFiles,
+    poetry_files_from_latest_tag,
 )
+from exasol.toolbox.util.git import Git
 
 
 class Dummy(BaseModel):
@@ -45,3 +48,13 @@ class TestPackage:
     def test_normalized_name(name, expected):
         dep = Package(name=name, version="0.1.0")
         assert dep.normalized_name == expected
+
+
+def test_poetry_files_from_latest_tag():
+    latest_tag = Git.get_latest_tag()
+    with poetry_files_from_latest_tag() as tmp_dir:
+        for file in PoetryFiles().files:
+            assert (tmp_dir / file).is_file()
+
+        contents = (tmp_dir / PoetryFiles.pyproject_toml).read_text()
+        assert f'version = "{latest_tag}"' in contents
