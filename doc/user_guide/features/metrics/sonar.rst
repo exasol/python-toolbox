@@ -53,9 +53,13 @@ In the code
 
         [tool.sonar]
         projectKey = "<sonar-project-key>"
-        hostUrl = "https://sonarcloud.io"
+        host.url = "https://sonarcloud.io"
         organization = "exasol"
         exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
+
+.. note::
+    For more information, see the :ref:`General remarks <configuration_general_remarks>` section.
+
 
 .. _configure_sonar_private_project:
 
@@ -98,8 +102,33 @@ In the code
 
         [tool.sonar]
         projectKey = "com.exasol:<project-key>"
-        hostUrl = "https://sonar.exasol.com"
+        host.url = "https://sonar.exasol.com"
         organization = "exasol"
         exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
 
+.. note::
+    For more information, see the :ref:`General remarks <configuration_general_remarks>` section.
+
 .. _Exasol Way: https://sonarcloud.io/organizations/exasol/quality_gates/show/AXxvLH-3BdtLlpiYmZhh
+.. _Sonar Matching Patterns: https://docs.sonarsource.com/sonarqube-server/project-administration/setting-analysis-scope/defining-matching-patterns
+
+.. _configuration_general_remarks:
+
+General remarks
+^^^^^^^^^^^^^^^^^^^
+For additional configuration information, see `Sonar's analysis parameters <https://docs.sonarsource.com/sonarqube-server/2025.1/analyzing-source-code/analysis-parameters>`__ page.
+
+``exclusions``
+""""""""""""""
+With the value of ``exclusions``, you can exclude files and directories of your
+project from Sonar's analysis:
+
+* You can use wildcards, e.g. ``<root>/dir/*.py`` or ``<root>/**/*.py``
+* Multiple exclusions can be comma-separated (as shown above).
+* For excluding arbitrary directories and files below a specific directory, please use two asterisks, e.g. ``root/abc/**``.
+
+See the `Sonar Matching Patterns`_ for more details.
+
+By default, the nox session ``sonar:check`` only analyses the source code,
+as specified by the ``PROJECT_CONFIG.source``, so directories outside of this
+are already excluded from being analyzed.

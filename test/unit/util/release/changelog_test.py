@@ -181,6 +181,7 @@ class TestChangelogs:
             saved_text
             == cleandoc(
                 f"""# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
+
             ## Added
             * Added Awesome feature
 
@@ -218,6 +219,7 @@ class TestChangelogs:
             saved_text
             == cleandoc(
                 f"""# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
+
             ## Added
             * Added Awesome feature
 

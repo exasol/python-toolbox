@@ -120,6 +120,6 @@ poetry-plugin-export = ">=1.8"
 
 [tool.sonar]
 projectKey = "com.exasol:python-toolbox"
-hostUrl = "https://sonarcloud.io"
+host.url = "https://sonarcloud.io"
 organization = "exasol"
 exclusions = "exasol/toolbox/version.py"

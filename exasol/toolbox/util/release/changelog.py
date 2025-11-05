@@ -50,7 +50,7 @@ class Changelogs:
         if dependency_changes := self._describe_dependency_changes():
             dependency_content = f"## Dependency Updates\n{dependency_changes}"
 
-        template = cleandoc(f"{header}\n{unreleased_content}\n{dependency_content}")
+        template = cleandoc(f"{header}\n\n{unreleased_content}\n{dependency_content}")
         self.versioned_changelog_md.write_text(template + "\n")
 
     def _extract_unreleased_notes(self) -> str:
