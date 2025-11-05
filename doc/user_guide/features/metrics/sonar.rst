@@ -53,7 +53,7 @@ In the code
 
         [tool.sonar]
         projectKey = "<sonar-project-key>"
-        hostUrl = "https://sonarcloud.io"
+        host.url = "https://sonarcloud.io"
         organization = "exasol"
         exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
 
@@ -98,7 +98,7 @@ In the code
 
         [tool.sonar]
         projectKey = "com.exasol:<project-key>"
-        hostUrl = "https://sonar.exasol.com"
+        host.url = "https://sonar.exasol.com"
         organization = "exasol"
         exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
 
