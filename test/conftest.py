@@ -63,12 +63,12 @@ class SampleVulnerability:
         return {
             "name": self.package_name,
             "version": self.version,
-            "refs": [self.vulnerability_id, self.cve_id],
+            "refs": [self.cve_id, self.vulnerability_id],
             "description": self.description,
             "coordinates": f"{self.package_name}:{self.version}",
             "references": (
-                f"https://github.com/advisories/{self.vulnerability_id}",
                 f"https://nvd.nist.gov/vuln/detail/{self.cve_id}",
+                f"https://github.com/advisories/{self.vulnerability_id}",
             ),
         }
 
@@ -80,8 +80,8 @@ class SampleVulnerability:
             description=self.description,
             coordinates=f"{self.package_name}:{self.version}",
             references=(
-                f"https://github.com/advisories/{self.vulnerability_id}",
                 f"https://nvd.nist.gov/vuln/detail/{self.cve_id}",
+                f"https://github.com/advisories/{self.vulnerability_id}",
             ),
         )
 

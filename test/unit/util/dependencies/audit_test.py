@@ -1,4 +1,5 @@
 import json
+from inspect import cleandoc
 from pathlib import Path
 from subprocess import CompletedProcess
 from unittest import mock
@@ -84,6 +85,48 @@ class TestVulnerability:
         )
 
         assert result.reference_links == (expected,)
+
+    @pytest.mark.parametrize(
+        "aliases,expected",
+        (
+            pytest.param(["A", "PYSEC", "CVE", "GHSA"], "CVE", id="CVE"),
+            pytest.param(["A", "PYSEC", "GHSA"], "GHSA", id="GHSA"),
+            pytest.param(["A", "PYSEC"], "PYSEC", id="PYSEC"),
+            pytest.param(["Z", "A"], "A", id="alphabetical_case"),
+        ),
+    )
+    def test_vulnerability_id(self, sample_vulnerability, aliases: list[str], expected):
+
+        result = Vulnerability(
+            name=sample_vulnerability.package_name,
+            version=sample_vulnerability.version,
+            id="DUMMY_IDENTIFIER",
+            aliases=aliases,
+            fix_versions=[sample_vulnerability.fix_version],
+            description=sample_vulnerability.description,
+        )
+
+        assert result.vulnerability_id == expected
+
+    def test_subsection_for_changelog_summary(self, sample_vulnerability):
+        expected = cleandoc(
+            """
+            ### CVE-2025-27516 in jinja2:3.1.5
+
+            An oversight in how the Jinja sandboxed environment interacts with the
+            `|attr` filter allows an attacker that controls the content of a template
+            to execute arbitrary Python code.
+
+            #### References:
+
+            * https://github.com/advisories/GHSA-cpwx-vrp4-4pq7
+            * https://nvd.nist.gov/vuln/detail/CVE-2025-27516
+            """
+        )
+        assert (
+            sample_vulnerability.vulnerability.subsection_for_changelog_summary
+            == expected
+        )
 
 
 class TestAuditPoetryFiles:

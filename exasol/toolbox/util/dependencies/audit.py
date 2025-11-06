@@ -5,6 +5,7 @@ import subprocess  # nosec
 import tempfile
 from dataclasses import dataclass
 from enum import Enum
+from inspect import cleandoc
 from pathlib import Path
 from re import search
 from typing import (
@@ -85,7 +86,7 @@ class Vulnerability(Package):
 
     @property
     def references(self) -> list[str]:
-        return [self.id] + self.aliases
+        return sorted([self.id] + self.aliases)
 
     @property
     def reference_links(self) -> tuple[str, ...]:
@@ -105,6 +106,31 @@ class Vulnerability(Package):
             "coordinates": self.coordinates,
             "references": self.reference_links,
         }
+
+    @property
+    def vulnerability_id(self) -> str | None:
+        """
+        Ensure a consistent way of identifying a vulnerability for string generation.
+        """
+        for ref in self.references:
+            ref_upper = ref.upper()
+            if ref_upper.startswith(VulnerabilitySource.CVE.value):
+                return ref
+            if ref_upper.startswith(VulnerabilitySource.GHSA.value):
+                return ref
+            if ref_upper.startswith(VulnerabilitySource.PYSEC.value):
+                return ref
+        return self.references[0]
+
+    @property
+    def subsection_for_changelog_summary(self) -> str:
+        """
+        Create a subsection to be included in the Summary section of a versioned changelog.
+        """
+        links_join = "\n* ".join(sorted(self.reference_links))
+        references_subsection = f"\n#### References:\n\n* {links_join}\n\n "
+        subsection = f"### {self.vulnerability_id} in {self.coordinates}\n\n{self.description}\n{references_subsection}"
+        return cleandoc(subsection.strip())
 
 
 def audit_poetry_files(working_directory: Path) -> str:
