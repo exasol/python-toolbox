@@ -19,9 +19,8 @@ class ResolvedVulnerabilities(BaseModel):
         A vulnerability is said to be resolved when it cannot be found
         in the `current_vulnerabilities`. In order to see if a vulnerability
         is still present, its id and aliases are compared to values in the
-        `current_vulnerabilities`. While one could hope that the IDs
-        are the same, it's possible between pip-audit versions that
-        there are differences.
+        `current_vulnerabilities`. It is hoped that if an ID were to change
+        that this would still be present in the aliases.
         """
         previous_vuln_set = {previous_vuln.id, *previous_vuln.aliases}
         for current_vuln in self.current_vulnerabilities:
