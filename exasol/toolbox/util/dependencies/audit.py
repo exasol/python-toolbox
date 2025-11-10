@@ -102,7 +102,7 @@ class Vulnerability(BaseModel):
         )
 
     @property
-    def security_issue_entry(self) -> dict[str, str | list[str]]:
+    def security_issue_entry(self) -> dict[str, str | list[str] | tuple[str, ...]]:
         return {
             "name": self.package.name,
             "version": str(self.package.version),
@@ -215,7 +215,7 @@ class Vulnerabilities(BaseModel):
         return Vulnerabilities(vulnerabilities=vulnerabilities)
 
     @property
-    def security_issue_dict(self) -> list[dict[str, str | list[str]]]:
+    def security_issue_dict(self) -> list[dict[str, str | list[str] | tuple[str, ...]]]:
         return [
             vulnerability.security_issue_entry for vulnerability in self.vulnerabilities
         ]
