@@ -44,7 +44,7 @@ class Package(BaseModel):
     version: VERSION_TYPE
 
     @property
-    def coordinates(self):
+    def coordinates(self) -> str:
         return create_coordinates(package_name=self.name, version=self.version)
 
     @property
