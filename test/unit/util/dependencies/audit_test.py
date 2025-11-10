@@ -1,4 +1,5 @@
 import json
+from inspect import cleandoc
 from pathlib import Path
 from subprocess import CompletedProcess
 from unittest import mock
@@ -10,8 +11,12 @@ from exasol.toolbox.util.dependencies.audit import (
     PipAuditException,
     Vulnerabilities,
     Vulnerability,
+    VulnerabilitySource,
     audit_poetry_files,
+    get_vulnerabilities,
+    get_vulnerabilities_from_latest_tag,
 )
+from noxconfig import PROJECT_CONFIG
 
 
 @pytest.fixture
@@ -28,8 +33,7 @@ class TestVulnerability:
     def test_from_audit_entry(sample_vulnerability):
         result = sample_vulnerability.vulnerability
         assert result == Vulnerability(
-            name=sample_vulnerability.package_name,
-            version=sample_vulnerability.version,
+            package=sample_vulnerability.vulnerability.package,
             id=sample_vulnerability.vulnerability_id,
             aliases=[sample_vulnerability.cve_id],
             fix_versions=[sample_vulnerability.fix_version],
@@ -41,6 +45,84 @@ class TestVulnerability:
         assert (
             sample_vulnerability.vulnerability.security_issue_entry
             == sample_vulnerability.security_issue_entry
+        )
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "reference, expected",
+        [
+            pytest.param(
+                "CVE-2025-27516",
+                "https://nvd.nist.gov/vuln/detail/CVE-2025-27516",
+                id="CVE",
+            ),
+            pytest.param(
+                "CWE-611",
+                "https://cwe.mitre.org/data/definitions/611.html",
+                id="CWE",
+            ),
+            pytest.param(
+                "GHSA-cpwx-vrp4-4pq7",
+                "https://github.com/advisories/GHSA-cpwx-vrp4-4pq7",
+                id="GHSA",
+            ),
+            pytest.param(
+                "PYSEC-2025-9",
+                "https://github.com/pypa/advisory-database/blob/main/vulns/jinja2/PYSEC-2025-9.yaml",
+                id="PYSEC",
+            ),
+        ],
+    )
+    def test_reference_links(sample_vulnerability, reference: str, expected: list[str]):
+        result = Vulnerability(
+            package=sample_vulnerability.vulnerability.package,
+            id=reference,
+            aliases=[],
+            fix_versions=[sample_vulnerability.fix_version],
+            description=sample_vulnerability.description,
+        )
+
+        assert result.reference_links == (expected,)
+
+    @pytest.mark.parametrize(
+        "aliases,expected",
+        (
+            pytest.param(["A", "PYSEC", "CVE", "GHSA"], "CVE", id="CVE"),
+            pytest.param(["A", "PYSEC", "GHSA"], "GHSA", id="GHSA"),
+            pytest.param(["A", "PYSEC"], "PYSEC", id="PYSEC"),
+            pytest.param(["Z", "A"], "A", id="alphabetical_case"),
+        ),
+    )
+    def test_vulnerability_id(self, sample_vulnerability, aliases: list[str], expected):
+
+        result = Vulnerability(
+            package=sample_vulnerability.vulnerability.package,
+            id="DUMMY_IDENTIFIER",
+            aliases=aliases,
+            fix_versions=[sample_vulnerability.fix_version],
+            description=sample_vulnerability.description,
+        )
+
+        assert result.vulnerability_id == expected
+
+    def test_subsection_for_changelog_summary(self, sample_vulnerability):
+        expected = cleandoc(
+            """
+            ### CVE-2025-27516 in jinja2:3.1.5
+
+            An oversight in how the Jinja sandboxed environment interacts with the
+            `|attr` filter allows an attacker that controls the content of a template
+            to execute arbitrary Python code.
+
+            #### References:
+
+            * https://github.com/advisories/GHSA-cpwx-vrp4-4pq7
+            * https://nvd.nist.gov/vuln/detail/CVE-2025-27516
+            """
+        )
+        assert (
+            sample_vulnerability.vulnerability.subsection_for_changelog_summary
+            == expected
         )
 
 
@@ -133,3 +215,44 @@ class TestVulnerabilities:
         )
         result = vulnerabilities.security_issue_dict
         assert result == [sample_vulnerability.security_issue_entry]
+
+
+@pytest.mark.parametrize(
+    "prefix,expected",
+    [
+        pytest.param("DUMMY", None, id="without_a_matching_prefix_returns_none"),
+        pytest.param(
+            f"{VulnerabilitySource.CWE.value.lower()}-1234",
+            VulnerabilitySource.CWE,
+            id="with_matching_prefix_returns_vulnerability_source",
+        ),
+    ],
+)
+def test_from_prefix(prefix: str, expected):
+    assert VulnerabilitySource.from_prefix(prefix) == expected
+
+
+class TestGetVulnerabilities:
+    def test_with_mock(self, sample_vulnerability):
+        with mock.patch(
+            "exasol.toolbox.util.dependencies.audit.audit_poetry_files",
+            return_value=sample_vulnerability.pip_audit_json,
+        ):
+            result = get_vulnerabilities(PROJECT_CONFIG.root)
+
+        # if successful, no errors & should be 1 due to mock
+        assert isinstance(result, list)
+        assert len(result) == 1
+
+
+class TestGetVulnerabilitiesFromLatestTag:
+    def test_with_mock(self, sample_vulnerability):
+        with mock.patch(
+            "exasol.toolbox.util.dependencies.audit.audit_poetry_files",
+            return_value=sample_vulnerability.pip_audit_json,
+        ):
+            result = get_vulnerabilities_from_latest_tag()
+
+        # if successful, no errors & should be 1 due to mock
+        assert isinstance(result, list)
+        assert len(result) == 1

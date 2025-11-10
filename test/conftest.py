@@ -1,6 +1,5 @@
 import json
 from inspect import cleandoc
-from typing import Union
 
 import pytest
 
@@ -60,12 +59,17 @@ class SampleVulnerability:
         return json.dumps([self.security_issue_entry], indent=2) + "\n"
 
     @property
-    def security_issue_entry(self) -> dict[str, str | list[str]]:
+    def security_issue_entry(self) -> dict[str, str | list[str] | tuple[str, ...]]:
         return {
             "name": self.package_name,
             "version": self.version,
-            "refs": [self.vulnerability_id, self.cve_id],
+            "refs": [self.cve_id, self.vulnerability_id],
             "description": self.description,
+            "coordinates": f"{self.package_name}:{self.version}",
+            "references": (
+                f"https://nvd.nist.gov/vuln/detail/{self.cve_id}",
+                f"https://github.com/advisories/{self.vulnerability_id}",
+            ),
         }
 
     @property
@@ -76,8 +80,8 @@ class SampleVulnerability:
             description=self.description,
             coordinates=f"{self.package_name}:{self.version}",
             references=(
-                f"https://github.com/advisories/{self.vulnerability_id}",
                 f"https://nvd.nist.gov/vuln/detail/{self.cve_id}",
+                f"https://github.com/advisories/{self.vulnerability_id}",
             ),
         )
 

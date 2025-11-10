@@ -1,10 +1,8 @@
 from __future__ import annotations
 
 import subprocess
-import tempfile
 from collections import OrderedDict
 from pathlib import Path
-from typing import Optional
 
 import tomlkit
 from pydantic import (
@@ -16,9 +14,9 @@ from tomlkit import TOMLDocument
 from exasol.toolbox.util.dependencies.shared_models import (
     NormalizedPackageStr,
     Package,
+    PoetryFiles,
+    poetry_files_from_latest_tag,
 )
-from exasol.toolbox.util.git import Git
-from noxconfig import PROJECT_CONFIG
 
 
 class PoetryGroup(BaseModel):
@@ -28,7 +26,6 @@ class PoetryGroup(BaseModel):
     toml_section: str | None
 
 
-PYPROJECT_TOML = "pyproject.toml"
 TRANSITIVE_GROUP = PoetryGroup(name="transitive", toml_section=None)
 
 
@@ -39,7 +36,7 @@ class PoetryToml(BaseModel):
 
     @classmethod
     def load_from_toml(cls, working_directory: Path) -> PoetryToml:
-        file_path = working_directory / PYPROJECT_TOML
+        file_path = working_directory / PoetryFiles.pyproject_toml
         if not file_path.exists():
             raise ValueError(f"File not found: {file_path}")
 
@@ -165,10 +162,5 @@ def get_dependencies(
 def get_dependencies_from_latest_tag() -> (
     OrderedDict[str, dict[NormalizedPackageStr, Package]]
 ):
-    latest_tag = Git.get_latest_tag()
-    path = PROJECT_CONFIG.root.relative_to(Git.toplevel())
-    with tempfile.TemporaryDirectory() as tmpdir_str:
-        tmpdir = Path(tmpdir_str)
-        for file in ("poetry.lock", PYPROJECT_TOML):
-            Git.checkout(latest_tag, path / file, tmpdir / file)
-        return get_dependencies(working_directory=tmpdir)
+    with poetry_files_from_latest_tag() as tmp_dir:
+        return get_dependencies(working_directory=tmp_dir)

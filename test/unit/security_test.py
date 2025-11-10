@@ -331,57 +331,32 @@ def test_from_json(json_input, expected):
 
 
 @pytest.mark.parametrize(
-    "prefix,expected",
-    [
-        pytest.param("DUMMY", None, id="without_a_matching_prefix_returns_none"),
-        pytest.param(
-            f"{security.VulnerabilitySource.CWE.value.lower()}-1234",
-            security.VulnerabilitySource.CWE,
-            id="with_matching_prefix_returns_vulnerability_source",
-        ),
-    ],
-)
-def test_from_prefix(prefix: str, expected):
-    assert security.VulnerabilitySource.from_prefix(prefix) == expected
-
-
-@pytest.mark.parametrize(
     "reference, expected",
     [
         pytest.param(
             "CVE-2025-27516",
-            (
-                ["CVE-2025-27516"],
-                [],
-                ["https://nvd.nist.gov/vuln/detail/CVE-2025-27516"],
-            ),
+            (["CVE-2025-27516"], []),
             id="CVE_identified_with_link",
         ),
         pytest.param(
             "CWE-611",
-            ([], ["CWE-611"], ["https://cwe.mitre.org/data/definitions/611.html"]),
+            ([], ["CWE-611"]),
             id="CWE_identified_with_link",
         ),
         pytest.param(
             "GHSA-cpwx-vrp4-4pq7",
-            ([], [], ["https://github.com/advisories/GHSA-cpwx-vrp4-4pq7"]),
+            ([], []),
             id="GHSA_link",
         ),
         pytest.param(
             "PYSEC-2025-9",
-            (
-                [],
-                [],
-                [
-                    "https://github.com/pypa/advisory-database/blob/main/vulns/dummy/PYSEC-2025-9.yaml"
-                ],
-            ),
+            ([], []),
             id="PYSEC_link",
         ),
     ],
 )
 def test_identify_pypi_references(reference: str, expected):
-    actual = security.identify_pypi_references([reference], package_name="dummy")
+    actual = security.identify_pypi_references([reference])
     assert actual == expected
 
 
@@ -393,7 +368,7 @@ class TestFromPipAudit:
 
     @staticmethod
     def test_convert_vulnerability_to_issue(sample_vulnerability):
-        actual = set(
+        actual = next(
             security.from_pip_audit(sample_vulnerability.nox_dependencies_audit)
         )
-        assert actual == {sample_vulnerability.security_issue}
+        assert actual == sample_vulnerability.security_issue

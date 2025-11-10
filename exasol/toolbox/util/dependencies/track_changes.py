@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from packaging.version import Version
 from pydantic import (
     BaseModel,
@@ -11,6 +9,7 @@ from pydantic import (
 from exasol.toolbox.util.dependencies.shared_models import (
     NormalizedPackageStr,
     Package,
+    create_package_coordinates,
 )
 
 
@@ -24,7 +23,8 @@ class AddedDependency(DependencyChange):
     version: Version
 
     def __str__(self) -> str:
-        return f"* Added dependency `{self.name}:{self.version}`"
+        coordinates = create_package_coordinates(self.name, self.version)
+        return f"* Added dependency `{coordinates}`"
 
     @classmethod
     def from_package(cls, package: Package) -> AddedDependency:
@@ -35,7 +35,8 @@ class RemovedDependency(DependencyChange):
     version: Version
 
     def __str__(self) -> str:
-        return f"* Removed dependency `{self.name}:{self.version}`"
+        coordinates = create_package_coordinates(self.name, self.version)
+        return f"* Removed dependency `{coordinates}`"
 
     @classmethod
     def from_package(cls, package: Package) -> RemovedDependency:
@@ -47,10 +48,8 @@ class UpdatedDependency(DependencyChange):
     current_version: Version
 
     def __str__(self) -> str:
-        return (
-            f"* Updated dependency `{self.name}:{self.previous_version}` "
-            f"to `{self.current_version}`"
-        )
+        coordinates = create_package_coordinates(self.name, self.previous_version)
+        return f"* Updated dependency `{coordinates}` to `{self.current_version}`"
 
     @classmethod
     def from_package(

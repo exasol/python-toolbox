@@ -14,6 +14,7 @@ from exasol.toolbox.nox._shared import (
     check_for_config_attribute,
 )
 from exasol.toolbox.nox.plugin import NoxTasks
+from exasol.toolbox.util.dependencies.shared_models import PoetryFiles
 from exasol.toolbox.util.git import Git
 from exasol.toolbox.util.release.changelog import Changelogs
 from exasol.toolbox.util.version import (
@@ -142,7 +143,7 @@ def prepare_release(session: Session) -> None:
         return
 
     changed_files += [
-        PROJECT_CONFIG.root / "pyproject.toml",
+        PROJECT_CONFIG.root / PoetryFiles.pyproject_toml,
         PROJECT_CONFIG.version_file,
     ]
     results = pm.hook.prepare_release_add_files(session=session, config=PROJECT_CONFIG)

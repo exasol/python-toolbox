@@ -4,16 +4,23 @@ import json
 import subprocess  # nosec
 import tempfile
 from dataclasses import dataclass
+from enum import Enum
+from inspect import cleandoc
 from pathlib import Path
 from re import search
 from typing import (
     Any,
-    Union,
 )
 
-from pydantic import BaseModel
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+)
 
-from exasol.toolbox.util.dependencies.shared_models import Package
+from exasol.toolbox.util.dependencies.shared_models import (
+    Package,
+    poetry_files_from_latest_tag,
+)
 
 PIP_AUDIT_VULNERABILITY_PATTERN = (
     r"^Found \d+ known vulnerabilit\w{1,3} in \d+ package\w?$"
@@ -32,7 +39,36 @@ class PipAuditException(Exception):
         self.stderr = subprocess_output.stderr
 
 
-class Vulnerability(Package):
+class VulnerabilitySource(str, Enum):
+    CVE = "CVE"
+    CWE = "CWE"
+    GHSA = "GHSA"
+    PYSEC = "PYSEC"
+
+    @classmethod
+    def from_prefix(cls, name: str) -> VulnerabilitySource | None:
+        for el in cls:
+            if name.upper().startswith(el.value):
+                return el
+        return None
+
+    def get_link(self, package: str, vuln_id: str) -> str:
+        if self == VulnerabilitySource.CWE:
+            cwe_id = vuln_id.upper().replace(f"{VulnerabilitySource.CWE.value}-", "")
+            return f"https://cwe.mitre.org/data/definitions/{cwe_id}.html"
+
+        map_link = {
+            VulnerabilitySource.CVE: "https://nvd.nist.gov/vuln/detail/{vuln_id}",
+            VulnerabilitySource.GHSA: "https://github.com/advisories/{vuln_id}",
+            VulnerabilitySource.PYSEC: "https://github.com/pypa/advisory-database/blob/main/vulns/{package}/{vuln_id}.yaml",
+        }
+        return map_link[self].format(package=package, vuln_id=vuln_id)
+
+
+class Vulnerability(BaseModel):
+    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
+
+    package: Package
     id: str
     aliases: list[str]
     fix_versions: list[str]
@@ -46,8 +82,7 @@ class Vulnerability(Package):
         Create a Vulnerability from a pip-audit vulnerability entry
         """
         return cls(
-            name=package_name,
-            version=version,
+            package=Package(name=package_name, version=version),
             id=vuln_entry["id"],
             aliases=vuln_entry["aliases"],
             fix_versions=vuln_entry["fix_versions"],
@@ -55,13 +90,52 @@ class Vulnerability(Package):
         )
 
     @property
-    def security_issue_entry(self) -> dict[str, str | list[str]]:
+    def references(self) -> list[str]:
+        return sorted([self.id] + self.aliases)
+
+    @property
+    def reference_links(self) -> tuple[str, ...]:
+        return tuple(
+            source.get_link(package=self.package.name, vuln_id=reference)
+            for reference in self.references
+            if (source := VulnerabilitySource.from_prefix(reference.upper()))
+        )
+
+    @property
+    def security_issue_entry(self) -> dict[str, str | list[str] | tuple[str, ...]]:
         return {
-            "name": self.name,
-            "version": str(self.version),
-            "refs": [self.id] + self.aliases,
+            "name": self.package.name,
+            "version": str(self.package.version),
+            "refs": self.references,
             "description": self.description,
+            "coordinates": self.package.coordinates,
+            "references": self.reference_links,
         }
+
+    @property
+    def vulnerability_id(self) -> str | None:
+        """
+        Ensure a consistent way of identifying a vulnerability for string generation.
+        """
+        for ref in self.references:
+            ref_upper = ref.upper()
+            if ref_upper.startswith(VulnerabilitySource.CVE.value):
+                return ref
+            if ref_upper.startswith(VulnerabilitySource.GHSA.value):
+                return ref
+            if ref_upper.startswith(VulnerabilitySource.PYSEC.value):
+                return ref
+        return self.references[0]
+
+    @property
+    def subsection_for_changelog_summary(self) -> str:
+        """
+        Create a subsection to be included in the Summary section of a versioned changelog.
+        """
+        links_join = "\n* ".join(sorted(self.reference_links))
+        references_subsection = f"\n#### References:\n\n* {links_join}\n\n "
+        subsection = f"### {self.vulnerability_id} in {self.package.coordinates}\n\n{self.description}\n{references_subsection}"
+        return cleandoc(subsection.strip())
 
 
 def audit_poetry_files(working_directory: Path) -> str:
@@ -141,7 +215,18 @@ class Vulnerabilities(BaseModel):
         return Vulnerabilities(vulnerabilities=vulnerabilities)
 
     @property
-    def security_issue_dict(self) -> list[dict[str, str | list[str]]]:
+    def security_issue_dict(self) -> list[dict[str, str | list[str] | tuple[str, ...]]]:
         return [
             vulnerability.security_issue_entry for vulnerability in self.vulnerabilities
         ]
+
+
+def get_vulnerabilities(working_directory: Path) -> list[Vulnerability]:
+    return Vulnerabilities.load_from_pip_audit(
+        working_directory=working_directory
+    ).vulnerabilities
+
+
+def get_vulnerabilities_from_latest_tag():
+    with poetry_files_from_latest_tag() as tmp_dir:
+        return get_vulnerabilities(working_directory=tmp_dir)
