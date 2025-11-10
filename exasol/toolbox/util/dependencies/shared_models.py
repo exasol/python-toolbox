@@ -30,7 +30,7 @@ def normalize_package_name(package_name: str) -> NormalizedPackageStr:
     return NormalizedPackageStr(package_name.lower().replace("_", "-"))
 
 
-def create_coordinates(package_name: str, version: str | Version) -> str:
+def create_package_coordinates(package_name: str, version: str | Version) -> str:
     """
     Create a naming convention for combining a package name and its version
     """
@@ -45,7 +45,7 @@ class Package(BaseModel):
 
     @property
     def coordinates(self) -> str:
-        return create_coordinates(package_name=self.name, version=self.version)
+        return create_package_coordinates(package_name=self.name, version=self.version)
 
     @property
     def normalized_name(self) -> NormalizedPackageStr:

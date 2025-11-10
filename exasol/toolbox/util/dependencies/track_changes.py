@@ -9,7 +9,7 @@ from pydantic import (
 from exasol.toolbox.util.dependencies.shared_models import (
     NormalizedPackageStr,
     Package,
-    create_coordinates,
+    create_package_coordinates,
 )
 
 
@@ -23,7 +23,7 @@ class AddedDependency(DependencyChange):
     version: Version
 
     def __str__(self) -> str:
-        coordinates = create_coordinates(self.name, self.version)
+        coordinates = create_package_coordinates(self.name, self.version)
         return f"* Added dependency `{coordinates}`"
 
     @classmethod
@@ -35,7 +35,7 @@ class RemovedDependency(DependencyChange):
     version: Version
 
     def __str__(self) -> str:
-        coordinates = create_coordinates(self.name, self.version)
+        coordinates = create_package_coordinates(self.name, self.version)
         return f"* Removed dependency `{coordinates}`"
 
     @classmethod
@@ -48,7 +48,7 @@ class UpdatedDependency(DependencyChange):
     current_version: Version
 
     def __str__(self) -> str:
-        coordinates = create_coordinates(self.name, self.previous_version)
+        coordinates = create_package_coordinates(self.name, self.previous_version)
         return f"* Updated dependency `{coordinates}` to `{self.current_version}`"
 
     @classmethod
