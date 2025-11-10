@@ -12,7 +12,10 @@ from typing import (
     Any,
 )
 
-from pydantic import BaseModel
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+)
 
 from exasol.toolbox.util.dependencies.shared_models import (
     Package,
@@ -62,7 +65,10 @@ class VulnerabilitySource(str, Enum):
         return map_link[self].format(package=package, vuln_id=vuln_id)
 
 
-class Vulnerability(Package):
+class Vulnerability(BaseModel):
+    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
+
+    package: Package
     id: str
     aliases: list[str]
     fix_versions: list[str]
@@ -76,8 +82,7 @@ class Vulnerability(Package):
         Create a Vulnerability from a pip-audit vulnerability entry
         """
         return cls(
-            name=package_name,
-            version=version,
+            package=Package(name=package_name, version=version),
             id=vuln_entry["id"],
             aliases=vuln_entry["aliases"],
             fix_versions=vuln_entry["fix_versions"],
@@ -91,7 +96,7 @@ class Vulnerability(Package):
     @property
     def reference_links(self) -> tuple[str, ...]:
         return tuple(
-            source.get_link(package=self.name, vuln_id=reference)
+            source.get_link(package=self.package.name, vuln_id=reference)
             for reference in self.references
             if (source := VulnerabilitySource.from_prefix(reference.upper()))
         )
@@ -99,11 +104,11 @@ class Vulnerability(Package):
     @property
     def security_issue_entry(self) -> dict[str, str | list[str]]:
         return {
-            "name": self.name,
-            "version": str(self.version),
+            "name": self.package.name,
+            "version": str(self.package.version),
             "refs": self.references,
             "description": self.description,
-            "coordinates": self.coordinates,
+            "coordinates": self.package.coordinates,
             "references": self.reference_links,
         }
 
@@ -129,7 +134,7 @@ class Vulnerability(Package):
         """
         links_join = "\n* ".join(sorted(self.reference_links))
         references_subsection = f"\n#### References:\n\n* {links_join}\n\n "
-        subsection = f"### {self.vulnerability_id} in {self.coordinates}\n\n{self.description}\n{references_subsection}"
+        subsection = f"### {self.vulnerability_id} in {self.package.coordinates}\n\n{self.description}\n{references_subsection}"
         return cleandoc(subsection.strip())
 
 

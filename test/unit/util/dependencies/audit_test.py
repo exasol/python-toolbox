@@ -33,8 +33,7 @@ class TestVulnerability:
     def test_from_audit_entry(sample_vulnerability):
         result = sample_vulnerability.vulnerability
         assert result == Vulnerability(
-            name=sample_vulnerability.package_name,
-            version=sample_vulnerability.version,
+            package=sample_vulnerability.vulnerability.package,
             id=sample_vulnerability.vulnerability_id,
             aliases=[sample_vulnerability.cve_id],
             fix_versions=[sample_vulnerability.fix_version],
@@ -76,8 +75,7 @@ class TestVulnerability:
     )
     def test_reference_links(sample_vulnerability, reference: str, expected: list[str]):
         result = Vulnerability(
-            name=sample_vulnerability.package_name,
-            version=sample_vulnerability.version,
+            package=sample_vulnerability.vulnerability.package,
             id=reference,
             aliases=[],
             fix_versions=[sample_vulnerability.fix_version],
@@ -98,8 +96,7 @@ class TestVulnerability:
     def test_vulnerability_id(self, sample_vulnerability, aliases: list[str], expected):
 
         result = Vulnerability(
-            name=sample_vulnerability.package_name,
-            version=sample_vulnerability.version,
+            package=sample_vulnerability.vulnerability.package,
             id="DUMMY_IDENTIFIER",
             aliases=aliases,
             fix_versions=[sample_vulnerability.fix_version],

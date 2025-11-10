@@ -24,7 +24,7 @@ class ResolvedVulnerabilities(BaseModel):
         """
         previous_vuln_set = {previous_vuln.id, *previous_vuln.aliases}
         for current_vuln in self.current_vulnerabilities:
-            if previous_vuln.name == current_vuln.name:
+            if previous_vuln.package.name == current_vuln.package.name:
                 current_vuln_id_set = {current_vuln.id, *current_vuln.aliases}
                 if previous_vuln_set.intersection(current_vuln_id_set):
                     return False
