@@ -39,7 +39,7 @@ might want to ignore automatically applied formatting.
 |                       |   <line-to-ignore> # isort:skip|    # isort:skip_file  |
 +-----------------------+--------------------------------+-----------------------+
 | formatting from ruff  | .. code-block:: python         | .. code-block:: python|
-|                       |                                |                       |
+| (example with F401)   |                                |                       |
 |                       |   <line-to-ignore> # noqa: F401|    # ruff: noqa F401  |
 +-----------------------+--------------------------------+-----------------------+
 

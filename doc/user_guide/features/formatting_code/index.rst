@@ -27,8 +27,10 @@ For autoformatting, the following tools are used:
   packages, third party packages, and local application imports).
 * `pyupgrade <https://pypi.org/project/pyupgrade/>`__ - upgrades syntax for newer
   versions of the Python language.
-* `ruff <https://docs.astral.sh/ruff/>`__ - checks and fixes code per its configuration.
-Currently, the PTB only supports removing unused imports.
+* `ruff <https://docs.astral.sh/ruff/>`__ - includes a plethora of tools to check and
+  automatically format code. In the PTB, only the following checks are active:
+
+   * `unused-import (F401) <https://docs.astral.sh/ruff/rules/unused-import/>`__ - removes unused imports
 
 In the PTB, these tools are bundled into nox sessions to ensure that they are run in a
 deterministic manner.
@@ -91,7 +93,7 @@ Ensure ``ruff`` is configured like so:
 
 .. literalinclude:: ../../../../project-template/{{cookiecutter.repo_name}}/pyproject.toml
   :language: toml
-  :start-at: [tool.ruff]
+  :start-at: [tool.ruff.lint]
   :end-before: [tool.mypy.overrides]
 
 For further configuration options, see
