@@ -27,6 +27,8 @@ For autoformatting, the following tools are used:
   packages, third party packages, and local application imports).
 * `pyupgrade <https://pypi.org/project/pyupgrade/>`__ - upgrades syntax for newer
   versions of the Python language.
+* `ruff <https://docs.astral.sh/ruff/>`__ - checks and fixes code per its configuration.
+Currently, the PTB only supports removing unused imports.
 
 In the PTB, these tools are bundled into nox sessions to ensure that they are run in a
 deterministic manner.
@@ -81,3 +83,16 @@ and is defined in the :meth:`exasol.toolbox.config.BaseConfig.pyupgrade_argument
 
 For further configuration options, see the
 `pyupgrade documentation <https://pypi.org/project/pyupgrade/>`__.
+
+ruff
+^^^^
+
+Ensure ``ruff`` is configured like so:
+
+.. literalinclude:: ../../../../project-template/{{cookiecutter.repo_name}}/pyproject.toml
+  :language: toml
+  :start-at: [tool.ruff]
+  :end-before: [tool.mypy.overrides]
+
+For further configuration options, see
+`ruff options <https://docs.astral.sh/ruff/configuration>`__.
