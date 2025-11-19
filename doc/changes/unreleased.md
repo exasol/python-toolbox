@@ -1,5 +1,13 @@
 # Unreleased
 
+## Summary
+
+In this release, the nox sessions `project:fix` and `project:format` have been modified
+to include removing unused imports via ruff. To avoid unexpected changes, please add
+the ruff configuration to your `pyproject.toml` as specified on
+[Formatting Code Configuration](https://exasol.github.io/python-toolbox/main/user_guide/features/formatting_code/index.html#configuration)
+page.
+
 ## Documentation
 
 * #589: Corrected configuration for Sonar documentation for host.url
