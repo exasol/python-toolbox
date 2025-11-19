@@ -1,7 +1,7 @@
 import pytest
 from nox.command import CommandFailed
-from toolbox.nox._format import _ruff
 
+from exasol.toolbox.nox._format import _ruff
 from exasol.toolbox.nox._shared import Mode
 
 
