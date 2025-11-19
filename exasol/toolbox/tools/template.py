@@ -5,7 +5,6 @@ from contextlib import ExitStack
 from pathlib import Path
 from typing import (
     Any,
-    Union,
 )
 
 import importlib_resources as resources

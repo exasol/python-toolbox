@@ -1,7 +1,6 @@
 import subprocess  # nosec
 from functools import wraps
 from pathlib import Path
-from typing import Union
 
 
 def run_command(func):
