@@ -9,6 +9,7 @@
 ## Features
 
 * #595: Created class `ResolvedVulnerabilities` to track resolved vulnerabilities between versions
+* #544: Modified nox sessions `project:fix` and `project:format` to use ruff to remove unused imports
 
 ## Refactoring
 
