@@ -118,12 +118,30 @@ class TestRuff:
 
 @pytest.fixture
 def file_with_multiple_problems(tmp_path):
+    """
+    In this file with multiple problems, it is expected that the nox session
+    `project:fix` would alter the following:
+
+    * x: Union[int, str]=2
+       * This should be altered to `x: int | str = 2` via pyupgrade.
+    * import isort
+      * This should be removed via ruff as it is an unused import.
+    * from typing import Union
+       * This should be removed as pyupgrade has been executed and altered `x: Union[int, str]=2` to `x: int | str = 2`.
+       * Thus, this is an unused import, which ruff will remove.
+    * newlines and spaces added
+       * black ensures that there is always:
+           * a blank line between the imports and first executed line of code
+           * a space around an equals sign, like ` = `.
+           * a blank line at the end of a file
+    """
+
     file_path = tmp_path / "dummy_file.py"
     text = """
     import numpy as np
     import isort # unused import
-    from typing import Union # outdated typing from < Python 3.10
-    x: Union[int, str]=2 # outdated typing from < Python 3.10
+    from typing import Union
+    x: Union[int, str]=2
     y: np.ndarray = np.array([1, 2, 3])
     """
     file_path.write_text(cleandoc(text))
@@ -145,7 +163,7 @@ def test_project_fix(nox_session, tmp_path, file_with_multiple_problems):
             """
             import numpy as np
 
-            x: int | str = 2  # outdated typing from < Python 3.10
+            x: int | str = 2
             y: np.ndarray = np.array([1, 2, 3])
         """
         )
