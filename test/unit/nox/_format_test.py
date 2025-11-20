@@ -135,7 +135,7 @@ def test_project_fix(nox_session, tmp_path, file_with_multiple_problems):
         with patch("exasol.toolbox.nox._format._version") as version:
             config.root = tmp_path
             config.pyupgrade_argument = ("--py310-plus",)
-            # skip version check as modifies version.py file only
+            # Simulate version is up-to-date, as version check is out of the scope of the test case
             version.return_value = True
             fix(nox_session)
 
