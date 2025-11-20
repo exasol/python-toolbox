@@ -2,14 +2,13 @@
 
 ## Summary
 
-In this release, the nox sessions `project:fix` and `project:format` have been modified
-to include removing unused imports via ruff. To avoid unexpected changes, please add
-the ruff configuration to your `pyproject.toml` as specified on
-[Formatting Code Configuration](https://exasol.github.io/python-toolbox/main/user_guide/features/formatting_code/index.html#configuration)
-page.
+This is a major release with potentially breaking changes as nox session `project:fix` has been modified and potentially can create many unexpected changes.
 
-Additionally, `isort` has been updated from `^6.0.0` to `^7.0.0`. In 7.x, `isort` has
-provided fixes for Python 3.14.
+This release adds [ruff](https://docs.astral.sh/ruff/) to Nox sessions `project:format` and `project:fix` to check for and remove unused imports.
+
+As `ruff` potentially can also apply many other changes, we recommend updating the `pyproject.toml` file in your project as specified here: [Formatting Code Configuration](https://exasol.github.io/python-toolbox/main/user_guide/features/formatting_code/index.html#configuration).
+
+Additionally, `isort` has been updated from `^6.0.0` to `^7.0.0`. In 7.x, `isort` has provided fixes for Python 3.14.
 
 ## Documentation
 
