@@ -181,7 +181,7 @@ def test_project_format(
         with pytest.raises(CommandFailed):
             fmt_check(nox_session)
 
-    # The failed message should always be for the first called checking function.
+    # The failed message should always relate to the checking function called first.
     assert (
         caplog.messages[1]
         == f"Command ruff check {file_with_multiple_problems} failed with exit code 1"
