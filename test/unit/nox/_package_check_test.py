@@ -1,14 +1,12 @@
 import shutil
 from pathlib import Path
 from unittest.mock import (
-    MagicMock,
     patch,
 )
 
 import pytest
 from nox.command import CommandFailed
 
-from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._package import (
     PROJECT_CONFIG,
     package_check,
@@ -39,12 +37,9 @@ class TestDistributionCheck:
         package_readme.open(mode="a").write(not_closed_link_error)
 
         # use of the folder with errors in the nox -s package:check function
-        config = BaseConfig()
-        mock = MagicMock(spec=BaseConfig, wraps=config)
-        mock.root = package
         with pytest.raises(CommandFailed) as e:
-            with patch("exasol.toolbox.nox._package.PROJECT_CONFIG", mock):
-                print(PROJECT_CONFIG.root)
+            with patch("exasol.toolbox.nox._package.PROJECT_CONFIG") as config:
+                config.root = package
                 package_check(nox_session)
         # verify broken with non-zero exit status
         assert str(e.value) == "Returned code 1"
