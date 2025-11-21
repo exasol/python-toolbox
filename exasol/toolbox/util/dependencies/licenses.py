@@ -6,7 +6,6 @@ from collections import OrderedDict
 from dataclasses import dataclass
 from inspect import cleandoc
 from json import loads
-from typing import Optional
 
 from pydantic import field_validator
 

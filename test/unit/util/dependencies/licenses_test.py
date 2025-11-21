@@ -1,5 +1,3 @@
-from typing import Optional
-
 import pytest
 
 from exasol.toolbox.util.dependencies.licenses import (

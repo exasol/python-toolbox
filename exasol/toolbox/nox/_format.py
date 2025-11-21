@@ -35,12 +35,20 @@ def _pyupgrade(session: Session, config: Config, files: Iterable[str]) -> None:
     )
 
 
+def _ruff(session: Session, mode: Mode, files: Iterable[str]):
+    def command(*args: str) -> Iterable[str]:
+        return args if mode == Mode.Check else list(args) + ["--fix"]
+
+    session.run(*command("ruff", "check"), *files)
+
+
 @nox.session(name="project:fix", python=False)
 def fix(session: Session) -> None:
     """Runs all automated fixes on the code base"""
     py_files = python_files(PROJECT_CONFIG.root)
     _version(session, Mode.Fix)
     _pyupgrade(session, config=PROJECT_CONFIG, files=py_files)
+    _ruff(session, mode=Mode.Fix, files=py_files)
     _code_format(session, Mode.Fix, py_files)
 
 
@@ -48,4 +56,5 @@ def fix(session: Session) -> None:
 def fmt_check(session: Session) -> None:
     """Checks the project for correct formatting"""
     py_files = python_files(PROJECT_CONFIG.root)
+    _ruff(session, mode=Mode.Check, files=py_files)
     _code_format(session=session, mode=Mode.Check, files=py_files)

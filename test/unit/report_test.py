@@ -1,8 +1,4 @@
 from inspect import cleandoc
-from typing import (
-    Dict,
-    List,
-)
 
 import pytest
 

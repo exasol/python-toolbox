@@ -7,7 +7,6 @@ import subprocess  # nosec
 import sys
 from collections.abc import Iterable
 from pathlib import Path
-from typing import Optional
 
 import nox
 from nox import Session

@@ -1,7 +1,6 @@
 from subprocess import CalledProcessError
 from unittest.mock import (
     MagicMock,
-    call,
     patch,
 )
 

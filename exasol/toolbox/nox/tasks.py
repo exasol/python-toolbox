@@ -19,6 +19,7 @@ __all__ = [
 import nox
 from nox import Session
 
+# ruff: noqa F401
 from exasol.toolbox.nox._format import (
     _code_format,
     fix,

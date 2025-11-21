@@ -1,12 +1,10 @@
 import shutil
 from unittest.mock import (
     MagicMock,
-    patch,
 )
 
 import pytest
 
-import exasol.toolbox.nox._documentation
 from exasol.toolbox.nox._documentation import (
     _docs_links_check,
     _docs_list_links,
@@ -24,7 +22,7 @@ https://examle.invalid
 @pytest.fixture()
 def index():
     return """.. _Test:
-    
+
 Test
 ____
 

@@ -1,6 +1,3 @@
-import os
-from pathlib import Path
-
 import pytest
 
 from exasol.toolbox.tools import template
