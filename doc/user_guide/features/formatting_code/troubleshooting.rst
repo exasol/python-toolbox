@@ -9,9 +9,9 @@ Formatting still fails after running ``format:fix``
 If when you execute:
 
 #. Run ``format:fix``
-#. Run ``project:format``
+#. Run ``format:check``
 
-you receive an error from ``project:format`` (i.e. ``isort`` or ``black``), it it
+you receive an error from ``format:check`` (i.e. ``isort`` or ``black``), it it
 likely that you need to update your configuration to align with
 :ref:`formatting_configuration`.
 
@@ -44,7 +44,7 @@ might want to ignore automatically applied formatting.
 +-----------------------+--------------------------------+-----------------------+
 
 
-In the ``checks.yml``, ``project:format`` wants me to reformat code I did not modify
+In the ``checks.yml``, ``format:check`` wants me to reformat code I did not modify
 ------------------------------------------------------------------------------------
 
 This is likely due to one of our tools (i.e. ``black``) being upgraded. Within the

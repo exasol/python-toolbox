@@ -158,7 +158,7 @@ jobs:
         uses: ./.github/actions/python-environment
 
       - name: Run format check
-        run: poetry run -- nox -s project:format
+        run: poetry run -- nox -s format:check
 
   Build-Packages:
     name: Build Package Check
