@@ -16,10 +16,13 @@ from noxconfig import PROJECT_CONFIG
 
 
 def _pylint(session: Session, files: Iterable[str]) -> None:
+    json_file = PROJECT_CONFIG.root / ".lint.json"
+    txt_file = PROJECT_CONFIG.root / ".lint.txt"
+
     session.run(
         "pylint",
         "--output-format",
-        "colorized,json:.lint.json,text:.lint.txt",
+        f"colorized,json:{json_file},text:{txt_file}",
         *files,
     )
 
@@ -47,7 +50,7 @@ def _security_lint(session: Session, files: Iterable[str]) -> None:
         "--format",
         "json",
         "--output",
-        ".security.json",
+        PROJECT_CONFIG.root / ".security.json",
         "--exit-zero",
         *files,
     )
