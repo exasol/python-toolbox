@@ -15,6 +15,8 @@ you receive an error from ``project:format`` (i.e. ``isort`` or ``black``), it i
 likely that you need to update your configuration to align with
 :ref:`formatting_configuration`.
 
+.. _prevent_auto_format:
+
 The automatic formatting is doing x, but we shouldn't do that because of y
 ---------------------------------------------------------------------------
 Usually, automatic formatting is helpful, but there are rare cases where a developer
