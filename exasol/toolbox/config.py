@@ -89,14 +89,14 @@ class BaseConfig(BaseModel):
     def excluded_python_paths(self) -> tuple[str, ...]:
         """
         There are certain nox sessions:
+          - format:check
+          - format:fix
           - lint:code
           - lint:security
           - lint:typing
-          - format:fix
-          - format:check
-        where it is desired restrict which Python files are considered within the
-        source_path, like excluding `dist`, `.eggs`. As such, this property is used to
-        exclude such undesired paths.
+        where it is desired to restrict which Python files are considered within the
+        PROJECT_CONFIG.source path, like excluding `dist`, `.eggs`. As such, this
+        property is used to exclude such undesired paths.
         """
         return tuple(
             DEFAULT_EXCLUDED_PATHS.union(set(self.add_to_excluded_python_paths))
