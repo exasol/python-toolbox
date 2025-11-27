@@ -89,13 +89,13 @@ class BaseConfig(BaseModel):
         exclude such undesired paths.
         """
         default_excluded_paths = {
-            "dist",
             ".eggs",
-            "venv",
-            ".venv",
+            ".html-documentation",
             ".poetry",
             ".sonar",
-            ".html-documentation",
+            ".venv",
+            "dist",
+            "venv",
         }
         return tuple(
             default_excluded_paths.union(set(self.add_to_excluded_python_paths))
