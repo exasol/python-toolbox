@@ -92,6 +92,7 @@ class BaseConfig(BaseModel):
             "dist",
             ".eggs",
             "venv",
+            ".venv",
             ".poetry",
             ".sonar",
             ".html-documentation",
