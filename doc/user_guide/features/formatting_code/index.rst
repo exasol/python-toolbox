@@ -45,9 +45,9 @@ deterministic manner.
 +--------------------+------------------+------------------------------------+
 | Nox session        | CI Usage         | Action                             |
 +====================+==================+====================================+
-| ``project:fix``    | No               | Applies code formatting changes    |
+| ``format:fix``     | No               | Applies code formatting changes    |
 +--------------------+------------------+------------------------------------+
-| ``project:format`` | ``checks.yml``   | Checks that current code does not  |
+| ``format:check``   | ``checks.yml``   | Checks that current code does not  |
 |                    |                  | need to be re-formatted            |
 +--------------------+------------------+------------------------------------+
 

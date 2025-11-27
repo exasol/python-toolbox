@@ -92,8 +92,8 @@ class BaseConfig(BaseModel):
           - lint:code
           - lint:security
           - lint:typing
-          - project:fix
-          - project:format
+          - format:fix
+          - format:check
         where it is desired restrict which Python files are considered within the
         source_path, like excluding `dist`, `.eggs`. As such, this property is used to
         exclude such undesired paths.

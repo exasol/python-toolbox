@@ -63,9 +63,9 @@ For example, if test execution isn't performed in the standard way (e.g., :code:
     from exasol.toolbox.nox.tasks import *  # pylint: disable=wildcard-import disable=unused-wildcard-import
 
     # default actions to be run if nothing is explicitly specified with the -s option
-    nox.options.sessions = ["project:fix"]
+    nox.options.sessions = ["format:fix"]
 
-    @nox.session(name="project:fix", python=False)
+    @nox.session(name="format:fix", python=False)
     def my_project_fix_overwrite(session) -> None:
         """Runs all automated fixes on the code base"""
 
@@ -75,7 +75,7 @@ For example, if test execution isn't performed in the standard way (e.g., :code:
         from exasol.toolbox.nox._shared import get_filtered_python_files
 
         py_files = get_filtered_python_files(PROJECT_CONFIG.root)
-        print("The original 'project:fix' task has been taken hostage by this overwrite")
+        print("The original 'format:fix' task has been taken hostage by this overwrite")
         print("Files:\n{files}".format(files="\n".join(py_files))
 
 
