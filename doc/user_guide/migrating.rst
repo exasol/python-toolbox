@@ -72,9 +72,9 @@ For example, if test execution isn't performed in the standard way (e.g., :code:
         # ATTENTION:
         # In cases where it is reasonable to use "internal" functions, please do those imports
         # within the function to keep them isolated and simplify future removal or replacement.
-        from exasol.toolbox.nox._shared import python_files
+        from exasol.toolbox.nox._shared import get_filtered_python_files
 
-        py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
+        py_files = get_filtered_python_files(PROJECT_CONFIG.root)
         print("The original 'project:fix' task has been taken hostage by this overwrite")
         print("Files:\n{files}".format(files="\n".join(py_files))
 
