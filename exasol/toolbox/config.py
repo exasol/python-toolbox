@@ -84,7 +84,7 @@ class BaseConfig(BaseModel):
         index_min_version = versioned.index(min_version)
         return self.python_versions[index_min_version]
 
-    @computed_field
+    @computed_field  # type: ignore[misc]
     @property
     def excluded_python_paths(self) -> tuple[str, ...]:
         """
