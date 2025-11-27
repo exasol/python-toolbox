@@ -23,14 +23,14 @@ def tmp_directory(tmp_path_factory):
 
 
 @pytest.fixture(scope="session")
-def path_filter_directory():
-    return "path_filter"
+def excluded_python_path():
+    return "excluded_python_path"
 
 
 @pytest.fixture(scope="session")
-def directories(package_directory, path_filter_directory):
+def directories(package_directory, excluded_python_path):
     yield set(BaseConfig().excluded_python_paths).union(
-        {package_directory, path_filter_directory}
+        {package_directory, excluded_python_path}
     )
 
 
@@ -49,9 +49,9 @@ def create_files(tmp_directory, directories):
 
 
 def test_get_filtered_python_files(
-    tmp_directory, create_files, package_directory, path_filter_directory
+    tmp_directory, create_files, package_directory, excluded_python_path
 ):
-    config = BaseConfig(add_to_excluded_python_paths=(path_filter_directory,))
+    config = BaseConfig(add_to_excluded_python_paths=(excluded_python_path,))
 
     with patch("exasol.toolbox.nox._shared.PROJECT_CONFIG", config):
         actual = get_filtered_python_files(tmp_directory)
