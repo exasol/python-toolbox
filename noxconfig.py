@@ -65,6 +65,9 @@ PROJECT_CONFIG = Config(
         # Instead, the format & linting are checked in the
         # ``test.integration.project-template``.
         "project-template",
+        # This file comes from poetry (https://install.python-poetry.org/),
+        # so we should not modify it.
+        "get_poetry.py",
     ),
     create_major_version_tags=True,
     # The PTB does not have integration tests run with an Exasol DB,
