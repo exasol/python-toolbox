@@ -56,16 +56,16 @@ class Config(BaseConfig):
     source: Path = Path("exasol/toolbox")
     importlinter: Path = Path(__file__).parent / ".import_linter_config"
     version_file: Path = Path(__file__).parent / "exasol" / "toolbox" / "version.py"
-    path_filters: Iterable[str] = (
-        "metrics-schema",
-        "project-template",
-        "idioms",
-        ".github",
-    )
     plugins: Iterable[object] = (UpdateTemplates,)
 
 
 PROJECT_CONFIG = Config(
+    addition_to_excluded_paths=(
+        # The cookiecutter placeholders do not work well with checks.
+        # Instead, the format & linting are checked in the
+        # ``test.integration.project-template``.
+        "project-template",
+    ),
     create_major_version_tags=True,
     # The PTB does not have integration tests run with an Exasol DB,
     # so for running in the CI, we take the first element.

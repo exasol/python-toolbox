@@ -44,10 +44,13 @@ def python_files(project_root: Path) -> Iterable[str]:
     """
     Returns iterable of python files after removing unwanted paths
     """
-    deny_list = DEFAULT_PATH_FILTERS.union(set(PROJECT_CONFIG.path_filters))
-
+    check_for_config_attribute(config=PROJECT_CONFIG, attribute="excluded_paths")
     files = project_root.glob("**/*.py")
-    return [f"{path}" for path in files if not set(path.parts).intersection(deny_list)]
+    return [
+        f"{path}"
+        for path in files
+        if not set(path.parts).intersection(PROJECT_CONFIG.excluded_paths)
+    ]
 
 
 def _version(session: Session, mode: Mode) -> None:

@@ -88,7 +88,14 @@ class BaseConfig(BaseModel):
         source_path, like excluding `dist`, `.eggs`. As such, this property is used to
         exclude such undesired paths.
         """
-        default_excluded_paths = {"dist", ".eggs", "venv", ".poetry"}
+        default_excluded_paths = {
+            "dist",
+            ".eggs",
+            "venv",
+            ".poetry",
+            ".sonar",
+            ".html-documentation",
+        }
         return tuple(default_excluded_paths.union(set(self.addition_to_excluded_paths)))
 
     @computed_field  # type: ignore[misc]
