@@ -1,6 +1,6 @@
 .. _github_actions:
 
-:octicon:`play` Github Actions
+:octicon:`play` GitHub Actions
 ===============================
 
 .. toctree::
