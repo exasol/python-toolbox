@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 from collections import ChainMap
 from collections.abc import (
-    Iterable,
     MutableMapping,
 )
 from enum import (
@@ -39,9 +38,9 @@ class Mode(Enum):
     Check = auto()
 
 
-def python_files(project_root: Path) -> Iterable[str]:
+def get_filtered_python_files(project_root: Path) -> list[str]:
     """
-    Returns iterable of python files after removing unwanted paths
+    Returns iterable of Python files after removing excluded paths
     """
     check_for_config_attribute(config=PROJECT_CONFIG, attribute="excluded_python_paths")
     files = project_root.glob("**/*.py")

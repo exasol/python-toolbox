@@ -8,7 +8,7 @@ import pytest
 from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._shared import (
     check_for_config_attribute,
-    python_files,
+    get_filtered_python_files,
 )
 
 
@@ -48,13 +48,13 @@ def create_files(tmp_directory, directories):
     yield file_list
 
 
-def test_python_files(
+def test_get_filtered_python_files(
     tmp_directory, create_files, package_directory, path_filter_directory
 ):
     config = BaseConfig(add_to_excluded_python_paths=(path_filter_directory,))
 
     with patch("exasol.toolbox.nox._shared.PROJECT_CONFIG", config):
-        actual = python_files(tmp_directory)
+        actual = get_filtered_python_files(tmp_directory)
 
     assert len(actual) == 1
     assert "toolbox-dummy" in actual[0]
