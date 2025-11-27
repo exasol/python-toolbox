@@ -20,7 +20,6 @@ from noxconfig import (
     Config,
 )
 
-DEFAULT_PATH_FILTERS = {"dist", ".eggs", "venv", ".poetry"}
 DOCS_OUTPUT_DIR = ".html-documentation"
 
 
