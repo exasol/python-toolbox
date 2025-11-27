@@ -6,7 +6,7 @@ __all__ = [
     "check",
     "clean_docs",
     "coverage",
-    "fix",
+    "fix_format",
     "integration_tests",
     "lint",
     "open_docs",
@@ -22,7 +22,7 @@ from nox import Session
 # ruff: noqa F401
 from exasol.toolbox.nox._format import (
     _code_format,
-    fix,
+    fix_format,
 )
 
 # fmt: off

@@ -8,8 +8,8 @@ from exasol.toolbox.nox._format import (
     _code_format,
     _pyupgrade,
     _ruff,
-    fix,
-    fmt_check,
+    check_format,
+    fix_format,
 )
 from exasol.toolbox.nox._shared import Mode
 from noxconfig import Config
@@ -120,7 +120,7 @@ class TestRuff:
 def file_with_multiple_problems(tmp_path):
     """
     In this file with multiple problems, it is expected that the nox session
-    `project:fix` would alter the following:
+    `format:fix` would alter the following:
 
     * x: Union[int, str]=2
        * This should be altered to `x: int | str = 2` via pyupgrade.
@@ -148,14 +148,14 @@ def file_with_multiple_problems(tmp_path):
     return file_path
 
 
-def test_project_fix(nox_session, tmp_path, file_with_multiple_problems):
+def test_fix_format(nox_session, tmp_path, file_with_multiple_problems):
     with patch("exasol.toolbox.nox._format.PROJECT_CONFIG") as config:
         with patch("exasol.toolbox.nox._format._version") as version:
             config.root = tmp_path
             config.pyupgrade_argument = ("--py310-plus",)
             # Simulate version is up-to-date, as version check is out of the scope of the test case
             version.return_value = True
-            fix(nox_session)
+            fix_format(nox_session)
 
     assert (
         file_with_multiple_problems.read_text()
@@ -171,7 +171,7 @@ def test_project_fix(nox_session, tmp_path, file_with_multiple_problems):
     )
 
 
-def test_project_format(
+def test_check_format(
     nox_session, tmp_path, file_with_multiple_problems, caplog, capsys
 ):
     expected_text = file_with_multiple_problems.read_text()
@@ -179,7 +179,7 @@ def test_project_format(
     with patch("exasol.toolbox.nox._format.PROJECT_CONFIG") as config:
         config.root = tmp_path
         with pytest.raises(CommandFailed):
-            fmt_check(nox_session)
+            check_format(nox_session)
 
     # The failed message should always relate to the checking function called first.
     assert (
