@@ -49,12 +49,12 @@ class BaseConfig(BaseModel):
         default=False,
         description="If true, creates also the major version tags (v*) automatically",
     )
-    addition_to_excluded_paths: tuple[str, ...] = Field(
+    add_to_excluded_python_paths: tuple[str, ...] = Field(
         default=(),
         description="""
-        This is used to extend the default excluded_paths. If a more general path that
-        would be seen in other projects, like .venv, needs to be added into this
-        argument, please instead modify the
+        This is used to extend the default excluded_python_paths. If a more general
+        path that would be seen in other projects, like .venv, needs to be added into
+        this argument, please instead modify the
         :meth:`exasol.toolbox.config.BaseConfig.excluded_paths` attribute.
         """,
     )
@@ -76,7 +76,7 @@ class BaseConfig(BaseModel):
 
     @computed_field
     @property
-    def excluded_paths(self) -> tuple[str, ...]:
+    def excluded_python_paths(self) -> tuple[str, ...]:
         """
         There are certain nox sessions:
           - lint:code
@@ -96,7 +96,9 @@ class BaseConfig(BaseModel):
             ".sonar",
             ".html-documentation",
         }
-        return tuple(default_excluded_paths.union(set(self.addition_to_excluded_paths)))
+        return tuple(
+            default_excluded_paths.union(set(self.add_to_excluded_python_paths))
+        )
 
     @computed_field  # type: ignore[misc]
     @property

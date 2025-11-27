@@ -60,7 +60,7 @@ class Config(BaseConfig):
 
 
 PROJECT_CONFIG = Config(
-    addition_to_excluded_paths=(
+    add_to_excluded_python_paths=(
         # The cookiecutter placeholders do not work well with checks.
         # Instead, the format & linting are checked in the
         # ``test.integration.project-template``.

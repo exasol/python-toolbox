@@ -29,7 +29,7 @@ def path_filter_directory():
 
 @pytest.fixture(scope="session")
 def directories(package_directory, path_filter_directory):
-    yield set(BaseConfig().excluded_paths).union(
+    yield set(BaseConfig().excluded_python_paths).union(
         {package_directory, path_filter_directory}
     )
 
@@ -51,7 +51,7 @@ def create_files(tmp_directory, directories):
 def test_python_files(
     tmp_directory, create_files, package_directory, path_filter_directory
 ):
-    config = BaseConfig(addition_to_excluded_paths=(path_filter_directory,))
+    config = BaseConfig(add_to_excluded_python_paths=(path_filter_directory,))
 
     with patch("exasol.toolbox.nox._shared.PROJECT_CONFIG", config):
         actual = python_files(tmp_directory)

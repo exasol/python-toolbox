@@ -43,12 +43,12 @@ def python_files(project_root: Path) -> Iterable[str]:
     """
     Returns iterable of python files after removing unwanted paths
     """
-    check_for_config_attribute(config=PROJECT_CONFIG, attribute="excluded_paths")
+    check_for_config_attribute(config=PROJECT_CONFIG, attribute="excluded_python_paths")
     files = project_root.glob("**/*.py")
     return [
         f"{path}"
         for path in files
-        if not set(path.parts).intersection(PROJECT_CONFIG.excluded_paths)
+        if not set(path.parts).intersection(PROJECT_CONFIG.excluded_python_paths)
     ]
 
 
