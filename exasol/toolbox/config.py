@@ -49,6 +49,15 @@ class BaseConfig(BaseModel):
         default=False,
         description="If true, creates also the major version tags (v*) automatically",
     )
+    addition_to_excluded_paths: tuple[str, ...] = Field(
+        default=(),
+        description="""
+        This is used to extend the default excluded_paths. If a more general path that
+        would be seen in other projects, like .venv, needs to be added into this
+        argument, please instead modify the
+        :meth:`exasol.toolbox.config.BaseConfig.excluded_paths` attribute.
+        """,
+    )
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
     @computed_field  # type: ignore[misc]
@@ -64,6 +73,23 @@ class BaseConfig(BaseModel):
         min_version = min(versioned)
         index_min_version = versioned.index(min_version)
         return self.python_versions[index_min_version]
+
+    @computed_field
+    @property
+    def excluded_paths(self) -> tuple[str, ...]:
+        """
+        There are certain nox sessions:
+          - lint:code
+          - lint:security
+          - lint:typing
+          - project:fix
+          - project:format
+        where it is desired restrict which Python files are considered within the
+        source_path, like excluding `dist`, `.eggs`. As such, this property is used to
+        exclude such undesired paths.
+        """
+        default_excluded_paths = {"dist", ".eggs", "venv", ".poetry"}
+        return tuple(default_excluded_paths.union(set(self.addition_to_excluded_paths)))
 
     @computed_field  # type: ignore[misc]
     @property
