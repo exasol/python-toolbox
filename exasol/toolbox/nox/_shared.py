@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 from collections import ChainMap
 from collections.abc import (
-    Iterable,
     MutableMapping,
 )
 from enum import (
@@ -20,7 +19,6 @@ from noxconfig import (
     Config,
 )
 
-DEFAULT_PATH_FILTERS = {"dist", ".eggs", "venv", ".poetry"}
 DOCS_OUTPUT_DIR = ".html-documentation"
 
 
@@ -40,14 +38,17 @@ class Mode(Enum):
     Check = auto()
 
 
-def python_files(project_root: Path) -> Iterable[str]:
+def get_filtered_python_files(project_root: Path) -> list[str]:
     """
-    Returns iterable of python files after removing unwanted paths
+    Returns iterable of Python files after removing excluded paths
     """
-    deny_list = DEFAULT_PATH_FILTERS.union(set(PROJECT_CONFIG.path_filters))
-
+    check_for_config_attribute(config=PROJECT_CONFIG, attribute="excluded_python_paths")
     files = project_root.glob("**/*.py")
-    return [f"{path}" for path in files if not set(path.parts).intersection(deny_list)]
+    return [
+        f"{path}"
+        for path in files
+        if not set(path.parts).intersection(PROJECT_CONFIG.excluded_python_paths)
+    ]
 
 
 def _version(session: Session, mode: Mode) -> None:

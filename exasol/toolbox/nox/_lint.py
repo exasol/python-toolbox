@@ -10,16 +10,19 @@ import rich.console
 import tomlkit
 from nox import Session
 
-from exasol.toolbox.nox._shared import python_files
+from exasol.toolbox.nox._shared import get_filtered_python_files
 from exasol.toolbox.util.dependencies.shared_models import PoetryFiles
 from noxconfig import PROJECT_CONFIG
 
 
 def _pylint(session: Session, files: Iterable[str]) -> None:
+    json_file = PROJECT_CONFIG.root / ".lint.json"
+    txt_file = PROJECT_CONFIG.root / ".lint.txt"
+
     session.run(
         "pylint",
         "--output-format",
-        "colorized,json:.lint.json,text:.lint.txt",
+        f"colorized,json:{json_file},text:{txt_file}",
         *files,
     )
 
@@ -47,7 +50,7 @@ def _security_lint(session: Session, files: Iterable[str]) -> None:
         "--format",
         "json",
         "--output",
-        ".security.json",
+        PROJECT_CONFIG.root / ".security.json",
         "--exit-zero",
         *files,
     )
@@ -120,22 +123,22 @@ def report_illegal(illegal: dict[str, list[str]], console: rich.console.Console)
 @nox.session(name="lint:code", python=False)
 def lint(session: Session) -> None:
     """Runs the static code analyzer on the project"""
-    py_files = python_files(PROJECT_CONFIG.root / PROJECT_CONFIG.source)
-    _pylint(session, py_files)
+    py_files = get_filtered_python_files(PROJECT_CONFIG.root / PROJECT_CONFIG.source)
+    _pylint(session=session, files=py_files)
 
 
 @nox.session(name="lint:typing", python=False)
 def type_check(session: Session) -> None:
     """Runs the type checker on the project"""
-    py_files = [f"{file}" for file in python_files(PROJECT_CONFIG.root)]
-    _type_check(session, py_files)
+    py_files = get_filtered_python_files(PROJECT_CONFIG.root)
+    _type_check(session=session, files=py_files)
 
 
 @nox.session(name="lint:security", python=False)
 def security_lint(session: Session) -> None:
     """Runs the security linter on the project"""
-    py_files = python_files(PROJECT_CONFIG.root / PROJECT_CONFIG.source)
-    _security_lint(session, py_files)
+    py_files = get_filtered_python_files(PROJECT_CONFIG.root / PROJECT_CONFIG.source)
+    _security_lint(session=session, files=py_files)
 
 
 @nox.session(name="lint:dependencies", python=False)

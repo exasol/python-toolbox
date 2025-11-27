@@ -20,6 +20,16 @@ def valid_version_string(version_string: str) -> str:
 
 ValidVersionStr = Annotated[str, AfterValidator(valid_version_string)]
 
+DEFAULT_EXCLUDED_PATHS = {
+    ".eggs",
+    ".html-documentation",
+    ".poetry",
+    ".sonar",
+    ".venv",
+    "dist",
+    "venv",
+}
+
 
 class BaseConfig(BaseModel):
     """
@@ -49,6 +59,15 @@ class BaseConfig(BaseModel):
         default=False,
         description="If true, creates also the major version tags (v*) automatically",
     )
+    add_to_excluded_python_paths: tuple[str, ...] = Field(
+        default=(),
+        description="""
+        This is used to extend the default excluded_python_paths. If a more general
+        path that would be seen in other projects, like .venv, needs to be added into
+        this argument, please instead modify the
+        `exasol.toolbox.config.DEFAULT_EXCLUDED_PATHS`.
+        """,
+    )
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
     @computed_field  # type: ignore[misc]
@@ -64,6 +83,24 @@ class BaseConfig(BaseModel):
         min_version = min(versioned)
         index_min_version = versioned.index(min_version)
         return self.python_versions[index_min_version]
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def excluded_python_paths(self) -> tuple[str, ...]:
+        """
+        There are certain nox sessions:
+          - lint:code
+          - lint:security
+          - lint:typing
+          - format:fix
+          - format:check
+        where it is desired restrict which Python files are considered within the
+        source_path, like excluding `dist`, `.eggs`. As such, this property is used to
+        exclude such undesired paths.
+        """
+        return tuple(
+            DEFAULT_EXCLUDED_PATHS.union(set(self.add_to_excluded_python_paths))
+        )
 
     @computed_field  # type: ignore[misc]
     @property

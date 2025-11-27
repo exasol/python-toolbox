@@ -1,15 +1,14 @@
 from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
-import noxconfig
 from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._shared import (
-    DEFAULT_PATH_FILTERS,
     check_for_config_attribute,
-    python_files,
+    get_filtered_python_files,
 )
 
 
@@ -24,13 +23,15 @@ def tmp_directory(tmp_path_factory):
 
 
 @pytest.fixture(scope="session")
-def path_filter_directory():
-    return "path_filter"
+def excluded_python_path():
+    return "excluded_python_path"
 
 
 @pytest.fixture(scope="session")
-def directories(package_directory, path_filter_directory):
-    yield DEFAULT_PATH_FILTERS.union({package_directory, path_filter_directory})
+def directories(package_directory, excluded_python_path):
+    yield set(BaseConfig().excluded_python_paths).union(
+        {package_directory, excluded_python_path}
+    )
 
 
 @pytest.fixture(scope="session")
@@ -47,15 +48,14 @@ def create_files(tmp_directory, directories):
     yield file_list
 
 
-def test_python_files(
-    tmp_directory, create_files, package_directory, path_filter_directory
+def test_get_filtered_python_files(
+    tmp_directory, create_files, package_directory, excluded_python_path
 ):
-    # Use builtin object to modify attribute path_filters of frozen dataclass instance.
-    object.__setattr__(
-        noxconfig.PROJECT_CONFIG, "path_filters", (path_filter_directory,)
-    )
+    config = BaseConfig(add_to_excluded_python_paths=(excluded_python_path,))
 
-    actual = python_files(tmp_directory)
+    with patch("exasol.toolbox.nox._shared.PROJECT_CONFIG", config):
+        actual = get_filtered_python_files(tmp_directory)
+
     assert len(actual) == 1
     assert "toolbox-dummy" in actual[0]
 

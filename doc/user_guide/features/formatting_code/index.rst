@@ -18,6 +18,13 @@ experience across projects.
 Nox sessions
 ++++++++++++
 
+.. note::
+    To prevent Python files from being formatted, you can do one of the following:
+        * For a single file, use a comment in the files as described in :ref:`this table <prevent_auto_format>`.
+        * If it is a directory (i.e. ``.workspace``), then you can exclude it by
+          adding it to the ``add_to_excluded_python_paths`` in the project's ``Config``
+          defined in the ``noxconfig.py``.
+
 For autoformatting, the following tools are used:
 
 * `black <https://black.readthedocs.io/en/stable/the_black_code_style/index.html>`__ -
