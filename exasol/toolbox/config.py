@@ -20,6 +20,16 @@ def valid_version_string(version_string: str) -> str:
 
 ValidVersionStr = Annotated[str, AfterValidator(valid_version_string)]
 
+DEFAULT_EXCLUDED_PATHS = {
+    ".eggs",
+    ".html-documentation",
+    ".poetry",
+    ".sonar",
+    ".venv",
+    "dist",
+    "venv",
+}
+
 
 class BaseConfig(BaseModel):
     """
@@ -55,7 +65,7 @@ class BaseConfig(BaseModel):
         This is used to extend the default excluded_python_paths. If a more general
         path that would be seen in other projects, like .venv, needs to be added into
         this argument, please instead modify the
-        :meth:`exasol.toolbox.config.BaseConfig.excluded_paths` attribute.
+        `exasol.toolbox.config.DEFAULT_EXCLUDED_PATHS`.
         """,
     )
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
@@ -88,17 +98,8 @@ class BaseConfig(BaseModel):
         source_path, like excluding `dist`, `.eggs`. As such, this property is used to
         exclude such undesired paths.
         """
-        default_excluded_paths = {
-            ".eggs",
-            ".html-documentation",
-            ".poetry",
-            ".sonar",
-            ".venv",
-            "dist",
-            "venv",
-        }
         return tuple(
-            default_excluded_paths.union(set(self.add_to_excluded_python_paths))
+            DEFAULT_EXCLUDED_PATHS.union(set(self.add_to_excluded_python_paths))
         )
 
     @computed_field  # type: ignore[misc]

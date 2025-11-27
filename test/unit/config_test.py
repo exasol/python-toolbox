@@ -2,6 +2,7 @@ import pytest
 from pydantic_core._pydantic_core import ValidationError
 
 from exasol.toolbox.config import (
+    DEFAULT_EXCLUDED_PATHS,
     BaseConfig,
     valid_version_string,
 )
@@ -66,3 +67,22 @@ def test_minimum_python_version():
 def test_pyupgrade_argument(minimum_python_version):
     conf = BaseConfig(python_versions=("3.11", minimum_python_version, "3.12"))
     assert conf.pyupgrade_argument == ("--py310-plus",)
+
+
+@pytest.mark.parametrize(
+    "add_to_excluded_python_paths,expected",
+    [
+        pytest.param((), tuple(DEFAULT_EXCLUDED_PATHS), id="no_additions"),
+        pytest.param(
+            (next(iter(DEFAULT_EXCLUDED_PATHS)),),
+            tuple(DEFAULT_EXCLUDED_PATHS),
+            id="duplicate_addition",
+        ),
+        pytest.param(
+            ("dummy",), tuple(DEFAULT_EXCLUDED_PATHS) + ("dummy",), id="add_a_new_entry"
+        ),
+    ],
+)
+def test_excluded_python_paths(add_to_excluded_python_paths, expected):
+    conf = BaseConfig(add_to_excluded_python_paths=add_to_excluded_python_paths)
+    assert sorted(conf.excluded_python_paths) == sorted(expected)
