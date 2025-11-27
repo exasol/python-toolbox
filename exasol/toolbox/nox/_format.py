@@ -42,7 +42,7 @@ def _ruff(session: Session, mode: Mode, files: Iterable[str]):
     session.run(*command("ruff", "check"), *files)
 
 
-@nox.session(name="project:fix", python=False)
+@nox.session(name="format:fix", python=False)
 def fix(session: Session) -> None:
     """Runs all automated fixes on the code base"""
     py_files = python_files(PROJECT_CONFIG.root)

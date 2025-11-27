@@ -3,12 +3,12 @@
 Troubleshooting
 ===============
 
-Formatting still fails after running ``project:fix``
+Formatting still fails after running ``format:fix``
 ----------------------------------------------------
 
 If when you execute:
 
-#. Run ``project:fix``
+#. Run ``format:fix``
 #. Run ``project:format``
 
 you receive an error from ``project:format`` (i.e. ``isort`` or ``black``), it it

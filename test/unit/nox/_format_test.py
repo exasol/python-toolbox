@@ -120,7 +120,7 @@ class TestRuff:
 def file_with_multiple_problems(tmp_path):
     """
     In this file with multiple problems, it is expected that the nox session
-    `project:fix` would alter the following:
+    `format:fix` would alter the following:
 
     * x: Union[int, str]=2
        * This should be altered to `x: int | str = 2` via pyupgrade.
