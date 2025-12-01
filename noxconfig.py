@@ -48,17 +48,18 @@ class UpdateTemplates:
 #           extra_data: list[str] = ["data"]
 
 
+ROOT_PATH = Path(__file__).parent
+
+
 class Config(BaseConfig):
     """Project specific configuration used by nox infrastructure"""
 
-    root: Path = Path(__file__).parent
-    importlinter: Path = Path(__file__).parent / ".import_linter_config"
-    version_file: Path = Path(__file__).parent / "exasol" / "toolbox" / "version.py"
+    importlinter: Path = ROOT_PATH / ".import_linter_config"
     plugins: Iterable[object] = (UpdateTemplates,)
 
 
 PROJECT_CONFIG = Config(
-    root_path=Path(__file__).parent,
+    root_path=ROOT_PATH,
     project_name="toolbox",
     add_to_excluded_python_paths=(
         # The cookiecutter placeholders do not work well with checks.

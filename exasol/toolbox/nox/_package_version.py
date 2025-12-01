@@ -71,7 +71,7 @@ def _create_parser() -> ArgumentParser:
 
 
 def _version_check(args: Namespace, config: Config) -> int:
-    version_file = config.version_file
+    version_file = config.version_filepath
 
     module_version = Version.from_python_module(version_file)
     poetry_version = Version.from_poetry()
