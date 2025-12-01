@@ -52,7 +52,6 @@ class Config(BaseConfig):
     """Project specific configuration used by nox infrastructure"""
 
     root: Path = Path(__file__).parent
-    source: Path = Path("exasol/toolbox")
     importlinter: Path = Path(__file__).parent / ".import_linter_config"
     version_file: Path = Path(__file__).parent / "exasol" / "toolbox" / "version.py"
     plugins: Iterable[object] = (UpdateTemplates,)

@@ -130,5 +130,5 @@ project from Sonar's analysis:
 See the `Sonar Matching Patterns`_ for more details.
 
 By default, the nox session ``sonar:check`` only analyses the source code,
-as specified by the ``PROJECT_CONFIG.source``, so directories outside of this
+as specified by the ``PROJECT_CONFIG.source_code_path``, so directories outside of this
 are already excluded from being analyzed.
