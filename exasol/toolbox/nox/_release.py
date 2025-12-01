@@ -127,7 +127,7 @@ def prepare_release(session: Session) -> None:
     _ = _update_project_version(session, new_version)
 
     changelogs = Changelogs(
-        changes_path=PROJECT_CONFIG.doc / "changes",
+        changes_path=PROJECT_CONFIG.documentation_path / "changes",
         root_path=PROJECT_CONFIG.root_path,
         version=new_version,
     )

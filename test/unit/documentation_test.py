@@ -42,7 +42,7 @@ def config(index, file, tmp_path):
     test_doc = tmp_path / "doc"
     test_doc.mkdir()
     (test_doc / "_static").mkdir()
-    shutil.copyfile(PROJECT_CONFIG.doc / "conf.py", test_doc / "conf.py")
+    shutil.copyfile(PROJECT_CONFIG.documentation_path / "conf.py", test_doc / "conf.py")
     rst_index = test_doc / "index.rst"
     rst_file1 = test_doc / "file.rst"
     rst_index.touch()
