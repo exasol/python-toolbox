@@ -88,5 +88,5 @@ class TestCheckForConfigAttribute:
             check_for_config_attribute(PreviousConfig(), attribute=attribute)
 
     @pytest.mark.parametrize("attribute", MIGRATED_VALUES)
-    def test_current_implementation_passes(self, attribute):
-        check_for_config_attribute(BaseConfig(), attribute=attribute)
+    def test_current_implementation_passes(self, test_project_config, attribute):
+        check_for_config_attribute(test_project_config, attribute=attribute)
