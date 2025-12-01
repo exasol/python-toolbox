@@ -45,16 +45,16 @@ SECURITY_JSON_ATTRIBUTES = {"errors", "generated_at", "metrics", "results"}
 @nox.session(name="artifacts:validate", python=False)
 def check_artifacts(session: Session) -> None:
     """Validate that all project artifacts are available and consistent"""
-    all_files = {f.name for f in PROJECT_CONFIG.root.iterdir() if f.is_file()}
+    all_files = {f.name for f in PROJECT_CONFIG.root_path.iterdir() if f.is_file()}
     if missing_files := (ALL_LINT_FILES - all_files):
         print(f"files not available: {missing_files}", file=sys.stderr)
         sys.exit(1)
 
     all_is_valid_checks = [
-        _is_valid_lint_txt(Path(PROJECT_CONFIG.root, LINT_TXT)),
-        _is_valid_lint_json(Path(PROJECT_CONFIG.root, LINT_JSON)),
-        _is_valid_security_json(Path(PROJECT_CONFIG.root, SECURITY_JSON)),
-        _is_valid_coverage(Path(PROJECT_CONFIG.root, COVERAGE_DB)),
+        _is_valid_lint_txt(Path(PROJECT_CONFIG.root_path, LINT_TXT)),
+        _is_valid_lint_json(Path(PROJECT_CONFIG.root_path, LINT_JSON)),
+        _is_valid_security_json(Path(PROJECT_CONFIG.root_path, SECURITY_JSON)),
+        _is_valid_coverage(Path(PROJECT_CONFIG.root_path, COVERAGE_DB)),
     ]
     if not all(all_is_valid_checks):
         sys.exit(1)

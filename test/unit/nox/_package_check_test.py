@@ -24,12 +24,14 @@ class TestDistributionCheck:
         package_readme = package / "README.rst"
 
         # copy over `packages` and `include` from `pyproject.toml` to for `poetry build`
-        shutil.copytree(PROJECT_CONFIG.root / "exasol", package / "exasol")
-        shutil.copyfile(PROJECT_CONFIG.root / "README.rst", package_readme)
-        shutil.copytree(PROJECT_CONFIG.root / "doc/changes", package / "doc/changes")
-        shutil.copyfile(PROJECT_CONFIG.root / "LICENSE", package / "LICENSE")
+        shutil.copytree(PROJECT_CONFIG.root_path / "exasol", package / "exasol")
+        shutil.copyfile(PROJECT_CONFIG.root_path / "README.rst", package_readme)
+        shutil.copytree(
+            PROJECT_CONFIG.root_path / "doc/changes", package / "doc/changes"
+        )
+        shutil.copyfile(PROJECT_CONFIG.root_path / "LICENSE", package / "LICENSE")
         shutil.copyfile(
-            PROJECT_CONFIG.root / "pyproject.toml", package / "pyproject.toml"
+            PROJECT_CONFIG.root_path / "pyproject.toml", package / "pyproject.toml"
         )
 
         # create an error in readme.rst

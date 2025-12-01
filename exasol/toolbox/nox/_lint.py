@@ -16,8 +16,8 @@ from noxconfig import PROJECT_CONFIG
 
 
 def _pylint(session: Session, files: Iterable[str]) -> None:
-    json_file = PROJECT_CONFIG.root / ".lint.json"
-    txt_file = PROJECT_CONFIG.root / ".lint.txt"
+    json_file = PROJECT_CONFIG.root_path / ".lint.json"
+    txt_file = PROJECT_CONFIG.root_path / ".lint.txt"
 
     session.run(
         "pylint",
@@ -50,7 +50,7 @@ def _security_lint(session: Session, files: Iterable[str]) -> None:
         "--format",
         "json",
         "--output",
-        PROJECT_CONFIG.root / ".security.json",
+        PROJECT_CONFIG.root_path / ".security.json",
         "--exit-zero",
         *files,
     )
@@ -130,7 +130,7 @@ def lint(session: Session) -> None:
 @nox.session(name="lint:typing", python=False)
 def type_check(session: Session) -> None:
     """Runs the type checker on the project"""
-    py_files = get_filtered_python_files(PROJECT_CONFIG.root)
+    py_files = get_filtered_python_files(PROJECT_CONFIG.root_path)
     _type_check(session=session, files=py_files)
 
 
@@ -144,7 +144,7 @@ def security_lint(session: Session) -> None:
 @nox.session(name="lint:dependencies", python=False)
 def dependency_check(session: Session) -> None:
     """Checks if only valid sources of dependencies are used"""
-    content = Path(PROJECT_CONFIG.root, PoetryFiles.pyproject_toml).read_text()
+    content = Path(PROJECT_CONFIG.root_path, PoetryFiles.pyproject_toml).read_text()
     dependencies = Dependencies.parse(content)
     console = rich.console.Console()
     if illegal := dependencies.illegal:

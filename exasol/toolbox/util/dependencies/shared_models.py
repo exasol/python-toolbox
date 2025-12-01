@@ -66,7 +66,7 @@ class PoetryFiles:
 def poetry_files_from_latest_tag() -> Generator[Path]:
     """Context manager to set up a temporary directory with poetry files from the latest tag"""
     latest_tag = Git.get_latest_tag()
-    path = PROJECT_CONFIG.root.relative_to(Git.toplevel())
+    path = PROJECT_CONFIG.root_path.relative_to(Git.toplevel())
     with tempfile.TemporaryDirectory() as tmpdir_str:
         tmp_dir = Path(tmpdir_str)
         for file in PoetryFiles().files:

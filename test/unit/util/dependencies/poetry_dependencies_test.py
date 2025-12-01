@@ -134,7 +134,7 @@ class TestPoetryDependencies:
 
 
 def test_get_dependencies():
-    result = get_dependencies(PROJECT_CONFIG.root)
+    result = get_dependencies(PROJECT_CONFIG.root_path)
 
     # if successful, no errors & should be non-empty dictionary
     assert isinstance(result, dict)

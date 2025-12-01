@@ -74,7 +74,7 @@ For example, if test execution isn't performed in the standard way (e.g., :code:
         # within the function to keep them isolated and simplify future removal or replacement.
         from exasol.toolbox.nox._shared import get_filtered_python_files
 
-        py_files = get_filtered_python_files(PROJECT_CONFIG.root)
+        py_files = get_filtered_python_files(PROJECT_CONFIG.root_path)
         print("The original 'format:fix' task has been taken hostage by this overwrite")
         print("Files:\n{files}".format(files="\n".join(py_files))
 

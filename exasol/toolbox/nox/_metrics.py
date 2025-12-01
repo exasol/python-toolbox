@@ -23,7 +23,7 @@ class RequiredFile:
     """
 
     def __init__(self, file: Path | str, task: str):
-        self.file = file if isinstance(file, Path) else PROJECT_CONFIG.root / file
+        self.file = file if isinstance(file, Path) else PROJECT_CONFIG.root_path / file
         self.task = task
 
     def __str__(self) -> str:

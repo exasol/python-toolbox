@@ -18,7 +18,7 @@ def new_project(cwd):
     package_name = "package"
 
     subprocess.run(
-        ["cookiecutter", PROJECT_CONFIG.root / "project-template", "-o", cwd, "--no-input",
+        ["cookiecutter", PROJECT_CONFIG.root_path / "project-template", "-o", cwd, "--no-input",
          f"project_name={project_name}", f"repo_name={repo_name}",
          f"package_name={package_name}",
          ], capture_output=True, check=True)
@@ -32,8 +32,9 @@ def poetry_install(run_command, poetry_path):
     # The tests want to verify the current branch of the PTB incl. its cookiecutter
     # template before releasing the PTB. The following command therefore modifies the
     # dependency to the PTB itself in the pyproject.toml file by replacing the latest
-    # released PTB version with the current checked-out branch in PROJECT_CONFIG.root:
-    run_command([poetry_path, "add", "--group", "dev", PROJECT_CONFIG.root])
+    # released PTB version with the current checked-out branch in
+    # PROJECT_CONFIG.root_path:
+    run_command([poetry_path, "add", "--group", "dev", PROJECT_CONFIG.root_path])
 
 
 @pytest.fixture(scope="session")

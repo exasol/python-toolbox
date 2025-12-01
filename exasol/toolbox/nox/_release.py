@@ -128,7 +128,7 @@ def prepare_release(session: Session) -> None:
 
     changelogs = Changelogs(
         changes_path=PROJECT_CONFIG.doc / "changes",
-        root_path=PROJECT_CONFIG.root,
+        root_path=PROJECT_CONFIG.root_path,
         version=new_version,
     )
     changelogs.update_changelogs_for_release()
@@ -143,7 +143,7 @@ def prepare_release(session: Session) -> None:
         return
 
     changed_files += [
-        PROJECT_CONFIG.root / PoetryFiles.pyproject_toml,
+        PROJECT_CONFIG.root_path / PoetryFiles.pyproject_toml,
         PROJECT_CONFIG.version_file,
     ]
     results = pm.hook.prepare_release_add_files(session=session, config=PROJECT_CONFIG)

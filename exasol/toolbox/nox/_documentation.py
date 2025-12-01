@@ -51,7 +51,7 @@ def _git_diff_changes_main() -> int:
             "--quiet",
             "origin/main",
             "--",
-            PROJECT_CONFIG.root / "doc/changes",
+            PROJECT_CONFIG.documentation_path / "changes",
         ],
         capture_output=True,
     )
@@ -73,7 +73,7 @@ def build_docs(session: Session) -> None:
 @nox.session(name="docs:open", python=False)
 def open_docs(session: Session) -> None:
     """Opens the built project documentation"""
-    docs_folder = PROJECT_CONFIG.root / DOCS_OUTPUT_DIR
+    docs_folder = PROJECT_CONFIG.root_path / DOCS_OUTPUT_DIR
     if not docs_folder.exists():
         session.error(f"No documentation could be found. {docs_folder} is missing")
     index = docs_folder / "index.html"
@@ -83,7 +83,7 @@ def open_docs(session: Session) -> None:
 @nox.session(name="docs:clean", python=False)
 def clean_docs(_session: Session) -> None:
     """Removes the documentations build folder"""
-    docs_folder = PROJECT_CONFIG.root / DOCS_OUTPUT_DIR
+    docs_folder = PROJECT_CONFIG.root_path / DOCS_OUTPUT_DIR
     if docs_folder.exists():
         shutil.rmtree(docs_folder)
 
@@ -146,7 +146,7 @@ def _docs_links_check(doc_config: Path, args):
 @nox.session(name="links:list", python=False)
 def docs_list_links(session: Session) -> None:
     """List all the links within the documentation."""
-    r_code, text = _docs_list_links(PROJECT_CONFIG.doc)
+    r_code, text = _docs_list_links(PROJECT_CONFIG.documentation_path)
     print(text)
     if r_code != 0:
         session.error()
@@ -164,7 +164,7 @@ def docs_links_check(session: Session) -> None:
         "-o", "--output", type=Path, help="path to copy the output json", default=None
     )
     args = parser.parse_args(session.posargs)
-    r_code, problems = _docs_links_check(PROJECT_CONFIG.doc, args)
+    r_code, problems = _docs_links_check(PROJECT_CONFIG.documentation_path, args)
     if r_code >= 2:
         session.error(2)
     if r_code == 1 or problems != "":
