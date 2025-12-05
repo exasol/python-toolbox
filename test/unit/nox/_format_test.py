@@ -12,26 +12,33 @@ from exasol.toolbox.nox._format import (
     fix_format,
 )
 from exasol.toolbox.nox._shared import Mode
-from noxconfig import Config
 
 
 @pytest.fixture
-def file_with_unneeded_import(tmp_path):
-    file_path = tmp_path / "dummy_file.py"
+def config(test_project_config_factory):
+    return test_project_config_factory()
+
+
+@pytest.fixture
+def file_with_unneeded_import(config):
+    config.source_code_path.mkdir(parents=True, exist_ok=True)
+    file_path = config.source_code_path / "dummy_file.py"
     file_path.write_text("import black")
     return file_path
 
 
 @pytest.fixture
-def file_with_not_ordered_import(tmp_path):
-    file_path = tmp_path / "dummy_file.py"
+def file_with_not_ordered_import(config):
+    config.source_code_path.mkdir(parents=True, exist_ok=True)
+    file_path = config.source_code_path / "dummy_file.py"
     file_path.write_text("import isort\nimport black")
     return file_path
 
 
 @pytest.fixture
-def file_without_blank_line(tmp_path):
-    file_path = tmp_path / "dummy_file.py"
+def file_without_blank_line(config):
+    config.source_code_path.mkdir(parents=True, exist_ok=True)
+    file_path = config.source_code_path / "dummy_file.py"
     file_path.write_text("import black\nimport isort")
     return file_path
 
@@ -86,10 +93,11 @@ class TestCodeFormat:
         assert file_without_blank_line.read_text() == "import black\nimport isort"
 
 
-def test_pyupgrade(nox_session, tmp_path):
-    file_path = tmp_path / "dummy_file.py"
+def test_pyupgrade(nox_session, config):
+    config.source_code_path.mkdir(parents=True, exist_ok=True)
+    file_path = config.source_code_path / "dummy_file.py"
     file_path.write_text("from typing import Union\nx:Union[int, str]=2")
-    _pyupgrade(session=nox_session, config=Config(), files=[str(file_path)])
+    _pyupgrade(session=nox_session, config=config, files=[str(file_path)])
     assert file_path.read_text() == "from typing import Union\nx:int | str=2"
 
 
@@ -148,11 +156,9 @@ def file_with_multiple_problems(tmp_path):
     return file_path
 
 
-def test_fix_format(nox_session, tmp_path, file_with_multiple_problems):
-    with patch("exasol.toolbox.nox._format.PROJECT_CONFIG") as config:
+def test_fix_format(nox_session, config, file_with_multiple_problems):
+    with patch("exasol.toolbox.nox._format.PROJECT_CONFIG", new=config):
         with patch("exasol.toolbox.nox._format._version") as version:
-            config.root = tmp_path
-            config.pyupgrade_argument = ("--py310-plus",)
             # Simulate version is up-to-date, as version check is out of the scope of the test case
             version.return_value = True
             fix_format(nox_session)
@@ -171,13 +177,10 @@ def test_fix_format(nox_session, tmp_path, file_with_multiple_problems):
     )
 
 
-def test_check_format(
-    nox_session, tmp_path, file_with_multiple_problems, caplog, capsys
-):
+def test_check_format(nox_session, config, file_with_multiple_problems, caplog, capsys):
     expected_text = file_with_multiple_problems.read_text()
 
-    with patch("exasol.toolbox.nox._format.PROJECT_CONFIG") as config:
-        config.root = tmp_path
+    with patch("exasol.toolbox.nox._format.PROJECT_CONFIG", new=config):
         with pytest.raises(CommandFailed):
             check_format(nox_session)
 

@@ -15,13 +15,16 @@ ALTERNATE_VERSION = Version(major=0, minor=2, patch=0)
 
 
 @pytest.fixture
-def config(version_file) -> Config:
-    return Config(version_file=version_file)
+def config(test_project_config_factory) -> Config:
+    config = test_project_config_factory()
+    # We need to set up the directory path so that version_file can execute
+    config.source_code_path.mkdir(parents=True, exist_ok=True)
+    return config
 
 
 @pytest.fixture
-def version_file(tmp_path):
-    version_file = tmp_path / "version.py"
+def version_file(config):
+    version_file = config.version_filepath
     write_version_module(version=DEFAULT_VERSION, version_file=version_file)
     return version_file
 
@@ -38,7 +41,7 @@ def test_write_version_module(version_file) -> None:
 class TestVersionCheck:
     @staticmethod
     @mock.patch.object(Version, "from_poetry", return_value=DEFAULT_VERSION)
-    def test_same_value_is_successful(from_poetry, config):
+    def test_same_value_is_successful(from_poetry, config, version_file):
         Version(major=0, minor=1, patch=0)
         parser = _create_parser()
         args = parser.parse_args([])
@@ -48,7 +51,7 @@ class TestVersionCheck:
 
     @staticmethod
     @mock.patch.object(Version, "from_poetry", return_value=ALTERNATE_VERSION)
-    def test_different_value_is_failure(from_poetry, config):
+    def test_different_value_is_failure(from_poetry, config, version_file):
         Version(major=0, minor=1, patch=0)
         parser = _create_parser()
         args = parser.parse_args([])

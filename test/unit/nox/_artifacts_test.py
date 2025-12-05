@@ -36,14 +36,14 @@ from exasol.toolbox.nox._artifacts import (
     check_artifacts,
     copy_artifacts,
 )
+from noxconfig import Config
 
 
 @contextlib.contextmanager
 def mock_check_artifacts_session(
-    path: Path,
+    config: Config,
 ):
-    with patch("exasol.toolbox.nox._artifacts.PROJECT_CONFIG") as config:
-        config.root = path
+    with patch("exasol.toolbox.nox._artifacts.PROJECT_CONFIG", new=config):
         yield Mock()
 
 
@@ -92,10 +92,18 @@ class TestCheckArtifacts:
     )
     @mock.patch("exasol.toolbox.nox._artifacts._is_valid_coverage", return_value=True)
     def test_passes_when_as_expected(
-        self, mock_coverage, mock_security, mock_lint_json, mock_lint_txt, tmp_path
+        self,
+        mock_coverage,
+        mock_security,
+        mock_lint_json,
+        mock_lint_txt,
+        test_project_config_factory,
+        tmp_path,
     ):
         self._create_artifact_files(tmp_path, ALL_LINT_FILES)
-        with mock_check_artifacts_session(tmp_path) as session:
+        with mock_check_artifacts_session(
+            config=test_project_config_factory()
+        ) as session:
             check_artifacts(session)
 
     @pytest.mark.parametrize(
@@ -105,18 +113,26 @@ class TestCheckArtifacts:
             (pytest.param(ALL_LINT_FILES, id="all_files_missing")),
         ],
     )
-    def test_fails_when_file_missing(self, tmp_path, missing_files, capsys):
+    def test_fails_when_file_missing(
+        self, test_project_config_factory, tmp_path, missing_files, capsys
+    ):
         existing_files = ALL_LINT_FILES - missing_files
         self._create_artifact_files(tmp_path, existing_files)
 
-        with mock_check_artifacts_session(tmp_path) as session:
+        with mock_check_artifacts_session(
+            config=test_project_config_factory()
+        ) as session:
             with pytest.raises(SystemExit):
                 check_artifacts(session)
         assert f"files not available: {missing_files}" in capsys.readouterr().err
 
-    def test_fails_when_check_fails(self, tmp_path, capsys):
+    def test_fails_when_check_fails(
+        self, test_project_config_factory, tmp_path, capsys
+    ):
         self._create_artifact_files(tmp_path, ALL_LINT_FILES)
-        with mock_check_artifacts_session(tmp_path) as session:
+        with mock_check_artifacts_session(
+            config=test_project_config_factory()
+        ) as session:
             with pytest.raises(SystemExit):
                 check_artifacts(session)
         assert "error in [" in capsys.readouterr().err

@@ -1,9 +1,15 @@
-from pathlib import Path
-
 import pytest
 from toolbox.config import BaseConfig
 
 
 @pytest.fixture
-def test_project_config():
-    return BaseConfig(root_path=Path("."), project_name="test")
+def test_project_config_factory(tmp_path):
+    def _test_project_config(**kwargs) -> BaseConfig:
+        defaults = {
+            "root_path": tmp_path,
+            "project_name": "test",
+        }
+        config = {**defaults, **kwargs}
+        return BaseConfig(**config)
+
+    return _test_project_config

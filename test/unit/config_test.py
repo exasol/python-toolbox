@@ -10,8 +10,8 @@ from exasol.toolbox.config import (
 
 class TestBaseConfig:
     @staticmethod
-    def test_works_as_defined():
-        BaseConfig()
+    def test_works_as_defined(test_project_config_factory):
+        test_project_config_factory()
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -58,14 +58,16 @@ def test_expansion_validation_fails_for_invalid_version():
         BaseConfigExpansion(python_versions=("1.f.0",))
 
 
-def test_minimum_python_version():
-    conf = BaseConfig(python_versions=("5.5.5", "1.10", "9.9.9"))
+def test_minimum_python_version(test_project_config_factory):
+    conf = test_project_config_factory(python_versions=("5.5.5", "1.10", "9.9.9"))
     assert conf.minimum_python_version == "1.10"
 
 
 @pytest.mark.parametrize("minimum_python_version", ["3.10", "3.10.5"])
-def test_pyupgrade_argument(minimum_python_version):
-    conf = BaseConfig(python_versions=("3.11", minimum_python_version, "3.12"))
+def test_pyupgrade_argument(test_project_config_factory, minimum_python_version):
+    conf = test_project_config_factory(
+        python_versions=("3.11", minimum_python_version, "3.12")
+    )
     assert conf.pyupgrade_argument == ("--py310-plus",)
 
 
@@ -83,6 +85,10 @@ def test_pyupgrade_argument(minimum_python_version):
         ),
     ],
 )
-def test_excluded_python_paths(add_to_excluded_python_paths, expected):
-    conf = BaseConfig(add_to_excluded_python_paths=add_to_excluded_python_paths)
+def test_excluded_python_paths(
+    test_project_config_factory, add_to_excluded_python_paths, expected
+):
+    conf = test_project_config_factory(
+        add_to_excluded_python_paths=add_to_excluded_python_paths
+    )
     assert sorted(conf.excluded_python_paths) == sorted(expected)
