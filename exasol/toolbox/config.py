@@ -128,6 +128,14 @@ class BaseConfig(BaseModel):
 
     @computed_field  # type: ignore[misc]
     @property
+    def sonar_code_path(self) -> Path:
+        """
+        Relative path needed in nox session `sonar:check` to create the coverage XML
+        """
+        return self.source_code_path.relative_to(self.root_path)
+
+    @computed_field  # type: ignore[misc]
+    @property
     def source_code_path(self) -> Path:
         """
         Path to the source code of the project.

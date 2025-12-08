@@ -207,7 +207,10 @@ def _prepare_coverage_xml(
         COVERAGE_XML,
         "--include",
         f"{source}/*",
-        "--fail-under=0",
+        "--fail-under",
+        "0",
+        "--data-file",
+        ".coverage",
     ]
     output = subprocess.run(command, capture_output=True, text=True, cwd=cwd)  # nosec
     if output.returncode != 0:
@@ -247,5 +250,5 @@ def _upload_to_sonar(session: Session, sonar_token: str | None, config: Config) 
 def upload_artifacts_to_sonar(session: Session) -> None:
     """Upload artifacts to sonar for analysis"""
     sonar_token = os.getenv("SONAR_TOKEN")
-    _prepare_coverage_xml(session, PROJECT_CONFIG.source_code_path)
+    _prepare_coverage_xml(session, PROJECT_CONFIG.sonar_code_path)
     _upload_to_sonar(session, sonar_token, PROJECT_CONFIG)
