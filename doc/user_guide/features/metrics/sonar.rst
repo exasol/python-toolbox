@@ -44,10 +44,7 @@ In Sonar
 
 In the code
 """""""""""
-#. Specify in the ``noxconfig.py`` the relative path to the project's source code in ``Config.source``
-    .. code-block:: python
-
-        source: Path = Path("exasol/<source-directory>")
+#. In the ``noxconfig.py``, the relative path to the project's source code is defined with ``Config.source_code_path``.
 #. Add the following to the project's file ``pyproject.toml``
     .. code-block:: toml
 
@@ -55,7 +52,7 @@ In the code
         projectKey = "<sonar-project-key>"
         host.url = "https://sonarcloud.io"
         organization = "exasol"
-        exclusions = "<source-directory>/version.py,<source_directory>/<directory-to-ignore>/*"
+        exclusions = "<source_code_directory>/version.py,<source_code_directory>/<directory-to-ignore>/*"
 
 .. note::
     For more information, see the :ref:`General remarks <configuration_general_remarks>` section.
