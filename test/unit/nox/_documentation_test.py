@@ -9,6 +9,7 @@ from nox.sessions import _SessionQuit
 
 from exasol.toolbox.nox._documentation import (
     _docs_links_check,
+    docs_links_check,
     docs_list_links,
 )
 from noxconfig import PROJECT_CONFIG
@@ -27,7 +28,7 @@ def index(config):
        :maxdepth: 1
        :hidden:
 
-       file
+       dummy
    """
     index_rst.write_text(text)
 
@@ -102,3 +103,23 @@ def test_docs_links_check(config, index, file_content, expected_code, expected_m
 
     assert code == expected_code
     assert expected_message in message
+
+
+class TestDocsLinksCheck:
+    @staticmethod
+    def test_works_as_expected_for_good_link(nox_session, config):
+        with patch("exasol.toolbox.nox._documentation.PROJECT_CONFIG", new=config):
+            with patch("exasol.toolbox.nox._documentation._docs_links_check") as mock:
+                mock.return_value = (0, "")
+                docs_links_check(nox_session)
+
+    @staticmethod
+    def test_raises_exception_for_problem_returned(nox_session, config, capsys):
+        with patch("exasol.toolbox.nox._documentation.PROJECT_CONFIG", new=config):
+            with patch("exasol.toolbox.nox._documentation._docs_links_check") as mock:
+                mock.return_value = (0, "[broken] ....")
+
+                with pytest.raises(_SessionQuit):
+                    docs_links_check(nox_session)
+
+        assert capsys.readouterr().out == "\x1b[31merrors:\n[broken] ....\n"
