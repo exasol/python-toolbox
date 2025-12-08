@@ -62,13 +62,6 @@ def _integration_tests(
     pm.hook.post_integration_tests_hook(session=session, config=config, context=context)
 
 
-def _pass(
-    _session: Session, _config: Config, _context: MutableMapping[str, Any]
-) -> bool:
-    """No operation"""
-    return True
-
-
 def _coverage(
     session: Session, config: Config, context: MutableMapping[str, Any]
 ) -> None:
