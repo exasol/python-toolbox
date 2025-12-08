@@ -25,7 +25,7 @@ def _build_docs(session: nox.Session, config: Config) -> None:
         "-W",
         "-b",
         "html",
-        f"{config.doc}",
+        f"{config.documentation_path}",
         DOCS_OUTPUT_DIR,
     )
 
@@ -33,7 +33,7 @@ def _build_docs(session: nox.Session, config: Config) -> None:
 def _build_multiversion_docs(session: nox.Session, config: Config) -> None:
     session.run(
         "sphinx-multiversion",
-        f"{config.doc}",
+        f"{config.documentation_path}",
         DOCS_OUTPUT_DIR,
     )
     session.run("touch", f"{DOCS_OUTPUT_DIR}/.nojekyll")
