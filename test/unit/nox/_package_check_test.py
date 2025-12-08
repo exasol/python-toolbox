@@ -19,7 +19,9 @@ class TestDistributionCheck:
         package_check(nox_session)
 
     @staticmethod
-    def test_raises_non_zero_exist_with_readme_error(nox_session, tmp_path):
+    def test_raises_non_zero_exist_with_readme_error(
+        nox_session, test_project_config_factory, tmp_path
+    ):
         package = Path(tmp_path)
         package_readme = package / "README.rst"
 
@@ -40,8 +42,10 @@ class TestDistributionCheck:
 
         # use of the folder with errors in the nox -s package:check function
         with pytest.raises(CommandFailed) as e:
-            with patch("exasol.toolbox.nox._package.PROJECT_CONFIG") as config:
-                config.root = package
+            with patch(
+                "exasol.toolbox.nox._package.PROJECT_CONFIG",
+                new=test_project_config_factory(),
+            ):
                 package_check(nox_session)
         # verify broken with non-zero exit status
         assert str(e.value) == "Returned code 1"

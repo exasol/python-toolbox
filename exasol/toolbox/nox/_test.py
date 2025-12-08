@@ -22,7 +22,13 @@ def _test_command(
     path: Path, config: Config, context: MutableMapping[str, Any]
 ) -> Iterable[str]:
     coverage_command = (
-        ["coverage", "run", "-a", f"--rcfile={config.root / 'pyproject.toml'}", "-m"]
+        [
+            "coverage",
+            "run",
+            "-a",
+            f"--rcfile={config.root_path / 'pyproject.toml'}",
+            "-m",
+        ]
         if context["coverage"]
         else []
     )
@@ -33,7 +39,7 @@ def _test_command(
 def _unit_tests(
     session: Session, config: Config, context: MutableMapping[str, Any]
 ) -> None:
-    command = _test_command(config.root / "test" / "unit", config, context)
+    command = _test_command(config.root_path / "test" / "unit", config, context)
     session.run(*command)
 
 
@@ -49,7 +55,7 @@ def _integration_tests(
     # - Catch exceptions and ensure post-hooks run before exiting
     # - Consider making the executed command(s) configurable via a plugin hook
     #   (The default implementation of the hook could provide the current implementation)
-    command = _test_command(config.root / "test" / "integration", config, context)
+    command = _test_command(config.root_path / "test" / "integration", config, context)
     session.run(*command)
 
     # run post integration test plugins
@@ -67,7 +73,7 @@ def _coverage(
     session: Session, config: Config, context: MutableMapping[str, Any]
 ) -> None:
     command = ["coverage", "report", "-m"]
-    coverage_file = config.root / ".coverage"
+    coverage_file = config.root_path / ".coverage"
     coverage_file.unlink(missing_ok=True)
     _unit_tests(session, config, context)
     _integration_tests(session, config, context)
