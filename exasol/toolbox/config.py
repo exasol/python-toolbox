@@ -110,7 +110,7 @@ class BaseConfig(BaseModel):
         this property is used to exclude such undesired paths.
         """
         return tuple(
-            DEFAULT_EXCLUDED_PATHS.union(set(self.add_to_excluded_python_paths))
+            sorted(DEFAULT_EXCLUDED_PATHS.union(set(self.add_to_excluded_python_paths)))
         )
 
     @computed_field  # type: ignore[misc]

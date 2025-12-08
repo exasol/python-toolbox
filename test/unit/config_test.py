@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
@@ -11,7 +13,32 @@ from exasol.toolbox.config import (
 class TestBaseConfig:
     @staticmethod
     def test_works_as_defined(test_project_config_factory):
-        test_project_config_factory()
+        config = test_project_config_factory()
+
+        root_path = config.root_path
+        assert config.model_dump() == {
+            "add_to_excluded_python_paths": (),
+            "create_major_version_tags": False,
+            "documentation_path": root_path / "doc",
+            "exasol_versions": ("7.1.30", "8.29.6", "2025.1.0"),
+            "excluded_python_paths": (
+                ".eggs",
+                ".html-documentation",
+                ".poetry",
+                ".sonar",
+                ".venv",
+                "dist",
+                "venv",
+            ),
+            "minimum_python_version": "3.10",
+            "project_name": "test",
+            "python_versions": ("3.10", "3.11", "3.12", "3.13", "3.14"),
+            "pyupgrade_argument": ("--py310-plus",),
+            "root_path": root_path,
+            "sonar_code_path": Path("exasol/test"),
+            "source_code_path": root_path / "exasol" / "test",
+            "version_filepath": root_path / "exasol" / "test" / "version.py",
+        }
 
     @staticmethod
     @pytest.mark.parametrize(
