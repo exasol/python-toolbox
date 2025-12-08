@@ -1,5 +1,6 @@
 import pytest
-from toolbox.config import BaseConfig
+
+from exasol.toolbox.config import BaseConfig
 
 
 @pytest.fixture
