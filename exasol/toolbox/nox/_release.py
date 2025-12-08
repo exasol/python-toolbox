@@ -144,7 +144,7 @@ def prepare_release(session: Session) -> None:
 
     changed_files += [
         PROJECT_CONFIG.root_path / PoetryFiles.pyproject_toml,
-        PROJECT_CONFIG.version_file,
+        PROJECT_CONFIG.version_filepath,
     ]
     results = pm.hook.prepare_release_add_files(session=session, config=PROJECT_CONFIG)
     changed_files += [f for plugin_response in results for f in plugin_response]
