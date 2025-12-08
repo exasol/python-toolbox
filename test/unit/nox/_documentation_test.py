@@ -1,13 +1,15 @@
 import shutil
 from unittest.mock import (
     MagicMock,
+    patch,
 )
 
 import pytest
+from nox.sessions import _SessionQuit
 
 from exasol.toolbox.nox._documentation import (
     _docs_links_check,
-    _docs_list_links,
+    docs_list_links,
 )
 from noxconfig import PROJECT_CONFIG
 
@@ -48,11 +50,24 @@ def set_up_doc_with_link(config, index):
     dummy_rst.write_text("https://examle.invalid\n:ref:`Test`")
 
 
-def test_docs_links(config, set_up_doc_with_link):
-    r_code, text = _docs_list_links(config.documentation_path)
+class TestDocsListLinks:
+    @staticmethod
+    def test_works_as_expected(nox_session, config, set_up_doc_with_link, capsys):
+        with patch("exasol.toolbox.nox._documentation.PROJECT_CONFIG", new=config):
+            docs_list_links(nox_session)
+        assert (
+            capsys.readouterr().out
+            == "filename: dummy.rst:1 -> uri: https://examle.invalid\n"
+        )
 
-    assert not r_code
-    assert text == """filename: dummy.rst:1 -> uri: https://examle.invalid"""
+    @staticmethod
+    def test_raises_error_for_rcode_not_0(nox_session, config):
+        with patch("exasol.toolbox.nox._documentation.PROJECT_CONFIG", new=config):
+            with patch("exasol.toolbox.nox._documentation._docs_list_links") as mock:
+                mock.return_value = (1, "dummy_text")
+
+                with pytest.raises(_SessionQuit):
+                    docs_list_links(nox_session)
 
 
 @pytest.mark.parametrize(
