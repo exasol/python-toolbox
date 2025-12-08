@@ -236,7 +236,7 @@ def _upload_to_sonar(session: Session, sonar_token: str | None, config: Config) 
         "--sonar-python-version",
         ",".join(config.python_versions),
         "--sonar-sources",
-        config.source,
+        config.source_code_path,
     ]
     if Path(COVERAGE_XML).exists():
         command.extend(["--sonar-python-coverage-report-paths", COVERAGE_XML])
