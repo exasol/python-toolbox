@@ -10,3 +10,9 @@ and replaces them with `format:fix` and `format:check`.
 ## Feature
 
 * #614: Replaced `path_filters` with `BaseConfig.add_to_excluded_python_paths` and `BaseConfig.excluded_python_paths`
+* #621: Moved path specifications into `BaseConfig`
+  * `root` is now `root_path`, which must be specified by the project
+  * `source` is now covered by `project_name`, which must be specified by the project,
+     and `source_code_path`, which uses `root_path` and `project_name`
+  * `doc` is now `documentation_path` and no longer needs to be specified
+  * `version_file` is now `version_filepath` and no longer needs to be specified
