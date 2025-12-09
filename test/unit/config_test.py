@@ -121,7 +121,7 @@ class TestPlugins:
         with pytest.raises(ValidationError) as ex:
             BaseConfig(plugins_for_nox_sessions=(WithNotSpecifiedHook,))
         assert "1 method(s) were decorated with `@hookimpl`, but" in str(ex.value)
-        assert "['not_specified_anywhere']" in str(ex.value)
+        assert "('not_specified_anywhere',)" in str(ex.value)
 
     @staticmethod
     def test_raises_exception_without_hook():
