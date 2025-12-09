@@ -20,7 +20,7 @@ class TestBaseConfig:
             "add_to_excluded_python_paths": (),
             "create_major_version_tags": False,
             "documentation_path": root_path / "doc",
-            "exasol_versions": ("7.1.30", "8.29.6", "2025.1.0"),
+            "exasol_versions": ("7.1.30", "8.29.13", "2025.1.8"),
             "excluded_python_paths": (
                 ".eggs",
                 ".html-documentation",
