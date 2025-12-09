@@ -113,7 +113,7 @@ class BaseConfig(BaseModel):
     )
 
     exasol_versions: tuple[ValidVersionStr, ...] = Field(
-        default=("7.1.30", "8.29.6", "2025.1.0"),
+        default=("7.1.30", "8.29.13", "2025.1.8"),
         description="Exasol versions to use in running CI workflows for integration tests using the DB",
     )
     create_major_version_tags: bool = Field(
