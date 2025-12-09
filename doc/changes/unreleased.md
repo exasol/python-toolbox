@@ -42,15 +42,14 @@ With this major release, you **should modify** your project's `noxconfig.py` to 
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Iterable
 
 from exasol.toolbox.config import BaseConfig
 
-
-class Config(BaseConfig):
-    plugins: Iterable[object] = ()
-
 """
+A class `Config` only needs to be defined if:
+- you have custom attributes to pass to your project-defined nox sessions
+- you need to override a convention in the PTB.
+
 These values do NOT need to be defined if your project follows the convention
 expected from the PTB:
 - documentation_path
@@ -66,8 +65,11 @@ If you have additional Paths that used one of these values (i.e. `root_path`), t
 you can define your own property in `class Config(BaseConfig)`, which accesses the
 class values
 """
+class Config(BaseConfig):
+    custom_field: str = "custom_field"
 
-PROJECT_CONFIG = Config(
+# For most projects, the PROJECT_CONFIG would look like:
+PROJECT_CONFIG = BaseConfig(
     project_name="{{cookiecutter.package_name}}",
     root_path=Path(__file__).parent,
 )
