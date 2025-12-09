@@ -142,22 +142,26 @@ class WithoutHook:
 
 class TestPlugins:
     @staticmethod
-    def test_works_when_empty():
-        BaseConfig(plugins_for_nox_sessions=())
+    def test_works_when_empty(test_project_config_factory):
+        test_project_config_factory(plugins_for_nox_sessions=())
 
     @staticmethod
-    def test_works_for_hook(capsys):
-        BaseConfig(plugins_for_nox_sessions=(WithHook,))
+    def test_works_for_hook(test_project_config_factory, capsys):
+        test_project_config_factory(plugins_for_nox_sessions=(WithHook,))
 
     @staticmethod
-    def test_raises_exception_method_with_hook_not_specified():
+    def test_raises_exception_method_with_hook_not_specified(
+        test_project_config_factory,
+    ):
         with pytest.raises(ValidationError) as ex:
-            BaseConfig(plugins_for_nox_sessions=(WithNotSpecifiedHook,))
+            test_project_config_factory(
+                plugins_for_nox_sessions=(WithNotSpecifiedHook,)
+            )
         assert "1 method(s) were decorated with `@hookimpl`, but" in str(ex.value)
         assert "('not_specified_anywhere',)" in str(ex.value)
 
     @staticmethod
-    def test_raises_exception_without_hook():
+    def test_raises_exception_without_hook(test_project_config_factory):
         with pytest.raises(ValidationError) as ex:
-            BaseConfig(plugins_for_nox_sessions=(WithoutHook,))
+            test_project_config_factory(plugins_for_nox_sessions=(WithoutHook,))
         assert "No methods in `WithoutHook`" in str(ex.value)
