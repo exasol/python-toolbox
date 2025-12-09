@@ -12,14 +12,14 @@ from pathlib import Path
 import nox
 from nox import Session
 
+from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._shared import DOCS_OUTPUT_DIR
 from noxconfig import (
     PROJECT_CONFIG,
-    Config,
 )
 
 
-def _build_docs(session: nox.Session, config: Config) -> None:
+def _build_docs(session: nox.Session, config: BaseConfig) -> None:
     session.run(
         "sphinx-build",
         "-W",
@@ -30,7 +30,7 @@ def _build_docs(session: nox.Session, config: Config) -> None:
     )
 
 
-def _build_multiversion_docs(session: nox.Session, config: Config) -> None:
+def _build_multiversion_docs(session: nox.Session, config: BaseConfig) -> None:
     session.run(
         "sphinx-multiversion",
         f"{config.documentation_path}",

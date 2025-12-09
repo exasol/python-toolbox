@@ -9,10 +9,10 @@ from pathlib import Path
 import nox
 from nox import Session
 
+from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.util.version import Version
 from noxconfig import (
     PROJECT_CONFIG,
-    Config,
 )
 
 _SUCCESS = 0
@@ -70,7 +70,7 @@ def _create_parser() -> ArgumentParser:
     return parser
 
 
-def _version_check(args: Namespace, config: Config) -> int:
+def _version_check(args: Namespace, config: BaseConfig) -> int:
     version_file = config.version_filepath
 
     module_version = Version.from_python_module(version_file)

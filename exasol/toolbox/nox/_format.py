@@ -5,6 +5,7 @@ from collections.abc import Iterable
 import nox
 from nox import Session
 
+from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._shared import (
     Mode,
     _version,
@@ -13,7 +14,6 @@ from exasol.toolbox.nox._shared import (
 )
 from noxconfig import (
     PROJECT_CONFIG,
-    Config,
 )
 
 
@@ -25,7 +25,7 @@ def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
     session.run(*command("black"), *files)
 
 
-def _pyupgrade(session: Session, config: Config, files: Iterable[str]) -> None:
+def _pyupgrade(session: Session, config: BaseConfig, files: Iterable[str]) -> None:
     check_for_config_attribute(config, "pyupgrade_argument")
     session.run(
         "pyupgrade",

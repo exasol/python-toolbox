@@ -33,6 +33,7 @@ class TestBaseConfig:
                 "venv",
             ),
             "minimum_python_version": "3.10",
+            "plugins_for_nox_sessions": (),
             "project_name": "test",
             "python_versions": ("3.10", "3.11", "3.12", "3.13", "3.14"),
             "pyupgrade_argument": ("--py310-plus",),

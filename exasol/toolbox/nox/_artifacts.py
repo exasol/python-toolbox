@@ -11,11 +11,9 @@ from pathlib import Path
 import nox
 from nox import Session
 
+from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._shared import check_for_config_attribute
-from noxconfig import (
-    PROJECT_CONFIG,
-    Config,
-)
+from noxconfig import PROJECT_CONFIG
 
 COVERAGE_DB = ".coverage"
 COVERAGE_XML = "ci-coverage.xml"
@@ -227,7 +225,9 @@ def _prepare_coverage_xml(
         session.error(output.returncode, output.stdout, output.stderr)
 
 
-def _upload_to_sonar(session: Session, sonar_token: str | None, config: Config) -> None:
+def _upload_to_sonar(
+    session: Session, sonar_token: str | None, config: BaseConfig
+) -> None:
     command = [
         "pysonar",
         "--sonar-token",

@@ -17,6 +17,7 @@ from nox.sessions import (
     _SessionQuit,
 )
 
+from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox import _artifacts
 from exasol.toolbox.nox._artifacts import (
     ALL_LINT_FILES,
@@ -36,13 +37,10 @@ from exasol.toolbox.nox._artifacts import (
     check_artifacts,
     copy_artifacts,
 )
-from noxconfig import Config
 
 
 @contextlib.contextmanager
-def mock_check_artifacts_session(
-    config: Config,
-):
+def mock_check_artifacts_session(config: BaseConfig):
     with patch("exasol.toolbox.nox._artifacts.PROJECT_CONFIG", new=config):
         yield Mock()
 

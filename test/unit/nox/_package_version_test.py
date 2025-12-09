@@ -2,20 +2,20 @@ from unittest import mock
 
 import pytest
 
+from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._package_version import (
     _create_parser,
     _version_check,
     write_version_module,
 )
 from exasol.toolbox.util.version import Version
-from noxconfig import Config
 
 DEFAULT_VERSION = Version(major=0, minor=1, patch=0)
 ALTERNATE_VERSION = Version(major=0, minor=2, patch=0)
 
 
 @pytest.fixture
-def config(test_project_config_factory) -> Config:
+def config(test_project_config_factory) -> BaseConfig:
     config = test_project_config_factory()
     # We need to set up the directory path so that version_file can execute
     config.source_code_path.mkdir(parents=True, exist_ok=True)

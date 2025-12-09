@@ -14,15 +14,15 @@ from typing import Any
 
 from nox import Session
 
+from exasol.toolbox.config import BaseConfig
 from noxconfig import (
     PROJECT_CONFIG,
-    Config,
 )
 
 DOCS_OUTPUT_DIR = ".html-documentation"
 
 
-def check_for_config_attribute(config: Config, attribute: str):
+def check_for_config_attribute(config: BaseConfig, attribute: str):
     if not hasattr(config, attribute):
         raise AttributeError(
             "in the noxconfig.py file, the class Config should inherit "

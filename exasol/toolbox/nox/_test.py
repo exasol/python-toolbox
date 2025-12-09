@@ -10,16 +10,16 @@ from typing import Any
 import nox
 from nox import Session
 
+from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._shared import _context
 from exasol.toolbox.nox.plugin import NoxTasks
 from noxconfig import (
     PROJECT_CONFIG,
-    Config,
 )
 
 
 def _test_command(
-    path: Path, config: Config, context: MutableMapping[str, Any]
+    path: Path, config: BaseConfig, context: MutableMapping[str, Any]
 ) -> Iterable[str]:
     coverage_command = (
         [
@@ -37,14 +37,14 @@ def _test_command(
 
 
 def _unit_tests(
-    session: Session, config: Config, context: MutableMapping[str, Any]
+    session: Session, config: BaseConfig, context: MutableMapping[str, Any]
 ) -> None:
     command = _test_command(config.root_path / "test" / "unit", config, context)
     session.run(*command)
 
 
 def _integration_tests(
-    session: Session, config: Config, context: MutableMapping[str, Any]
+    session: Session, config: BaseConfig, context: MutableMapping[str, Any]
 ) -> None:
     pm = NoxTasks.plugin_manager(config)
 
@@ -63,7 +63,7 @@ def _integration_tests(
 
 
 def _coverage(
-    session: Session, config: Config, context: MutableMapping[str, Any]
+    session: Session, config: BaseConfig, context: MutableMapping[str, Any]
 ) -> None:
     command = ["coverage", "report", "-m"]
     coverage_file = config.root_path / ".coverage"
