@@ -112,11 +112,13 @@ class NoxTasks:
 
         if not hasattr(config, plugin_attribute):
             raise AttributeError(
-                "in the noxconfig.py file, the class Config should inherit "
-                "from `exasol.toolbox.config.BaseConfig`. This is used to "
-                f"set the default `{plugin_attribute}`. If the allowed "
-                f"`{plugin_attribute} needs to differ in your project and is an "
-                "input parameter (not property), you can set it in the PROJECT_CONFIG statement."
+                f"""`{plugin_attribute}` is not defined in the `PROJECT_CONFIG`.
+                To resolve this, check that the `PROJECT_CONFIG` in the `noxconfig.py`
+                file is an instance of `exasol.toolbox.config.BaseConfig`. The
+                `BaseConfig` sets many defaults. If the value for `{plugin_attribute}`
+                needs to differ in your project and is an input parameter (not
+                property), you can set it in the PROJECT_CONFIG statement.
+                """
             )
 
         for plugin in getattr(config, plugin_attribute, ()):
