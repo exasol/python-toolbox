@@ -25,7 +25,7 @@ Documentation of the Exasol-Toolbox
 
         CLI-Tools which are shipped as part of this project.
 
-    .. grid-item-card:: :octicon:`play` Github Actions
+    .. grid-item-card:: :octicon:`play` GitHub Actions
         :link: github_actions
         :link-type: ref
 
