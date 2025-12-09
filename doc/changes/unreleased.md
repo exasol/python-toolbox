@@ -81,6 +81,7 @@ PROJECT_CONFIG = Config(
 ## Feature
 
 * #614: Replaced `path_filters` with `BaseConfig.add_to_excluded_python_paths` and `BaseConfig.excluded_python_paths`
+* #626: Replaced `plugins` with `BaseConfig.plugins_for_nox_sessions`
 * #621: Moved path specifications into `BaseConfig`
   * `root` is now `root_path`, which must be specified by the project
   * `source` is now covered by `project_name`, which must be specified by the project,

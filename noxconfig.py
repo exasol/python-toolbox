@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
 from pathlib import Path
+
+from pydantic import computed_field
 
 from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox.plugin import hookimpl
@@ -52,10 +53,16 @@ ROOT_PATH = Path(__file__).parent
 
 
 class Config(BaseConfig):
-    """Project specific configuration used by nox infrastructure"""
-
-    importlinter: Path = ROOT_PATH / ".import_linter_config"
-    plugins: Iterable[object] = (UpdateTemplates,)
+    @computed_field  # type: ignore[misc]
+    @property
+    def importlinter(self) -> Path:
+        """
+        Path for the import lint configuration file.
+        This is an experimental feature that requires further scrutiny. This will
+        be done in:
+            https://github.com/exasol/python-toolbox/issues/628
+        """
+        return self.root_path / ".import_linter_config"
 
 
 PROJECT_CONFIG = Config(
@@ -74,4 +81,5 @@ PROJECT_CONFIG = Config(
     # The PTB does not have integration tests run with an Exasol DB,
     # so for running in the CI, we take the first element.
     exasol_versions=("7.1.30",),
+    plugins_for_nox_sessions=(UpdateTemplates,),
 )
