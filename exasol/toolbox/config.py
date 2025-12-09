@@ -36,7 +36,9 @@ def validate_plugin_hook(plugin_class: type[Any]):
     if not has_hook_implementation:
         raise ValueError(
             f"No methods in `{plugin_class.__name__}` were found to be decorated"
-            "with `@hookimpl`"
+            "with `@hookimpl`. The `@hookimpl` decorator indicates that this"
+            "will be used with pluggy and used in specific nox sessions."
+            "Without it, this class does not modify any nox sessions."
         )
 
     if not_specified_decorated_methods:
@@ -44,7 +46,11 @@ def validate_plugin_hook(plugin_class: type[Any]):
             f"{len(not_specified_decorated_methods)} method(s) were "
             "decorated with `@hookimpl`, but these methods were not "
             "specified in `exasol.toolbox.nox.plugins.NoxTasks`: "
-            f"{not_specified_decorated_methods}"
+            f"{not_specified_decorated_methods}. The `@hookimpl` decorator indicates "
+            "that these methods will be used by pluggy to modify specific nox sessions."
+            "If the method was not previously specified, then no nox sessions will"
+            "be modified. The `@hookimpl` is only used by nox sessions provided by the"
+            "pyexasol-toolbox and not ones created for just your project."
         )
 
     return plugin_class
