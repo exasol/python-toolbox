@@ -1,5 +1,8 @@
+import inspect
+from collections.abc import Callable
 from typing import (
     Annotated,
+    Any,
 )
 
 from pydantic import (
@@ -10,7 +13,64 @@ from pydantic import (
     computed_field,
 )
 
+from exasol.toolbox.nox.plugin import (
+    METHODS_SPECIFIED_FOR_HOOKS,
+    PLUGIN_ATTR_NAME,
+)
 from exasol.toolbox.util.version import Version
+
+
+def get_methods_with_hook_implementation(
+    plugin_class: type[Any],
+) -> tuple[tuple[str, Callable], ...]:
+    """
+    Get all methods from a plugin_class which were specified with a @hookimpl.
+    """
+    return tuple(
+        (name, method)
+        for name, method in inspect.getmembers(plugin_class, inspect.isroutine)
+        if hasattr(method, PLUGIN_ATTR_NAME)
+    )
+
+
+def filter_not_specified_methods(
+    methods: tuple[tuple[str, Callable], ...],
+) -> tuple[str, ...]:
+    """
+    Filter methods which were specified with a @hookimpl but where not specified
+    in `exasol.toolbox.nox.plugins.NoxTasks`.
+    """
+    return tuple(name for name, _ in methods if name not in METHODS_SPECIFIED_FOR_HOOKS)
+
+
+def validate_plugin_hook(plugin_class: type[Any]):
+    """
+    Validate methods in a class for at least one pluggy @hookimpl marker and verifies
+    that this method is also specified in `exasol.toolbox.nox.plugins.NoxTasks`.
+    """
+    methods_with_hook = get_methods_with_hook_implementation(plugin_class=plugin_class)
+
+    if len(methods_with_hook) == 0:
+        raise ValueError(
+            f"No methods in `{plugin_class.__name__}` were found to be decorated"
+            "with `@hookimpl`. The `@hookimpl` decorator indicates that this"
+            "will be used with pluggy and used in specific nox sessions."
+            "Without it, this class does not modify any nox sessions."
+        )
+
+    if not_specified_methods := filter_not_specified_methods(methods_with_hook):
+        raise ValueError(
+            f"{len(not_specified_methods)} method(s) were "
+            "decorated with `@hookimpl`, but these methods were not "
+            "specified in `exasol.toolbox.nox.plugins.NoxTasks`: "
+            f"{not_specified_methods}. The `@hookimpl` decorator indicates "
+            "that these methods will be used by pluggy to modify specific nox sessions."
+            "If the method was not previously specified, then no nox sessions will"
+            "be modified. The `@hookimpl` is only used by nox sessions provided by the"
+            "pyexasol-toolbox and not ones created for just your project."
+        )
+
+    return plugin_class
 
 
 def valid_version_string(version_string: str) -> str:
@@ -18,6 +78,7 @@ def valid_version_string(version_string: str) -> str:
     return version_string
 
 
+ValidPluginHook = Annotated[type[Any], AfterValidator(validate_plugin_hook)]
 ValidVersionStr = Annotated[str, AfterValidator(valid_version_string)]
 
 DEFAULT_EXCLUDED_PATHS = {
@@ -66,6 +127,16 @@ class BaseConfig(BaseModel):
         path that would be seen in other projects, like .venv, needs to be added into
         this argument, please instead modify the
         `exasol.toolbox.config.DEFAULT_EXCLUDED_PATHS`.
+        """,
+    )
+    plugins_for_nox_sessions: tuple[ValidPluginHook, ...] = Field(
+        default=(),
+        description="""
+        This is used to provide hooks to extend one or more of the Nox sessions provided
+        by the python-toolbox. As described on the plugins pages:
+            - https://exasol.github.io/python-toolbox/main/user_guide/customization.html#plugins
+            - https://exasol.github.io/python-toolbox/main/developer_guide/plugins.html,
+        possible plugin options are defined in `exasol.toolbox.nox.plugins.NoxTasks`.
         """,
     )
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)

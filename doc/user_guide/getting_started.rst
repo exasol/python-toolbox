@@ -91,7 +91,7 @@ example shown below.
 
 .. note::
 
-   For further details on plugins, see the customization section.
+   For further details on plugins, see :ref:`plugins` in the Customization section.
 
 .. collapse:: noxconfig.py
 

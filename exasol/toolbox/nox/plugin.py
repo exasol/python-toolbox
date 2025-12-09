@@ -1,6 +1,9 @@
+import inspect
+
 import pluggy
 
 _PLUGIN_MARKER = "python-toolbox-nox"
+PLUGIN_ATTR_NAME = f"{_PLUGIN_MARKER}_impl"
 hookspec = pluggy.HookspecMarker("python-toolbox-nox")
 hookimpl = pluggy.HookimplMarker("python-toolbox-nox")
 
@@ -105,6 +108,26 @@ class NoxTasks:
     def plugin_manager(config) -> pluggy.PluginManager:
         pm = pluggy.PluginManager(_PLUGIN_MARKER)
         pm.add_hookspecs(NoxTasks)
-        for plugin in getattr(config, "plugins", []):
+        plugin_attribute = "plugins_for_nox_sessions"
+
+        if not hasattr(config, plugin_attribute):
+            raise AttributeError(
+                f"""`{plugin_attribute}` is not defined in the `PROJECT_CONFIG`.
+                To resolve this, check that the `PROJECT_CONFIG` in the `noxconfig.py`
+                file is an instance of `exasol.toolbox.config.BaseConfig`. The
+                `BaseConfig` sets many defaults. If the value for `{plugin_attribute}`
+                needs to differ in your project and is an input parameter (not
+                property), you can set it in the PROJECT_CONFIG statement.
+                """
+            )
+
+        for plugin in getattr(config, plugin_attribute, ()):
             pm.register(plugin())
         return pm
+
+
+METHODS_SPECIFIED_FOR_HOOKS = [
+    name
+    for name, method in inspect.getmembers(NoxTasks, inspect.isroutine)
+    if hasattr(method, f"{_PLUGIN_MARKER}_spec")
+]

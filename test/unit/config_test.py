@@ -6,6 +6,8 @@ from exasol.toolbox.config import (
     BaseConfig,
     valid_version_string,
 )
+from exasol.toolbox.nox.plugin import hookimpl
+from exasol.toolbox.util.version import Version
 
 
 class TestBaseConfig:
@@ -86,3 +88,43 @@ def test_pyupgrade_argument(minimum_python_version):
 def test_excluded_python_paths(add_to_excluded_python_paths, expected):
     conf = BaseConfig(add_to_excluded_python_paths=add_to_excluded_python_paths)
     assert sorted(conf.excluded_python_paths) == sorted(expected)
+
+
+class WithHook:
+    @hookimpl
+    def prepare_release_update_version(self, session, config, version: Version) -> None:
+        print("This is a simple, silly hook.")
+
+
+class WithNotSpecifiedHook:
+    @hookimpl
+    def not_specified_anywhere(self, session, config, version: Version) -> None:
+        print("This is not a properly prepared hook.")
+
+
+class WithoutHook:
+    def prepare_release_update_version(self, session, config, version: Version) -> None:
+        print("This is not a properly prepared hook.")
+
+
+class TestPlugins:
+    @staticmethod
+    def test_works_when_empty():
+        BaseConfig(plugins_for_nox_sessions=())
+
+    @staticmethod
+    def test_works_for_hook(capsys):
+        BaseConfig(plugins_for_nox_sessions=(WithHook,))
+
+    @staticmethod
+    def test_raises_exception_method_with_hook_not_specified():
+        with pytest.raises(ValidationError) as ex:
+            BaseConfig(plugins_for_nox_sessions=(WithNotSpecifiedHook,))
+        assert "1 method(s) were decorated with `@hookimpl`, but" in str(ex.value)
+        assert "('not_specified_anywhere',)" in str(ex.value)
+
+    @staticmethod
+    def test_raises_exception_without_hook():
+        with pytest.raises(ValidationError) as ex:
+            BaseConfig(plugins_for_nox_sessions=(WithoutHook,))
+        assert "No methods in `WithoutHook`" in str(ex.value)
