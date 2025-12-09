@@ -1,7 +1,77 @@
 # Unreleased
 
+## Summary
+
 This major release removes `project:fix` and `project:format`
 and replaces them with `format:fix` and `format:check`.
+
+The `BaseConfig` has been extended to handle the commonly provided paths:
+* `root` is now `root_path`
+* `source` is now covered by `project_name` and `source_code_path`, which uses `root_path` and `project_name`
+* `doc` is now `documentation_path`
+* `version_file` is now `version_filepath`
+
+If your project was previously defining these values, your **before** would look like:
+
+```python
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Iterable
+
+from exasol.toolbox.config import BaseConfig
+
+
+class Config(BaseConfig):
+    root: Path = Path(__file__).parent
+    doc: Path = Path(__file__).parent / "doc"
+    source: Path = Path("exasol/{{cookiecutter.package_name}}")
+    version_file: Path = (
+            Path(__file__).parent
+            / "exasol"
+            / "{{cookiecutter.package_name}}"
+            / "version.py"
+    )
+    plugins: Iterable[object] = ()
+
+PROJECT_CONFIG = Config()
+```
+
+With this major release, you **should modify** your project's `noxconfig.py` to look like:
+```python
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Iterable
+
+from exasol.toolbox.config import BaseConfig
+
+
+class Config(BaseConfig):
+    plugins: Iterable[object] = ()
+
+"""
+These values do NOT need to be defined if your project follows the convention
+expected from the PTB:
+- documentation_path
+- source_code_path
+- version_filepath
+
+If your values differ, you can override these properties with the needed values when
+you define `class Config(BaseConfig)`. We highly recommend that you create an issue
+to remove this override in the future by aligning your project's structure with
+that expected by the PTB.
+
+If you have additional Paths that used one of these values (i.e. `root_path`), then
+you can define your own property in `class Config(BaseConfig)`, which accesses the
+class values
+"""
+
+PROJECT_CONFIG = Config(
+    project_name="{{cookiecutter.package_name}}",
+    root_path=Path(__file__).parent,
+)
+```
 
 ## Refactoring
 
