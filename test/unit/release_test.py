@@ -7,7 +7,6 @@ from unittest.mock import (
 import pytest
 
 import noxconfig
-from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._release import (
     ReleaseError,
     _trigger_release,
@@ -64,15 +63,15 @@ class TestTriggerReleaseWithMocking:
             ]
         assert result == mock_from_poetry.return_value
 
-    def test_not_creates_major_version_tag(self, mock_from_poetry):
-        class DummyConfig(BaseConfig):
-            pass
+    def test_not_creates_major_version_tag(
+        self, test_project_config_factory, mock_from_poetry
+    ):
 
         def simulate_pass(args, **kwargs):
             return self._get_subprocess_run_mock(args)
 
         with patch("subprocess.run", side_effect=simulate_pass) as subprocess_mock:
-            result = _trigger_release(DummyConfig())
+            result = _trigger_release(project_config=test_project_config_factory())
             commands = [c.args[0] for c in subprocess_mock.mock_calls]
             assert commands == [
                 ("git", "remote", "show", "origin"),

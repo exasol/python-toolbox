@@ -27,18 +27,18 @@ def excluded_python_path():
     return "excluded_python_path"
 
 
-@pytest.fixture(scope="session")
-def directories(package_directory, excluded_python_path):
-    yield set(BaseConfig().excluded_python_paths).union(
+@pytest.fixture
+def directories(test_project_config_factory, package_directory, excluded_python_path):
+    yield set(test_project_config_factory().excluded_python_paths).union(
         {package_directory, excluded_python_path}
     )
 
 
-@pytest.fixture(scope="session")
-def create_files(tmp_directory, directories):
+@pytest.fixture
+def create_files(tmp_path, directories):
     file_list = []
     for directory in directories:
-        directory_path = tmp_directory / directory
+        directory_path = tmp_path / directory
         directory_path.mkdir(parents=True, exist_ok=True)
 
         file_path = directory_path / f"{directory}-dummy.py"
@@ -49,12 +49,18 @@ def create_files(tmp_directory, directories):
 
 
 def test_get_filtered_python_files(
-    tmp_directory, create_files, package_directory, excluded_python_path
+    test_project_config_factory,
+    tmp_path,
+    create_files,
+    package_directory,
+    excluded_python_path,
 ):
-    config = BaseConfig(add_to_excluded_python_paths=(excluded_python_path,))
+    config = test_project_config_factory(
+        add_to_excluded_python_paths=(excluded_python_path,)
+    )
 
     with patch("exasol.toolbox.nox._shared.PROJECT_CONFIG", config):
-        actual = get_filtered_python_files(tmp_directory)
+        actual = get_filtered_python_files(tmp_path)
 
     assert len(actual) == 1
     assert "toolbox-dummy" in actual[0]
@@ -88,5 +94,9 @@ class TestCheckForConfigAttribute:
             check_for_config_attribute(PreviousConfig(), attribute=attribute)
 
     @pytest.mark.parametrize("attribute", MIGRATED_VALUES)
-    def test_current_implementation_passes(self, attribute):
-        check_for_config_attribute(BaseConfig(), attribute=attribute)
+    def test_current_implementation_passes(
+        self, test_project_config_factory, attribute
+    ):
+        check_for_config_attribute(
+            config=test_project_config_factory(), attribute=attribute
+        )

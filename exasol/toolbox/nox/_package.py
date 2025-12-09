@@ -12,5 +12,5 @@ def package_check(session: Session) -> None:
 
     This has more robust checks for rst documentation than markdown.
     """
-    session.run("poetry", "build", "--project", PROJECT_CONFIG.root)
-    session.run("twine", "check", PROJECT_CONFIG.root / "./dist/*")
+    session.run("poetry", "build", "--project", PROJECT_CONFIG.root_path)
+    session.run("twine", "check", PROJECT_CONFIG.root_path / "./dist/*")

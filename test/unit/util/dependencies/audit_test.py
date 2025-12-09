@@ -238,7 +238,7 @@ class TestGetVulnerabilities:
             "exasol.toolbox.util.dependencies.audit.audit_poetry_files",
             return_value=sample_vulnerability.pip_audit_json,
         ):
-            result = get_vulnerabilities(PROJECT_CONFIG.root)
+            result = get_vulnerabilities(PROJECT_CONFIG.root_path)
 
         # if successful, no errors & should be 1 due to mock
         assert isinstance(result, list)

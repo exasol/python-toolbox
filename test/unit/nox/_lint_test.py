@@ -1,6 +1,5 @@
 import json
 from inspect import cleandoc
-from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -14,7 +13,12 @@ from exasol.toolbox.nox._lint import (
 
 
 @pytest.fixture
-def file_with_multiple_problems(tmp_path):
+def config(test_project_config_factory):
+    return test_project_config_factory()
+
+
+@pytest.fixture
+def file_with_multiple_problems(config):
     """
     In this file with multiple problems, it is expected that the nox
     lint sessions would detect the following errors:
@@ -30,8 +34,8 @@ def file_with_multiple_problems(tmp_path):
         * [B607:start_process_with_partial_path] Starting a process with a partial executable path
         * [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.
     """
-
-    file_path = tmp_path / "dummy_file.py"
+    config.source_code_path.mkdir(parents=True, exist_ok=True)
+    file_path = config.source_code_path / "dummy_file.py"
     text = """
     import subprocess
 
@@ -42,15 +46,13 @@ def file_with_multiple_problems(tmp_path):
     return file_path
 
 
-def test_lint(nox_session, tmp_path, file_with_multiple_problems):
-    with patch("exasol.toolbox.nox._lint.PROJECT_CONFIG") as config:
-        config.root = tmp_path
-        config.source = Path("")
+def test_lint(nox_session, config, file_with_multiple_problems):
+    with patch("exasol.toolbox.nox._lint.PROJECT_CONFIG", new=config):
         with pytest.raises(CommandFailed, match="Returned code 20"):
             lint(session=nox_session)
 
-    json_file = tmp_path / ".lint.json"
-    txt_file = tmp_path / ".lint.txt"
+    json_file = config.root_path / ".lint.json"
+    txt_file = config.root_path / ".lint.txt"
 
     assert json_file.exists()
     assert txt_file.exists()
@@ -60,10 +62,8 @@ def test_lint(nox_session, tmp_path, file_with_multiple_problems):
     assert {"C0114", "C0304", "W1510"}.issubset(errors)
 
 
-def test_type_check(nox_session, tmp_path, file_with_multiple_problems, caplog):
-    with patch("exasol.toolbox.nox._lint.PROJECT_CONFIG") as config:
-        config.root = tmp_path
-        config.source = Path("")
+def test_type_check(nox_session, config, file_with_multiple_problems, caplog):
+    with patch("exasol.toolbox.nox._lint.PROJECT_CONFIG", new=config):
         with pytest.raises(CommandFailed, match="Returned code 1"):
             type_check(session=nox_session)
 
@@ -74,13 +74,11 @@ def test_type_check(nox_session, tmp_path, file_with_multiple_problems, caplog):
     )
 
 
-def test_security_lint(nox_session, tmp_path, file_with_multiple_problems):
-    with patch("exasol.toolbox.nox._lint.PROJECT_CONFIG") as config:
-        config.root = tmp_path
-        config.source = Path("")
+def test_security_lint(nox_session, config, file_with_multiple_problems):
+    with patch("exasol.toolbox.nox._lint.PROJECT_CONFIG", new=config):
         security_lint(session=nox_session)
 
-    output_file = tmp_path / ".security.json"
+    output_file = config.root_path / ".security.json"
     assert output_file.exists()
 
     contents = output_file.read_text()

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
@@ -12,8 +14,34 @@ from exasol.toolbox.util.version import Version
 
 class TestBaseConfig:
     @staticmethod
-    def test_works_as_defined():
-        BaseConfig()
+    def test_works_as_defined(test_project_config_factory):
+        config = test_project_config_factory()
+
+        root_path = config.root_path
+        assert config.model_dump() == {
+            "add_to_excluded_python_paths": (),
+            "create_major_version_tags": False,
+            "documentation_path": root_path / "doc",
+            "exasol_versions": ("7.1.30", "8.29.13", "2025.1.8"),
+            "excluded_python_paths": (
+                ".eggs",
+                ".html-documentation",
+                ".poetry",
+                ".sonar",
+                ".venv",
+                "dist",
+                "venv",
+            ),
+            "minimum_python_version": "3.10",
+            "plugins_for_nox_sessions": (),
+            "project_name": "test",
+            "python_versions": ("3.10", "3.11", "3.12", "3.13", "3.14"),
+            "pyupgrade_argument": ("--py310-plus",),
+            "root_path": root_path,
+            "sonar_code_path": Path("exasol/test"),
+            "source_code_path": root_path / "exasol" / "test",
+            "version_filepath": root_path / "exasol" / "test" / "version.py",
+        }
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -60,14 +88,16 @@ def test_expansion_validation_fails_for_invalid_version():
         BaseConfigExpansion(python_versions=("1.f.0",))
 
 
-def test_minimum_python_version():
-    conf = BaseConfig(python_versions=("5.5.5", "1.10", "9.9.9"))
+def test_minimum_python_version(test_project_config_factory):
+    conf = test_project_config_factory(python_versions=("5.5.5", "1.10", "9.9.9"))
     assert conf.minimum_python_version == "1.10"
 
 
 @pytest.mark.parametrize("minimum_python_version", ["3.10", "3.10.5"])
-def test_pyupgrade_argument(minimum_python_version):
-    conf = BaseConfig(python_versions=("3.11", minimum_python_version, "3.12"))
+def test_pyupgrade_argument(test_project_config_factory, minimum_python_version):
+    conf = test_project_config_factory(
+        python_versions=("3.11", minimum_python_version, "3.12")
+    )
     assert conf.pyupgrade_argument == ("--py310-plus",)
 
 
@@ -85,8 +115,12 @@ def test_pyupgrade_argument(minimum_python_version):
         ),
     ],
 )
-def test_excluded_python_paths(add_to_excluded_python_paths, expected):
-    conf = BaseConfig(add_to_excluded_python_paths=add_to_excluded_python_paths)
+def test_excluded_python_paths(
+    test_project_config_factory, add_to_excluded_python_paths, expected
+):
+    conf = test_project_config_factory(
+        add_to_excluded_python_paths=add_to_excluded_python_paths
+    )
     assert sorted(conf.excluded_python_paths) == sorted(expected)
 
 
@@ -109,22 +143,26 @@ class WithoutHook:
 
 class TestPlugins:
     @staticmethod
-    def test_works_when_empty():
-        BaseConfig(plugins_for_nox_sessions=())
+    def test_works_when_empty(test_project_config_factory):
+        test_project_config_factory(plugins_for_nox_sessions=())
 
     @staticmethod
-    def test_works_for_hook(capsys):
-        BaseConfig(plugins_for_nox_sessions=(WithHook,))
+    def test_works_for_hook(test_project_config_factory, capsys):
+        test_project_config_factory(plugins_for_nox_sessions=(WithHook,))
 
     @staticmethod
-    def test_raises_exception_method_with_hook_not_specified():
+    def test_raises_exception_method_with_hook_not_specified(
+        test_project_config_factory,
+    ):
         with pytest.raises(ValidationError) as ex:
-            BaseConfig(plugins_for_nox_sessions=(WithNotSpecifiedHook,))
+            test_project_config_factory(
+                plugins_for_nox_sessions=(WithNotSpecifiedHook,)
+            )
         assert "1 method(s) were decorated with `@hookimpl`, but" in str(ex.value)
         assert "('not_specified_anywhere',)" in str(ex.value)
 
     @staticmethod
-    def test_raises_exception_without_hook():
+    def test_raises_exception_without_hook(test_project_config_factory):
         with pytest.raises(ValidationError) as ex:
-            BaseConfig(plugins_for_nox_sessions=(WithoutHook,))
+            test_project_config_factory(plugins_for_nox_sessions=(WithoutHook,))
         assert "No methods in `WithoutHook`" in str(ex.value)
