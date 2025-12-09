@@ -65,16 +65,15 @@ Plugin Registration
 
 Once the plugin class has been defined, it must be registered in the Nox configuration. This is done by adding the class to the `plugins` list within the `Config` data class.
 
-In the Nox `Config` data class, you should amend the `plugins` list to include the new plugin:
+In the Nox `PROJECT_CONFIG`, you should amend the `plugins_for_nox_sessions` tuple to include the new plugin:
 
 .. code-block:: python
 
-    @dataclass(frozen=True)
-    class Config:
-        """Project-specific configuration used by Nox infrastructure."""
-        # ... other configuration attributes ...
+    from exasol.toolbox.config import BaseConfig
 
-        plugins = [UpdateTemplates]  # register the plugin
+    PROJECT_CONFIG = BaseConfig(
+        plugins_for_nox_sessions=(UpdateTemplates,), # register the plugin
+    )
 
 When Nox runs, it will instantiate `UpdateTemplates` with no arguments and integrate the hooks defined by the plugin into the execution lifecycle. All registered plugins’ hooks are called at their designated points in the Nox workflow.
 

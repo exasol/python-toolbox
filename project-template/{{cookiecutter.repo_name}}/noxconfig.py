@@ -16,6 +16,5 @@ class Config(BaseConfig):
             / "{{cookiecutter.package_name}}"
             / "version.py"
     )
-    plugins: Iterable[object] = ()
 
 PROJECT_CONFIG = Config()

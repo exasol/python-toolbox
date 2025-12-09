@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
 from pathlib import Path
 
 from exasol.toolbox.config import BaseConfig
@@ -56,7 +55,6 @@ class Config(BaseConfig):
     source: Path = Path("exasol/toolbox")
     importlinter: Path = Path(__file__).parent / ".import_linter_config"
     version_file: Path = Path(__file__).parent / "exasol" / "toolbox" / "version.py"
-    plugins: Iterable[object] = (UpdateTemplates,)
 
 
 PROJECT_CONFIG = Config(
@@ -73,4 +71,5 @@ PROJECT_CONFIG = Config(
     # The PTB does not have integration tests run with an Exasol DB,
     # so for running in the CI, we take the first element.
     exasol_versions=(BaseConfig().exasol_versions[0],),
+    plugins_for_nox_sessions=(UpdateTemplates,),
 )

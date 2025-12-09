@@ -1,5 +1,7 @@
+import inspect
 from typing import (
     Annotated,
+    Any,
 )
 
 from pydantic import (
@@ -10,7 +12,42 @@ from pydantic import (
     computed_field,
 )
 
+from exasol.toolbox.nox.plugin import (
+    METHODS_SPECIFIED_FOR_HOOKS,
+    PLUGIN_ATTR_NAME,
+)
 from exasol.toolbox.util.version import Version
+
+
+def validate_plugin_hook(plugin_class: type[Any]):
+    """
+    Checks methods in a class for at least one specific pluggy @hookimpl marker
+    and verifies that this method is also specified in
+    `exasol.toolbox.nox.plugins.NoxTasks`.
+    """
+    has_hook_implementation = False
+    not_specified_decorated_methods = []
+    for name, method in inspect.getmembers(plugin_class, inspect.isroutine):
+        if hasattr(method, PLUGIN_ATTR_NAME):
+            has_hook_implementation = True
+            if name not in METHODS_SPECIFIED_FOR_HOOKS:
+                not_specified_decorated_methods.append(name)
+
+    if not has_hook_implementation:
+        raise ValueError(
+            f"No methods in `{plugin_class.__name__}` were found to be decorated"
+            "with `@hookimpl`"
+        )
+
+    if not_specified_decorated_methods:
+        raise ValueError(
+            f"{len(not_specified_decorated_methods)} method(s) were "
+            "decorated with `@hookimpl`, but these methods were not "
+            "specified in `exasol.toolbox.nox.plugins.NoxTasks`: "
+            f"{not_specified_decorated_methods}"
+        )
+
+    return plugin_class
 
 
 def valid_version_string(version_string: str) -> str:
@@ -18,6 +55,7 @@ def valid_version_string(version_string: str) -> str:
     return version_string
 
 
+ValidPluginHook = Annotated[type[Any], AfterValidator(validate_plugin_hook)]
 ValidVersionStr = Annotated[str, AfterValidator(valid_version_string)]
 
 DEFAULT_EXCLUDED_PATHS = {
@@ -66,6 +104,16 @@ class BaseConfig(BaseModel):
         path that would be seen in other projects, like .venv, needs to be added into
         this argument, please instead modify the
         `exasol.toolbox.config.DEFAULT_EXCLUDED_PATHS`.
+        """,
+    )
+    plugins_for_nox_sessions: tuple[ValidPluginHook, ...] = Field(
+        default=(),
+        description="""
+        This is used to provide hooks to extend one or more of the Nox sessions provided
+        by the python-toolbox. As described on the plugins pages:
+            - https://exasol.github.io/python-toolbox/main/user_guide/customization.html#plugins
+            - https://exasol.github.io/python-toolbox/main/developer_guide/plugins.html,
+        possible plugin options are defined in `exasol.toolbox.nox.plugins.NoxTasks`.
         """,
     )
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
