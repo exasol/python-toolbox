@@ -107,7 +107,7 @@ In the code
     For more information, see the :ref:`General remarks <configuration_general_remarks>` section.
 
 .. _Exasol Way: https://sonarcloud.io/organizations/exasol/quality_gates/show/AXxvLH-3BdtLlpiYmZhh
-.. _Sonar Matching Patterns: https://docs.sonarsource.com/sonarqube-server/project-administration/setting-analysis-scope/defining-matching-patterns
+.. _Sonar Matching Patterns: https://docs.sonarsource.com/sonarqube-server/project-administration/adjusting-analysis/setting-analysis-scope/defining-matching-patterns
 
 .. _configuration_general_remarks:
 

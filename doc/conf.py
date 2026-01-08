@@ -91,5 +91,5 @@ linkcheck_allowed_redirects = {
     # the canonical URI will be treated as "working".
     r"https://github\.com/.*": r"https://github\.com/login*",
     r"https://www.sphinx-doc\.org/.*": r"https://www.sphinx-doc\.org/en/master/.*",
-    r"https://sonarcloud\.io.*": r"https://www.sonarsource\.com/products/sonarcloud/.*",
+    r"https://sonarcloud\.io.*": r"https://www.sonarsource\.com/products/sonarqube/cloud/.*",
 }
