@@ -21,8 +21,6 @@ from pathlib import Path
 
 import typer
 
-from exasol.toolbox.util.dependencies.audit import VulnerabilitySource
-
 stdout = print
 stderr = partial(print, file=sys.stderr)
 
@@ -106,6 +104,8 @@ def from_maven(report: str) -> Iterable[Issue]:
 
 
 def identify_pypi_references(references: list[str]) -> tuple[list[str], list[str]]:
+    from exasol.toolbox.util.dependencies.audit import VulnerabilitySource
+
     refs: dict = {k: [] for k in VulnerabilitySource}
     for reference in references:
         if source := VulnerabilitySource.from_prefix(reference.upper()):
