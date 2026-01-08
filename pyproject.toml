@@ -1,6 +1,6 @@
 [project]
 name = "exasol-toolbox"
-version = "4.0.0"
+version = "4.0.1"
 requires-python = ">=3.10,<4.0"
 description = "Your one-stop solution for managing all standard tasks and core workflows of your Python project."
 authors = [
