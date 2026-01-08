@@ -104,6 +104,8 @@ def from_maven(report: str) -> Iterable[Issue]:
 
 
 def identify_pypi_references(references: list[str]) -> tuple[list[str], list[str]]:
+    # This import must be inside a function scope to prevent errors for
+    # non-Python projects.
     from exasol.toolbox.util.dependencies.audit import VulnerabilitySource
 
     refs: dict = {k: [] for k in VulnerabilitySource}

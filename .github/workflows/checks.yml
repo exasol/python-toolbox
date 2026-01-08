@@ -176,9 +176,24 @@ jobs:
       - name: Run Distribution Check
         run: poetry run -- nox -s package:check
 
+  Lint-Imports:
+    name: Lint Imports
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: SCM Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Python & Poetry Environment
+        uses: ./.github/actions/python-environment
+
+      - name: Run import linter
+        run: poetry run -- nox -s lint:import
+
   Tests:
     name: Unit-Tests (Python-${{ matrix.python-version }})
-    needs: [ Build-Packages, build-matrix ]
+    needs: [ Build-Packages, Lint-Imports, build-matrix ]
     runs-on: ubuntu-24.04
     permissions:
       contents: read

@@ -1,2 +1,16 @@
 [importlinter]
 root_package = exasol.toolbox
+
+[importlinter:contract:security-contract]
+name = Security module should not import from toolbox
+type = forbidden
+source_modules = exasol.toolbox.tools.security
+forbidden_modules =
+    exasol.toolbox.nox
+    exasol.toolbox.sphinx
+    exasol.toolbox.templates
+    exasol.toolbox.util
+ignore_imports =
+    # importlinter lacks an option to ignore a specific line, so we must ignore this in
+    # total, as this is needed for Python security audits.
+    exasol.toolbox.tools.security -> exasol.toolbox.util.dependencies.audit
