@@ -1,6 +1,10 @@
 Collecting metrics
 ==================
 
+The PTB allows you to collect various metrics on the quality of your project
+regarding Coverage, Security, and Static Code Analysis. There are two options
+for reporting the metrics:
+
 .. toctree::
     :maxdepth: 2
 
@@ -11,9 +15,6 @@ Collecting metrics
 
 Generated metrics
 +++++++++++++++++
-
-The PTB allows you to collect various metrics on the quality of your project
-regarding Coverage, Security, and Static Code Analysis.
 
 For each metric, there is a dedicated nox session, generating one or multiple
 files and based on a selected external Python tool.
