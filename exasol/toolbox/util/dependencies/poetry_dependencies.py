@@ -159,8 +159,8 @@ def get_dependencies(
     ).direct_dependencies
 
 
-def get_dependencies_from_latest_tag() -> (
-    OrderedDict[str, dict[NormalizedPackageStr, Package]]
-):
-    with poetry_files_from_latest_tag() as tmp_dir:
+def get_dependencies_from_latest_tag(
+    root_path: Path,
+) -> OrderedDict[str, dict[NormalizedPackageStr, Package]]:
+    with poetry_files_from_latest_tag(root_path=root_path) as tmp_dir:
         return get_dependencies(working_directory=tmp_dir)

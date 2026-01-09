@@ -19,7 +19,6 @@ from pydantic import (
 )
 
 from exasol.toolbox.util.git import Git
-from noxconfig import PROJECT_CONFIG
 
 NormalizedPackageStr = NewType("NormalizedPackageStr", str)
 
@@ -63,10 +62,10 @@ class PoetryFiles:
 
 
 @contextmanager
-def poetry_files_from_latest_tag() -> Generator[Path]:
+def poetry_files_from_latest_tag(root_path: Path) -> Generator[Path]:
     """Context manager to set up a temporary directory with poetry files from the latest tag"""
     latest_tag = Git.get_latest_tag()
-    path = PROJECT_CONFIG.root_path.relative_to(Git.toplevel())
+    path = root_path.relative_to(Git.toplevel())
     with tempfile.TemporaryDirectory() as tmpdir_str:
         tmp_dir = Path(tmpdir_str)
         for file in PoetryFiles().files:

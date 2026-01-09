@@ -10,6 +10,7 @@ from exasol.toolbox.util.dependencies.shared_models import (
     poetry_files_from_latest_tag,
 )
 from exasol.toolbox.util.git import Git
+from noxconfig import PROJECT_CONFIG
 
 
 class Dummy(BaseModel):
@@ -57,7 +58,7 @@ class TestPackage:
 
 def test_poetry_files_from_latest_tag():
     latest_tag = Git.get_latest_tag()
-    with poetry_files_from_latest_tag() as tmp_dir:
+    with poetry_files_from_latest_tag(root_path=PROJECT_CONFIG.root_path) as tmp_dir:
         for file in PoetryFiles().files:
             assert (tmp_dir / file).is_file()
 
