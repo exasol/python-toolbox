@@ -8,7 +8,7 @@
 
     dependencies
     getting_started
-    features/sonar_setup
+    configuration
     features/index
     workflows
     customization
