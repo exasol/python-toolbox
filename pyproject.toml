@@ -60,7 +60,9 @@ Changelog = "https://exasol.github.io/python-toolbox/changelog.html"
 tbx = "exasol.toolbox.tools.tbx:CLI"
 sphinx-multiversion = "exasol.toolbox.sphinx.multiversion:main"
 
-[project.entry-points]
+# unused entry point as using project.scripts instead
+# manually remove
+#[project.entry-points]
 
 [dependency-groups]
 dev = [
@@ -68,21 +70,23 @@ dev = [
     "cookiecutter>=2.6.0,<3",
 ]
 
-[tool.hatch.build.targets.sdist]
-include = ["exasol"]
+# Needed for poetry install to run again
+[tool.poetry]
+requires-poetry = ">=2.1.0"
+packages = [
+    { include = "exasol" },
+]
+include = [
+    "README.rst",
+    "doc/changelog.rst",
+    "LICENSE",
+    "exasol/toolbox/templates/**/*"
+]
 
-[tool.hatch.build.targets.sdist.force-include]
-"README.rst" = "README.rst"
-"doc/changelog.rst" = "doc/changelog.rst"
-LICENSE = "LICENSE"
-"exasol/toolbox/templates/**/*" = "exasol/toolbox/templates/**/*"
-
-[tool.hatch.build.targets.wheel]
-include = ["exasol"]
-
+# Needed for poetry build to run again
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["poetry-core>=2.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.coverage.run]
 relative_files = true
@@ -121,13 +125,17 @@ ignore_errors = true
 
 [tool.ruff.lint]
 extend-ignore = [
-    "E",      # Syntax errors
-    "F",      # Pyflakes rules (excluding F401)
-    "UP",     # pyupgrade rules
-    "D",      # Docstring rules
+    "E", # Syntax errors
+    "F", # Pyflakes rules (excluding F401)
+    "UP", # pyupgrade rules
+    "D", # Docstring rules
 ]
 extend-select = ["F401"]
 unfixable = []
+
+# manually re-add as needed for code
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"
 
 [tool.sonar]
 projectKey = "com.exasol:python-toolbox"
