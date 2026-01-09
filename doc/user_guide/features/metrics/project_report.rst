@@ -1,6 +1,6 @@
 .. _project_report:
 
-Nox task ``project:report``
+Nox session ``project:report``
 ===========================
 After collecting the metrics described in by :ref:`generated_metrics`, you can use the
 nox session ``project:report`` to create a report using one of the following formats:
