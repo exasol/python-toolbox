@@ -45,10 +45,12 @@ dependencies = [
     "sphinx-inline-tabs>=2023.4.21,<2024",
     "sphinx-design>=0.5.0,<1",
     "sphinx-toolbox>=4.0.0,<5",
-    "typer[all]>=0.7.0",
+    # Output indicated that [all] doesn't exist
+    "typer>=0.7.0",
     "twine>=6.1.0,<7",
 ]
-dynamic = ["dependencies"]
+# Need to manually remove
+# dynamic = ["dependencies"]
 
 [project.scripts]
 tbx = "exasol.toolbox.tools.tbx:CLI"
@@ -74,7 +76,8 @@ LICENSE = "LICENSE"
 [tool.hatch.build.targets.wheel]
 include = ["exasol"]
 
-[poetry.urls]
+# Did not convert this as was misnamed
+[tool.poetry.urls]
 Homepage = "https://www.exasol.com/"
 Documentation = "https://exasol.github.io/python-toolbox/"
 Source = "https://github.com/exasol/python-toolbox"
