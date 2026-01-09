@@ -142,7 +142,7 @@ def test_get_dependencies():
 
 
 def test_get_dependencies_from_latest_tag():
-    result = get_dependencies_from_latest_tag()
+    result = get_dependencies_from_latest_tag(root_path=PROJECT_CONFIG.root_path)
 
     # if successful, no errors & should be non-empty dictionary
     assert isinstance(result, dict)
