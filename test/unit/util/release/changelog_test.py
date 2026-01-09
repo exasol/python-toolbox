@@ -76,7 +76,7 @@ def unreleased_md(changelogs):
 def mock_dependencies(dependencies, previous_dependencies):
     with mock.patch.multiple(
         "exasol.toolbox.util.release.changelog",
-        get_dependencies_from_latest_tag=lambda: previous_dependencies,
+        get_dependencies_from_latest_tag=lambda root_path: previous_dependencies,
         get_dependencies=lambda working_directory: dependencies,
     ):
         yield
@@ -86,7 +86,7 @@ def mock_dependencies(dependencies, previous_dependencies):
 def mock_no_dependencies():
     with mock.patch.multiple(
         "exasol.toolbox.util.release.changelog",
-        get_dependencies_from_latest_tag=lambda: {},
+        get_dependencies_from_latest_tag=lambda root_path: {},
         get_dependencies=lambda working_directory: {},
     ):
         yield

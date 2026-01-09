@@ -1,5 +1,6 @@
 [importlinter]
 root_package = exasol.toolbox
+include_external_packages = True
 
 [importlinter:contract:security-contract]
 name = Security module should not import from toolbox
@@ -14,3 +15,15 @@ ignore_imports =
     # importlinter lacks an option to ignore a specific line, so we must ignore this in
     # total, as this is needed for Python security audits.
     exasol.toolbox.tools.security -> exasol.toolbox.util.dependencies.audit
+
+[importlinter:contract:restrict-noxconfig]
+name = Only exasol.toolbox.nox submodules can import noxconfig
+type = forbidden
+source_modules =
+    exasol.toolbox
+forbidden_modules =
+    noxconfig
+ignore_imports =
+    # To reduce the effort in using nox sessions (i.e. having to pass the config path
+    # in each CLI usage), we allow the noxconfig to be imported within these modules.
+    exasol.toolbox.nox.* -> noxconfig

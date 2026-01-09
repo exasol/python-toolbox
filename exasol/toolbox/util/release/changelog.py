@@ -68,7 +68,9 @@ class Changelogs:
         Describe the dependency changes between the latest tag and the current version
         for use in the versioned changes file.
         """
-        previous_dependencies_in_groups = get_dependencies_from_latest_tag()
+        previous_dependencies_in_groups = get_dependencies_from_latest_tag(
+            root_path=self.root_path
+        )
         current_dependencies_in_groups = get_dependencies(
             working_directory=self.root_path
         )
