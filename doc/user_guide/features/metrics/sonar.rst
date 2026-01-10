@@ -1,6 +1,6 @@
 .. _sonarqube_analysis:
 
-SonarQube analysis
+SonarQube Analysis
 ==================
 
 The PTB supports using `SonarQube Cloud <https://docs.sonarsource.com/sonarqube-server>`__
@@ -12,9 +12,9 @@ SonarQube analysis fails.
 
 The PTB includes instructions to set up a GitHub bot to display the results of the
 Sonar analysis in your pull requests as a stylized comment and workflow result.
-Section :ref:`configuration` gives instructions for public and private repositories.
+Section :ref:`sonar_configuration` gives instructions for public and private repositories.
 
-.. _configuration:
+.. _sonar_configuration:
 
 Configuration
 +++++++++++++

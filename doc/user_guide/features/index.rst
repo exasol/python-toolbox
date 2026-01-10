@@ -4,14 +4,14 @@ Features
 ========
 
 .. toctree::
-    :maxdepth: 2
+   :maxdepth: 2
 
-    metrics/collecting_metrics
-    creating_a_release
-    documentation/index
-    git_hooks/index
-    formatting_code/index
-    managing_dependencies
+   metrics/collecting_metrics
+   creating_a_release
+   documentation/index
+   git_hooks/index
+   formatting_code/index
+   managing_dependencies
 
 Uniform Project Layout
 ----------------------

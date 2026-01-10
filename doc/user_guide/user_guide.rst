@@ -8,6 +8,7 @@
 
     dependencies
     getting_started
+    configuration
     features/index
     workflows
     customization
