@@ -12,8 +12,10 @@ from exasol.toolbox.util.version import Version
 
 
 class SampleContent:
-    changelog = cleandoc(
+    changelog = "\n" + cleandoc(
         """
+        Summary of changes.
+
         ## Added
         * Added Awesome feature
 
@@ -127,9 +129,9 @@ class TestChangelogs:
 
     @staticmethod
     def test_extract_unreleased_notes(changelogs, unreleased_md):
-        result = changelogs._extract_unreleased_notes()
-
-        assert result == SampleContent.changelog + "\n"
+        actual = changelogs._extract_unreleased_notes()
+        expected = "## Summary\n" + SampleContent.changelog + "\n"
+        assert actual == expected
 
     @staticmethod
     def test_describe_dependency_changes(changelogs, mock_dependencies):
@@ -182,6 +184,10 @@ class TestChangelogs:
             == cleandoc(
                 f"""# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
 
+            ## Summary
+
+            Summary of changes.
+
             ## Added
             * Added Awesome feature
 
@@ -218,17 +224,22 @@ class TestChangelogs:
         assert (
             saved_text
             == cleandoc(
-                f"""# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
+                f"""
+                # 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
 
-            ## Added
-            * Added Awesome feature
+                ## Summary
 
-            ## Changed
-            * Some behaviour
+                Summary of changes.
 
-            ## Fixed
-            * Fixed nasty bug
-            """
+                ## Added
+                * Added Awesome feature
+
+                ## Changed
+                * Some behaviour
+
+                ## Fixed
+                * Fixed nasty bug
+                """
             )
             + "\n"
         )
