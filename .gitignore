@@ -1,6 +1,7 @@
 .lint.json
 .lint.txt
 .security.json
+.import_linter_cache
 
 odbcconfig/odbcinst.ini
 
