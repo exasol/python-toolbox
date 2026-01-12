@@ -13,10 +13,8 @@ from exasol.toolbox.util.dependencies.shared_models import Package
 from noxconfig import PROJECT_CONFIG
 
 MAIN_GROUP = PoetryGroup(name="main", toml_section="project.dependencies")
-DEV_GROUP = PoetryGroup(name="dev", toml_section="tool.poetry.group.dev.dependencies")
-ANALYSIS_GROUP = PoetryGroup(
-    name="analysis", toml_section="tool.poetry.group.analysis.dependencies"
-)
+DEV_GROUP = PoetryGroup(name="dev", toml_section="dependency-groups.dev")
+ANALYSIS_GROUP = PoetryGroup(name="analysis", toml_section="dependency-groups.analysis")
 
 PYLINT = Package(name="pylint", version="3.3.7")
 ISORT = Package(name="isort", version="6.0.1")
