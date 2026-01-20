@@ -1,18 +1,22 @@
 [project]
 name = "{{cookiecutter.pypi_package_name}}"
 version = "0.1.0"
-requires-python = ">={{cookiecutter.python_version_min}},<4.0"
 description = "{{cookiecutter.description}}"
 authors = [
     {name = "{{cookiecutter.author_full_name}}", email = "{{cookiecutter.author_email}}"},
 ]
+requires-python = ">={{cookiecutter.python_version_min}},<4.0"
 readme = "README.rst"
 license = "MIT"
 keywords = ['exasol', '{{cookiecutter.package_name}}']
-dynamic = ["dependencies"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+
+]
+dependencies = []
 
 [tool.poetry]
-requires-poetry = ">=2.1.0"
+requires-poetry = ">=2.3.0"
 packages = [
     { include = "exasol" },
 ]
@@ -21,10 +25,8 @@ packages = [
 repository = "https://github.com/exasol/{{cookiecutter.repo_name}}"
 homepage = "https://github.com/exasol/{{cookiecutter.repo_name}}"
 
-[tool.poetry.dependencies]
-
 [tool.poetry.group.dev.dependencies]
-exasol-toolbox = "^1.6.0"
+exasol-toolbox = "^4.0.1"
 
 [build-system]
 requires = ["poetry-core>=2.0.0"]
@@ -38,7 +40,8 @@ source = [
 ]
 
 [tool.coverage.report]
-fail_under = 15
+# Switch to 15 after code has been added
+fail_under = 0
 
 [tool.black]
 line-length = 88
@@ -59,10 +62,10 @@ max-module-lines = 800
 
 [tool.ruff.lint]
 extend-ignore = [
-    "E",      # Syntax errors
-    "F",      # Pyflakes rules (excluding F401)
-    "UP",     # pyupgrade rules
-    "D",      # Docstring rules
+    "E", # Syntax errors
+    "F", # Pyflakes rules (excluding F401)
+    "UP", # pyupgrade rules
+    "D", # Docstring rules
 ]
 extend-select = ["F401"]
 unfixable = []
