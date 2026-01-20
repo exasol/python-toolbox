@@ -8,6 +8,7 @@ authors = [
 requires-python = ">={{cookiecutter.python_version_min}},<4.0"
 readme = "README.rst"
 license = "MIT"
+license-files = ["LICENSE"]
 keywords = ['exasol', '{{cookiecutter.package_name}}']
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -15,18 +16,26 @@ classifiers = [
 ]
 dependencies = []
 
+[dependency-groups]
+dev = [
+    "exasol-toolbox>=4.0.1,<5",
+]
+
 [tool.poetry]
 requires-poetry = ">=2.3.0"
 packages = [
     { include = "exasol" },
 ]
+include = [
+    "README.rst",
+    "doc/changes/changelog.md",
+    "LICENSE",
+    "exasol/toolbox/templates/**/*"
+]
 
 [poetry.urls]
 repository = "https://github.com/exasol/{{cookiecutter.repo_name}}"
 homepage = "https://github.com/exasol/{{cookiecutter.repo_name}}"
-
-[tool.poetry.group.dev.dependencies]
-exasol-toolbox = "^4.0.1"
 
 [build-system]
 requires = ["poetry-core>=2.0.0"]
