@@ -39,16 +39,6 @@ class UpdateTemplates:
         return self.template_workflows + self.actions
 
 
-# BaseConfig
-#   - Use
-#       Project_Config = BaseConfig()
-#   - modify
-#       Project_Config = BaseConfig(python_versions=["3.12"])
-#   - expand (Do not overwrite the attributes of BaseConfig)
-#       class ProjectConfig(BaseConfig):
-#           extra_data: list[str] = ["data"]
-
-
 ROOT_PATH = Path(__file__).parent
 
 
