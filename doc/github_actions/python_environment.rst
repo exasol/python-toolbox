@@ -18,7 +18,7 @@ Parameters
    * - poetry-version
      - Poetry version to use
      - True
-     - 2.1.2
+     - 2.3.0
    * - working-directory
      - Working directory to use
      - False
