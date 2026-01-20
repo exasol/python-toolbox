@@ -57,13 +57,15 @@ dependencies = [
     "twine>=6.1.0,<7",
 ]
 
-[tool.poetry.group.dev.dependencies]
-autoimport = "^1.4.0"
-cookiecutter = "^2.6.0"
-
 [project.scripts]
 tbx = "exasol.toolbox.tools.tbx:CLI"
 sphinx-multiversion = "exasol.toolbox.sphinx.multiversion:main"
+
+[dependency-groups]
+dev = [
+    "autoimport>=1.4.0,<2",
+    "cookiecutter>=2.6.0,<3",
+]
 
 [tool.poetry]
 requires-poetry = ">=2.3.0"
