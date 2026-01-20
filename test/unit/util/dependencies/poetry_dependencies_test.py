@@ -1,4 +1,5 @@
 import subprocess
+from inspect import cleandoc
 
 import pytest
 
@@ -63,6 +64,42 @@ def created_pyproject_toml(project_path, create_poetry_project):
     return PoetryToml.load_from_toml(working_directory=project_path)
 
 
+@pytest.fixture(scope="module")
+def poetry_2_1_pyproject_toml(cwd, create_poetry_project):
+    older_project_path = cwd / "older_project"
+    pyproject_toml_text = """
+    [project]
+    name = "project"
+    version = "0.1.0"
+    description = ""
+    authors = []
+    readme = "README.md"
+    requires-python = ">=3.10"
+    dependencies = [
+        "pylint (==3.3.7)"
+    ]
+
+    [tool.poetry]
+    packages = [{include = "project", from = "src"}]
+
+
+    [tool.poetry.group.dev.dependencies]
+    isort = "6.0.1"
+
+
+    [tool.poetry.group.analysis.dependencies]
+    black = "25.1.0"
+
+    [build-system]
+    requires = ["poetry-core>=2.0.0,<3.0.0"]
+    build-backend = "poetry.core.masonry.api"
+    """
+    older_project_path.mkdir(parents=True, exist_ok=True)
+    pyproject_toml_path = older_project_path / "pyproject.toml"
+    pyproject_toml_path.write_text(cleandoc(pyproject_toml_text))
+    return PoetryToml.load_from_toml(working_directory=older_project_path)
+
+
 class TestPoetryToml:
     @staticmethod
     def test_get_section_dict_exists(created_pyproject_toml):
@@ -77,6 +114,16 @@ class TestPoetryToml:
     @staticmethod
     def test_groups(created_pyproject_toml):
         assert created_pyproject_toml.groups == (MAIN_GROUP, DEV_GROUP, ANALYSIS_GROUP)
+
+    @staticmethod
+    def test_groups_with_poetry_2_1_0(poetry_2_1_pyproject_toml):
+        assert poetry_2_1_pyproject_toml.groups == (
+            MAIN_GROUP,
+            PoetryGroup(name="dev", toml_section="tool.poetry.group.dev.dependencies"),
+            PoetryGroup(
+                name="analysis", toml_section="tool.poetry.group.analysis.dependencies"
+            ),
+        )
 
 
 class TestPoetryDependencies:
