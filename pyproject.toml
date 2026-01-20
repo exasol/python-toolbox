@@ -20,7 +20,7 @@ keywords = [
 dynamic = ["dependencies"]
 
 [tool.poetry]
-requires-poetry = ">=2.1.0"
+requires-poetry = ">=2.3.0"
 packages = [
     { include = "exasol" },
 ]
