@@ -59,24 +59,24 @@ def create_poetry_project(cwd, project_name, project_path):
 
 
 @pytest.fixture(scope="module")
-def pyproject_toml(project_path, create_poetry_project):
+def created_pyproject_toml(project_path, create_poetry_project):
     return PoetryToml.load_from_toml(working_directory=project_path)
 
 
 class TestPoetryToml:
     @staticmethod
-    def test_get_section_dict_exists(pyproject_toml):
-        result = pyproject_toml.get_section_dict("project")
+    def test_get_section_dict_exists(created_pyproject_toml):
+        result = created_pyproject_toml.get_section_dict("project")
         assert result is not None
 
     @staticmethod
-    def test_get_section_dict_does_not_exist(pyproject_toml):
-        result = pyproject_toml.get_section_dict("test")
+    def test_get_section_dict_does_not_exist(created_pyproject_toml):
+        result = created_pyproject_toml.get_section_dict("test")
         assert result is None
 
     @staticmethod
-    def test_groups(pyproject_toml):
-        assert pyproject_toml.groups == (MAIN_GROUP, DEV_GROUP, ANALYSIS_GROUP)
+    def test_groups(created_pyproject_toml):
+        assert created_pyproject_toml.groups == (MAIN_GROUP, DEV_GROUP, ANALYSIS_GROUP)
 
 
 class TestPoetryDependencies:
