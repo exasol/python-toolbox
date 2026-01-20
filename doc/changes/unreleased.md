@@ -2,7 +2,7 @@
 
 ## Summary
 
-In exasol-toolbox version `7.0.0` and higher the default behavior for
+In exasol-toolbox version `5.0.0` and higher the default behavior for
 `.github/actions/python-environment/action.yml` has changed. In previous versions,
 the default value for `poetry-version` was `2.1.2`, and it is now `2.3.0`.
 
