@@ -55,7 +55,7 @@ Example Usage
             uses: exasol/python-toolbox/.github/actions/python-environment@v1
             with:
               python-version: 3.12
-              poetry-version: 2.1.2
+              poetry-version: 2.3.0
               working-directory: pytest-backend
               use-cache: false
               extras: 'numpy,pandas'
