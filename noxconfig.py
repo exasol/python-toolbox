@@ -13,30 +13,36 @@ from exasol.toolbox.util.version import Version
 
 
 class UpdateTemplates:
-    TEMPLATE_PATH: Path = Path(__file__).parent / "exasol" / "toolbox" / "templates"
     PARENT_PATH: Path = Path(__file__).parent
 
     @property
-    def template_workflows(self) -> list[Path]:
-        gh_workflows = self.TEMPLATE_PATH / "github" / "workflows"
+    def github_template_workflows(self) -> list[Path]:
+        gh_workflows = (
+            self.PARENT_PATH
+            / "exasol"
+            / "toolbox"
+            / "templates"
+            / "github"
+            / "workflows"
+        )
         return [f for f in gh_workflows.iterdir() if f.is_file()]
 
     @property
-    def actions(self) -> list[Path]:
+    def github_actions(self) -> list[Path]:
         gh_actions = self.PARENT_PATH / ".github" / "actions"
         return [f for f in gh_actions.rglob("*") if f.is_file()]
 
     @hookimpl
     def prepare_release_update_version(self, session, config, version: Version) -> None:
-        for workflow in self.template_workflows:
+        for workflow in self.github_template_workflows:
             update_github_yml(workflow, version)
 
-        for action in self.actions:
+        for action in self.github_actions:
             update_github_yml(action, version)
 
     @hookimpl
     def prepare_release_add_files(self, session, config):
-        return self.template_workflows + self.actions
+        return self.github_template_workflows + self.github_actions
 
 
 ROOT_PATH = Path(__file__).parent
