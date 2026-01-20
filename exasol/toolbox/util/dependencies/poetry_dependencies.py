@@ -77,6 +77,17 @@ class PoetryToml(BaseModel):
                             toml_section=f"{group_key}.{group}.dependencies",
                         )
                     )
+
+        new_group_key = "dependency-groups"
+        if group_dict := self.get_section_dict(new_group_key):
+            for group, content in group_dict.items():
+                groups.append(
+                    PoetryGroup(
+                        name=group,
+                        toml_section=f"{new_group_key}.{group}",
+                    )
+                )
+
         return tuple(groups)
 
 
