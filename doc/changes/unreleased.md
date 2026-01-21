@@ -5,9 +5,9 @@
 In this major release, attention needs to be given to the following:
 
 * `gh-pages.yml` changes
-  * See [GitHub `upload-pages-artifact` v4](#github-upload-pages-artifact-v4)
+  * See GitHub `upload-pages-artifact` v4
 * default Poetry version changed from `2.1.2` to `2.3.0`
-  * See [Poetry Update](#poetry-update)
+  * See Poetry Update
 
 ### GitHub `upload-pages-artifact` v4
 
