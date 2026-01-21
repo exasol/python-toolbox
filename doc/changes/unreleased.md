@@ -15,15 +15,15 @@ could be specified in the GitHub workflows.
 
 * Projects migrating to this version should:
 
-* Update their `pyproject.toml` to have:
-    ```toml
-    requires-poetry = ">=2.3.0"
-    ```
-* Run `poetry check` and resolve any issues
-* (optional) Run `poetry lock` to update the  lock
-* (optional) Update their `pyproject.toml` to fit:
-   * [PEP-621](https://peps.python.org/pep-0621/)
-   * [PEP-735](https://peps.python.org/pep-0735/)
+  * Update their `pyproject.toml` to have:
+      ```toml
+      requires-poetry = ">=2.3.0"
+      ```
+  * Run `poetry check` and resolve any issues
+  * (optional) Run `poetry lock` to update the  lock
+  * (optional) Update their `pyproject.toml` to fit:
+     * [PEP-621](https://peps.python.org/pep-0621/)
+     * [PEP-735](https://peps.python.org/pep-0735/)
 
 Note that [uvx migrate-to-uv](https://github.com/mkniewallner/migrate-to-uv) seems to
 do a good job with automating many of the PEP-related changes; though developers should
