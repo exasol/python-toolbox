@@ -69,6 +69,7 @@ take care and will need to make manual changes to ensure it still works with
 
 * #624: Updated GitHub python-environment action and all code to use Poetry >= 2.3.0
 * #662: Update GitHub actions
-  * `checkout` from v5 to [v6](https://github.com/actions/checkout/releases/tag/v6.0.0) (now on Node24)
-  * `upload-pages-artifact` from v3 to [v4](https://github.com/actions/upload-pages-artifact/releases/tag/v4.0.0)
-  * `download-artifact`from v6 to [v7](https://github.com/actions/download-artifact/releases/tag/v7.0.0) (now on Node24)
+  * `checkout` from v5 to [v6](https://github.com/actions/checkout/releases/tag/v6.0.0) - using Node.js 24
+  * `upload-pages-artifact` from v3 to [v4](https://github.com/actions/upload-pages-artifact/releases/tag/v4.0.0) - breaking change
+  * `download-artifact`from v6 to [v7](https://github.com/actions/download-artifact/releases/tag/v7.0.0) - using Node.js 24
+  * `upload-artifact` from v5 to [v6](https://github.com/actions/upload-artifact/releases/tag/v6.0.0) - using Node.js 24
