@@ -2,9 +2,34 @@
 
 ## Summary
 
-In exasol-toolbox version `5.0.0` and higher the default behavior for
-`.github/actions/python-environment/action.yml` has changed. In previous versions,
-the default value for `poetry-version` was `2.1.2`, and it is now `2.3.0`.
+In this major release, attention needs to be given to the following:
+
+* `gh-pages.yml` changes
+  * See [GitHub `upload-pages-artifact` v4](#github-upload-pages-artifact-v4)
+* default Poetry version changed from `2.1.2` to `2.3.0`
+  * See [Poetry Update](#poetry-update)
+
+### GitHub `upload-pages-artifact` v4
+
+In v4, the developers of `upload-pages-artifact` dropped support for uploading
+dotfiles. This means that the `gh-pages.yml` has been modified such that it
+converts the generated `.html-documentation` to `html-documentation`. It was also checked
+which files are created by the nox session `docs:build`. It was found that in many cases
+that the only dotfiles produced are `.buildinfo` and `.doctrees`, which do not need
+to be uploaded for the GitHub pages to work. To verify that your project will not be
+adversely affected by these changes, please:
+
+1. Run the nox sessions `docs:build`
+2. Use this command to see what dotfiles are created:
+    ```bash
+    ls -a .hmtl-documentation/ | grep "^\."
+    ```
+3. If there are other critical dotfiles, consider converting them. Otherwise, create
+an issue in the `python-toolbox`.
+
+### Poetry Update
+The default behavior for `.github/actions/python-environment/action.yml` has changed.
+In previous versions, the default value for `poetry-version` was `2.1.2`, and it is now `2.3.0`.
 
 * Depending on its poetry version, a repository relying on the default behavior of said
 action may run into breaking changes. This can easily be resolved with explicitly setting the
@@ -43,4 +68,6 @@ take care and will need to make manual changes to ensure it still works with
 ## Refactoring
 
 * #624: Updated GitHub python-environment action and all code to use Poetry >= 2.3.0
-* #662: Update GitHub actions checkout from v5 to [v6](https://github.com/actions/checkout/releases/tag/v6.0.0)
+* #662: Update GitHub actions
+  * `checkout` from v5 to [v6](https://github.com/actions/checkout/releases/tag/v6.0.0)
+  * `upload-pages-artifact` from v3 to [v4](https://github.com/actions/upload-pages-artifact/releases/tag/v4.0.0)
