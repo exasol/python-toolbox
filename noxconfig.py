@@ -9,44 +9,51 @@ from pydantic import computed_field
 from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox.plugin import hookimpl
 from exasol.toolbox.tools.replace_version import update_github_yml
+from exasol.toolbox.util.release.cookiecutter import update_cookiecutter_default
 from exasol.toolbox.util.version import Version
 
 
 class UpdateTemplates:
-    TEMPLATE_PATH: Path = Path(__file__).parent / "exasol" / "toolbox" / "templates"
     PARENT_PATH: Path = Path(__file__).parent
 
     @property
-    def template_workflows(self) -> list[Path]:
-        gh_workflows = self.TEMPLATE_PATH / "github" / "workflows"
+    def github_template_workflows(self) -> list[Path]:
+        gh_workflows = (
+            self.PARENT_PATH
+            / "exasol"
+            / "toolbox"
+            / "templates"
+            / "github"
+            / "workflows"
+        )
         return [f for f in gh_workflows.iterdir() if f.is_file()]
 
     @property
-    def actions(self) -> list[Path]:
+    def github_actions(self) -> list[Path]:
         gh_actions = self.PARENT_PATH / ".github" / "actions"
         return [f for f in gh_actions.rglob("*") if f.is_file()]
 
+    @property
+    def cookiecutter_json(self) -> Path:
+        return self.PARENT_PATH / "project-template" / "cookiecutter.json"
+
     @hookimpl
     def prepare_release_update_version(self, session, config, version: Version) -> None:
-        for workflow in self.template_workflows:
+        for workflow in self.github_template_workflows:
             update_github_yml(workflow, version)
 
-        for action in self.actions:
+        for action in self.github_actions:
             update_github_yml(action, version)
 
+        update_cookiecutter_default(self.cookiecutter_json, version)
+
     @hookimpl
-    def prepare_release_add_files(self, session, config):
-        return self.template_workflows + self.actions
-
-
-# BaseConfig
-#   - Use
-#       Project_Config = BaseConfig()
-#   - modify
-#       Project_Config = BaseConfig(python_versions=["3.12"])
-#   - expand (Do not overwrite the attributes of BaseConfig)
-#       class ProjectConfig(BaseConfig):
-#           extra_data: list[str] = ["data"]
+    def prepare_release_add_files(self, session, config) -> list[Path]:
+        return (
+            self.github_template_workflows
+            + self.github_actions
+            + [self.cookiecutter_json]
+        )
 
 
 ROOT_PATH = Path(__file__).parent

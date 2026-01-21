@@ -18,7 +18,7 @@ dependencies = []
 
 [dependency-groups]
 dev = [
-    "exasol-toolbox>=4.0.1,<5",
+    "exasol-toolbox{{cookiecutter.exasol_toolbox_version_range}}",
 ]
 
 [tool.poetry]

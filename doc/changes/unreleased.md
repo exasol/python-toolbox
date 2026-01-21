@@ -38,6 +38,7 @@ take care and will need to make manual changes to ensure it still works with
 
 * #649: Restricted noxconfig usage throughout exasol.toolbox to only exasol.toolbox.nox.*
 * #647: Added summary to changelog template
+* #657: Updated `release:prepare` to modify cookiecutter template exasol-toolbox version range
 
 ## Refactoring
 
