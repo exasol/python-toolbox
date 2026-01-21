@@ -42,4 +42,5 @@ take care and will need to make manual changes to ensure it still works with
 
 ## Refactoring
 
-* 624: Updated GitHub python-environment action and all code to use Poetry >= 2.3.0
+* #624: Updated GitHub python-environment action and all code to use Poetry >= 2.3.0
+* #662: Update GitHub actions checkout from v5 to [v6](https://github.com/actions/checkout/releases/tag/v6.0.0)
