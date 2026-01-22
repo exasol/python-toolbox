@@ -131,9 +131,9 @@ def _install_template(
             output_file.write(input_file.read())
             return
 
-        output_file = stack.enter_context(open(dest, "w"))
+        output_file = stack.enter_context(open(dest, "wb"))
         rendered_string = _render_template(src=src, stack=stack)
-        output_file.write(rendered_string)
+        output_file.write(rendered_string.encode("utf-8"))
 
 
 def _select_templates(template: str, pkg: str, template_type: str) -> Mapping[str, Any]:
