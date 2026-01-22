@@ -21,6 +21,7 @@ class TestBaseConfig:
         assert config.model_dump() == {
             "add_to_excluded_python_paths": (),
             "create_major_version_tags": False,
+            "dependency_manager": {"name": "poetry", "version": "2.3.0"},
             "documentation_path": root_path / "doc",
             "exasol_versions": ("7.1.30", "8.29.13", "2025.1.8"),
             "excluded_python_paths": (
@@ -32,7 +33,13 @@ class TestBaseConfig:
                 "dist",
                 "venv",
             ),
+            "github_template_dict": {
+                "dependency_manager_version": "2.3.0",
+                "minimum_python_version": "3.10",
+                "os_version": "ubuntu-24.04",
+            },
             "minimum_python_version": "3.10",
+            "os_version": "ubuntu-24.04",
             "plugins_for_nox_sessions": (),
             "project_name": "test",
             "python_versions": ("3.10", "3.11", "3.12", "3.13", "3.14"),
