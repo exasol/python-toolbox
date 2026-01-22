@@ -26,7 +26,7 @@ jobs:
       contents: read
     steps:
       - name: SCM Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -39,12 +39,12 @@ jobs:
       - name: Build Documentation
         run: |
           poetry run -- nox -s docs:multiversion
-          rm -r .html-documentation/*/.doctrees
+          mv .html-documentation html-documentation
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
-          path: .html-documentation
+          path: html-documentation
 
   deploy-documentation:
     needs: [ build-documentation ]
