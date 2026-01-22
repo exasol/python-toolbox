@@ -53,4 +53,6 @@ take care and will need to make manual changes to ensure it still works with
 
 ## Refactoring
 
-* 624: Updated GitHub python-environment action and all code to use Poetry >= 2.3.0
+* #624: Updated GitHub python-environment action and all code to use Poetry >= 2.3.0
+* #667: Added deprecation warnings to `tbx workflow x` endpoints as some are unneeded
+(will be removed) and others need updates (will be moved to a nox session)

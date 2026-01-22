@@ -1,3 +1,4 @@
+import warnings
 from pathlib import Path
 
 import typer
@@ -18,6 +19,11 @@ def list_workflows(
 ) -> None:
     """List all available workflows."""
     template.list_templates(columns=columns, pkg=PKG)
+    warnings.warn(
+        "\033[31m`tbx workflow list` is deprecated; this will be removed after 2026-04-22\033[0m",
+        category=FutureWarning,
+        stacklevel=2,
+    )
 
 
 @CLI.command(name="show")
@@ -27,6 +33,11 @@ def show_workflow(
     """Shows a specific workflow."""
     template.show_templates(
         template=workflow, pkg=PKG, template_type=TEMPLATE_TYPE, lexer=LEXER
+    )
+    warnings.warn(
+        "\033[31m`tbx workflow show` is deprecated; this will be removed after 2026-04-22\033[0m",
+        category=FutureWarning,
+        stacklevel=2,
     )
 
 
@@ -41,6 +52,11 @@ def diff_workflow(
     """Diff a specific workflow against the installed one."""
     template.diff_template(
         template=workflow, dest=dest, pkg=PKG, template_type=TEMPLATE_TYPE
+    )
+    warnings.warn(
+        "\033[31m`tbx workflow diff` is deprecated; this will be removed after 2026-04-22\033[0m",
+        category=FutureWarning,
+        stacklevel=2,
     )
 
 
@@ -58,6 +74,11 @@ def install_workflow(
     """
     template.install_template(
         template=workflow, dest=dest, pkg=PKG, template_type=TEMPLATE_TYPE
+    )
+    warnings.warn(
+        "\033[31m`tbx workflow install` is deprecated; this will be replaced by a nox session after 2026-04-22\033[0m",
+        category=FutureWarning,
+        stacklevel=2,
     )
 
 
@@ -78,6 +99,11 @@ def update_workflow(
         confirm=confirm,
         pkg=PKG,
         template_type=TEMPLATE_TYPE,
+    )
+    warnings.warn(
+        "\033[31m`tbx workflow update` is deprecated; this will be replaced by a nox session after 2026-04-22\033[0m",
+        category=FutureWarning,
+        stacklevel=2,
     )
 
 
