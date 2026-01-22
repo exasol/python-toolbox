@@ -96,6 +96,20 @@ def test_expansion_validation_fails_for_invalid_version():
         BaseConfigExpansion(python_versions=("1.f.0",))
 
 
+class TestOsVersion:
+    @staticmethod
+    @pytest.mark.parametrize("os_version", ["ubuntu-24.04", "ubuntu-20.10"])
+    def test_works_as_expected(test_project_config_factory, os_version):
+        test_project_config_factory(os_version=os_version)
+
+    @staticmethod
+    @pytest.mark.parametrize("os_version", ["ubunt-24.04", "windows-2025", "macos-15"])
+    def test_fails_when_pattern_not_matched(test_project_config_factory, os_version):
+        with pytest.raises(ValidationError) as ex:
+            test_project_config_factory(os_version=os_version)
+        assert "String should match pattern '^ubuntu-.*'" in str(ex)
+
+
 def test_minimum_python_version(test_project_config_factory):
     conf = test_project_config_factory(python_versions=("5.5.5", "1.10", "9.9.9"))
     assert conf.minimum_python_version == "1.10"
