@@ -6,6 +6,7 @@ from pydantic_core._pydantic_core import ValidationError
 from exasol.toolbox.config import (
     DEFAULT_EXCLUDED_PATHS,
     BaseConfig,
+    DependencyManager,
     valid_version_string,
 )
 from exasol.toolbox.nox.plugin import hookimpl
@@ -173,3 +174,35 @@ class TestPlugins:
         with pytest.raises(ValidationError) as ex:
             test_project_config_factory(plugins_for_nox_sessions=(WithoutHook,))
         assert "No methods in `WithoutHook`" in str(ex.value)
+
+
+class TestDependencyManager:
+    @staticmethod
+    @pytest.mark.parametrize("version", ["2.1.4", "2.3.0", "2.9.9"])
+    def test_works_as_expected(version):
+        DependencyManager(name="poetry", version=version)
+
+    @staticmethod
+    def test_raises_exception_when_not_supported_name():
+        with pytest.raises(ValidationError) as ex:
+            DependencyManager(name="uv", version="2.3.0")
+        assert "Input should be 'poetry'" in str(ex.value)
+
+    @staticmethod
+    def test_raises_exception_when_version_too_high():
+        with pytest.raises(ValidationError) as ex:
+            DependencyManager(name="poetry", version="3.1.0")
+        assert "Poetry version must be <" in str(ex.value)
+
+    @staticmethod
+    def test_raises_exception_when_version_too_low():
+        with pytest.raises(ValidationError) as ex:
+            DependencyManager(name="poetry", version="2.1.0")
+        assert "Poetry version must be >=" in str(ex.value)
+
+    @staticmethod
+    def test_gives_warning_when_in_ok_range_but_above_last_tested(capsys):
+        with pytest.warns(
+            UserWarning, match="Poetry version exceeds last tested version"
+        ):
+            DependencyManager(name="poetry", version="2.4.0")

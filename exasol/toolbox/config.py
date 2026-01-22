@@ -108,7 +108,7 @@ class DependencyManager(BaseModel):
     def check_minimum_version(cls, v: str, info: ValidationInfo) -> str:
         tool = info.data.get("name")
         if tool == "poetry":
-            prefix = f"Poetry version {v} "
+            prefix = "Poetry version "
             if version.parse(v) < (min_version := version.parse("2.1.4")):
                 raise ValueError(prefix + f"must be >= {min_version}")
             elif version.parse(v) >= (max_version := version.parse("3.0.0")):
