@@ -280,7 +280,6 @@ class BaseConfig(BaseModel):
         configurations.
         """
         return {
-            "dependency_manager_name": self.dependency_manager.name,
             "dependency_manager_version": self.dependency_manager.version,
             "minimum_python_version": self.minimum_python_version,
             "os_version": self.os_version,

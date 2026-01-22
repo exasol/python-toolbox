@@ -2,6 +2,7 @@ import difflib
 import io
 from collections.abc import Mapping
 from contextlib import ExitStack
+from inspect import cleandoc
 from pathlib import Path
 from typing import (
     Any,
@@ -9,14 +10,20 @@ from typing import (
 
 import importlib_resources as resources
 import typer
+import yaml
+from jinja2 import Environment
 from rich.columns import Columns
 from rich.console import Console
 from rich.syntax import Syntax
+
+from noxconfig import PROJECT_CONFIG
 
 stdout = Console()
 stderr = Console(stderr=True)
 
 CLI = typer.Typer()
+
+jinja_env = Environment(variable_start_string="((", variable_end_string="))")
 
 
 def _templates(pkg: str) -> Mapping[str, Any]:
@@ -56,7 +63,25 @@ def show_templates(
         raise typer.Exit(code=1)
 
     template = templates[template]
-    stdout.print(Syntax.from_path(path=template, encoding="utf-8", lexer=lexer))  # type: ignore
+    stdout.print(
+        Syntax.from_path(path=template, encoding="utf-8", lexer=lexer)
+    )  # type: ignore
+
+
+def _render_template(
+    src: str | Path,
+    stack: ExitStack,
+) -> str:
+    input_file = stack.enter_context(open(src, encoding="utf-8"))
+
+    # dynamically render the template with Jinja2
+    template = jinja_env.from_string(input_file.read())
+    rendered_string = template.render(PROJECT_CONFIG.github_template_dict)
+
+    # validate that the rendered content is a valid YAML. This is not
+    # written out as by default it does not give GitHub-safe output.
+    yaml.safe_load(rendered_string)
+    return cleandoc(rendered_string) + "\n"
 
 
 def diff_template(template: str, dest: Path, pkg: str, template_type: str) -> None:
@@ -75,9 +100,14 @@ def diff_template(template: str, dest: Path, pkg: str, template_type: str) -> No
                 old = stack.enter_context(
                     open(old, encoding="utf-8") if old.exists() else io.StringIO("")
                 )
-                new = stack.enter_context(open(new, encoding="utf-8"))
-                old = old.read().split("\n")
-                new = new.read().split("\n")
+                if template_type == "issue":
+                    new = stack.enter_context(open(new, encoding="utf-8"))
+                    old = old.read().split("\n")
+                    new = new.read().split("\n")
+                elif template_type == "workflow":
+                    new = _render_template(src=new, stack=stack)
+                    old = old.read().split("\n")
+                    new = new.split("\n")
 
             diff = difflib.unified_diff(old, new, fromfile="old", tofile="new")
             stdout.print(Syntax("\n".join(diff), "diff"))
@@ -95,9 +125,15 @@ def _install_template(
         raise FileExistsError(f"{template_type} already exists")
 
     with ExitStack() as stack:
-        input_file = stack.enter_context(open(src, "rb"))
-        output_file = stack.enter_context(open(dest, "wb"))
-        output_file.write(input_file.read())
+        if template_type == "issue":
+            input_file = stack.enter_context(open(src, "rb"))
+            output_file = stack.enter_context(open(dest, "wb"))
+            output_file.write(input_file.read())
+            return
+
+        output_file = stack.enter_context(open(dest, "w"))
+        rendered_string = _render_template(src=src, stack=stack)
+        output_file.write(rendered_string)
 
 
 def _select_templates(template: str, pkg: str, template_type: str) -> Mapping[str, Any]:

@@ -6,7 +6,7 @@ on:
 jobs:
 
   report:
-    runs-on: ubuntu-24.04
+    runs-on: "(( os_version ))"
     permissions:
       contents: read
     env:
@@ -20,6 +20,9 @@ jobs:
 
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v4
+        with:
+          python-version: "(( minimum_python_version ))"
+          poetry-version: "(( dependency_manager_version ))"
 
       - name: Download Artifacts
         uses: actions/download-artifact@v6
