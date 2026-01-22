@@ -1,5 +1,7 @@
 from unittest.mock import patch
 
+import pytest
+
 from exasol.toolbox.tools.workflow import CLI
 
 
@@ -46,11 +48,29 @@ def test_show_workflow(cli_runner):
     assert "name: Checks " in result.output
 
 
-def test_diff_workflow(cli_runner, tmp_path):
+@pytest.mark.parametrize(
+    "workflow",
+    [
+        "build-and-publish",
+        "cd",
+        "check-release-tag",
+        "checks",
+        "ci",
+        "gh-pages",
+        "matrix-all",
+        "matrix-exasol",
+        "matrix-python",
+        "merge-gate",
+        "pr-merge",
+        "report",
+        "slow-checks",
+    ],
+)
+def test_diff_workflow(cli_runner, tmp_path, workflow):
     # set up with file in tmp_path so checks files are the same
-    cli_runner.invoke(CLI, ["install", "checks", str(tmp_path)])
+    cli_runner.invoke(CLI, ["install", workflow, str(tmp_path)])
 
-    result = cli_runner.invoke(CLI, ["diff", "checks", str(tmp_path)])
+    result = cli_runner.invoke(CLI, ["diff", workflow, str(tmp_path)])
 
     assert result.exit_code == 0
     # as the files are the same, we expect no difference
