@@ -23,7 +23,9 @@ stderr = Console(stderr=True)
 
 CLI = typer.Typer()
 
-jinja_env = Environment(variable_start_string="((", variable_end_string="))")
+jinja_env = Environment(
+    variable_start_string="((", variable_end_string="))", autoescape=True
+)
 
 
 def _templates(pkg: str) -> Mapping[str, Any]:
