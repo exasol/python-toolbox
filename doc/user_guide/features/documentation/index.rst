@@ -9,7 +9,7 @@ Deploying documentation
     multiversion
     troubleshooting
 
-The PTB uses ref:`sphinx <https://www.sphinx-doc.org/>`__ to build and validate the contents
+The PTB uses `sphinx <https://www.sphinx-doc.org/>`__ to build and validate the contents
 of your project's documentation. PTB expects the project's documentation in directory ``doc``,
 primarily as ``rst`` files. The ``doc/conf.py`` acts as the configuration file for building the
 documentation.
