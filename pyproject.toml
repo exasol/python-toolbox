@@ -47,6 +47,7 @@ dependencies = [
     "pysonar>=1.0.1.1548,<2",
     "pytest>=7.2.2,<10",
     "pyupgrade>=2.38.2,<4.0.0",
+    "pyyaml (>=6.0.3,<7.0.0)",
     "ruff>=0.14.5,<0.15",
     "shibuya>=2024.5.14",
     "sphinx>=5.3,<8",
@@ -66,6 +67,7 @@ sphinx-multiversion = "exasol.toolbox.sphinx.multiversion:main"
 dev = [
     "autoimport>=1.4.0,<2",
     "cookiecutter>=2.6.0,<3",
+    "types-pyyaml (>=6.0.12.20250915,<7.0.0.0)",
 ]
 
 [tool.poetry]
