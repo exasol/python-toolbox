@@ -272,7 +272,7 @@ class BaseConfig(BaseModel):
         """
         return self.source_code_path / "version.py"
 
-    @computed_field
+    @computed_field  # type: ignore[misc]
     @property
     def github_template_dict(self) -> dict[str, Any]:
         """
