@@ -34,7 +34,7 @@ In previous versions, the default value for `poetry-version` was `2.1.2`, and it
 * Depending on its poetry version, a repository relying on the default behavior of said
 action may run into breaking changes. This can easily be resolved with explicitly setting the
 `poetry-version` when calling the GitHub action. It is, however, recommended whenever
-possible to update the poetry version of the affected repository. In this major release,
+possible to update the poetry version of the affected repository. Since this major release,
 you can, if needed, alter the `poetry-version` via the `noxconfig.py::PROJECT_CONFIG`
 by changing `dependency_manager_version`. If you do this, please create an issue to
 update to `2.3.0` at your earliest convenience.
