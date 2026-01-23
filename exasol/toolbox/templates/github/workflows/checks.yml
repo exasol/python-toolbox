@@ -168,12 +168,13 @@ jobs:
 
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v4
-
-      - name: Run format check
-        run: poetry run -- nox -s format:check
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
+
+      - name: Run format check
+        run: poetry run -- nox -s format:check
+
 
   Build-Packages:
     name: Build Package Check
