@@ -7,7 +7,7 @@ jobs:
 
   check-tag-version-job:
     name: Check Tag Version
-    runs-on: ubuntu-24.04
+    runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     steps:
@@ -16,6 +16,9 @@ jobs:
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
+        with:
+          python-version: "3.10"
+          poetry-version: "2.3.0"
 
       - name: Check Tag Version
         # make sure the pushed/created tag matched the project version

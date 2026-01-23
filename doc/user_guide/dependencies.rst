@@ -32,7 +32,7 @@ Migration Information
 
 .. _migration_to_2.3.x:
 
-From Poetry ``2.1.x`` to ``2.3.0``
+From Poetry 2.1.x to 2.3.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 It is **highly** encouraged that a developer update their ``pyproject.toml`` and
 system-wide Poetry installation to most use effectively use Poetry ``2.3.0``:

@@ -6,7 +6,7 @@ on:
 jobs:
   Version-Check:
     name: Version
-    runs-on: ubuntu-24.04
+    runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     steps:
@@ -17,6 +17,9 @@ jobs:
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
+        with:
+          python-version: "3.10"
+          poetry-version: "2.3.0"
 
       - name: Check Version(s)
         run: poetry run -- nox -s version:check
@@ -24,7 +27,7 @@ jobs:
   Documentation:
     name: Docs
     needs: [ Version-Check ]
-    runs-on: ubuntu-24.04
+    runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     steps:
@@ -33,6 +36,9 @@ jobs:
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
+        with:
+          python-version: "3.10"
+          poetry-version: "2.3.0"
 
       - name: Build Documentation
         run: |
@@ -50,7 +56,7 @@ jobs:
 
   Changelog:
     name: Changelog Update Check
-    runs-on: ubuntu-24.04
+    runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     if: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
@@ -60,6 +66,9 @@ jobs:
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
+        with:
+          python-version: "3.10"
+          poetry-version: "2.3.0"
 
       - name: Run changelog update check
         run: poetry run -- nox -s changelog:updated
@@ -67,7 +76,7 @@ jobs:
   Lint:
     name: Linting (Python-${{ matrix.python-version }})
     needs: [ Version-Check, build-matrix ]
-    runs-on: ubuntu-24.04
+    runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     strategy:
@@ -81,6 +90,7 @@ jobs:
         uses: ./.github/actions/python-environment
         with:
           python-version: ${{ matrix.python-version }}
+          poetry-version: "2.3.0"
 
       - name: Run lint
         run: poetry run -- nox -s lint:code
@@ -97,7 +107,7 @@ jobs:
   Type-Check:
     name: Type Checking (Python-${{ matrix.python-version }})
     needs: [ Version-Check, build-matrix ]
-    runs-on: ubuntu-24.04
+    runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     strategy:
@@ -112,6 +122,7 @@ jobs:
         uses: ./.github/actions/python-environment
         with:
           python-version: ${{ matrix.python-version }}
+          poetry-version: "2.3.0"
 
       - name: Run type-check
         run: poetry run -- nox -s lint:typing
@@ -119,7 +130,7 @@ jobs:
   Security:
     name: Security Checks (Python-${{ matrix.python-version }})
     needs: [ Version-Check, build-matrix ]
-    runs-on: ubuntu-24.04
+    runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     strategy:
@@ -134,6 +145,7 @@ jobs:
         uses: ./.github/actions/python-environment
         with:
           python-version: ${{ matrix.python-version }}
+          poetry-version: "2.3.0"
 
       - name: Run security linter
         run: poetry run -- nox -s lint:security
@@ -147,7 +159,7 @@ jobs:
 
   Format:
     name: Format Check
-    runs-on: ubuntu-24.04
+    runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     steps:
@@ -156,14 +168,18 @@ jobs:
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
+        with:
+          python-version: "3.10"
+          poetry-version: "2.3.0"
 
       - name: Run format check
         run: poetry run -- nox -s format:check
 
+
   Build-Packages:
     name: Build Package Check
     needs: [ Documentation, Lint, Type-Check, Security, Format ]
-    runs-on: ubuntu-24.04
+    runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     steps:
@@ -172,6 +188,9 @@ jobs:
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
+        with:
+          python-version: "3.10"
+          poetry-version: "2.3.0"
 
       - name: Run Distribution Check
         run: poetry run -- nox -s package:check
@@ -187,6 +206,9 @@ jobs:
 
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
+        with:
+          python-version: "3.10"
+          poetry-version: "2.3.0"
 
       - name: Run import linter
         run: poetry run -- nox -s lint:import
@@ -194,7 +216,7 @@ jobs:
   Tests:
     name: Unit-Tests (Python-${{ matrix.python-version }})
     needs: [ Build-Packages, Lint-Imports, build-matrix ]
-    runs-on: ubuntu-24.04
+    runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     strategy:
@@ -212,6 +234,7 @@ jobs:
         uses: ./.github/actions/python-environment
         with:
           python-version: ${{ matrix.python-version }}
+          poetry-version: "2.3.0"
 
       - name: Run Tests and Collect Coverage
         run: poetry run -- nox -s test:unit -- --coverage
