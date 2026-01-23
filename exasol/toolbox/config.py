@@ -173,13 +173,9 @@ class BaseConfig(BaseModel):
         This is used to define which dependency manager is used to install dependencies
         in the CI. At this time, the PTB only supports poetry >= 2.1.4. The PTB
         default GitHub templates and code have been recently adapted to work with 2.3.0,
-        and its highly encouraged that a developer update their pyproject.toml:
-            * To have: requires-poetry = ">=2.3.0"
-            * Run `poetry check` and resolve any issues
-            * Run `poetry lock` to update the  lock
-            * (optional) Update their `pyproject.toml` to fit:
-                * [PEP-621](https://peps.python.org/pep-0621/)
-                * [PEP-735](https://peps.python.org/pep-0735/)
+        and it is highly encouraged that a developer update their pyproject.toml,
+        as described further on:
+            https://exasol.github.io/python-toolbox/main/user_guide/dependencies.html
         """,
     )
     os_version: str = Field(
