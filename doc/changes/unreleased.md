@@ -73,3 +73,4 @@ update to `2.3.0` at your earliest convenience.
   * `upload-artifact` from v5 to [v6](https://github.com/actions/upload-artifact/releases/tag/v6.0.0) - using Node.js 24
 * #667: Added deprecation warnings to `tbx workflow x` endpoints as some are unneeded
 (will be removed) and others need updates (will be moved to a nox session)
+* #669: Updated PTB GitHub workflows
