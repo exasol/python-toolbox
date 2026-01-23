@@ -67,7 +67,7 @@ take care and will need to make manual changes to ensure it still works with
 * #657: Updated `release:prepare` to modify cookiecutter template exasol-toolbox version range
 * #665: Added SECURITY.md to the cookiecutter template
 * #667: Switched GitHub workflow templates to be controlled by PROJECT_CONFIG:
-   * The in `BaseConfig.github_template_dict` are used to render the following values in
+   * The values in `BaseConfig.github_template_dict` are used to render the following values in
      the templates
       * `dependency_manager_version` - used for `poetry-version` in the workflows.
          The default it `2.3.0`.
