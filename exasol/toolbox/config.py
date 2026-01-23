@@ -171,10 +171,8 @@ class BaseConfig(BaseModel):
         default=DependencyManager(name="poetry", version="2.3.0"),
         description="""
         This is used to define which dependency manager is used to install dependencies
-        in the CI. At this time, the PTB only supports poetry >= 2.1.4. The PTB
-        default GitHub templates and code have been recently adapted to work with 2.3.0,
-        and it is highly encouraged that a developer update their pyproject.toml,
-        as described further on:
+        in the CI. For more details on which PTB version pairs with which
+        dependency manager, see:
             https://exasol.github.io/python-toolbox/main/user_guide/dependencies.html
         """,
     )
