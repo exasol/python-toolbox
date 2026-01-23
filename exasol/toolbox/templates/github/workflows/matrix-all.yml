@@ -9,7 +9,7 @@ on:
 
 jobs:
   all_versions:
-    runs-on: ubuntu-24.04
+    runs-on: "(( os_version ))"
     permissions:
       contents: read
     steps:
@@ -18,6 +18,9 @@ jobs:
 
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v4
+        with:
+          python-version: "(( minimum_python_version ))"
+          poetry-version: "(( dependency_manager_version ))"
 
       - name: Generate matrix
         run: poetry run -- nox -s matrix:all

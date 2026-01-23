@@ -27,3 +27,4 @@ ignore_imports =
     # To reduce the effort in using nox sessions (i.e. having to pass the config path
     # in each CLI usage), we allow the noxconfig to be imported within these modules.
     exasol.toolbox.nox.* -> noxconfig
+    exasol.toolbox.tools.template -> noxconfig

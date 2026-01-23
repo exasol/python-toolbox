@@ -34,21 +34,22 @@ In previous versions, the default value for `poetry-version` was `2.1.2`, and it
 * Depending on its poetry version, a repository relying on the default behavior of said
 action may run into breaking changes. This can easily be resolved with explicitly setting the
 `poetry-version` when calling the GitHub action. It is, however, recommended whenever
-possible to update the poetry version of the affected repository. Unfortunately,
-there is not a quick and easy way to update all the places where `poetry-version`
-could be specified in the GitHub workflows.
+possible to update the poetry version of the affected repository. Since this major release,
+you can, if needed, alter the `poetry-version` via the `noxconfig.py::PROJECT_CONFIG`
+by changing `dependency_manager_version`. If you do this, please create an issue to
+update to `2.3.0` at your earliest convenience.
 
 * Projects migrating to this version should:
 
-* Update their `pyproject.toml` to have:
-    ```toml
-    requires-poetry = ">=2.3.0"
-    ```
-* Run `poetry check` and resolve any issues
-* (optional) Run `poetry lock` to update the  lock
-* (optional) Update their `pyproject.toml` to fit:
-   * [PEP-621](https://peps.python.org/pep-0621/)
-   * [PEP-735](https://peps.python.org/pep-0735/)
+  * Update their `pyproject.toml` to have:
+      ```toml
+      requires-poetry = ">=2.3.0"
+      ```
+  * Run `poetry check` and resolve any issues
+  * (optional) Run `poetry lock` to update the  lock
+  * (optional) Update their `pyproject.toml` to fit:
+     * [PEP-621](https://peps.python.org/pep-0621/)
+     * [PEP-735](https://peps.python.org/pep-0735/)
 
 Note that [uvx migrate-to-uv](https://github.com/mkniewallner/migrate-to-uv) seems to
 do a good job with automating many of the PEP-related changes; though developers should
@@ -65,6 +66,16 @@ take care and will need to make manual changes to ensure it still works with
 * #647: Added summary to changelog template
 * #657: Updated `release:prepare` to modify cookiecutter template exasol-toolbox version range
 * #665: Added SECURITY.md to the cookiecutter template
+* #667: Switched GitHub workflow templates to be controlled by PROJECT_CONFIG:
+   * The values in `BaseConfig.github_template_dict` are used to render the following values in
+     the templates
+      * `dependency_manager_version` - used for `poetry-version` in the workflows.
+         The default it `2.3.0`.
+      * `minimum_python_version` - used for `python-version` in the workflows whenever
+         `python-version` for actions that are run once. The default is the minimum value
+         in your project's defined `python_versions`
+      * `os_version` - used for the GitHub runner in the workflows. The default is
+         `ubuntu-24.04`
 
 ## Refactoring
 
@@ -74,3 +85,5 @@ take care and will need to make manual changes to ensure it still works with
   * `upload-pages-artifact` from v3 to [v4](https://github.com/actions/upload-pages-artifact/releases/tag/v4.0.0) - breaking change
   * `download-artifact`from v6 to [v7](https://github.com/actions/download-artifact/releases/tag/v7.0.0) - using Node.js 24
   * `upload-artifact` from v5 to [v6](https://github.com/actions/upload-artifact/releases/tag/v6.0.0) - using Node.js 24
+* #667: Added deprecation warnings to `tbx workflow x` endpoints as some are unneeded
+(will be removed) and others need updates (will be moved to a nox session)

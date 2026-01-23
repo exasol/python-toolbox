@@ -1,18 +1,23 @@
 import inspect
+import warnings
 from collections.abc import Callable
 from pathlib import Path
 from typing import (
     Annotated,
     Any,
+    Literal,
 )
 
+from packaging import version
 from pydantic import (
     AfterValidator,
     BaseModel,
     ConfigDict,
     Field,
     computed_field,
+    field_validator,
 )
+from pydantic_core.core_schema import ValidationInfo
 
 from exasol.toolbox.nox.plugin import (
     METHODS_SPECIFIED_FOR_HOOKS,
@@ -93,6 +98,26 @@ DEFAULT_EXCLUDED_PATHS = {
 }
 
 
+class DependencyManager(BaseModel):
+    # Restricted to only allow "poetry" at the moment
+    name: Literal["poetry"]
+    version: ValidVersionStr
+
+    @field_validator("version")
+    @classmethod
+    def check_minimum_version(cls, v: str, info: ValidationInfo) -> str:
+        tool = info.data.get("name")
+        if tool == "poetry":
+            prefix = "Poetry version "
+            if version.parse(v) < (min_version := version.parse("2.1.4")):
+                raise ValueError(prefix + f"must be >= {min_version}")
+            elif version.parse(v) >= (max_version := version.parse("3.0.0")):
+                raise ValueError(prefix + f"must be < {max_version}")
+            elif version.parse(v) > (current_version := version.parse("2.3.0")):
+                warnings.warn(prefix + f"exceeds last tested version {current_version}")
+        return v
+
+
 class BaseConfig(BaseModel):
     """
     Basic configuration for projects using the PTB
@@ -140,6 +165,24 @@ class BaseConfig(BaseModel):
             - https://exasol.github.io/python-toolbox/main/user_guide/customization.html#plugins
             - https://exasol.github.io/python-toolbox/main/developer_guide/plugins.html,
         possible plugin options are defined in `exasol.toolbox.nox.plugins.NoxTasks`.
+        """,
+    )
+    dependency_manager: DependencyManager = Field(
+        default=DependencyManager(name="poetry", version="2.3.0"),
+        description="""
+        This is used to define which dependency manager is used to install dependencies
+        in the CI. For more details on which PTB version pairs with which
+        dependency manager, see:
+            https://exasol.github.io/python-toolbox/main/user_guide/dependencies.html
+        """,
+    )
+    os_version: str = Field(
+        default="ubuntu-24.04",
+        pattern=r"^ubuntu-.*",
+        description="""
+        This is used to set the OS-runner in the GitHub workflows that are
+        provided as templates from the PTB. Currently, only ubuntu-based runners
+        are supported.
         """,
     )
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
@@ -222,3 +265,16 @@ class BaseConfig(BaseModel):
         the nox sessions ``version:check`` and ``release:prepare``.
         """
         return self.source_code_path / "version.py"
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def github_template_dict(self) -> dict[str, Any]:
+        """
+        Dictionary of variables to dynamically render Jinja2 templates into valid YAML
+        configurations.
+        """
+        return {
+            "dependency_manager_version": self.dependency_manager.version,
+            "minimum_python_version": self.minimum_python_version,
+            "os_version": self.os_version,
+        }

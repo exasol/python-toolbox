@@ -7,7 +7,7 @@ on:
 jobs:
 
   build-documentation:
-    runs-on: ubuntu-24.04
+    runs-on: "(( os_version ))"
     permissions:
       contents: read
     steps:
@@ -18,6 +18,9 @@ jobs:
 
       - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v4
+        with:
+          python-version: "(( minimum_python_version ))"
+          poetry-version: "(( dependency_manager_version ))"
 
       - name: Build Documentation
         run: |
@@ -38,7 +41,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-24.04
+    runs-on: "(( os_version ))"
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

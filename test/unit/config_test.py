@@ -6,6 +6,7 @@ from pydantic_core._pydantic_core import ValidationError
 from exasol.toolbox.config import (
     DEFAULT_EXCLUDED_PATHS,
     BaseConfig,
+    DependencyManager,
     valid_version_string,
 )
 from exasol.toolbox.nox.plugin import hookimpl
@@ -21,6 +22,7 @@ class TestBaseConfig:
         assert config.model_dump() == {
             "add_to_excluded_python_paths": (),
             "create_major_version_tags": False,
+            "dependency_manager": {"name": "poetry", "version": "2.3.0"},
             "documentation_path": root_path / "doc",
             "exasol_versions": ("7.1.30", "8.29.13", "2025.1.8"),
             "excluded_python_paths": (
@@ -32,7 +34,13 @@ class TestBaseConfig:
                 "dist",
                 "venv",
             ),
+            "github_template_dict": {
+                "dependency_manager_version": "2.3.0",
+                "minimum_python_version": "3.10",
+                "os_version": "ubuntu-24.04",
+            },
             "minimum_python_version": "3.10",
+            "os_version": "ubuntu-24.04",
             "plugins_for_nox_sessions": (),
             "project_name": "test",
             "python_versions": ("3.10", "3.11", "3.12", "3.13", "3.14"),
@@ -86,6 +94,20 @@ class BaseConfigExpansion(BaseConfig):
 def test_expansion_validation_fails_for_invalid_version():
     with pytest.raises(ValueError):
         BaseConfigExpansion(python_versions=("1.f.0",))
+
+
+class TestOsVersion:
+    @staticmethod
+    @pytest.mark.parametrize("os_version", ["ubuntu-24.04", "ubuntu-20.10"])
+    def test_works_as_expected(test_project_config_factory, os_version):
+        test_project_config_factory(os_version=os_version)
+
+    @staticmethod
+    @pytest.mark.parametrize("os_version", ["ubunt-24.04", "windows-2025", "macos-15"])
+    def test_fails_when_pattern_not_matched(test_project_config_factory, os_version):
+        with pytest.raises(ValidationError) as ex:
+            test_project_config_factory(os_version=os_version)
+        assert "String should match pattern '^ubuntu-.*'" in str(ex)
 
 
 def test_minimum_python_version(test_project_config_factory):
@@ -166,3 +188,35 @@ class TestPlugins:
         with pytest.raises(ValidationError) as ex:
             test_project_config_factory(plugins_for_nox_sessions=(WithoutHook,))
         assert "No methods in `WithoutHook`" in str(ex.value)
+
+
+class TestDependencyManager:
+    @staticmethod
+    @pytest.mark.parametrize("version", ["2.1.4", "2.3.0", "2.9.9"])
+    def test_works_as_expected(version):
+        DependencyManager(name="poetry", version=version)
+
+    @staticmethod
+    def test_raises_exception_when_not_supported_name():
+        with pytest.raises(ValidationError) as ex:
+            DependencyManager(name="uv", version="2.3.0")
+        assert "Input should be 'poetry'" in str(ex.value)
+
+    @staticmethod
+    def test_raises_exception_when_version_too_high():
+        with pytest.raises(ValidationError) as ex:
+            DependencyManager(name="poetry", version="3.1.0")
+        assert "Poetry version must be <" in str(ex.value)
+
+    @staticmethod
+    def test_raises_exception_when_version_too_low():
+        with pytest.raises(ValidationError) as ex:
+            DependencyManager(name="poetry", version="2.1.0")
+        assert "Poetry version must be >=" in str(ex.value)
+
+    @staticmethod
+    def test_gives_warning_when_in_ok_range_but_above_last_tested(capsys):
+        with pytest.warns(
+            UserWarning, match="Poetry version exceeds last tested version"
+        ):
+            DependencyManager(name="poetry", version="2.4.0")
