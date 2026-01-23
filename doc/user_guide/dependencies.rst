@@ -35,7 +35,7 @@ Migration Information
 From Poetry 2.1.x to 2.3.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 It is **highly** encouraged that a developer update their ``pyproject.toml`` and
-system-wide Poetry installation to most use effectively use Poetry ``2.3.0``:
+system-wide Poetry installation to most effectively use Poetry ``2.3.0``:
 
 #. In your terminal, update your system-wide Poetry version:
 
