@@ -38,6 +38,13 @@ class TestBaseConfig:
                 "dependency_manager_version": "2.3.0",
                 "minimum_python_version": "3.10",
                 "os_version": "ubuntu-24.04",
+                "python_versions": (
+                    "3.10",
+                    "3.11",
+                    "3.12",
+                    "3.13",
+                    "3.14",
+                ),
             },
             "minimum_python_version": "3.10",
             "os_version": "ubuntu-24.04",
