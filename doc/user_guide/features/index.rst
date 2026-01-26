@@ -10,6 +10,7 @@ Features
    creating_a_release
    documentation/index
    git_hooks/index
+   github_workflows/index
    formatting_code/index
    managing_dependencies
 

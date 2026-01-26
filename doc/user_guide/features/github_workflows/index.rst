@@ -3,7 +3,7 @@
 GitHub Workflows
 ================
 
-.. figure:: ../_static/github-workflows.png
+.. figure:: ../../../_static/github-workflows.png
     :alt: GitHub Workflow Example
 
 The exasol-toolbox ships with various GitHub workflow templates. To leverage the full feature set of the toolbox, you should use them.
