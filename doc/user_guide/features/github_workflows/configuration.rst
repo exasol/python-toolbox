@@ -8,7 +8,7 @@ Configuration
 
 * Make sure your GitHub project has access to a deployment token for PyPi with the following name: **PYPI_TOKEN**. It should be available to the repository either as an Organization-, Repository-, or Environment-secret.
 
-* If your CI workflow involves slow or expensive steps you can guard these to be executed only after manual approval. The CI workflow will automaticallu create a GitHub environment named :code:`manual-approval`. You only need to add reviewers in (:code:`Settings/Environments/manual-approval`) and move the steps to be guarded into the related section in job :code:`slow-checks` in file :code:`.github/workflows/merge-gate.yml`.
+* If your CI workflow involves slow or expensive steps you can guard these to be executed only after manual approval. The CI workflow will automatically create a GitHub environment named :code:`manual-approval`. You only need to add reviewers in (:code:`Settings/Environments/manual-approval`) and move the steps to be guarded into the related section in job :code:`slow-checks` in file :code:`.github/workflows/merge-gate.yml`.
 
 2. Add all workflows to your project
 ++++++++++++++++++++++++++++++++++++
