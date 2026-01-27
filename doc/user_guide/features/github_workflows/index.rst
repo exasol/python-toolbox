@@ -9,11 +9,12 @@ Enabling GitHub Workflows
 
     configuration
 
-The PTB ships with partially configurable GitHub workflow templates that cover the most common Python
-CI/CD setup. The templates are defined in:
+The PTB ships with configurable GitHub workflow templates covering the most common
+CI/CD setup variants for Python projects. The templates are defined in:
 `exasol/toolbox/templates/github/workflows <https://github.com/exasol/python-toolbox/tree/main/exasol/toolbox/templates/github/workflows>`__.
 
-To use, update, and otherwise interact with these templates, a CLI has been provided:
+The PTB provides a command line interface (CLI) for generating and updating actual
+workflows from the templates.
 
 .. code-block:: bash
 
@@ -21,9 +22,8 @@ To use, update, and otherwise interact with these templates, a CLI has been prov
 
 .. attention::
 
-   Generally, it is advised to use all workflows provided by the PTB due to their
-   interdependencies. For more details of how the workflows work together, see
-   :ref:`ci_actions`.
+   In most cases, we recommend using _all_ workflows without change to ensure
+   consistent interdependencies. For more details, see :ref:`ci_actions`.
 
 Underlying the CLI, the PTB uses Jinja to dynamically generate project-specific
 workflows. The rendering process is supported by the ``github_template_dict`` found in
@@ -48,37 +48,38 @@ Workflows
      - Description
    * - ``build-and-publish.yml``
      - Workflow call
-     - Packages the distribution and releases it to PyPi and GitHub.
+     - Packages the distribution and publishes it to PyPi and GitHub.
    * - ``cd.yml``
      - Push with new tag
      - Manages continuous delivery by calling ``check-release-tag.yml``,
        ``build-and-publish.yml``, and ``gh-pages.yml``. See :ref:`cd_yml`
-       for a graph of called workflows.
+       for a graph of workflow calls.
    * - ``check-release-tag.yml``
      - Workflow call
      - Verifies that the release tag matches the project's internal versioning.
    * - ``checks.yml``
      - Workflow call
-     - Executes many small & fast checks: checks links of and builds documentation,
-       runs various linters (security, type checks, etc.), and unit tests.
+     - Executes many small & fast checks: builds documentation and validates
+       cross-references (AKA. "links") to be valid,runs various linters
+       (security, type checks, etc.), and unit tests.
    * - ``ci.yml``
      - Pull request and monthly
      - Executes the continuous integration suite by calling ``merge-gate.yml`` and
-       ``report.yml``. See :ref:`ci_yml` for a graph of called workflows.
+       ``report.yml``. See :ref:`ci_yml` for a graph of workflow calls.
    * - ``gh-pages.yml``
      - Workflow call
      - Builds the documentation and deploys it to GitHub Pages.
    * - ``matrix-all.yml``
      - Workflow call
-     - Calls on a nox session ``matrix:all``, which typically has ``exasol_versions``
+     - Calls Nox session ``matrix:all``, which typically evaluates ``exasol_versions``
        and ``python_versions`` from the ``PROJECT_CONFIG``.
    * - ``matrix-exasol.yml``
      - Workflow call
-     - Calls on a nox session ``matrix:exasol`` to get the ``exasol_versions`` from the
+     - Calls Nox session ``matrix:exasol`` to get the ``exasol_versions`` from the
        ``PROJECT_CONFIG``.
    * - ``matrix-python.yml``
      - Workflow call
-     - Calls on a nox session ``matrix:python`` to get the ``python_versions`` from the
+     - Calls Nox session ``matrix:python`` to get the ``python_versions`` from the
        ``PROJECT_CONFIG``.
    * - ``merge-gate.yml``
      - Workflow call
