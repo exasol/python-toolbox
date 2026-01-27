@@ -15,6 +15,7 @@ from jinja2 import Environment
 from rich.columns import Columns
 from rich.console import Console
 from rich.syntax import Syntax
+from yaml.resolver import Resolver
 
 from noxconfig import PROJECT_CONFIG
 
@@ -70,6 +71,16 @@ def show_templates(
     )  # type: ignore
 
 
+# yaml uses a shorthand to identify "on" and "off" tags.
+# for GitHub workflows, we do NOT want "on" replaced with "True".
+for character in ["O", "o"]:
+    Resolver.yaml_implicit_resolvers[character] = [
+        x
+        for x in Resolver.yaml_implicit_resolvers[character]
+        if x[0] != "tag:yaml.org,2002:bool"
+    ]
+
+
 def _render_template(
     src: str | Path,
     stack: ExitStack,
@@ -80,10 +91,14 @@ def _render_template(
     template = jinja_env.from_string(input_file.read())
     rendered_string = template.render(PROJECT_CONFIG.github_template_dict)
 
-    # validate that the rendered content is a valid YAML. This is not
-    # written out as by default it does not give GitHub-safe output.
-    yaml.safe_load(rendered_string)
-    return cleandoc(rendered_string) + "\n"
+    # this line also checks that the rendered content is a valid YAML
+    data = yaml.safe_load(rendered_string)
+    output = yaml.safe_dump(
+        data,
+        sort_keys=False,  # if True, then re-orders the jobs alphabetically
+    )
+
+    return cleandoc(output) + "\n"
 
 
 def diff_template(template: str, dest: Path, pkg: str, template_type: str) -> None:
