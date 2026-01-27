@@ -84,18 +84,20 @@ Workflows
    * - ``merge-gate.yml``
      - Workflow call
      - Acts as a final status check (gatekeeper) to ensure all required CI steps have
-       passed before allowing a merge.
+       passed before allowing to merge the branch of your pull request to the
+       default branch of the repository. e.g. ``main``.
    * - ``pr-merge.yml``
      - Push to main
      - Runs ``checks.yml``, ``gh-pages.yml``, and ``report.yml``. See
        :ref:`pr_merge_yml` for a graph of called workflows.
    * - ``report.yml``
      - Workflow call
-     - Downloads coverage and linting information, creates a summary for GitHub action,
-       and uploads the raw results to Sonar for evaluation.
+     - Downloads results from code coverage analysis and linting,
+       creates a summary displayed by GitHub as result of running
+       the action, and uploads the results to Sonar.
    * - ``slow-checks.yml``
      - Workflow call
-     - Runs long-running checks, which typically involve an Exasol database.
+     - Runs long-running checks, which typically involve an Exasol database instance.
 
 .. _ci_actions:
 
