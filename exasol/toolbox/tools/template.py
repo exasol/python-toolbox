@@ -95,7 +95,15 @@ def empty_representer(dumper, data):
     return dumper.represent_scalar("tag:yaml.org,2002:null", "")
 
 
+def str_presenter(dumper, data):
+    # Use literal style '|' for strings with newlines
+    if "\n" in data:
+        return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
+    return dumper.represent_scalar("tag:yaml.org,2002:str", data)
+
+
 # Register it to the dumper
+GitHubDumper.add_representer(str, str_presenter)
 GitHubDumper.add_representer(type(None), empty_representer)
 
 
