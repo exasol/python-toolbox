@@ -81,6 +81,24 @@ for character in ["O", "o"]:
     ]
 
 
+class GitHubDumper(yaml.SafeDumper):
+    pass
+
+
+def empty_representer(dumper, data):
+    """
+    Leave empty fields without 'null'
+
+    on:
+        workflow_call:
+    """
+    return dumper.represent_scalar("tag:yaml.org,2002:null", "")
+
+
+# Register it to the dumper
+GitHubDumper.add_representer(type(None), empty_representer)
+
+
 def _render_template(
     src: str | Path,
     stack: ExitStack,
@@ -93,8 +111,9 @@ def _render_template(
 
     # this line also checks that the rendered content is a valid YAML
     data = yaml.safe_load(rendered_string)
-    output = yaml.safe_dump(
+    output = yaml.dump(
         data,
+        Dumper=GitHubDumper,
         sort_keys=False,  # if True, then re-orders the jobs alphabetically
     )
 
