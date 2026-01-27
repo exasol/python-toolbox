@@ -113,11 +113,11 @@ When any pull request is opened, synchronized, or reopened, then the ``ci.yml`` 
 triggered.
 
 When configured as described on :ref:`github_workflows_configuration`, the
-``run-slow-tests`` job requires a developer to manually approve running the slower
+``run-slow-tests`` job requires a developer to manually approve executing the slower
 workflows, like ``slow-checks.yml``. This allows developers to update their pull
 request more often and to only periodically run the more time-expensive tests.
 
-If one of the jobs in the chain fails (or is ``run-slow-tests`` is not approved),
+If one of the jobs in the chain fails (or if ``run-slow-tests`` is not approved),
 then the subsequent jobs will not be started.
 
 .. mermaid::
