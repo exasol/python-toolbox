@@ -1,5 +1,6 @@
 import difflib
 import io
+import re
 from collections.abc import Mapping
 from contextlib import ExitStack
 from inspect import cleandoc
@@ -95,10 +96,19 @@ def empty_representer(dumper, data):
     return dumper.represent_scalar("tag:yaml.org,2002:null", "")
 
 
+# Regex for common strings that lose quotes:
+# 1. Version numbers (e.g., 2.3.0, 3.10)
+# 2. OS/image names (e.g., ubuntu-24.04)
+# 3. Numeric strings that look like octals or floats (e.g., 045, 1.2)
+QUOTE_REGEX = re.compile(r"^(\d+\.\d+(\.\d+)?|[a-zA-Z]+-\d+\.\d+|0\d+)$")
+
+
 def str_presenter(dumper, data):
     # Use literal style '|' for strings with newlines
     if "\n" in data:
         return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
+    if QUOTE_REGEX.match(data):
+        return dumper.represent_scalar("tag:yaml.org,2002:str", data, style='"')
     return dumper.represent_scalar("tag:yaml.org,2002:str", data)
 
 
