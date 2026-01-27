@@ -1,0 +1,6 @@
+#merge-diagram svg {
+    max-height: 225px !important;
+}
+#release-diagram svg {
+    max-height: 325px !important;
+}
