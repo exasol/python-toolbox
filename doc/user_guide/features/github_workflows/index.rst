@@ -1,7 +1,7 @@
 .. _GitHub Workflows:
 
-GitHub Workflows
-================
+Enabling GitHub Workflows
+=========================
 
 .. toctree::
     :maxdepth: 2
