@@ -1,8 +1,6 @@
 name: Checks
-
 on:
   workflow_call:
-
 jobs:
   Version-Check:
     name: Version
@@ -10,44 +8,38 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: SCM Checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Setup Python & Poetry Environment
-        uses: ./.github/actions/python-environment
-        with:
-          python-version: "3.10"
-          poetry-version: "2.3.0"
-
-      - name: Check Version(s)
-        run: poetry run -- nox -s version:check
-
+    - name: SCM Checkout
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+    - name: Setup Python & Poetry Environment
+      uses: ./.github/actions/python-environment
+      with:
+        python-version: "3.10"
+        poetry-version: "2.3.0"
+    - name: Check Version(s)
+      run: poetry run -- nox -s version:check
   Documentation:
     name: Docs
-    needs: [ Version-Check ]
+    needs:
+    - Version-Check
     runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     steps:
-      - name: SCM Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Python & Poetry Environment
-        uses: ./.github/actions/python-environment
-        with:
-          python-version: "3.10"
-          poetry-version: "2.3.0"
-
-      - name: Build Documentation
-        run: |
-          poetry run -- nox -s docs:build
-
-      - name: Link Check
-        run: |
-          poetry run -- nox -s links:check
-
+    - name: SCM Checkout
+      uses: actions/checkout@v6
+    - name: Setup Python & Poetry Environment
+      uses: ./.github/actions/python-environment
+      with:
+        python-version: "3.10"
+        poetry-version: "2.3.0"
+    - name: Build Documentation
+      run: |
+        poetry run -- nox -s docs:build
+    - name: Link Check
+      run: |
+        poetry run -- nox -s links:check
   Changelog:
     name: Changelog Update Check
     runs-on: "ubuntu-24.04"
@@ -55,143 +47,143 @@ jobs:
       contents: read
     if: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
     steps:
-      - name: SCM Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Python & Poetry Environment
-        uses: ./.github/actions/python-environment
-        with:
-          python-version: "3.10"
-          poetry-version: "2.3.0"
-
-      - name: Run changelog update check
-        run: poetry run -- nox -s changelog:updated
-
+    - name: SCM Checkout
+      uses: actions/checkout@v6
+    - name: Setup Python & Poetry Environment
+      uses: ./.github/actions/python-environment
+      with:
+        python-version: "3.10"
+        poetry-version: "2.3.0"
+    - name: Run changelog update check
+      run: poetry run -- nox -s changelog:updated
   Lint:
     name: Linting (Python-${{ matrix.python-versions }})
-    needs: [ Version-Check ]
+    needs:
+    - Version-Check
     runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     strategy:
       fail-fast: false
       matrix:
-        python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-versions:
+        - "3.10"
+        - "3.11"
+        - "3.12"
+        - "3.13"
+        - "3.14"
     steps:
-      - name: SCM Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Python & Poetry Environment
-        uses: ./.github/actions/python-environment
-        with:
-          python-version: ${{ matrix.python-versions }}
-          poetry-version: "2.3.0"
-
-      - name: Run lint
-        run: poetry run -- nox -s lint:code
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v6
-        with:
-          name: lint-python${{ matrix.python-versions }}
-          path: |
-            .lint.txt
-            .lint.json
-          include-hidden-files: true
-
+    - name: SCM Checkout
+      uses: actions/checkout@v6
+    - name: Setup Python & Poetry Environment
+      uses: ./.github/actions/python-environment
+      with:
+        python-version: ${{ matrix.python-versions }}
+        poetry-version: "2.3.0"
+    - name: Run lint
+      run: poetry run -- nox -s lint:code
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v6
+      with:
+        name: lint-python${{ matrix.python-versions }}
+        path: |
+          .lint.txt
+          .lint.json
+        include-hidden-files: true
   Type-Check:
     name: Type Checking (Python-${{ matrix.python-versions }})
-    needs: [ Version-Check ]
+    needs:
+    - Version-Check
     runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     strategy:
       fail-fast: false
       matrix:
-        python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
-
+        python-versions:
+        - "3.10"
+        - "3.11"
+        - "3.12"
+        - "3.13"
+        - "3.14"
     steps:
-      - name: SCM Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Python & Poetry Environment
-        uses: ./.github/actions/python-environment
-        with:
-          python-version: ${{ matrix.python-versions }}
-          poetry-version: "2.3.0"
-
-      - name: Run type-check
-        run: poetry run -- nox -s lint:typing
-
+    - name: SCM Checkout
+      uses: actions/checkout@v6
+    - name: Setup Python & Poetry Environment
+      uses: ./.github/actions/python-environment
+      with:
+        python-version: ${{ matrix.python-versions }}
+        poetry-version: "2.3.0"
+    - name: Run type-check
+      run: poetry run -- nox -s lint:typing
   Security:
     name: Security Checks (Python-${{ matrix.python-versions }})
-    needs: [ Version-Check ]
+    needs:
+    - Version-Check
     runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     strategy:
       fail-fast: false
       matrix:
-        python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
-
+        python-versions:
+        - "3.10"
+        - "3.11"
+        - "3.12"
+        - "3.13"
+        - "3.14"
     steps:
-      - name: SCM Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Python & Poetry Environment
-        uses: ./.github/actions/python-environment
-        with:
-          python-version: ${{ matrix.python-versions }}
-          poetry-version: "2.3.0"
-
-      - name: Run security linter
-        run: poetry run -- nox -s lint:security
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v6
-        with:
-          name: security-python${{ matrix.python-versions }}
-          path: .security.json
-          include-hidden-files: true
-
+    - name: SCM Checkout
+      uses: actions/checkout@v6
+    - name: Setup Python & Poetry Environment
+      uses: ./.github/actions/python-environment
+      with:
+        python-version: ${{ matrix.python-versions }}
+        poetry-version: "2.3.0"
+    - name: Run security linter
+      run: poetry run -- nox -s lint:security
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v6
+      with:
+        name: security-python${{ matrix.python-versions }}
+        path: .security.json
+        include-hidden-files: true
   Format:
     name: Format Check
     runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     steps:
-      - name: SCM Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Python & Poetry Environment
-        uses: ./.github/actions/python-environment
-        with:
-          python-version: "3.10"
-          poetry-version: "2.3.0"
-
-      - name: Run format check
-        run: poetry run -- nox -s format:check
-
-
+    - name: SCM Checkout
+      uses: actions/checkout@v6
+    - name: Setup Python & Poetry Environment
+      uses: ./.github/actions/python-environment
+      with:
+        python-version: "3.10"
+        poetry-version: "2.3.0"
+    - name: Run format check
+      run: poetry run -- nox -s format:check
   Build-Packages:
     name: Build Package Check
-    needs: [ Documentation, Lint, Type-Check, Security, Format ]
+    needs:
+    - Documentation
+    - Lint
+    - Type-Check
+    - Security
+    - Format
     runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     steps:
-      - name: SCM Checkout
-        uses: actions/checkout@v6
-
-      - name: Setup Python & Poetry Environment
-        uses: ./.github/actions/python-environment
-        with:
-          python-version: "3.10"
-          poetry-version: "2.3.0"
-
-      - name: Run Distribution Check
-        run: poetry run -- nox -s package:check
-
+    - name: SCM Checkout
+      uses: actions/checkout@v6
+    - name: Setup Python & Poetry Environment
+      uses: ./.github/actions/python-environment
+      with:
+        python-version: "3.10"
+        poetry-version: "2.3.0"
+    - name: Run Distribution Check
+      run: poetry run -- nox -s package:check
   Lint-Imports:
     name: Lint Imports
     runs-on: ubuntu-24.04
@@ -200,46 +192,46 @@ jobs:
     steps:
       - name: SCM Checkout
         uses: actions/checkout@v6
-
       - name: Setup Python & Poetry Environment
         uses: ./.github/actions/python-environment
         with:
           python-version: "3.10"
           poetry-version: "2.3.0"
-
       - name: Run import linter
         run: poetry run -- nox -s lint:import
-
   Tests:
     name: Unit-Tests (Python-${{ matrix.python-versions }})
-    needs: [ Build-Packages, Lint-Imports ]
+    needs:
+    - Build-Packages
+    - Lint-Imports
     runs-on: "ubuntu-24.04"
     permissions:
       contents: read
     strategy:
       fail-fast: false
       matrix:
-        python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
-
+        python-versions:
+        - "3.10"
+        - "3.11"
+        - "3.12"
+        - "3.13"
+        - "3.14"
     steps:
-      - name: SCM Checkout
-        uses: actions/checkout@v6
-        # The PTB has unit tests which require the fetch-depth to be 0.
-        with:
-          fetch-depth: 0
-
-      - name: Setup Python & Poetry Environment
-        uses: ./.github/actions/python-environment
-        with:
-          python-version: ${{ matrix.python-versions }}
-          poetry-version: "2.3.0"
-
-      - name: Run Tests and Collect Coverage
-        run: poetry run -- nox -s test:unit -- --coverage
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v6
-        with:
-          name: coverage-python${{ matrix.python-versions }}-fast
-          path: .coverage
-          include-hidden-files: true
+    - name: SCM Checkout
+      uses: actions/checkout@v6
+      # The PTB has unit tests which require the fetch-depth to be 0.
+      with:
+        fetch-depth: 0
+    - name: Setup Python & Poetry Environment
+      uses: ./.github/actions/python-environment
+      with:
+        python-version: ${{ matrix.python-versions }}
+        poetry-version: "2.3.0"
+    - name: Run Tests and Collect Coverage
+      run: poetry run -- nox -s test:unit -- --coverage
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v6
+      with:
+        name: coverage-python${{ matrix.python-versions }}-fast
+        path: .coverage
+        include-hidden-files: true
