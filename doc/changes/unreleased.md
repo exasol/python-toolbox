@@ -8,4 +8,8 @@
 
 ## Documentation
 
-* #676: Move GitHub Workflows to be inside features & updated
+* #676: Moved GitHub Workflows to be inside features & updated
+
+## Refactoring
+
+* #680: Removed `needs` from `checks.yml`
