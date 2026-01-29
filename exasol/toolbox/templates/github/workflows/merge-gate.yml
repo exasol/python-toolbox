@@ -12,7 +12,7 @@ jobs:
       contents: read
 
   run-slow-tests:
-    name: Run Slow Tests
+    name: Run Slow Tests?
     runs-on: "(( os_version ))"
     permissions:
       contents: read
