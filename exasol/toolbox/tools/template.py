@@ -1,5 +1,6 @@
 import difflib
 import io
+import re
 from collections.abc import Mapping
 from contextlib import ExitStack
 from inspect import cleandoc
@@ -15,6 +16,7 @@ from jinja2 import Environment
 from rich.columns import Columns
 from rich.console import Console
 from rich.syntax import Syntax
+from yaml.resolver import Resolver
 
 from noxconfig import PROJECT_CONFIG
 
@@ -70,6 +72,51 @@ def show_templates(
     )  # type: ignore
 
 
+# yaml uses a shorthand to identify "on" and "off" tags.
+# for GitHub workflows, we do NOT want "on" replaced with "True".
+for character in ["O", "o"]:
+    Resolver.yaml_implicit_resolvers[character] = [
+        x
+        for x in Resolver.yaml_implicit_resolvers[character]
+        if x[0] != "tag:yaml.org,2002:bool"
+    ]
+
+
+class GitHubDumper(yaml.SafeDumper):
+    pass
+
+
+def empty_representer(dumper, data):
+    """
+    Leave empty fields without 'null'
+
+    on:
+        workflow_call:
+    """
+    return dumper.represent_scalar("tag:yaml.org,2002:null", "")
+
+
+# Regex for common strings that lose quotes:
+# 1. Version numbers (e.g., 2.3.0, 3.10)
+# 2. OS/image names (e.g., ubuntu-24.04)
+# 3. Numeric strings that look like octals or floats (e.g., 045, 1.2)
+QUOTE_REGEX = re.compile(r"^(\d+\.\d+(\.\d+)?|[a-zA-Z]+-\d+\.\d+|0\d+)$")
+
+
+def str_presenter(dumper, data):
+    # Use literal style '|' for strings with newlines
+    if "\n" in data:
+        return dumper.represent_scalar("tag:yaml.org,2002:str", data, style="|")
+    if QUOTE_REGEX.match(data):
+        return dumper.represent_scalar("tag:yaml.org,2002:str", data, style='"')
+    return dumper.represent_scalar("tag:yaml.org,2002:str", data)
+
+
+# Register it to the dumper
+GitHubDumper.add_representer(str, str_presenter)
+GitHubDumper.add_representer(type(None), empty_representer)
+
+
 def _render_template(
     src: str | Path,
     stack: ExitStack,
@@ -80,10 +127,15 @@ def _render_template(
     template = jinja_env.from_string(input_file.read())
     rendered_string = template.render(PROJECT_CONFIG.github_template_dict)
 
-    # validate that the rendered content is a valid YAML. This is not
-    # written out as by default it does not give GitHub-safe output.
-    yaml.safe_load(rendered_string)
-    return cleandoc(rendered_string) + "\n"
+    # this line also checks that the rendered content is a valid YAML
+    data = yaml.safe_load(rendered_string)
+    output = yaml.dump(
+        data,
+        Dumper=GitHubDumper,
+        sort_keys=False,  # if True, then re-orders the jobs alphabetically
+    )
+
+    return cleandoc(output) + "\n"
 
 
 def diff_template(template: str, dest: Path, pkg: str, template_type: str) -> None:
