@@ -62,7 +62,8 @@ In the code
 
 **Private** GitHub repository
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-For general configuration, please refer to the team's internal documentation.
+See the company wiki for details on how to use Exasol's on-prem SonarQube cluster
+and the needed steps to configure for a private GitHub repository.
 
 .. note::
     For more general information, see the :ref:`General remarks <configuration_general_remarks>` section.
