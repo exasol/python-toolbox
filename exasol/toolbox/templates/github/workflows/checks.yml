@@ -26,7 +26,6 @@ jobs:
 
   Documentation:
     name: Docs
-    needs: [ Version-Check ]
     runs-on: "(( os_version ))"
     permissions:
       contents: read
@@ -41,12 +40,10 @@ jobs:
           poetry-version: "(( dependency_manager_version ))"
 
       - name: Build Documentation
-        run: |
-          poetry run -- nox -s docs:build
+        run: poetry run -- nox -s docs:build
 
       - name: Link Check
-        run: |
-          poetry run -- nox -s links:check
+        run: poetry run -- nox -s links:check
 
   Changelog:
     name: Changelog Update Check
@@ -69,7 +66,6 @@ jobs:
 
   Lint:
     name: Linting (Python-${{ matrix.python-versions }})
-    needs: [ Version-Check ]
     runs-on: "(( os_version ))"
     permissions:
       contents: read
@@ -101,7 +97,6 @@ jobs:
 
   Type-Check:
     name: Type Checking (Python-${{ matrix.python-versions }})
-    needs: [ Version-Check ]
     runs-on: "(( os_version ))"
     permissions:
       contents: read
@@ -125,7 +120,6 @@ jobs:
 
   Security:
     name: Security Checks (Python-${{ matrix.python-versions }})
-    needs: [ Version-Check ]
     runs-on: "(( os_version ))"
     permissions:
       contents: read
@@ -175,7 +169,6 @@ jobs:
 
   Build-Packages:
     name: Build Package Check
-    needs: [ Documentation, Lint, Type-Check, Security, Format ]
     runs-on: "(( os_version ))"
     permissions:
       contents: read
@@ -194,7 +187,6 @@ jobs:
 
   Tests:
     name: Unit-Tests (Python-${{ matrix.python-versions }})
-    needs: [ Build-Packages ]
     runs-on: "(( os_version ))"
     permissions:
       contents: read
