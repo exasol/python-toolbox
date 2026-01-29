@@ -151,6 +151,7 @@ Merge
 When a pull request is merged to main, then the ``pr-merge.yml`` workflow is activated.
 
 .. mermaid::
+   :name: merge-diagram
 
     graph TD
         %% Workflow Triggers (Solid Lines)
@@ -169,6 +170,7 @@ When the nox session ``release:trigger`` is used, a new tag is created & pushed
 to main. This starts the release process by activating the ``cd.yml`` workflow.
 
 .. mermaid::
+    :name: release-diagram
 
     graph TD
         %% Workflow Triggers (Solid Lines)
