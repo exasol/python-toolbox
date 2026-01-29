@@ -40,12 +40,10 @@ jobs:
           poetry-version: "(( dependency_manager_version ))"
 
       - name: Build Documentation
-        run: |
-          poetry run -- nox -s docs:build
+        run: poetry run -- nox -s docs:build
 
       - name: Link Check
-        run: |
-          poetry run -- nox -s links:check
+        run: poetry run -- nox -s links:check
 
   Changelog:
     name: Changelog Update Check
