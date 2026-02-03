@@ -29,22 +29,19 @@ In this case, the bandit error code is ``B603``, which you can either accept
 via Sonar UI or ignore via a comment in the source code.
 
 
-Accepting a Finding Via Sonar UI
---------------------------------
+Ignoring a Finding Via a Source Code Comment
+--------------------------------------------
 
-The following screenshot shows how to accept a finding in the Sonar UI.
-
-.. image:: accept_finding_in_sonar_ui.png
-   :width: 400px
-   :alt: Accepting a Finding Via Sonar UI
-
-
-Ignoring a Finding Via Source Code Comments
--------------------------------------------
-
-The following example shows how to ignore a finding, by appending a comment to
-the relevant implementation in the source code.
+The recommended way of ignoring such a finding, is to append a comment to the
+relevant line of code:
 
 .. code-block:: python
 
     subprocess.run(args)  # nosec: B603 - risk of untrusted input is accepted
+
+
+Alternatively, you could also accept a finding in the Sonar UI:
+
+.. image:: accept_finding_in_sonar_ui.png
+   :width: 400px
+   :alt: Accepting a Finding Via Sonar UI
