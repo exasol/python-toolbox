@@ -38,7 +38,7 @@ class PoetryToml(BaseModel):
     def load_from_toml(cls, working_directory: Path) -> PoetryToml:
         file_path = working_directory / PoetryFiles.pyproject_toml
         if not file_path.exists():
-            raise ValueError(f"File not found: {file_path}")
+            raise FileExistsError(f"File not found: {file_path}")
 
         try:
             text = file_path.read_text()

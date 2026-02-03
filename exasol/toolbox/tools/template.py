@@ -2,7 +2,6 @@ import difflib
 import io
 from collections.abc import Mapping
 from contextlib import ExitStack
-from inspect import cleandoc
 from pathlib import Path
 from typing import (
     Any,
@@ -10,23 +9,17 @@ from typing import (
 
 import importlib_resources as resources
 import typer
-import yaml
-from jinja2 import Environment
 from rich.columns import Columns
 from rich.console import Console
 from rich.syntax import Syntax
 
-from exasol.toolbox.util.workflows.format_yaml import GitHubDumper
+from exasol.toolbox.util.workflows.workflow import Workflow
 from noxconfig import PROJECT_CONFIG
 
 stdout = Console()
 stderr = Console(stderr=True)
 
 CLI = typer.Typer()
-
-jinja_env = Environment(
-    variable_start_string="((", variable_end_string="))", autoescape=True
-)
 
 
 def _templates(pkg: str) -> Mapping[str, Any]:
@@ -73,23 +66,13 @@ def show_templates(
 
 def _render_template(
     src: str | Path,
-    stack: ExitStack,
 ) -> str:
-    input_file = stack.enter_context(open(src, encoding="utf-8"))
-
-    # dynamically render the template with Jinja2
-    template = jinja_env.from_string(input_file.read())
-    rendered_string = template.render(PROJECT_CONFIG.github_template_dict)
-
-    # this line also checks that the rendered content is a valid YAML
-    data = yaml.safe_load(rendered_string)
-    output = yaml.dump(
-        data,
-        Dumper=GitHubDumper,
-        sort_keys=False,  # if True, then re-orders the jobs alphabetically
+    src_path = Path(src)
+    github_template_dict = PROJECT_CONFIG.github_template_dict
+    workflow = Workflow.load_from_template(
+        file_path=src_path, github_template_dict=github_template_dict
     )
-
-    return cleandoc(output) + "\n"
+    return workflow.content + "\n"
 
 
 def diff_template(template: str, dest: Path, pkg: str, template_type: str) -> None:
@@ -113,7 +96,7 @@ def diff_template(template: str, dest: Path, pkg: str, template_type: str) -> No
                     old = old.read().split("\n")
                     new = new.read().split("\n")
                 elif template_type == "workflow":
-                    new = _render_template(src=new, stack=stack)
+                    new = _render_template(src=new)
                     old = old.read().split("\n")
                     new = new.split("\n")
 
@@ -140,7 +123,7 @@ def _install_template(
             return
 
         output_file = stack.enter_context(open(dest, "wb"))
-        rendered_string = _render_template(src=src, stack=stack)
+        rendered_string = _render_template(src=src)
         output_file.write(rendered_string.encode("utf-8"))
 
 

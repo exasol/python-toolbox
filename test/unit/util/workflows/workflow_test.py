@@ -1,12 +1,9 @@
-from contextlib import ExitStack
 from inspect import cleandoc
 
 import pytest
-from yaml.parser import ParserError
 
-from exasol.toolbox.tools.template import (
-    _render_template,
-)
+from exasol.toolbox.util.workflows.workflow import Workflow
+from noxconfig import PROJECT_CONFIG
 
 TEMPLATE = """
 name: Publish Documentation
@@ -60,7 +57,7 @@ jobs:
 
 """
 
-RENDERED_TEMPLATE = """
+WORKFLOW = """
 name: Publish Documentation
 on:
   workflow_call:
@@ -125,19 +122,23 @@ jobs:
 """
 
 
-class TestRenderTemplate:
+class TestWorkflow:
     @staticmethod
     def test_works_as_expected(tmp_path):
         file_path = tmp_path / "test.yml"
         file_path.write_text(TEMPLATE)
-        with ExitStack() as stack:
-            rendered_str = _render_template(src=file_path, stack=stack)
-        assert rendered_str == cleandoc(RENDERED_TEMPLATE) + "\n"
+        workflow = Workflow.load_from_template(
+            file_path=file_path,
+            github_template_dict=PROJECT_CONFIG.github_template_dict,
+        )
+        assert workflow.content == cleandoc(WORKFLOW)
 
     @staticmethod
     def test_fails_when_yaml_malformed(tmp_path):
         file_path = tmp_path / "test.yaml"
         file_path.write_text(BAD_TEMPLATE)
-        with pytest.raises(ParserError, match="while parsing a block collection"):
-            with ExitStack() as stack:
-                _render_template(src=file_path, stack=stack)
+        with pytest.raises(ValueError, match="while parsing a block collection"):
+            Workflow.load_from_template(
+                file_path=file_path,
+                github_template_dict=PROJECT_CONFIG.github_template_dict,
+            )
