@@ -25,8 +25,8 @@ on "Why is this an issue?", you will find references like
   `Bandit <https://bandit.readthedocs.io/en/latest/plugins/b603_subprocess_without_shell_equals_true.html>`__
   *website*.
 
-In this case, the bandit error code is ``B603``, which you can either accept
-via Sonar UI or ignore via a comment in the source code.
+In this case, the bandit error code is ``B603``, which you can ignore via a
+comment in the source code or, alternatively, accept in the Sonar UI.
 
 
 Ignoring a Finding Via a Source Code Comment
