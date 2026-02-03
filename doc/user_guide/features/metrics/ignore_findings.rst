@@ -1,7 +1,7 @@
 .. _ignore_findings:
 
-How to Ignore Sonar Findings?
-=============================
+Ignoring Sonar Findings
+=======================
 
 In rare cases, Sonar might report a finding, you cannot fix or on which you
 can agree with your reviewers to accept or ignore it.  Please only choose this

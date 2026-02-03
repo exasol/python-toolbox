@@ -11,4 +11,3 @@ especially when starting a new project.
 
    features/metrics/sonar
    Formatting <features/formatting_code/configuration>
-   features/metrics/ignore_findings
