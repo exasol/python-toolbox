@@ -34,7 +34,7 @@ Accepting a Finding Via Sonar UI
 
 The following screenshot shows how to accept a finding in the Sonar UI.
 
-.. image:: ignore_sonar_finding.png
+.. image:: accept_finding_in_sonar_ui.png
    :width: 400px
    :alt: Accepting a Finding Via Sonar UI
 
