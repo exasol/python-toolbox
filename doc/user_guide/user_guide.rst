@@ -10,5 +10,6 @@
     getting_started
     configuration
     features/index
+    troubleshooting
     customization
     migrating
