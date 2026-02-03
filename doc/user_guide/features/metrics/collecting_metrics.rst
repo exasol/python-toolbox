@@ -10,6 +10,7 @@ regarding Coverage, Security, and Static Code Analysis.
 
    project_report
    sonar
+   ignore_findings
 
 .. _generated_metrics:
 
