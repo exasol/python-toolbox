@@ -3,10 +3,9 @@
 How to Ignore Sonar Findings?
 =============================
 
-In case of Sonar findings, you cannot fix or there is an agreement to ignore
-these findings, you can add a comment to ignore a particular finding.
-
-Please choose this approach only as a last resort.
+In rare cases, Sonar might report a finding, you cannot fix or on which you
+can agree with your reviewers to accept or ignore it.  Please only choose this
+approach as a last resort.
 
 Example
 -------
