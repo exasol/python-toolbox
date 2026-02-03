@@ -2,10 +2,6 @@
 
 ## Summary
 
-## Feature
-
-* #673: Switched `checks.yml` to get Python versions for matrix from `BaseConfig`
-
 ## Documentation
 
-* #676: Move GitHub Workflows to be inside features & updated
+* #585: Added instructions how to ignore sonar issues to the User Guide
