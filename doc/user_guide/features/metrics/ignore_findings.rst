@@ -32,7 +32,7 @@ comment in the source code or, alternatively, accept in the Sonar UI.
 Ignoring a Finding Via a Source Code Comment
 --------------------------------------------
 
-The recommended way of ignoring such a finding, is to append a comment to the
+The recommended way of ignoring such a finding is to append a comment to the
 relevant line of code:
 
 .. code-block:: python
