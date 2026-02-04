@@ -12,7 +12,8 @@ jobs:
 
   tests:
     name: Integration-Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
-    needs: [ build-matrix ]
+    needs:
+      - build-matrix
     runs-on: "ubuntu-24.04"
     permissions:
       contents: read
@@ -44,7 +45,8 @@ jobs:
 
 
   verify-poetry-installation:
-    needs: [ build-matrix ]
+    needs:
+     - build-matrix
     # This Job verifies if pipx installation is successful on each of the
     # selected GitHub Runners.
     strategy:
