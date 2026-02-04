@@ -32,7 +32,7 @@ class TemplateToWorkflow:
         yaml = YAML()
         yaml.width = 200
         yaml.preserve_quotes = True
-        yaml.sort_base_mapping_type_on_output = False  # Ensures keys stay in order
+        yaml.sort_base_mapping_type_on_output = False  # type: ignore
         yaml.indent(mapping=2, sequence=4, offset=2)
 
         workflow_string = self._render_with_jinja(self.template_str)
