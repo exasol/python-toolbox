@@ -4,108 +4,88 @@ from exasol.toolbox.util.workflows.template import TemplateToWorkflow
 from noxconfig import PROJECT_CONFIG
 
 TEMPLATE = """
-name: Publish Documentation
+name: Build & Publish
 
 on:
   workflow_call:
-  workflow_dispatch:
+    secrets:
+      PYPI_TOKEN:
+          required: true
 
-# A multi-line comment
-# because why not make it harder
 jobs:
-  build-documentation:
-    # My second comment
+  cd-job:
+    name: Continuous Delivery
     runs-on: "(( os_version ))"
     permissions:
-      contents: read
+      contents: write
     steps:
-      - name: SCM Checkout # A comment inline
+      # Comment in nested area
+      - name: SCM Checkout # Comment inline
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
+        # Comment in step
       - name: Setup Python & Poetry Environment
-        # My third comment
         uses: exasol/python-toolbox/.github/actions/python-environment@v5
         with:
-          # My fourth comment
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
-
-      - name: Build Documentation
-        run: |
-          poetry run -- nox -s docs:multiversion
-          mv .html-documentation html-documentation
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: html-documentation
-
-  deploy-documentation:
-    needs: [ build-documentation ]
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: "(( os_version ))"
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Build Artifacts
+        run: poetry build
+      - name: PyPi Release
+        env:
+          POETRY_HTTP_BASIC_PYPI_USERNAME: "__token__"
+          POETRY_HTTP_BASIC_PYPI_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
+        run: poetry publish
+      - name: GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          gh release create ${GITHUB_REF_NAME}
+          --title ${GITHUB_REF_NAME}
+          --notes-file ./doc/changes/changes_${GITHUB_REF_NAME}.md
+          dist/*
 
 """
 
 WORKFLOW = """
-name: Publish Documentation
+name: Build & Publish
+
 on:
   workflow_call:
-  workflow_dispatch:
-# A multi-line comment
-# because why not make it harder
+    secrets:
+      PYPI_TOKEN:
+        required: true
+
 jobs:
-  build-documentation:
-    # My second comment
+  cd-job:
+    name: Continuous Delivery
     runs-on: "ubuntu-24.04"
     permissions:
-      contents: read
+      contents: write
     steps:
-    - name: SCM Checkout
-      uses: actions/checkout@v6
-      with:
-        fetch-depth: 0
-    - name: Setup Python & Poetry Environment
-      # My third comment
-      uses: exasol/python-toolbox/.github/actions/python-environment@v5
-      with:
-        # My fourth comment
-        python-version: "3.10"
-        poetry-version: "2.3.0"
-    - name: Build Documentation
-      run: |
-        poetry run -- nox -s docs:multiversion
-        mv .html-documentation html-documentation
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v4
-      with:
-        path: html-documentation
-  deploy-documentation:
-    needs:
-    - build-documentation
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: "${{ steps.deployment.outputs.page_url }}"
-    runs-on: "ubuntu-24.04"
-    steps:
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+      # Comment in nested area
+      - name: SCM Checkout # Comment inline
+        uses: actions/checkout@v6
+        # Comment in step
+      - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@v5
+        with:
+          python-version: "3.10"
+          poetry-version: "2.3.0"
+      - name: Build Artifacts
+        run: poetry build
+      - name: PyPi Release
+        env:
+          POETRY_HTTP_BASIC_PYPI_USERNAME: "__token__"
+          POETRY_HTTP_BASIC_PYPI_PASSWORD: "${{ secrets.PYPI_TOKEN }}"
+        run: poetry publish
+      - name: GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          gh release create ${GITHUB_REF_NAME}
+          --title ${GITHUB_REF_NAME}
+          --notes-file ./doc/changes/changes_${GITHUB_REF_NAME}.md
+          dist/*
 
 """
 
