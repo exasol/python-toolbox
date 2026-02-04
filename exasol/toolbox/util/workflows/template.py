@@ -59,7 +59,7 @@ class TemplateToWorkflow:
         def comment_to_key(match):
             indent = match.group(1)
             content = match.group(2)
-            return f'{indent}__com_{next(self._comment_id)}: "{content}"'
+            return f'{indent}_com_{next(self._comment_id)}: "{content}"'
 
         pattern = r"(^\s*)#\s*(.*)"
         return sub(pattern, comment_to_key, input_str, flags=MULTILINE)
@@ -70,7 +70,7 @@ class TemplateToWorkflow:
         Convert a special key-pair back to a comment. This performs the reverse
         operation of :meth:`_convert_comment_to_tag`.
         """
-        pattern = r"(^\s*)__com_\d+:\s*(.*)"
+        pattern = r"(^\s*)_com_\d+:\s*(.*)"
         return sub(pattern, r"\1# \2", input_str, flags=MULTILINE)
 
     def convert(self) -> str:
