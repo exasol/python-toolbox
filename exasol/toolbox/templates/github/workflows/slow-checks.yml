@@ -12,7 +12,8 @@ jobs:
 
   tests:
     name: Integration-Tests (Python-${{ matrix.python-version }}, Exasol-${{ matrix.exasol-version}})
-    needs: [ build-matrix ]
+    needs:
+      - build-matrix
     runs-on: "(( os_version ))"
     permissions:
       contents: read
