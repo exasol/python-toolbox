@@ -14,7 +14,7 @@ from ruamel.yaml import YAML
 
 
 @dataclass(frozen=True)
-class TemplateToWorkflow:
+class TemplateRenderer:
     template_str: str
     github_template_dict: dict[str, Any]
 
@@ -25,7 +25,7 @@ class TemplateToWorkflow:
         jinja_template = jinja_env.from_string(input_str)
         return jinja_template.render(self.github_template_dict)
 
-    def render(self) -> str:
+    def render_to_workflow(self) -> str:
         """
         Render the template to the contents of a valid GitHub workflow.
         """

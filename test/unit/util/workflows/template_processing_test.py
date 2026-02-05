@@ -1,10 +1,10 @@
 from inspect import cleandoc
 
-from exasol.toolbox.util.workflows.template_processing import TemplateToWorkflow
+from exasol.toolbox.util.workflows.template_processing import TemplateRenderer
 from noxconfig import PROJECT_CONFIG
 
 
-class TestTemplateToWorkflow:
+class TestTemplateRenderer:
     @staticmethod
     def test_works_for_general_case():
         input_yaml = """
@@ -23,11 +23,11 @@ class TestTemplateToWorkflow:
               contents: write
         """
 
-        template_to_workflow = TemplateToWorkflow(
+        template_renderer = TemplateRenderer(
             template_str=cleandoc(input_yaml),
             github_template_dict=PROJECT_CONFIG.github_template_dict,
         )
-        assert template_to_workflow.render() == cleandoc(input_yaml)
+        assert template_renderer.render_to_workflow() == cleandoc(input_yaml)
 
     @staticmethod
     def test_fixes_extra_horizontal_whitespace():
@@ -52,11 +52,11 @@ class TestTemplateToWorkflow:
                 required: true
         """
 
-        template_to_workflow = TemplateToWorkflow(
+        template_renderer = TemplateRenderer(
             template_str=cleandoc(input_yaml),
             github_template_dict=PROJECT_CONFIG.github_template_dict,
         )
-        assert template_to_workflow.render() == cleandoc(expected_yaml)
+        assert template_renderer.render_to_workflow() == cleandoc(expected_yaml)
 
     @staticmethod
     def test_keeps_comments():
@@ -76,12 +76,12 @@ class TestTemplateToWorkflow:
           # Comment in step
         """
 
-        template_to_workflow = TemplateToWorkflow(
+        template_renderer = TemplateRenderer(
             template_str=cleandoc(input_yaml),
             github_template_dict=PROJECT_CONFIG.github_template_dict,
         )
 
-        assert template_to_workflow.render() == cleandoc(expected_yaml)
+        assert template_renderer.render_to_workflow() == cleandoc(expected_yaml)
 
     @staticmethod
     def test_keeps_quotes_for_variables_as_is():
@@ -121,12 +121,12 @@ class TestTemplateToWorkflow:
             dist/*
         """
 
-        template_to_workflow = TemplateToWorkflow(
+        template_renderer = TemplateRenderer(
             template_str=cleandoc(input_yaml),
             github_template_dict=PROJECT_CONFIG.github_template_dict,
         )
 
-        assert template_to_workflow.render() == cleandoc(expected_yaml)
+        assert template_renderer.render_to_workflow() == cleandoc(expected_yaml)
 
     @staticmethod
     def test_updates_jinja_variables():
@@ -145,12 +145,12 @@ class TestTemplateToWorkflow:
           poetry-version: "2.3.0"
         """
 
-        template_to_workflow = TemplateToWorkflow(
+        template_renderer = TemplateRenderer(
             template_str=cleandoc(input_yaml),
             github_template_dict=PROJECT_CONFIG.github_template_dict,
         )
 
-        assert template_to_workflow.render() == cleandoc(expected_yaml)
+        assert template_renderer.render_to_workflow() == cleandoc(expected_yaml)
 
     @staticmethod
     def test_preserves_list_format():
@@ -170,9 +170,9 @@ class TestTemplateToWorkflow:
               python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         """
 
-        template_to_workflow = TemplateToWorkflow(
+        template_renderer = TemplateRenderer(
             template_str=cleandoc(input_yaml),
             github_template_dict=PROJECT_CONFIG.github_template_dict,
         )
 
-        assert template_to_workflow.render() == cleandoc(input_yaml)
+        assert template_renderer.render_to_workflow() == cleandoc(input_yaml)
