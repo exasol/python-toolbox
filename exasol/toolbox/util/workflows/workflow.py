@@ -27,4 +27,4 @@ class Workflow(BaseModel):
             workflow = template_to_workflow.convert()
             return cls(content=workflow)
         except Exception as e:
-            raise ValueError(f"Error rendering file: {str(e)}")
+            raise ValueError(f"Error rendering file: {file_path}") from e
