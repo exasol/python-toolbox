@@ -27,7 +27,7 @@ class TemplateToWorkflow:
 
     def convert(self) -> str:
         """
-        Convert a workflow template to a rendered workflow that works for GitHub.
+        Render the template to the contents of a valid GitHub workflow.
         """
         yaml = YAML()
         yaml.width = 200
