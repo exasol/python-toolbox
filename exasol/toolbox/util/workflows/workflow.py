@@ -24,7 +24,7 @@ class Workflow(BaseModel):
             template_to_workflow = TemplateToWorkflow(
                 template_str=raw_content, github_template_dict=github_template_dict
             )
-            workflow = template_to_workflow.convert()
+            workflow = template_to_workflow.render()
             return cls(content=workflow)
         except Exception as e:
             raise ValueError(f"Error rendering file: {file_path}") from e

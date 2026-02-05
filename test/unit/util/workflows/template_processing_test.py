@@ -27,7 +27,7 @@ class TestTemplateToWorkflow:
             template_str=cleandoc(input_yaml),
             github_template_dict=PROJECT_CONFIG.github_template_dict,
         )
-        assert template_to_workflow.convert() == cleandoc(input_yaml)
+        assert template_to_workflow.render() == cleandoc(input_yaml)
 
     @staticmethod
     def test_fixes_extra_horizontal_whitespace():
@@ -56,7 +56,7 @@ class TestTemplateToWorkflow:
             template_str=cleandoc(input_yaml),
             github_template_dict=PROJECT_CONFIG.github_template_dict,
         )
-        assert template_to_workflow.convert() == cleandoc(expected_yaml)
+        assert template_to_workflow.render() == cleandoc(expected_yaml)
 
     @staticmethod
     def test_keeps_comments():
@@ -81,7 +81,7 @@ class TestTemplateToWorkflow:
             github_template_dict=PROJECT_CONFIG.github_template_dict,
         )
 
-        assert template_to_workflow.convert() == cleandoc(expected_yaml)
+        assert template_to_workflow.render() == cleandoc(expected_yaml)
 
     @staticmethod
     def test_keeps_quotes_for_variables_as_is():
@@ -126,7 +126,7 @@ class TestTemplateToWorkflow:
             github_template_dict=PROJECT_CONFIG.github_template_dict,
         )
 
-        assert template_to_workflow.convert() == cleandoc(expected_yaml)
+        assert template_to_workflow.render() == cleandoc(expected_yaml)
 
     @staticmethod
     def test_updates_jinja_variables():
@@ -150,7 +150,7 @@ class TestTemplateToWorkflow:
             github_template_dict=PROJECT_CONFIG.github_template_dict,
         )
 
-        assert template_to_workflow.convert() == cleandoc(expected_yaml)
+        assert template_to_workflow.render() == cleandoc(expected_yaml)
 
     @staticmethod
     def test_preserves_list_format():
@@ -175,4 +175,4 @@ class TestTemplateToWorkflow:
             github_template_dict=PROJECT_CONFIG.github_template_dict,
         )
 
-        assert template_to_workflow.convert() == cleandoc(input_yaml)
+        assert template_to_workflow.render() == cleandoc(input_yaml)

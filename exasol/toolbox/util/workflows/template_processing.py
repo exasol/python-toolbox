@@ -25,7 +25,7 @@ class TemplateToWorkflow:
         jinja_template = jinja_env.from_string(input_str)
         return jinja_template.render(self.github_template_dict)
 
-    def convert(self) -> str:
+    def render(self) -> str:
         """
         Render the template to the contents of a valid GitHub workflow.
         """
