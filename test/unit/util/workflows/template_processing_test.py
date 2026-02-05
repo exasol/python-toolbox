@@ -1,6 +1,6 @@
 from inspect import cleandoc
 
-from exasol.toolbox.util.workflows.template import TemplateToWorkflow
+from exasol.toolbox.util.workflows.template_processing import TemplateToWorkflow
 from noxconfig import PROJECT_CONFIG
 
 
