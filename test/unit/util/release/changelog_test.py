@@ -4,6 +4,7 @@ from unittest import mock
 
 import pytest
 
+from exasol.toolbox.util.dependencies.shared_models import LatestTagNotFoundError
 from exasol.toolbox.util.release.changelog import (
     UNRELEASED_INITIAL_CONTENT,
     Changelogs,
@@ -85,6 +86,18 @@ def mock_dependencies(dependencies, previous_dependencies):
 
 
 @pytest.fixture(scope="function")
+def mock_new_dependencies(dependencies):
+    mock_latest_tag_not_found_error = mock.Mock(side_effect=LatestTagNotFoundError)
+
+    with mock.patch.multiple(
+        "exasol.toolbox.util.release.changelog",
+        get_dependencies_from_latest_tag=mock_latest_tag_not_found_error,
+        get_dependencies=lambda working_directory: dependencies,
+    ):
+        yield
+
+
+@pytest.fixture(scope="function")
 def mock_no_dependencies():
     with mock.patch.multiple(
         "exasol.toolbox.util.release.changelog",
@@ -140,6 +153,20 @@ class TestChangelogs:
             "\n"
             "### `main`\n"
             "* Updated dependency `package1:0.0.1` to `0.1.0`\n"
+            "\n"
+            "### `dev`\n"
+            "* Added dependency `package2:0.2.0`\n"
+        )
+
+    @staticmethod
+    def test_describe_dependency_changes_without_latest_version(
+        changelogs, mock_new_dependencies
+    ):
+        result = changelogs._describe_dependency_changes()
+        assert result == (
+            "\n"
+            "### `main`\n"
+            "* Added dependency `package1:0.1.0`\n"
             "\n"
             "### `dev`\n"
             "* Added dependency `package2:0.2.0`\n"
