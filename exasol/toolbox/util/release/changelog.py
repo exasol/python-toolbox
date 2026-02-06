@@ -8,6 +8,7 @@ from exasol.toolbox.util.dependencies.poetry_dependencies import (
     get_dependencies,
     get_dependencies_from_latest_tag,
 )
+from exasol.toolbox.util.dependencies.shared_models import LatestTagNotFoundError
 from exasol.toolbox.util.dependencies.track_changes import DependencyChanges
 from exasol.toolbox.util.version import Version
 
@@ -77,9 +78,15 @@ class Changelogs:
         Describe the dependency changes between the latest tag and the current version
         for use in the versioned changes file.
         """
-        previous_dependencies_in_groups = get_dependencies_from_latest_tag(
-            root_path=self.root_path
-        )
+        try:
+            previous_dependencies_in_groups = get_dependencies_from_latest_tag(
+                root_path=self.root_path
+            )
+        except LatestTagNotFoundError:
+            # In new projects, there is not a pre-existing tag, and all dependencies
+            # are considered new.
+            previous_dependencies_in_groups = {}
+
         current_dependencies_in_groups = get_dependencies(
             working_directory=self.root_path
         )

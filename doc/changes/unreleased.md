@@ -2,6 +2,10 @@
 
 ## Summary
 
+## Bug
+
+* #692: Fixed bug where creating first release failed due to no previous tags
+
 ## Documentation
 
 * #585: Added instructions how to ignore sonar issues to the User Guide

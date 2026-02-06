@@ -5,6 +5,7 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
+from subprocess import CalledProcessError
 from typing import (
     Annotated,
     Final,
@@ -23,6 +24,13 @@ from exasol.toolbox.util.git import Git
 NormalizedPackageStr = NewType("NormalizedPackageStr", str)
 
 VERSION_TYPE = Annotated[str, AfterValidator(lambda v: Version(v))]
+
+
+class LatestTagNotFoundError(Exception):
+    """Raised when the requested latest tag cannot be found in the repository."""
+
+    def __init__(self, *args):
+        super().__init__("The latest git tag was not found in the repository.", *args)
 
 
 def normalize_package_name(package_name: str) -> NormalizedPackageStr:
@@ -64,7 +72,11 @@ class PoetryFiles:
 @contextmanager
 def poetry_files_from_latest_tag(root_path: Path) -> Generator[Path]:
     """Context manager to set up a temporary directory with poetry files from the latest tag"""
-    latest_tag = Git.get_latest_tag()
+    try:
+        latest_tag = Git.get_latest_tag()
+    except CalledProcessError:
+        raise LatestTagNotFoundError()
+
     path = root_path.relative_to(Git.toplevel())
     with tempfile.TemporaryDirectory() as tmpdir_str:
         tmp_dir = Path(tmpdir_str)
