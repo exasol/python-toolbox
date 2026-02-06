@@ -58,3 +58,9 @@ class TestSpecificNoxTasks:
         output = run_command(package_check)
 
         assert output.returncode == 0
+
+    def test_release_prepare(self, poetry_path, run_command):
+        release_prepare = self._command(poetry_path, task="release:prepare", add_ons=["--type", "minor", "--no-pr", "--no-branch", "--no-add"])
+        output = run_command(release_prepare)
+
+        assert output.returncode == 0
