@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import OrderedDict
 from datetime import datetime
 from inspect import cleandoc
 from pathlib import Path
@@ -85,7 +86,7 @@ class Changelogs:
         except LatestTagNotFoundError:
             # In new projects, there is not a pre-existing tag, and all dependencies
             # are considered new.
-            previous_dependencies_in_groups = {}
+            previous_dependencies_in_groups = OrderedDict()
 
         current_dependencies_in_groups = get_dependencies(
             working_directory=self.root_path
