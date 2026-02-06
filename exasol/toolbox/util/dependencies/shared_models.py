@@ -5,7 +5,9 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
-from subprocess import CalledProcessError
+from subprocess import (
+    CalledProcessError,  # nosec: B404 - risk of using subprocess is acceptable
+)
 from typing import (
     Annotated,
     Final,
