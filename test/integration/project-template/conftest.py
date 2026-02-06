@@ -16,9 +16,14 @@ def new_project(cwd):
     project_name = "project"
     repo_name = "repo"
     package_name = "package"
+    project_path = cwd / repo_name
+
+    subprocess.run(["mkdir", "-p", project_path])
+    subprocess.run(["git", "init"], cwd=project_path)
 
     subprocess.run(
-        ["cookiecutter", PROJECT_CONFIG.root_path / "project-template", "-o", cwd, "--no-input",
+        ["cookiecutter", PROJECT_CONFIG.root_path / "project-template",
+         "-o", cwd, "--no-input", "--overwrite-if-exists",
          f"project_name={project_name}", f"repo_name={repo_name}",
          f"package_name={package_name}",
          ], capture_output=True, check=True)

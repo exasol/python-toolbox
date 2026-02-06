@@ -1,3 +1,6 @@
+from subprocess import CalledProcessError
+from unittest import mock
+
 import pytest
 from packaging.version import Version
 from pydantic import BaseModel
@@ -5,6 +8,7 @@ from pydantic_core._pydantic_core import ValidationError
 
 from exasol.toolbox.util.dependencies.shared_models import (
     VERSION_TYPE,
+    LatestTagNotFoundError,
     Package,
     PoetryFiles,
     poetry_files_from_latest_tag,
@@ -56,11 +60,28 @@ class TestPackage:
         assert dep.coordinates == "numpy:0.1.0"
 
 
-def test_poetry_files_from_latest_tag():
-    latest_tag = Git.get_latest_tag()
-    with poetry_files_from_latest_tag(root_path=PROJECT_CONFIG.root_path) as tmp_dir:
-        for file in PoetryFiles().files:
-            assert (tmp_dir / file).is_file()
+class TestPoetryFilesFromLatestTag:
+    @staticmethod
+    def test_works_as_expected():
+        latest_tag = Git.get_latest_tag()
+        with poetry_files_from_latest_tag(
+            root_path=PROJECT_CONFIG.root_path
+        ) as tmp_dir:
+            for file in PoetryFiles().files:
+                assert (tmp_dir / file).is_file()
 
-        contents = (tmp_dir / PoetryFiles.pyproject_toml).read_text()
-        assert f'version = "{latest_tag}"' in contents
+            contents = (tmp_dir / PoetryFiles.pyproject_toml).read_text()
+            assert f'version = "{latest_tag}"' in contents
+
+    @staticmethod
+    def test_raises_exception_when_latest_tag_not_found():
+        with pytest.raises(LatestTagNotFoundError):
+            with mock.patch.object(
+                Git,
+                "get_latest_tag",
+                side_effect=CalledProcessError(
+                    cmd="Mocked subprocess error", returncode=1
+                ),
+            ):
+                with poetry_files_from_latest_tag(root_path=PROJECT_CONFIG.root_path):
+                    pass
