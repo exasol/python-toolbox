@@ -3,14 +3,14 @@ from typing import Any
 
 from jinja2 import Environment
 
+from exasol.toolbox.util.workflows.format_yaml import get_standard_yaml
+
 jinja_env = Environment(
     variable_start_string="((", variable_end_string="))", autoescape=True
 )
 
 import io
 from inspect import cleandoc
-
-from ruamel.yaml import YAML
 
 
 @dataclass(frozen=True)
@@ -29,13 +29,9 @@ class TemplateRenderer:
         """
         Render the template to the contents of a valid GitHub workflow.
         """
-        yaml = YAML()
-        yaml.width = 200
-        yaml.preserve_quotes = True
-        yaml.sort_base_mapping_type_on_output = False  # type: ignore
-        yaml.indent(mapping=2, sequence=4, offset=2)
-
         workflow_string = self._render_with_jinja(self.template_str)
+
+        yaml = get_standard_yaml()
         workflow_dict = yaml.load(workflow_string)
 
         stream = io.StringIO()

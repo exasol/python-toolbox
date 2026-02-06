@@ -34,6 +34,7 @@ class TestBaseConfig:
                 "dist",
                 "venv",
             ),
+            "github_modification_yml": None,
             "github_template_dict": {
                 "dependency_manager_version": "2.3.0",
                 "minimum_python_version": "3.10",
