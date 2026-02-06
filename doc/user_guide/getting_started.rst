@@ -31,13 +31,17 @@ Use the following command to create a new project:
 .. code-block:: shell
 
    cookiecutter https://github.com/exasol/python-toolbox.git \
-    --checkout <latest-tag> --directory project-template
+    --checkout <latest-tag> --directory project-template \
+    --overwrite-if-exists
 
 .. note::
 
     Without option :code:`--checkout` cookiecutter will use the main branch of the PTB. In order
     to get reliable and reproducible results, we recommend using the tag of PTB's latest released
     version instead.
+
+    Without option :code:`--overwrite-if-exists`, the cookiecutter command will fail if
+    you already have files in that directory, like from ``git init``.
 
 **2. Follow the interactive project setup prompt**
 
