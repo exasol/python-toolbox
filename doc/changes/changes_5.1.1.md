@@ -2,6 +2,11 @@
 
 ## Summary
 
+In this patch release, we:
+
+* Fixed a bug which was affecting new GitHub projects from using the nox session `release:prepare`.
+* Switched from using a string verified by PyYaml to directly using ruamel-yaml for rendering the GitHub workflows.
+
 ## Bug
 
 * #692: Fixed bug where creating first release failed due to no previous tags
