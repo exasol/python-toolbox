@@ -9,7 +9,7 @@
   "author_email": "opensource@exasol.com",
   "project_short_tag": "",
   "python_version_min": "3.10",
-  "exasol_toolbox_version_range": ">=5.1.0,<6",
+  "exasol_toolbox_version_range": ">=5.1.1,<6",
   "license_year": "{% now 'utc', '%Y' %}",
   "__repo_name_slug": "{{cookiecutter.package_name}}",
   "__package_name_slug": "{{cookiecutter.package_name}}",
