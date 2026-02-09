@@ -9,7 +9,7 @@ from pydantic import (
 )
 from ruamel.yaml import CommentedMap
 
-from exasol.toolbox.util.workflows.format_yaml import YamlRenderer
+from exasol.toolbox.util.workflows.render_yaml import YamlRenderer
 
 
 class ActionType(str, Enum):

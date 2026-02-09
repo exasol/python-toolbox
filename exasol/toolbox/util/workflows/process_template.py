@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from exasol.toolbox.util.workflows.format_yaml import YamlRenderer
+from exasol.toolbox.util.workflows.render_yaml import YamlRenderer
 
 
 class TemplateRenderer(YamlRenderer):
