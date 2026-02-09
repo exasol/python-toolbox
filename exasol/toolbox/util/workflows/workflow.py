@@ -6,7 +6,7 @@ from pydantic import (
     ConfigDict,
 )
 
-from exasol.toolbox.util.workflows.template_processing import TemplateRenderer
+from exasol.toolbox.util.workflows.process_template import TemplateRenderer
 
 
 class Workflow(BaseModel):
