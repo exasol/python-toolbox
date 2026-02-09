@@ -1,12 +1,19 @@
 from inspect import cleandoc
 
+import pytest
+
 from exasol.toolbox.util.workflows.process_template import TemplateRenderer
 from noxconfig import PROJECT_CONFIG
 
 
+@pytest.fixture
+def template_renderer() -> TemplateRenderer:
+    return TemplateRenderer(github_template_dict=PROJECT_CONFIG.github_template_dict)
+
+
 class TestTemplateRenderer:
     @staticmethod
-    def test_works_for_general_case():
+    def test_works_for_general_case(tmp_path, template_renderer):
         input_yaml = """
         name: Build & Publish
 
@@ -22,15 +29,15 @@ class TestTemplateRenderer:
             permissions:
               contents: write
         """
+        file_path = tmp_path / "dummy.yml"
+        content = cleandoc(input_yaml)
+        file_path.write_text(content)
 
-        template_renderer = TemplateRenderer(
-            template_str=cleandoc(input_yaml),
-            github_template_dict=PROJECT_CONFIG.github_template_dict,
-        )
-        assert template_renderer.render_to_workflow() == cleandoc(input_yaml)
+        result = template_renderer.render_to_workflow(file_path=file_path)
+        assert result == cleandoc(input_yaml)
 
     @staticmethod
-    def test_fixes_extra_horizontal_whitespace():
+    def test_fixes_extra_horizontal_whitespace(tmp_path, template_renderer):
         # required has 2 extra spaces
         input_yaml = """
         name: Build & Publish
@@ -52,14 +59,15 @@ class TestTemplateRenderer:
                 required: true
         """
 
-        template_renderer = TemplateRenderer(
-            template_str=cleandoc(input_yaml),
-            github_template_dict=PROJECT_CONFIG.github_template_dict,
-        )
-        assert template_renderer.render_to_workflow() == cleandoc(expected_yaml)
+        file_path = tmp_path / "dummy.yml"
+        content = cleandoc(input_yaml)
+        file_path.write_text(content)
+
+        result = template_renderer.render_to_workflow(file_path=file_path)
+        assert result == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_keeps_comments():
+    def test_keeps_comments(tmp_path, template_renderer):
         input_yaml = """
         steps:
           # Comment in nested area
@@ -76,15 +84,15 @@ class TestTemplateRenderer:
           # Comment in step
         """
 
-        template_renderer = TemplateRenderer(
-            template_str=cleandoc(input_yaml),
-            github_template_dict=PROJECT_CONFIG.github_template_dict,
-        )
+        file_path = tmp_path / "dummy.yml"
+        content = cleandoc(input_yaml)
+        file_path.write_text(content)
 
-        assert template_renderer.render_to_workflow() == cleandoc(expected_yaml)
+        result = template_renderer.render_to_workflow(file_path=file_path)
+        assert result == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_keeps_quotes_for_variables_as_is():
+    def test_keeps_quotes_for_variables_as_is(tmp_path, template_renderer):
         input_yaml = """
         - name: Build Artifacts
           run: poetry build
@@ -121,15 +129,15 @@ class TestTemplateRenderer:
             dist/*
         """
 
-        template_renderer = TemplateRenderer(
-            template_str=cleandoc(input_yaml),
-            github_template_dict=PROJECT_CONFIG.github_template_dict,
-        )
+        file_path = tmp_path / "dummy.yml"
+        content = cleandoc(input_yaml)
+        file_path.write_text(content)
 
-        assert template_renderer.render_to_workflow() == cleandoc(expected_yaml)
+        result = template_renderer.render_to_workflow(file_path=file_path)
+        assert result == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_updates_jinja_variables():
+    def test_updates_jinja_variables(tmp_path, template_renderer):
         input_yaml = """
         - name: Setup Python & Poetry Environment
           uses: exasol/python-toolbox/.github/actions/python-environment@v5
@@ -145,15 +153,15 @@ class TestTemplateRenderer:
           poetry-version: "2.3.0"
         """
 
-        template_renderer = TemplateRenderer(
-            template_str=cleandoc(input_yaml),
-            github_template_dict=PROJECT_CONFIG.github_template_dict,
-        )
+        file_path = tmp_path / "dummy.yml"
+        content = cleandoc(input_yaml)
+        file_path.write_text(content)
 
-        assert template_renderer.render_to_workflow() == cleandoc(expected_yaml)
+        result = template_renderer.render_to_workflow(file_path=file_path)
+        assert result == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_preserves_list_format():
+    def test_preserves_list_format(tmp_path, template_renderer):
         input_yaml = """
         on:
           pull_request:
@@ -170,9 +178,9 @@ class TestTemplateRenderer:
               python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         """
 
-        template_renderer = TemplateRenderer(
-            template_str=cleandoc(input_yaml),
-            github_template_dict=PROJECT_CONFIG.github_template_dict,
-        )
+        file_path = tmp_path / "dummy.yml"
+        content = cleandoc(input_yaml)
+        file_path.write_text(content)
 
-        assert template_renderer.render_to_workflow() == cleandoc(input_yaml)
+        result = template_renderer.render_to_workflow(file_path=file_path)
+        assert result == cleandoc(input_yaml)

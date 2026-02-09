@@ -9,7 +9,7 @@ from pydantic import (
 )
 from ruamel.yaml import CommentedMap
 
-from exasol.toolbox.util.workflows.format_yaml import get_standard_yaml
+from exasol.toolbox.util.workflows.format_yaml import YamlRenderer
 
 
 class ActionType(str, Enum):
@@ -45,10 +45,13 @@ class WorkflowConfig(BaseModel):
     workflows: list[Workflow]
 
 
-def load_and_validate_workflow_customizer(file_path: Path) -> CommentedMap:
-    standard_yaml = get_standard_yaml()
-    with file_path.open("r", encoding="utf-8") as stream:
-        yaml_dict = standard_yaml.load(stream)
+class CustomWorkflow(YamlRenderer):
+    """
+    The PTB allows users to define a YAML (of type :class:`WorkflowConfig`) to
+    customize the workflows provided by the PTB.
+    """
 
-    WorkflowConfig.model_validate(yaml_dict)
-    return yaml_dict
+    def get_yaml_dict(self, file_path: Path) -> CommentedMap:
+        loaded_yaml = super().get_yaml_dict(file_path)
+        WorkflowConfig.model_validate(loaded_yaml)
+        return loaded_yaml
