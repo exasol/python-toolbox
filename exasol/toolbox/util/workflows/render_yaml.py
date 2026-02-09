@@ -17,12 +17,19 @@ jinja_env = Environment(
 
 @dataclass(frozen=True)
 class YamlRenderer:
+    """
+    The :class:`YamlRenderer` provides a standardised interface for rendering YAML
+    files within the PTB. To simplify configuration and reduce manual coordination,
+    use Jinja variables as defined in :meth:`BaseConfig.github_template_dict` in your
+    YAML files.
+    """
+
     github_template_dict: dict[str, Any]
 
     @staticmethod
     def _get_standard_yaml() -> YAML:
         """
-        Prepare standard YAML class
+        Prepare standard YAML class.
         """
         yaml = YAML()
         yaml.width = 200

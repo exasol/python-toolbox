@@ -47,8 +47,9 @@ class WorkflowConfig(BaseModel):
 
 class WorkflowCustomizer(YamlRenderer):
     """
-    The PTB allows users to define a YAML (of type :class:`WorkflowConfig`) to
-    customize the workflows provided by the PTB.
+    The :class:`WorkflowCustomizer` enables users to define a YAML file
+    to customize PTB-provided workflows. The provided YAML file must meet
+    the conditions of :class:`WorkflowConfig`.
     """
 
     def get_yaml_dict(self, file_path: Path) -> CommentedMap:

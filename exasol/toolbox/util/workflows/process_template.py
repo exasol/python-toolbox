@@ -4,6 +4,13 @@ from exasol.toolbox.util.workflows.render_yaml import YamlRenderer
 
 
 class TemplateRenderer(YamlRenderer):
+    """
+    The :class:`TemplateRenderer` is used to process the
+    `PTB-provided GitHub workflow templates <https://exasol.github.io/python-toolbox/main/user_guide/features/github_workflows/index.html>__`
+     by:
+      - resolving Jinja variables.
+      - standardising formatting via ruamel.yaml for consistent output.
+    """
 
     def render_to_workflow(self, file_path: Path) -> str:
         """
