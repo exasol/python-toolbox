@@ -6,7 +6,7 @@ from pydantic import ValidationError
 
 from exasol.toolbox.util.workflows.customize_workflow import (
     ActionType,
-    CustomWorkflow,
+    WorkflowCustomizer,
 )
 from noxconfig import PROJECT_CONFIG
 
@@ -36,38 +36,37 @@ class ExampleYaml:
 
 
 @pytest.fixture
-def custom_workflow() -> CustomWorkflow:
-    return CustomWorkflow(github_template_dict=PROJECT_CONFIG.github_template_dict)
+def workflow_customizer() -> WorkflowCustomizer:
+    return WorkflowCustomizer(github_template_dict=PROJECT_CONFIG.github_template_dict)
 
 
 class TestCustomWorkflow:
     @staticmethod
-    def test_remove_jobs(tmp_path, custom_workflow):
+    def test_remove_jobs(tmp_path, workflow_customizer):
         file_path = tmp_path / ".exasol-toolbox.yml"
         content = cleandoc(ExampleYaml.remove_jobs)
         file_path.write_text(content)
 
-        yaml_dict = custom_workflow.get_yaml_dict(file_path)
+        yaml_dict = workflow_customizer.get_yaml_dict(file_path)
 
-        assert custom_workflow.get_as_string(yaml_dict) == content
+        assert workflow_customizer.get_as_string(yaml_dict) == content
 
     @staticmethod
     @pytest.mark.parametrize("action", ActionType)
-    def test_step_customizations(tmp_path, action, custom_workflow):
+    def test_step_customizations(tmp_path, action, workflow_customizer):
         file_path = tmp_path / ".exasol-toolbox.yml"
         content = cleandoc(ExampleYaml.step_customization.format(action=action.value))
         file_path.write_text(content)
 
-        yaml_dict = custom_workflow.get_yaml_dict(file_path)
+        yaml_dict = workflow_customizer.get_yaml_dict(file_path)
 
-        assert custom_workflow.get_as_string(yaml_dict) == content
+        assert workflow_customizer.get_as_string(yaml_dict) == content
 
 
 class TestStepCustomization:
     @staticmethod
-    def test_allows_extra_field(tmp_path, custom_workflow):
+    def test_allows_extra_field(tmp_path, workflow_customizer):
         file_path = tmp_path / ".exasol-toolbox.yml"
-
         content = f"""
         {ExampleYaml.step_customization.format(action="REPLACE")}
                   extra-field: "test"
@@ -75,15 +74,15 @@ class TestStepCustomization:
         content = cleandoc(content)
         file_path.write_text(content)
 
-        yaml_dict = custom_workflow.get_yaml_dict(file_path)
+        yaml_dict = workflow_customizer.get_yaml_dict(file_path)
 
-        assert custom_workflow.get_as_string(yaml_dict) == content
+        assert workflow_customizer.get_as_string(yaml_dict) == content
 
     @staticmethod
-    def test_raises_error_for_unknown_action(tmp_path, custom_workflow):
+    def test_raises_error_for_unknown_action(tmp_path, workflow_customizer):
         file_path = tmp_path / ".exasol-toolbox.yml"
         content = cleandoc(ExampleYaml.step_customization.format(action="UNKNOWN"))
         file_path.write_text(content)
 
         with pytest.raises(ValidationError, match="Input should be"):
-            custom_workflow.get_yaml_dict(file_path)
+            workflow_customizer.get_yaml_dict(file_path)

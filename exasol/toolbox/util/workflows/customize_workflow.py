@@ -45,7 +45,7 @@ class WorkflowConfig(BaseModel):
     workflows: list[Workflow]
 
 
-class CustomWorkflow(YamlRenderer):
+class WorkflowCustomizer(YamlRenderer):
     """
     The PTB allows users to define a YAML (of type :class:`WorkflowConfig`) to
     customize the workflows provided by the PTB.
