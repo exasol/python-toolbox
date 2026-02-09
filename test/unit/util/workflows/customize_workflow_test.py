@@ -7,7 +7,7 @@ from pydantic import ValidationError
 
 from exasol.toolbox.util.workflows.customize_workflow import (
     ActionType,
-    load_and_validate_custom_workflow,
+    load_and_validate_workflow_customizer,
 )
 from exasol.toolbox.util.workflows.format_yaml import get_standard_yaml
 
@@ -44,14 +44,14 @@ def convert_back_to_str(yaml_dict):
     return stream.getvalue()
 
 
-class TestLoadAndValidateCustomWorkflowWorks:
+class TestLoadAndValidateWorkflowCustomizer:
     @staticmethod
     def test_remove_jobs(tmp_path):
         file_path = tmp_path / ".exasol-toolbox.yml"
         content = cleandoc(ExampleYaml.remove_jobs)
         file_path.write_text(content)
 
-        result = load_and_validate_custom_workflow(file_path)
+        result = load_and_validate_workflow_customizer(file_path)
 
         assert convert_back_to_str(result) == content + "\n"
 
@@ -62,7 +62,7 @@ class TestLoadAndValidateCustomWorkflowWorks:
         content = cleandoc(ExampleYaml.step_customization.format(action=action.value))
         file_path.write_text(content)
 
-        result = load_and_validate_custom_workflow(file_path)
+        result = load_and_validate_workflow_customizer(file_path)
 
         assert convert_back_to_str(result) == content + "\n"
 
@@ -79,7 +79,7 @@ class TestStepCustomization:
         content = cleandoc(content)
         file_path.write_text(content)
 
-        result = load_and_validate_custom_workflow(file_path)
+        result = load_and_validate_workflow_customizer(file_path)
 
         assert convert_back_to_str(result) == content + "\n"
 
@@ -90,4 +90,4 @@ class TestStepCustomization:
         file_path.write_text(content)
 
         with pytest.raises(ValidationError, match="Input should be"):
-            load_and_validate_custom_workflow(file_path)
+            load_and_validate_workflow_customizer(file_path)

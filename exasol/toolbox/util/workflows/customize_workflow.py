@@ -45,7 +45,7 @@ class WorkflowConfig(BaseModel):
     workflows: list[Workflow]
 
 
-def load_and_validate_custom_workflow(file_path: Path) -> CommentedMap:
+def load_and_validate_workflow_customizer(file_path: Path) -> CommentedMap:
     standard_yaml = get_standard_yaml()
     with file_path.open("r", encoding="utf-8") as stream:
         yaml_dict = standard_yaml.load(stream)
