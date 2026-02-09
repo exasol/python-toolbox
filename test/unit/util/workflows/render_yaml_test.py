@@ -2,18 +2,18 @@ from inspect import cleandoc
 
 import pytest
 
-from exasol.toolbox.util.workflows.process_template import TemplateRenderer
+from exasol.toolbox.util.workflows.render_yaml import YamlRenderer
 from noxconfig import PROJECT_CONFIG
 
 
 @pytest.fixture
-def template_renderer() -> TemplateRenderer:
-    return TemplateRenderer(github_template_dict=PROJECT_CONFIG.github_template_dict)
+def yaml_renderer() -> YamlRenderer:
+    return YamlRenderer(github_template_dict=PROJECT_CONFIG.github_template_dict)
 
 
 class TestTemplateRenderer:
     @staticmethod
-    def test_works_for_general_case(tmp_path, template_renderer):
+    def test_works_for_general_case(tmp_path, yaml_renderer):
         input_yaml = """
         name: Build & Publish
 
@@ -33,11 +33,11 @@ class TestTemplateRenderer:
         content = cleandoc(input_yaml)
         file_path.write_text(content)
 
-        result = template_renderer.render_to_workflow(file_path=file_path)
-        assert result == cleandoc(input_yaml)
+        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(input_yaml)
 
     @staticmethod
-    def test_fixes_extra_horizontal_whitespace(tmp_path, template_renderer):
+    def test_fixes_extra_horizontal_whitespace(tmp_path, yaml_renderer):
         # required has 2 extra spaces
         input_yaml = """
         name: Build & Publish
@@ -63,11 +63,11 @@ class TestTemplateRenderer:
         content = cleandoc(input_yaml)
         file_path.write_text(content)
 
-        result = template_renderer.render_to_workflow(file_path=file_path)
-        assert result == cleandoc(expected_yaml)
+        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_keeps_comments(tmp_path, template_renderer):
+    def test_keeps_comments(tmp_path, yaml_renderer):
         input_yaml = """
         steps:
           # Comment in nested area
@@ -88,11 +88,11 @@ class TestTemplateRenderer:
         content = cleandoc(input_yaml)
         file_path.write_text(content)
 
-        result = template_renderer.render_to_workflow(file_path=file_path)
-        assert result == cleandoc(expected_yaml)
+        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_keeps_quotes_for_variables_as_is(tmp_path, template_renderer):
+    def test_keeps_quotes_for_variables_as_is(tmp_path, yaml_renderer):
         input_yaml = """
         - name: Build Artifacts
           run: poetry build
@@ -133,11 +133,11 @@ class TestTemplateRenderer:
         content = cleandoc(input_yaml)
         file_path.write_text(content)
 
-        result = template_renderer.render_to_workflow(file_path=file_path)
-        assert result == cleandoc(expected_yaml)
+        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_updates_jinja_variables(tmp_path, template_renderer):
+    def test_updates_jinja_variables(tmp_path, yaml_renderer):
         input_yaml = """
         - name: Setup Python & Poetry Environment
           uses: exasol/python-toolbox/.github/actions/python-environment@v5
@@ -157,11 +157,11 @@ class TestTemplateRenderer:
         content = cleandoc(input_yaml)
         file_path.write_text(content)
 
-        result = template_renderer.render_to_workflow(file_path=file_path)
-        assert result == cleandoc(expected_yaml)
+        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_preserves_list_format(tmp_path, template_renderer):
+    def test_preserves_list_format(tmp_path, yaml_renderer):
         input_yaml = """
         on:
           pull_request:
@@ -182,5 +182,5 @@ class TestTemplateRenderer:
         content = cleandoc(input_yaml)
         file_path.write_text(content)
 
-        result = template_renderer.render_to_workflow(file_path=file_path)
-        assert result == cleandoc(input_yaml)
+        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(input_yaml)
