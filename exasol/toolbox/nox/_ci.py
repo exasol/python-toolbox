@@ -5,7 +5,6 @@ import nox
 from nox import Session
 
 from exasol.toolbox.config import BaseConfig
-from exasol.toolbox.nox._shared import check_for_config_attribute
 from noxconfig import (
     PROJECT_CONFIG,
 )
@@ -14,12 +13,10 @@ _log = logging.getLogger(__name__)
 
 
 def _python_matrix(config: BaseConfig):
-    check_for_config_attribute(config=config, attribute="python_versions")
     return {"python-version": config.python_versions}
 
 
 def _exasol_matrix(config: BaseConfig):
-    check_for_config_attribute(config=config, attribute="exasol_versions")
     return {"exasol-version": config.exasol_versions}
 
 
