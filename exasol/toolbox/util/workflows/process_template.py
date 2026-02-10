@@ -6,7 +6,7 @@ from exasol.toolbox.util.workflows.render_yaml import YamlRenderer
 class WorkflowRenderer(YamlRenderer):
     """
     The :class:`WorkflowRenderer` renders a workflow template provided by the PTB into
-    a final workflow. It renders the final workflow template by:
+    a final workflow. It renders the final workflow by:
       - resolving Jinja variables.
       - standardizing formatting via ruamel.yaml for a consistent output.
     """
