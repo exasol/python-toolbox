@@ -11,7 +11,7 @@ class WorkflowRenderer(YamlRenderer):
       - standardizing formatting via ruamel.yaml for a consistent output.
     """
 
-    def render_to_workflow(self, file_path: Path) -> str:
+    def render(self, file_path: Path) -> str:
         """
         Render the template to the contents of a valid GitHub workflow.
         """
