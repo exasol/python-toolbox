@@ -282,7 +282,7 @@ class BaseConfig(BaseModel):
 
     @computed_field  # type: ignore[misc]
     @property
-    def github_custom_yml(self) -> Path | None:
+    def github_workflow_patcher_yaml(self) -> Path | None:
         """
         For customizing the GitHub workflow templates provided by the PTB,
         a project can define a `.exasol-toolbox.yml`.
@@ -290,7 +290,7 @@ class BaseConfig(BaseModel):
         This feature is a work-in-progress that will be completed with:
             https://github.com/exasol/python-toolbox/issues/690
         """
-        customization_yml = self.root_path / ".exasol-toolbox.yml"
-        if customization_yml.exists():
-            return customization_yml
+        workflow_patcher_yaml = self.root_path / ".exasol-toolbox.yml"
+        if workflow_patcher_yaml.exists():
+            return workflow_patcher_yaml
         return None
