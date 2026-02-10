@@ -6,7 +6,7 @@ from pydantic import ValidationError
 
 from exasol.toolbox.util.workflows.customize_workflow import (
     ActionType,
-    CustomYamlRenderer,
+    WorkflowPatcher,
 )
 from noxconfig import PROJECT_CONFIG
 
@@ -36,36 +36,36 @@ class ExampleYaml:
 
 
 @pytest.fixture
-def custom_yaml_renderer() -> CustomYamlRenderer:
-    return CustomYamlRenderer(github_template_dict=PROJECT_CONFIG.github_template_dict)
+def workflow_patcher() -> WorkflowPatcher:
+    return WorkflowPatcher(github_template_dict=PROJECT_CONFIG.github_template_dict)
 
 
-class TestCustomYamlRenderer:
+class TestWorkflowPatcher:
     @staticmethod
-    def test_remove_jobs(tmp_path, custom_yaml_renderer):
+    def test_remove_jobs(tmp_path, workflow_patcher):
         file_path = tmp_path / ".exasol-toolbox.yml"
         content = cleandoc(ExampleYaml.remove_jobs)
         file_path.write_text(content)
 
-        yaml_dict = custom_yaml_renderer.get_yaml_dict(file_path)
+        yaml_dict = workflow_patcher.get_yaml_dict(file_path)
 
-        assert custom_yaml_renderer.get_as_string(yaml_dict) == content
+        assert workflow_patcher.get_as_string(yaml_dict) == content
 
     @staticmethod
     @pytest.mark.parametrize("action", ActionType)
-    def test_step_customizations(tmp_path, action, custom_yaml_renderer):
+    def test_step_customizations(tmp_path, action, workflow_patcher):
         file_path = tmp_path / ".exasol-toolbox.yml"
         content = cleandoc(ExampleYaml.step_customization.format(action=action.value))
         file_path.write_text(content)
 
-        yaml_dict = custom_yaml_renderer.get_yaml_dict(file_path)
+        yaml_dict = workflow_patcher.get_yaml_dict(file_path)
 
-        assert custom_yaml_renderer.get_as_string(yaml_dict) == content
+        assert workflow_patcher.get_as_string(yaml_dict) == content
 
 
 class TestStepCustomization:
     @staticmethod
-    def test_allows_extra_field(tmp_path, custom_yaml_renderer):
+    def test_allows_extra_field(tmp_path, workflow_patcher):
         file_path = tmp_path / ".exasol-toolbox.yml"
         content = f"""
         {ExampleYaml.step_customization.format(action="REPLACE")}
@@ -74,15 +74,15 @@ class TestStepCustomization:
         content = cleandoc(content)
         file_path.write_text(content)
 
-        yaml_dict = custom_yaml_renderer.get_yaml_dict(file_path)
+        yaml_dict = workflow_patcher.get_yaml_dict(file_path)
 
-        assert custom_yaml_renderer.get_as_string(yaml_dict) == content
+        assert workflow_patcher.get_as_string(yaml_dict) == content
 
     @staticmethod
-    def test_raises_error_for_unknown_action(tmp_path, custom_yaml_renderer):
+    def test_raises_error_for_unknown_action(tmp_path, workflow_patcher):
         file_path = tmp_path / ".exasol-toolbox.yml"
         content = cleandoc(ExampleYaml.step_customization.format(action="UNKNOWN"))
         file_path.write_text(content)
 
         with pytest.raises(ValidationError, match="Input should be"):
-            custom_yaml_renderer.get_yaml_dict(file_path)
+            workflow_patcher.get_yaml_dict(file_path)

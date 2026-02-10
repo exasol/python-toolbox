@@ -41,18 +41,20 @@ class Workflow(BaseModel):
     step_customizations: list[StepCustomization] = Field(default_factory=list)
 
 
-class WorkflowConfig(BaseModel):
+class WorkflowPatcherConfig(BaseModel):
     workflows: list[Workflow]
 
 
-class CustomYamlRenderer(YamlRenderer):
+class WorkflowPatcher(YamlRenderer):
     """
-    The :class:`CustomYamlRenderer` enables users to define a YAML file
-    to customize PTB-provided workflows. The provided YAML file must meet
-    the conditions of :class:`WorkflowConfig`.
+    The :class:`WorkflowPatcher` enables users to define a YAML file
+    to customize PTB-provided workflows by:
+     - removing jobs
+     - modifying steps by either replacing or inserting after
+    The provided YAML file must meet the conditions of :class:`WorkflowPatcherConfig`.
     """
 
     def get_yaml_dict(self, file_path: Path) -> CommentedMap:
         loaded_yaml = super().get_yaml_dict(file_path)
-        WorkflowConfig.model_validate(loaded_yaml)
+        WorkflowPatcherConfig.model_validate(loaded_yaml)
         return loaded_yaml
