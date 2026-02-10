@@ -4,7 +4,7 @@ from inspect import cleandoc
 import pytest
 from pydantic import ValidationError
 
-from exasol.toolbox.util.workflows.customize_workflow import (
+from exasol.toolbox.util.workflows.patch_workflow import (
     ActionType,
     WorkflowPatcher,
 )
