@@ -9,7 +9,6 @@ from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._shared import (
     Mode,
     _version,
-    check_for_config_attribute,
     get_filtered_python_files,
 )
 from noxconfig import (
@@ -26,7 +25,6 @@ def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
 
 
 def _pyupgrade(session: Session, config: BaseConfig, files: Iterable[str]) -> None:
-    check_for_config_attribute(config, "pyupgrade_argument")
     session.run(
         "pyupgrade",
         *config.pyupgrade_argument,

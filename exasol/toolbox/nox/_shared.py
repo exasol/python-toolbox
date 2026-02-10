@@ -14,23 +14,11 @@ from typing import Any
 
 from nox import Session
 
-from exasol.toolbox.config import BaseConfig
 from noxconfig import (
     PROJECT_CONFIG,
 )
 
 DOCS_OUTPUT_DIR = ".html-documentation"
-
-
-def check_for_config_attribute(config: BaseConfig, attribute: str):
-    if not hasattr(config, attribute):
-        raise AttributeError(
-            "in the noxconfig.py file, the class Config should inherit "
-            "from `exasol.toolbox.config.BaseConfig`. This is used to "
-            f"set the default `{attribute}`. If the allowed "
-            f"`{attribute} needs to differ in your project and is an "
-            "input parameter (not property), you can set it in the PROJECT_CONFIG statement."
-        )
 
 
 class Mode(Enum):
@@ -42,7 +30,6 @@ def get_filtered_python_files(project_root: Path) -> list[str]:
     """
     Returns iterable of Python files after removing excluded paths
     """
-    check_for_config_attribute(config=PROJECT_CONFIG, attribute="excluded_python_paths")
     files = project_root.glob("**/*.py")
     return [
         f"{path}"

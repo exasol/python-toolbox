@@ -12,7 +12,6 @@ import nox
 from nox import Session
 
 from exasol.toolbox.config import BaseConfig
-from exasol.toolbox.nox._shared import check_for_config_attribute
 from noxconfig import PROJECT_CONFIG
 
 COVERAGE_DB = ".coverage"
@@ -156,7 +155,6 @@ def copy_artifacts(session: Session) -> None:
 
 
 def _python_version_suffix() -> str:
-    check_for_config_attribute(PROJECT_CONFIG, "minimum_python_version")
     pivot = PROJECT_CONFIG.minimum_python_version
     return f"-python{pivot}"
 
