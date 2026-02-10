@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from inspect import cleandoc
+from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
@@ -40,49 +41,50 @@ def workflow_patcher() -> WorkflowPatcher:
     return WorkflowPatcher(github_template_dict=PROJECT_CONFIG.github_template_dict)
 
 
+@pytest.fixture
+def workflow_patcher_yaml(tmp_path: Path) -> Path:
+    return tmp_path / ".workflow-patcher.yml"
+
+
 class TestWorkflowPatcher:
     @staticmethod
-    def test_remove_jobs(tmp_path, workflow_patcher):
-        file_path = tmp_path / ".workflow-patcher.yml"
+    def test_remove_jobs(workflow_patcher_yaml, workflow_patcher):
         content = cleandoc(ExampleYaml.remove_jobs)
-        file_path.write_text(content)
+        workflow_patcher_yaml.write_text(content)
 
-        yaml_dict = workflow_patcher.get_yaml_dict(file_path)
+        yaml_dict = workflow_patcher.get_yaml_dict(workflow_patcher_yaml)
 
         assert workflow_patcher.get_as_string(yaml_dict) == content
 
     @staticmethod
     @pytest.mark.parametrize("action", ActionType)
-    def test_step_customizations(tmp_path, action, workflow_patcher):
-        file_path = tmp_path / ".workflow-patcher.yml"
+    def test_step_customizations(workflow_patcher_yaml, action, workflow_patcher):
         content = cleandoc(ExampleYaml.step_customization.format(action=action.value))
-        file_path.write_text(content)
+        workflow_patcher_yaml.write_text(content)
 
-        yaml_dict = workflow_patcher.get_yaml_dict(file_path)
+        yaml_dict = workflow_patcher.get_yaml_dict(workflow_patcher_yaml)
 
         assert workflow_patcher.get_as_string(yaml_dict) == content
 
 
 class TestStepCustomization:
     @staticmethod
-    def test_allows_extra_field(tmp_path, workflow_patcher):
-        file_path = tmp_path / ".workflow-patcher.yml"
+    def test_allows_extra_field(workflow_patcher_yaml, workflow_patcher):
         content = f"""
         {ExampleYaml.step_customization.format(action="REPLACE")}
                   extra-field: "test"
         """
         content = cleandoc(content)
-        file_path.write_text(content)
+        workflow_patcher_yaml.write_text(content)
 
-        yaml_dict = workflow_patcher.get_yaml_dict(file_path)
+        yaml_dict = workflow_patcher.get_yaml_dict(workflow_patcher_yaml)
 
         assert workflow_patcher.get_as_string(yaml_dict) == content
 
     @staticmethod
-    def test_raises_error_for_unknown_action(tmp_path, workflow_patcher):
-        file_path = tmp_path / ".workflow-patcher.yml"
+    def test_raises_error_for_unknown_action(workflow_patcher_yaml, workflow_patcher):
         content = cleandoc(ExampleYaml.step_customization.format(action="UNKNOWN"))
-        file_path.write_text(content)
+        workflow_patcher_yaml.write_text(content)
 
         with pytest.raises(ValidationError, match="Input should be"):
-            workflow_patcher.get_yaml_dict(file_path)
+            workflow_patcher.get_yaml_dict(workflow_patcher_yaml)
