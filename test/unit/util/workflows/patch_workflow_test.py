@@ -43,7 +43,7 @@ def workflow_patcher() -> WorkflowPatcher:
 class TestWorkflowPatcher:
     @staticmethod
     def test_remove_jobs(tmp_path, workflow_patcher):
-        file_path = tmp_path / ".exasol-toolbox.yml"
+        file_path = tmp_path / ".workflow-patcher.yml"
         content = cleandoc(ExampleYaml.remove_jobs)
         file_path.write_text(content)
 
@@ -54,7 +54,7 @@ class TestWorkflowPatcher:
     @staticmethod
     @pytest.mark.parametrize("action", ActionType)
     def test_step_customizations(tmp_path, action, workflow_patcher):
-        file_path = tmp_path / ".exasol-toolbox.yml"
+        file_path = tmp_path / ".workflow-patcher.yml"
         content = cleandoc(ExampleYaml.step_customization.format(action=action.value))
         file_path.write_text(content)
 
@@ -66,7 +66,7 @@ class TestWorkflowPatcher:
 class TestStepCustomization:
     @staticmethod
     def test_allows_extra_field(tmp_path, workflow_patcher):
-        file_path = tmp_path / ".exasol-toolbox.yml"
+        file_path = tmp_path / ".workflow-patcher.yml"
         content = f"""
         {ExampleYaml.step_customization.format(action="REPLACE")}
                   extra-field: "test"
@@ -80,7 +80,7 @@ class TestStepCustomization:
 
     @staticmethod
     def test_raises_error_for_unknown_action(tmp_path, workflow_patcher):
-        file_path = tmp_path / ".exasol-toolbox.yml"
+        file_path = tmp_path / ".workflow-patcher.yml"
         content = cleandoc(ExampleYaml.step_customization.format(action="UNKNOWN"))
         file_path.write_text(content)
 

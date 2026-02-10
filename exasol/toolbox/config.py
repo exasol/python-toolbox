@@ -285,14 +285,14 @@ class BaseConfig(BaseModel):
     def github_workflow_patcher_yaml(self) -> Path | None:
         """
         For customizing the GitHub workflow templates provided by the PTB,
-        a project can define a `.exasol-toolbox.yml` file containing instructions to
-        delete or modyfy jobs in the PTB template.
-        Modification includes replacing and inserting steps.
+        a project can define a `.workflow-patcher.yml` file containing instructions to
+        delete or modify jobs in the PTB template. Modification includes replacing and
+        inserting steps.
 
         This feature is a work-in-progress that will be completed with:
             https://github.com/exasol/python-toolbox/issues/690
         """
-        workflow_patcher_yaml = self.root_path / ".exasol-toolbox.yml"
+        workflow_patcher_yaml = self.root_path / ".workflow-patcher.yml"
         if workflow_patcher_yaml.exists():
             return workflow_patcher_yaml
         return None
