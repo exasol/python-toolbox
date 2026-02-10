@@ -6,7 +6,7 @@ from pydantic import (
     ConfigDict,
 )
 
-from exasol.toolbox.util.workflows.template_processing import TemplateRenderer
+from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
 
 
 class Workflow(BaseModel):
@@ -20,11 +20,10 @@ class Workflow(BaseModel):
             raise FileNotFoundError(file_path)
 
         try:
-            raw_content = file_path.read_text()
-            template_renderer = TemplateRenderer(
-                template_str=raw_content, github_template_dict=github_template_dict
+            workflow_renderer = WorkflowRenderer(
+                github_template_dict=github_template_dict
             )
-            workflow = template_renderer.render_to_workflow()
+            workflow = workflow_renderer.render(file_path=file_path)
             return cls(content=workflow)
         except Exception as e:
             raise ValueError(f"Error rendering file: {file_path}") from e
