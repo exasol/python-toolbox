@@ -9,3 +9,4 @@
 ## Refactoring
 
 * #664: Removed deprecation warning for projects to switch over to BaseConfig
+* #637: Added id to workflow templates  & synchronized on naming conventions
