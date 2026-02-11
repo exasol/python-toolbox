@@ -5,21 +5,23 @@ on:
 
 jobs:
 
-  check-tag-version-job:
-    name: Check Tag Version
+  check-release-tag:
+    name: Check Release Tag
     runs-on: "(( os_version ))"
     permissions:
       contents: read
     steps:
-      - name: SCM Checkout
+      - name: Check out Repository
+        id: check-out-repository
         uses: actions/checkout@v6
 
-      - name: Setup Python & Poetry Environment
+      - name: Set up Python & Poetry Environment
+        id: set-up-python-and-poetry-environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v5
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
 
-      - name: Check Tag Version
+      - name: Check Release Tag
         # make sure the pushed/created tag matched the project version
         run: "[[ `poetry version --short` == ${{ github.ref_name }} ]]"
