@@ -23,5 +23,6 @@ jobs:
           poetry-version: "(( dependency_manager_version ))"
 
       - name: Check Release Tag
+        id: check-release-tag
         # make sure the pushed/created tag matched the project version
         run: "[[ `poetry version --short` == ${{ github.ref_name }} ]]"
