@@ -13,26 +13,26 @@ from exasol.toolbox.util.version import Version
 def cookiecutter_json(tmp_path: Path) -> Path:
     cookiecutter_json = tmp_path / "cookiecutter.json"
     contents = """
-        {
-          "project_name": "Yet Another Project",
-          "repo_name": "{{cookiecutter.project_name | lower | replace(' ', '-')}}",
-          "package_name": "{{cookiecutter.repo_name | replace('-', '_')}}",
-          "pypi_package_name": "exasol-{{cookiecutter.repo_name}}",
-          "import_package": "exasol.{{cookiecutter.package_name}}",
-          "description": "",
-          "author_full_name": "Exasol AG",
-          "author_email": "opensource@exasol.com",
-          "project_short_tag": "",
-          "python_version_min": "3.10",
-          "exasol_toolbox_version_range": ">=4.0.1,<5",
-          "license_year": "{% now 'utc', '%Y' %}",
-          "__repo_name_slug": "{{cookiecutter.package_name}}",
-          "__package_name_slug": "{{cookiecutter.package_name}}",
-          "_extensions": [
-            "cookiecutter.extensions.TimeExtension"
-          ]
-        }
-        """
+    {
+      "project_name": "Yet Another Project",
+      "repo_name": "{{cookiecutter.project_name | lower | replace(' ', '-')}}",
+      "package_name": "{{cookiecutter.repo_name | replace('-', '_')}}",
+      "pypi_package_name": "exasol-{{cookiecutter.repo_name}}",
+      "import_package": "exasol.{{cookiecutter.package_name}}",
+      "description": "",
+      "author_full_name": "Exasol AG",
+      "author_email": "opensource@exasol.com",
+      "project_short_tag": "",
+      "python_version_min": "3.10",
+      "exasol_toolbox_version_range": ">=4.0.1,<5",
+      "license_year": "{% now 'utc', '%Y' %}",
+      "__repo_name_slug": "{{cookiecutter.package_name}}",
+      "__package_name_slug": "{{cookiecutter.package_name}}",
+      "_extensions": [
+        "cookiecutter.extensions.TimeExtension"
+      ]
+    }
+    """
     cookiecutter_json.write_text(cleandoc(contents))
     return cookiecutter_json
 
