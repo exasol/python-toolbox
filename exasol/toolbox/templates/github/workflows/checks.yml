@@ -68,7 +68,8 @@ jobs:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
 
-      - name: Run changelog update check
+      - name: Check Changelog was Updated
+        id: check-changelog-was-updated
         run: poetry run -- nox -s changelog:updated
 
   lint-code:
