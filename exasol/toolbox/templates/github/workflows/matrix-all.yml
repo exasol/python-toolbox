@@ -8,24 +8,28 @@ on:
         value: ${{ jobs.all_versions.outputs.matrix }}
 
 jobs:
-  all_versions:
+  set-matrix-all:
     runs-on: "(( os_version ))"
     permissions:
       contents: read
     steps:
-      - name: SCM Checkout
+      - name: Check out Repository
+        id: check-out-repository
         uses: actions/checkout@v6
 
-      - name: Setup Python & Poetry Environment
+      - name: Set up Python & Poetry Environment
+        id: set-up-python-and-poetry-environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v5
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
 
-      - name: Generate matrix
+      - name: Generate Matrix
+        id: generate-matrix
         run: poetry run -- nox -s matrix:all
 
-      - id: set-matrix
+      - name: Set Matrix
+        id: set-matrix
         run: |
           echo "matrix=$(poetry run -- nox -s matrix:all)" >> $GITHUB_OUTPUT
 
