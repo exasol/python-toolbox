@@ -1,6 +1,7 @@
 from inspect import cleandoc
 from json import loads
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -46,7 +47,10 @@ def cookiecutter_json(tmp_path: Path) -> Path:
 def test_update_cookiecutter_default(
     cookiecutter_json, version: Version, expected: str
 ):
-    update_cookiecutter_default(cookiecutter_json=cookiecutter_json, version=version)
+    with patch(
+        "exasol.toolbox.util.release.cookiecutter.COOKIECUTTER_JSON", cookiecutter_json
+    ):
+        update_cookiecutter_default(version=version)
 
     updated_json = cookiecutter_json.read_text()
     updated_dict = loads(updated_json)
