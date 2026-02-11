@@ -50,6 +50,7 @@ jobs:
     needs:
       - run-fast-checks
       - run-slow-checks
+      - test-python-environment
     # Each job requires a step, so we added this dummy step.
     steps:
       - name: Approve
