@@ -5,7 +5,7 @@ on:
     outputs:
       matrix:
         description: "Generates the all versions build matrix"
-        value: ${{ jobs.all_versions.outputs.matrix }}
+        value: ${{ jobs.set-matrix-all.outputs.matrix }}
 
 jobs:
   set-matrix-all:

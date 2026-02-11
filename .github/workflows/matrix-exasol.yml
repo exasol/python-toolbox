@@ -5,7 +5,7 @@ on:
     outputs:
       matrix:
         description: "Generates the exasol version build matrix"
-        value: ${{ jobs.exasol_versions.outputs.matrix }}
+        value: ${{ jobs.set-matrix-exasol.outputs.matrix }}
 
 jobs:
   set-matrix-exasol:
