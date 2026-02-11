@@ -1,6 +1,7 @@
 from inspect import cleandoc
 from json import loads
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -12,26 +13,26 @@ from exasol.toolbox.util.version import Version
 def cookiecutter_json(tmp_path: Path) -> Path:
     cookiecutter_json = tmp_path / "cookiecutter.json"
     contents = """
-    {
-      "project_name": "Yet Another Project",
-      "repo_name": "{{cookiecutter.project_name | lower | replace(' ', '-')}}",
-      "package_name": "{{cookiecutter.repo_name | replace('-', '_')}}",
-      "pypi_package_name": "exasol-{{cookiecutter.repo_name}}",
-      "import_package": "exasol.{{cookiecutter.package_name}}",
-      "description": "",
-      "author_full_name": "Exasol AG",
-      "author_email": "opensource@exasol.com",
-      "project_short_tag": "",
-      "python_version_min": "3.10",
-      "exasol_toolbox_version_range": ">=4.0.1,<5",
-      "license_year": "{% now 'utc', '%Y' %}",
-      "__repo_name_slug": "{{cookiecutter.package_name}}",
-      "__package_name_slug": "{{cookiecutter.package_name}}",
-      "_extensions": [
-        "cookiecutter.extensions.TimeExtension"
-      ]
-    }
-    """
+        {
+          "project_name": "Yet Another Project",
+          "repo_name": "{{cookiecutter.project_name | lower | replace(' ', '-')}}",
+          "package_name": "{{cookiecutter.repo_name | replace('-', '_')}}",
+          "pypi_package_name": "exasol-{{cookiecutter.repo_name}}",
+          "import_package": "exasol.{{cookiecutter.package_name}}",
+          "description": "",
+          "author_full_name": "Exasol AG",
+          "author_email": "opensource@exasol.com",
+          "project_short_tag": "",
+          "python_version_min": "3.10",
+          "exasol_toolbox_version_range": ">=4.0.1,<5",
+          "license_year": "{% now 'utc', '%Y' %}",
+          "__repo_name_slug": "{{cookiecutter.package_name}}",
+          "__package_name_slug": "{{cookiecutter.package_name}}",
+          "_extensions": [
+            "cookiecutter.extensions.TimeExtension"
+          ]
+        }
+        """
     cookiecutter_json.write_text(cleandoc(contents))
     return cookiecutter_json
 
@@ -46,7 +47,10 @@ def cookiecutter_json(tmp_path: Path) -> Path:
 def test_update_cookiecutter_default(
     cookiecutter_json, version: Version, expected: str
 ):
-    update_cookiecutter_default(cookiecutter_json=cookiecutter_json, version=version)
+    with patch(
+        "exasol.toolbox.util.release.cookiecutter.COOKIECUTTER_JSON", cookiecutter_json
+    ):
+        update_cookiecutter_default(version=version)
 
     updated_json = cookiecutter_json.read_text()
     updated_dict = loads(updated_json)

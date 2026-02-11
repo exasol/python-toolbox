@@ -9,7 +9,10 @@ from pydantic import computed_field
 from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox.plugin import hookimpl
 from exasol.toolbox.tools.replace_version import update_github_yml
-from exasol.toolbox.util.release.cookiecutter import update_cookiecutter_default
+from exasol.toolbox.util.release.cookiecutter import (
+    COOKIECUTTER_JSON,
+    update_cookiecutter_default,
+)
 from exasol.toolbox.util.version import Version
 
 
@@ -33,10 +36,6 @@ class UpdateTemplates:
         gh_actions = self.PARENT_PATH / ".github" / "actions"
         return [f for f in gh_actions.rglob("*") if f.is_file()]
 
-    @property
-    def cookiecutter_json(self) -> Path:
-        return self.PARENT_PATH / "project-template" / "cookiecutter.json"
-
     @hookimpl
     def prepare_release_update_version(self, session, config, version: Version) -> None:
         for workflow in self.github_template_workflows:
@@ -45,14 +44,12 @@ class UpdateTemplates:
         for action in self.github_actions:
             update_github_yml(action, version)
 
-        update_cookiecutter_default(self.cookiecutter_json, version)
+        update_cookiecutter_default(version)
 
     @hookimpl
     def prepare_release_add_files(self, session, config) -> list[Path]:
         return (
-            self.github_template_workflows
-            + self.github_actions
-            + [self.cookiecutter_json]
+            self.github_template_workflows + self.github_actions + [COOKIECUTTER_JSON]
         )
 
 
