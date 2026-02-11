@@ -13,7 +13,7 @@ jobs:
     permissions:
       contents: read
 
-  verify-poetry-installation:
+  verify-poetry-setup:
     needs:
      - build-matrix
     strategy:
@@ -22,14 +22,14 @@ jobs:
         runner:
           - ubuntu-24.04
           - ubuntu-22.04
+          - ubuntu-24.04-arm
           - int-linux-x64-4core-gpu-t4-ubuntu24.04-1
           - int-linux-x64-4core-ubuntu24.04-1
           - int-linux-x64-2core-ubuntu24.04-1
         python-version: ${{ fromJson(needs.build-matrix.outputs.matrix).python-version }}
-    name: Install Pipx on ${{ matrix.runner }} (Python-${{ matrix.python-version }})
+    name: Verify Poetry Setup for ${{ matrix.runner }} (Python-${{ matrix.python-version }})
     runs-on:
       labels: ${{ matrix.runner }}
-
     steps:
       - name: Check out Repository
         id: check-out-repository
