@@ -32,7 +32,7 @@ class StepCustomization(BaseModel):
     action: ActionType
     job: str
     step_id: str
-    content: StepContent
+    content: list[StepContent]
 
 
 class Workflow(BaseModel):

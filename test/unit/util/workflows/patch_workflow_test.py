@@ -28,11 +28,11 @@ class ExampleYaml:
               job: Tests
               step_id: checkout-repo
               content:
-                name: SCM Checkout
-                id: checkout-repo
-                uses: actions/checkout@v6
-                with:
-                  fetch-depth: 0
+                - name: SCM Checkout
+                  id: checkout-repo
+                  uses: actions/checkout@v6
+                  with:
+                    fetch-depth: 0
         """
 
 
