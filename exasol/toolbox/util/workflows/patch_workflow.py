@@ -18,6 +18,20 @@ class ActionType(str, Enum):
 
 
 class StepContent(BaseModel):
+    """
+    The :class:`StepContent` is used to lightly validate the content which
+    would be used to REPLACE or INSERT_AFTER the specified step in the GitHub workflow.
+
+    With the value `ConfigDict(extra="allow")`, this model allows for further fields
+    (e.g. `dummy`) to be specified without any validation. This design choice was
+    intentional, as GitHub already allows additional fields and may specify more fields
+    than what has been specified in this model.
+
+    As the validation here is light, it is left to GitHub to validate the content.
+    For further information on what is allowed & expected for the fields, refer to
+    `GitHub's documentation on jobs.<job_id>.steps <https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idsteps>`__.
+    """
+
     model_config = ConfigDict(extra="allow")  # This allows extra fields
 
     name: str
@@ -29,6 +43,15 @@ class StepContent(BaseModel):
 
 
 class StepCustomization(BaseModel):
+    """
+    The :class:`StepCustomization` is used to specify the desired modification:
+      * REPLACE - means that the contents of the specified `step_id` should be replaced
+        with whatever `content` is provided.
+      * INSERT_AFTER - means that the specified `content` should be inserted after
+        the specified `step_id`.
+    For a given step
+    """
+
     action: ActionType
     job: str
     step_id: str
@@ -36,12 +59,26 @@ class StepCustomization(BaseModel):
 
 
 class Workflow(BaseModel):
+    """
+    The :class:`Workflow` is used to specify which workflow should be modified.
+    This is determined by the workflow `name`. A workflow can be modified by specifying:
+       * `remove_jobs` - job names in this list will be removed from the workflow.
+       * `step_customization` - items in this list indicate which job's step
+          should be modified.
+    """
+
     name: str
     remove_jobs: list[str] = Field(default_factory=list)
     step_customizations: list[StepCustomization] = Field(default_factory=list)
 
 
 class WorkflowPatcherConfig(BaseModel):
+    """
+    The :class:`WorkflowPatcherConfig` is used to validate the expected format for
+    the `.workflow-patcher.yml`, which is used to modify the workflow templates provided
+    by the PTB.
+    """
+
     workflows: list[Workflow]
 
 
