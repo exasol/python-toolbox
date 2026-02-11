@@ -9,7 +9,6 @@ on:
 jobs:
   check-release-tag:
     name: Check Release Tag
-    id: check-release-tag
     uses: ./.github/workflows/check-release-tag.yml
     permissions:
       contents: read
@@ -18,7 +17,6 @@ jobs:
     needs:
      - check-release-tag
     name: Build & Publish
-    id: build-and-publish
     uses: ./.github/workflows/build-and-publish.yml
     permissions:
       contents: write
@@ -29,7 +27,6 @@ jobs:
     needs:
      - build-and-publish
     name: Publish Documentation
-    id: publish-documentation
     uses: ./.github/workflows/gh-pages.yml
     permissions:
       contents: read
