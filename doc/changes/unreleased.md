@@ -10,3 +10,4 @@
 
 * #664: Removed deprecation warning for projects to switch over to BaseConfig
 * #637: Added id to workflow templates  & synchronized on naming conventions
+* #702: Fixed StepCustomization.content to list[StepContent] and security concern for `update_cookiecutter_default`
