@@ -1,0 +1,55 @@
+# This workflow verifies if the python-environment Action is successful on each
+# of the selected GitHub Runners.
+
+name: Test python-environment Action
+
+on:
+  workflow_call:
+
+jobs:
+  build-matrix:
+    name: Build Matrix
+    uses: ./.github/workflows/matrix-all.yml
+    permissions:
+      contents: read
+
+  verify-poetry-installation:
+    needs:
+     - build-matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - ubuntu-22.04
+          - int-linux-x64-4core-gpu-t4-ubuntu24.04-1
+          - int-linux-x64-4core-ubuntu24.04-1
+          - int-linux-x64-2core-ubuntu24.04-1
+        python-version: ${{ fromJson(needs.build-matrix.outputs.matrix).python-version }}
+    name: Install Pipx on ${{ matrix.runner }} (Python-${{ matrix.python-version }})
+    runs-on:
+      labels: ${{ matrix.runner }}
+
+    steps:
+      - name: Check out Repository
+        id: check-out-repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python & Poetry Environment
+        id: set-up-python-and-poetry-environment
+        uses: ./.github/actions/python-environment
+        with:
+          python-version: "${{ matrix.python-version }}"
+          poetry-version: "2.3.0"
+
+      - name: Check Poetry Version
+        id: check-poetry-version
+        run: poetry --version
+
+      - name: Validate Python Version
+        id: validate-python-version
+        run: |
+          poetry run which python
+          poetry run python --version
+          poetry env list
+          poetry run python --version | grep "${{ matrix.python-version }}"
