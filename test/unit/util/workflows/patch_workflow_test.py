@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from inspect import cleandoc
 from pathlib import Path
 
@@ -13,30 +12,6 @@ from exasol.toolbox.util.workflows.patch_workflow import (
 from noxconfig import PROJECT_CONFIG
 
 
-@dataclass(frozen=True)
-class ExampleYaml:
-    remove_jobs = """
-        workflows:
-        - name: "checks.yml"
-          remove_jobs:
-            - documentation
-        """
-    step_customization = """
-        workflows:
-        - name: "checks.yml"
-          step_customizations:
-            - action: {action}
-              job: Tests
-              step_id: checkout-repo
-              content:
-                - name: SCM Checkout
-                  id: checkout-repo
-                  uses: actions/checkout@v6
-                  with:
-                    fetch-depth: 0
-        """
-
-
 @pytest.fixture
 def workflow_patcher() -> WorkflowPatcher:
     return WorkflowPatcher(github_template_dict=PROJECT_CONFIG.github_template_dict)
@@ -49,8 +24,8 @@ def workflow_patcher_yaml(tmp_path: Path) -> Path:
 
 class TestWorkflowPatcher:
     @staticmethod
-    def test_remove_jobs(workflow_patcher_yaml, workflow_patcher):
-        content = cleandoc(ExampleYaml.remove_jobs)
+    def test_remove_jobs(example_patcher_yaml, workflow_patcher_yaml, workflow_patcher):
+        content = cleandoc(example_patcher_yaml.remove_jobs)
         workflow_patcher_yaml.write_text(content)
 
         yaml_dict = workflow_patcher.get_yaml_dict(workflow_patcher_yaml)
@@ -59,8 +34,12 @@ class TestWorkflowPatcher:
 
     @staticmethod
     @pytest.mark.parametrize("action", ActionType)
-    def test_step_customizations(workflow_patcher_yaml, action, workflow_patcher):
-        content = cleandoc(ExampleYaml.step_customization.format(action=action.value))
+    def test_step_customizations(
+        example_patcher_yaml, workflow_patcher_yaml, action, workflow_patcher
+    ):
+        content = cleandoc(
+            example_patcher_yaml.step_customization.format(action=action.value)
+        )
         workflow_patcher_yaml.write_text(content)
 
         yaml_dict = workflow_patcher.get_yaml_dict(workflow_patcher_yaml)
@@ -70,9 +49,11 @@ class TestWorkflowPatcher:
 
 class TestStepCustomization:
     @staticmethod
-    def test_allows_extra_field(workflow_patcher_yaml, workflow_patcher):
+    def test_allows_extra_field(
+        example_patcher_yaml, workflow_patcher_yaml, workflow_patcher
+    ):
         content = f"""
-        {ExampleYaml.step_customization.format(action="REPLACE")}
+        {example_patcher_yaml.step_customization.format(action="REPLACE")}
                   extra-field: "test"
         """
         content = cleandoc(content)
@@ -83,8 +64,12 @@ class TestStepCustomization:
         assert workflow_patcher.get_as_string(yaml_dict) == content
 
     @staticmethod
-    def test_raises_error_for_unknown_action(workflow_patcher_yaml, workflow_patcher):
-        content = cleandoc(ExampleYaml.step_customization.format(action="UNKNOWN"))
+    def test_raises_error_for_unknown_action(
+        example_patcher_yaml, workflow_patcher_yaml, workflow_patcher
+    ):
+        content = cleandoc(
+            example_patcher_yaml.step_customization.format(action="UNKNOWN")
+        )
         workflow_patcher_yaml.write_text(content)
 
         with pytest.raises(
