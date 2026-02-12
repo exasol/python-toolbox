@@ -28,3 +28,4 @@ ignore_imports =
     # in each CLI usage), we allow the noxconfig to be imported within these modules.
     exasol.toolbox.nox.* -> noxconfig
     exasol.toolbox.tools.template -> noxconfig
+    exasol.toolbox.util.workflow.* -> noxconfig
