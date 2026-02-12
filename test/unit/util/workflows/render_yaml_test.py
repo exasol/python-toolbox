@@ -1,8 +1,15 @@
 from inspect import cleandoc
 
 import pytest
+from jinja2 import (
+    TemplateSyntaxError,
+    UndefinedError,
+)
 
-from exasol.toolbox.util.workflows.render_yaml import YamlRenderer
+from exasol.toolbox.util.workflows.render_yaml import (
+    TemplateRenderingError,
+    YamlRenderer,
+)
 from noxconfig import PROJECT_CONFIG
 
 
@@ -11,9 +18,14 @@ def yaml_renderer() -> YamlRenderer:
     return YamlRenderer(github_template_dict=PROJECT_CONFIG.github_template_dict)
 
 
-class TestTemplateRenderer:
+@pytest.fixture
+def dummy_yaml(tmp_path):
+    return tmp_path / "dummy.yml"
+
+
+class TestYamlRenderer:
     @staticmethod
-    def test_works_for_general_case(tmp_path, yaml_renderer):
+    def test_works_for_general_case(dummy_yaml, yaml_renderer):
         input_yaml = """
         name: Build & Publish
 
@@ -29,15 +41,14 @@ class TestTemplateRenderer:
             permissions:
               contents: write
         """
-        file_path = tmp_path / "dummy.yml"
         content = cleandoc(input_yaml)
-        file_path.write_text(content)
+        dummy_yaml.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        yaml_dict = yaml_renderer.get_yaml_dict(dummy_yaml)
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(input_yaml)
 
     @staticmethod
-    def test_fixes_extra_horizontal_whitespace(tmp_path, yaml_renderer):
+    def test_fixes_extra_horizontal_whitespace(dummy_yaml, yaml_renderer):
         # required has 2 extra spaces
         input_yaml = """
         name: Build & Publish
@@ -59,15 +70,14 @@ class TestTemplateRenderer:
                 required: true
         """
 
-        file_path = tmp_path / "dummy.yml"
         content = cleandoc(input_yaml)
-        file_path.write_text(content)
+        dummy_yaml.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        yaml_dict = yaml_renderer.get_yaml_dict(dummy_yaml)
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_keeps_comments(tmp_path, yaml_renderer):
+    def test_keeps_comments(dummy_yaml, yaml_renderer):
         input_yaml = """
         steps:
           # Comment in nested area
@@ -84,15 +94,14 @@ class TestTemplateRenderer:
           # Comment in step
         """
 
-        file_path = tmp_path / "dummy.yml"
         content = cleandoc(input_yaml)
-        file_path.write_text(content)
+        dummy_yaml.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        yaml_dict = yaml_renderer.get_yaml_dict(dummy_yaml)
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_keeps_quotes_for_variables_as_is(tmp_path, yaml_renderer):
+    def test_keeps_quotes_for_variables_as_is(dummy_yaml, yaml_renderer):
         input_yaml = """
         - name: Build Artifacts
           run: poetry build
@@ -129,15 +138,14 @@ class TestTemplateRenderer:
             dist/*
         """
 
-        file_path = tmp_path / "dummy.yml"
         content = cleandoc(input_yaml)
-        file_path.write_text(content)
+        dummy_yaml.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        yaml_dict = yaml_renderer.get_yaml_dict(dummy_yaml)
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_updates_jinja_variables(tmp_path, yaml_renderer):
+    def test_updates_jinja_variables(dummy_yaml, yaml_renderer):
         input_yaml = """
         - name: Setup Python & Poetry Environment
           uses: exasol/python-toolbox/.github/actions/python-environment@v5
@@ -153,15 +161,14 @@ class TestTemplateRenderer:
           poetry-version: "2.3.0"
         """
 
-        file_path = tmp_path / "dummy.yml"
         content = cleandoc(input_yaml)
-        file_path.write_text(content)
+        dummy_yaml.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        yaml_dict = yaml_renderer.get_yaml_dict(dummy_yaml)
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_preserves_list_format(tmp_path, yaml_renderer):
+    def test_preserves_list_format(dummy_yaml, yaml_renderer):
         input_yaml = """
         on:
           pull_request:
@@ -178,9 +185,46 @@ class TestTemplateRenderer:
               python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         """
 
-        file_path = tmp_path / "dummy.yml"
         content = cleandoc(input_yaml)
-        file_path.write_text(content)
+        dummy_yaml.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        yaml_dict = yaml_renderer.get_yaml_dict(dummy_yaml)
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(input_yaml)
+
+    @staticmethod
+    def test_jinja_variable_unknown(dummy_yaml, yaml_renderer):
+        input_yaml = """
+        - name: Setup Python & Poetry Environment
+          uses: exasol/python-toolbox/.github/actions/python-environment@v5
+          with:
+            poetry-version: "(( bad_jinja ))"
+        """
+
+        content = cleandoc(input_yaml)
+        dummy_yaml.write_text(content)
+
+        with pytest.raises(
+            TemplateRenderingError, match="Check Jinja2-related errors."
+        ) as exc:
+            yaml_renderer.get_yaml_dict(dummy_yaml)
+        assert isinstance(exc.value.__cause__, UndefinedError)
+        assert "'bad_jinja' is undefined" in str(exc.value.__cause__)
+
+    @staticmethod
+    def test_jinja_variable_unclosed(dummy_yaml, yaml_renderer):
+        input_yaml = """
+        - name: Setup Python & Poetry Environment
+          uses: exasol/python-toolbox/.github/actions/python-environment@v5
+          with:
+            python-version: "(( minimum_python_version )"
+        """
+
+        content = cleandoc(input_yaml)
+        dummy_yaml.write_text(content)
+
+        with pytest.raises(
+            TemplateRenderingError, match="Check Jinja2-related errors."
+        ) as exc:
+            yaml_renderer.get_yaml_dict(dummy_yaml)
+        assert isinstance(exc.value.__cause__, TemplateSyntaxError)
+        assert "unexpected ')'" in str(exc.value.__cause__)

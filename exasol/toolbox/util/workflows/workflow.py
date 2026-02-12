@@ -19,11 +19,6 @@ class Workflow(BaseModel):
         if not file_path.exists():
             raise FileNotFoundError(file_path)
 
-        try:
-            workflow_renderer = WorkflowRenderer(
-                github_template_dict=github_template_dict
-            )
-            workflow = workflow_renderer.render(file_path=file_path)
-            return cls(content=workflow)
-        except Exception as e:
-            raise ValueError(f"Error rendering file: {file_path}") from e
+        workflow_renderer = WorkflowRenderer(github_template_dict=github_template_dict)
+        workflow = workflow_renderer.render(file_path=file_path)
+        return cls(content=workflow)

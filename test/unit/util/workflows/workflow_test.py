@@ -1,5 +1,4 @@
 import pytest
-from ruamel.yaml.parser import ParserError
 
 from exasol.toolbox.util.workflows.workflow import Workflow
 from noxconfig import PROJECT_CONFIG
@@ -42,17 +41,3 @@ class TestWorkflow:
                 file_path=file_path,
                 github_template_dict=PROJECT_CONFIG.github_template_dict,
             )
-
-    @staticmethod
-    def test_fails_when_yaml_malformed(tmp_path):
-        file_path = tmp_path / "test.yaml"
-        file_path.write_text(BAD_TEMPLATE)
-
-        with pytest.raises(ValueError, match="Error rendering file") as excinfo:
-            Workflow.load_from_template(
-                file_path=file_path,
-                github_template_dict=PROJECT_CONFIG.github_template_dict,
-            )
-
-        assert isinstance(excinfo.value.__cause__, ParserError)
-        assert "while parsing a block collection" in str(excinfo.value.__cause__)

@@ -4,15 +4,44 @@ from inspect import cleandoc
 from pathlib import Path
 from typing import Any
 
-from jinja2 import Environment
+from jinja2 import (
+    Environment,
+    StrictUndefined,
+    TemplateError,
+)
 from ruamel.yaml import (
     YAML,
     CommentedMap,
 )
+from ruamel.yaml.error import YAMLError
 
 jinja_env = Environment(
-    variable_start_string="((", variable_end_string="))", autoescape=True
+    variable_start_string="((",
+    variable_end_string="))",
+    autoescape=True,
+    # This requires that all Jinja variables must be defined in the provided
+    # dictionary. If not, then a `jinja2.exceptions.UndefinedError` exception
+    # will be raised.
+    undefined=StrictUndefined,
 )
+
+
+class YamlSyntaxError(Exception):
+    """Raised when the rendered template is not a valid YAML document."""
+
+    def __init__(self, file_path: Path):
+        super().__init__(
+            f"File '{file_path}' could not be parsed by ruamel-yaml. Check for invalid YAML syntax."
+        )
+
+
+class TemplateRenderingError(Exception):
+    """Raised when Jinja2 fails to process the template."""
+
+    def __init__(self, file_path: Path):
+        super().__init__(
+            f"File '{file_path}' failed to render. Check Jinja2-related errors."
+        )
 
 
 @dataclass(frozen=True)
@@ -53,10 +82,14 @@ class YamlRenderer:
         with file_path.open("r", encoding="utf-8") as stream:
             raw_content = stream.read()
 
-        workflow_string = self._render_with_jinja(raw_content)
-
-        yaml = self._get_standard_yaml()
-        return yaml.load(workflow_string)
+        try:
+            workflow_string = self._render_with_jinja(raw_content)
+            yaml = self._get_standard_yaml()
+            return yaml.load(workflow_string)
+        except TemplateError as exc:
+            raise TemplateRenderingError(file_path=file_path) from exc
+        except YAMLError as exc:
+            raise YamlSyntaxError(file_path=file_path) from exc
 
     def get_as_string(self, yaml_dict: CommentedMap) -> str:
         """
