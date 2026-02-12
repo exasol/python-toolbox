@@ -7,6 +7,7 @@ from pydantic import ValidationError
 
 from exasol.toolbox.util.workflows.patch_workflow import (
     ActionType,
+    InvalidWorkflowPatcherYamlError,
     WorkflowPatcher,
 )
 from noxconfig import PROJECT_CONFIG
@@ -86,5 +87,11 @@ class TestStepCustomization:
         content = cleandoc(ExampleYaml.step_customization.format(action="UNKNOWN"))
         workflow_patcher_yaml.write_text(content)
 
-        with pytest.raises(ValidationError, match="Input should be"):
+        with pytest.raises(
+            InvalidWorkflowPatcherYamlError,
+            match="is malformed; it failed Pydantic validation",
+        ) as exc:
             workflow_patcher.get_yaml_dict(workflow_patcher_yaml)
+
+        underlying_error = exc.value.__cause__
+        assert isinstance(underlying_error, ValidationError)

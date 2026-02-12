@@ -6,10 +6,18 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
+    ValidationError,
 )
 from ruamel.yaml import CommentedMap
 
 from exasol.toolbox.util.workflows.render_yaml import YamlRenderer
+
+
+class InvalidWorkflowPatcherYamlError(Exception):
+    def __init__(self, file_path: Path):
+        super().__init__(
+            f"File '{file_path}' is malformed; it failed Pydantic validation."
+        )
 
 
 class ActionType(str, Enum):
@@ -92,5 +100,8 @@ class WorkflowPatcher(YamlRenderer):
 
     def get_yaml_dict(self, file_path: Path) -> CommentedMap:
         loaded_yaml = super().get_yaml_dict(file_path)
-        WorkflowPatcherConfig.model_validate(loaded_yaml)
-        return loaded_yaml
+        try:
+            WorkflowPatcherConfig.model_validate(loaded_yaml)
+            return loaded_yaml
+        except ValidationError as exc:
+            raise InvalidWorkflowPatcherYamlError(file_path=file_path) from exc
