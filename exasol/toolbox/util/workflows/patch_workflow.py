@@ -1,4 +1,8 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
 from enum import Enum
+from functools import cached_property
 from pathlib import Path
 from typing import Any
 
@@ -90,6 +94,7 @@ class WorkflowPatcherConfig(BaseModel):
     workflows: list[Workflow]
 
 
+@dataclass(frozen=True)
 class WorkflowPatcher(YamlRenderer):
     """
     The :class:`WorkflowPatcher` enables users to define a YAML file
@@ -98,10 +103,17 @@ class WorkflowPatcher(YamlRenderer):
     The provided YAML file must meet the conditions of :class:`WorkflowPatcherConfig`.
     """
 
-    def get_yaml_dict(self, file_path: Path) -> CommentedMap:
-        loaded_yaml = super().get_yaml_dict(file_path)
+    file_path: Path
+
+    @cached_property
+    def content(self) -> CommentedMap:
+        """
+        The loaded YAML content. It loads on first access and
+        stays cached even though the class is frozen.
+        """
+        loaded_yaml = self.get_yaml_dict(self.file_path)
         try:
             WorkflowPatcherConfig.model_validate(loaded_yaml)
             return loaded_yaml
         except ValidationError as exc:
-            raise InvalidWorkflowPatcherYamlError(file_path=file_path) from exc
+            raise InvalidWorkflowPatcherYamlError(file_path=self.file_path) from exc

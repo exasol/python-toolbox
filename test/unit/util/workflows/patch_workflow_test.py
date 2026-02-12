@@ -13,8 +13,11 @@ from noxconfig import PROJECT_CONFIG
 
 
 @pytest.fixture
-def workflow_patcher() -> WorkflowPatcher:
-    return WorkflowPatcher(github_template_dict=PROJECT_CONFIG.github_template_dict)
+def workflow_patcher(workflow_patcher_yaml) -> WorkflowPatcher:
+    return WorkflowPatcher(
+        github_template_dict=PROJECT_CONFIG.github_template_dict,
+        file_path=workflow_patcher_yaml,
+    )
 
 
 @pytest.fixture
@@ -28,9 +31,8 @@ class TestWorkflowPatcher:
         content = cleandoc(example_patcher_yaml.remove_jobs)
         workflow_patcher_yaml.write_text(content)
 
-        yaml_dict = workflow_patcher.get_yaml_dict(workflow_patcher_yaml)
-
-        assert workflow_patcher.get_as_string(yaml_dict) == content
+        result = workflow_patcher.content
+        assert workflow_patcher.get_as_string(result) == content
 
     @staticmethod
     @pytest.mark.parametrize("action", ActionType)
@@ -42,9 +44,8 @@ class TestWorkflowPatcher:
         )
         workflow_patcher_yaml.write_text(content)
 
-        yaml_dict = workflow_patcher.get_yaml_dict(workflow_patcher_yaml)
-
-        assert workflow_patcher.get_as_string(yaml_dict) == content
+        result = workflow_patcher.content
+        assert workflow_patcher.get_as_string(result) == content
 
 
 class TestStepCustomization:
@@ -76,7 +77,7 @@ class TestStepCustomization:
             InvalidWorkflowPatcherYamlError,
             match="is malformed; it failed Pydantic validation",
         ) as exc:
-            workflow_patcher.get_yaml_dict(workflow_patcher_yaml)
+            workflow_patcher.content
 
         underlying_error = exc.value.__cause__
         assert isinstance(underlying_error, ValidationError)
