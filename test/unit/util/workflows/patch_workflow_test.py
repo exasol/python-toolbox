@@ -1,5 +1,4 @@
 from inspect import cleandoc
-from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
@@ -7,45 +6,24 @@ from pydantic import ValidationError
 from exasol.toolbox.util.workflows.patch_workflow import (
     ActionType,
     InvalidWorkflowPatcherYamlError,
-    WorkflowPatcher,
 )
-from noxconfig import PROJECT_CONFIG
-
-
-@pytest.fixture
-def workflow_patcher(workflow_patcher_yaml) -> WorkflowPatcher:
-    return WorkflowPatcher(
-        github_template_dict=PROJECT_CONFIG.github_template_dict,
-        file_path=workflow_patcher_yaml,
-    )
-
-
-@pytest.fixture
-def workflow_patcher_yaml(tmp_path: Path) -> Path:
-    return tmp_path / ".workflow-patcher.yml"
 
 
 class TestWorkflowPatcher:
     @staticmethod
-    def test_remove_jobs(example_patcher_yaml, workflow_patcher_yaml, workflow_patcher):
-        content = cleandoc(example_patcher_yaml.remove_jobs)
-        workflow_patcher_yaml.write_text(content)
-
+    def test_remove_jobs(remove_job_yaml, workflow_patcher):
         result = workflow_patcher.content
-        assert workflow_patcher.get_as_string(result) == content
+        assert workflow_patcher.get_as_string(result) == remove_job_yaml
 
     @staticmethod
-    @pytest.mark.parametrize("action", ActionType)
-    def test_step_customizations(
-        example_patcher_yaml, workflow_patcher_yaml, action, workflow_patcher
-    ):
-        content = cleandoc(
-            example_patcher_yaml.step_customization.format(action=action.value)
-        )
-        workflow_patcher_yaml.write_text(content)
-
+    @pytest.mark.parametrize(
+        "step_customization_yaml",
+        [action.value for action in ActionType],
+        indirect=True,
+    )
+    def test_step_customizations(step_customization_yaml, workflow_patcher):
         result = workflow_patcher.content
-        assert workflow_patcher.get_as_string(result) == content
+        assert workflow_patcher.get_as_string(result) == step_customization_yaml
 
 
 class TestStepCustomization:
