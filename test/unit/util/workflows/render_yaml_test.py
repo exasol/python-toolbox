@@ -14,13 +14,15 @@ from noxconfig import PROJECT_CONFIG
 
 
 @pytest.fixture
-def yaml_renderer() -> YamlRenderer:
-    return YamlRenderer(github_template_dict=PROJECT_CONFIG.github_template_dict)
+def dummy_yaml(tmp_path):
+    return tmp_path / "dummy.yml"
 
 
 @pytest.fixture
-def dummy_yaml(tmp_path):
-    return tmp_path / "dummy.yml"
+def yaml_renderer(dummy_yaml) -> YamlRenderer:
+    return YamlRenderer(
+        github_template_dict=PROJECT_CONFIG.github_template_dict, file_path=dummy_yaml
+    )
 
 
 class TestYamlRenderer:
@@ -44,7 +46,7 @@ class TestYamlRenderer:
         content = cleandoc(input_yaml)
         dummy_yaml.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(dummy_yaml)
+        yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(input_yaml)
 
     @staticmethod
@@ -73,7 +75,7 @@ class TestYamlRenderer:
         content = cleandoc(input_yaml)
         dummy_yaml.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(dummy_yaml)
+        yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
@@ -97,7 +99,7 @@ class TestYamlRenderer:
         content = cleandoc(input_yaml)
         dummy_yaml.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(dummy_yaml)
+        yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
@@ -141,7 +143,7 @@ class TestYamlRenderer:
         content = cleandoc(input_yaml)
         dummy_yaml.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(dummy_yaml)
+        yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
@@ -164,7 +166,7 @@ class TestYamlRenderer:
         content = cleandoc(input_yaml)
         dummy_yaml.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(dummy_yaml)
+        yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
@@ -188,7 +190,7 @@ class TestYamlRenderer:
         content = cleandoc(input_yaml)
         dummy_yaml.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(dummy_yaml)
+        yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(input_yaml)
 
     @staticmethod
@@ -206,7 +208,7 @@ class TestYamlRenderer:
         with pytest.raises(
             TemplateRenderingError, match="Check Jinja2-related errors."
         ) as exc:
-            yaml_renderer.get_yaml_dict(dummy_yaml)
+            yaml_renderer.get_yaml_dict()
         assert isinstance(exc.value.__cause__, UndefinedError)
         assert "'bad_jinja' is undefined" in str(exc.value.__cause__)
 
@@ -225,6 +227,6 @@ class TestYamlRenderer:
         with pytest.raises(
             TemplateRenderingError, match="Check Jinja2-related errors."
         ) as exc:
-            yaml_renderer.get_yaml_dict(dummy_yaml)
+            yaml_renderer.get_yaml_dict()
         assert isinstance(exc.value.__cause__, TemplateSyntaxError)
         assert "unexpected ')'" in str(exc.value.__cause__)

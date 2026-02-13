@@ -54,6 +54,7 @@ class YamlRenderer:
     """
 
     github_template_dict: dict[str, Any]
+    file_path: Path
 
     @staticmethod
     def _get_standard_yaml() -> YAML:
@@ -74,12 +75,12 @@ class YamlRenderer:
         jinja_template = jinja_env.from_string(input_str)
         return jinja_template.render(self.github_template_dict)
 
-    def get_yaml_dict(self, file_path: Path) -> CommentedMap:
+    def get_yaml_dict(self) -> CommentedMap:
         """
         Load a file as a CommentedMap (dictionary form of a YAML), after
         rendering it with Jinja.
         """
-        with file_path.open("r", encoding="utf-8") as stream:
+        with self.file_path.open("r", encoding="utf-8") as stream:
             raw_content = stream.read()
 
         try:
@@ -87,9 +88,9 @@ class YamlRenderer:
             yaml = self._get_standard_yaml()
             return yaml.load(workflow_string)
         except TemplateError as exc:
-            raise TemplateRenderingError(file_path=file_path) from exc
+            raise TemplateRenderingError(file_path=self.file_path) from exc
         except YAMLError as exc:
-            raise YamlSyntaxError(file_path=file_path) from exc
+            raise YamlSyntaxError(file_path=self.file_path) from exc
 
     def get_as_string(self, yaml_dict: CommentedMap) -> str:
         """

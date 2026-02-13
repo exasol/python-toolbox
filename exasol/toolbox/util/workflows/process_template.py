@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from exasol.toolbox.util.workflows.render_yaml import YamlRenderer
 
 
@@ -11,9 +9,9 @@ class WorkflowRenderer(YamlRenderer):
       - standardizing formatting via ruamel.yaml for a consistent output.
     """
 
-    def render(self, file_path: Path) -> str:
+    def render(self) -> str:
         """
         Render the template to the contents of a valid GitHub workflow.
         """
-        workflow_dict = self.get_yaml_dict(file_path)
+        workflow_dict = self.get_yaml_dict()
         return self.get_as_string(workflow_dict)

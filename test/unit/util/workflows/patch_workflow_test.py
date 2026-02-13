@@ -60,7 +60,7 @@ class TestStepCustomization:
         content = cleandoc(content)
         workflow_patcher_yaml.write_text(content)
 
-        yaml_dict = workflow_patcher.get_yaml_dict(workflow_patcher_yaml)
+        yaml_dict = workflow_patcher.get_yaml_dict()
 
         assert workflow_patcher.get_as_string(yaml_dict) == content
 

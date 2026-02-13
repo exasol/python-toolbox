@@ -103,15 +103,13 @@ class WorkflowPatcher(YamlRenderer):
     The provided YAML file must meet the conditions of :class:`WorkflowPatcherConfig`.
     """
 
-    file_path: Path
-
     @cached_property
     def content(self) -> CommentedMap:
         """
         The loaded YAML content. It loads on first access and
         stays cached even though the class is frozen.
         """
-        loaded_yaml = self.get_yaml_dict(self.file_path)
+        loaded_yaml = self.get_yaml_dict()
         try:
             WorkflowPatcherConfig.model_validate(loaded_yaml)
             return loaded_yaml
