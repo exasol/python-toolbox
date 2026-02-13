@@ -4,7 +4,11 @@ from dataclasses import dataclass
 from enum import Enum
 from functools import cached_property
 from pathlib import Path
-from typing import Any
+from typing import (
+    Annotated,
+    Any,
+    TypeAlias,
+)
 
 from pydantic import (
     BaseModel,
@@ -94,6 +98,20 @@ class WorkflowPatcherConfig(BaseModel):
     workflows: list[Workflow]
 
 
+WorkflowCommentedMap: TypeAlias = Annotated[
+    CommentedMap, f"This CommentedMap is structured according to `{Workflow.__name__}`"
+]
+
+StepCustomizationCommentedMap: TypeAlias = Annotated[
+    CommentedMap,
+    f"This CommentedMap is structured according to `{StepCustomization.__name__}`",
+]
+StepsCommentedMap: TypeAlias = Annotated[
+    CommentedMap,
+    f"This CommentedMap is structured according to `list[{StepContent.__name__}]`",
+]
+
+
 @dataclass(frozen=True)
 class WorkflowPatcher(YamlRenderer):
     """
@@ -116,7 +134,7 @@ class WorkflowPatcher(YamlRenderer):
         except ValidationError as exc:
             raise InvalidWorkflowPatcherYamlError(file_path=self.file_path) from exc
 
-    def extract_by_workflow(self, workflow_name: str) -> CommentedMap | None:
+    def extract_by_workflow(self, workflow_name: str) -> WorkflowCommentedMap | None:
         """
         Extract from the `content` where `name` matches the `workflow_name`.
         If the workflow is not found, then `None` is returned. It is an expected and

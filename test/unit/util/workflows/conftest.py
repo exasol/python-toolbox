@@ -24,8 +24,8 @@ class ExamplePatcherYaml:
               job: run-unit-tests
               step_id: check-out-repository
               content:
-                - name: SCM Checkout
-                  id: checkout-repo
+                - name: Check out Repository
+                  id: check-out-repository
                   uses: actions/checkout@v6
                   with:
                     fetch-depth: 0
