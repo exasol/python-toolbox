@@ -2,6 +2,7 @@ from inspect import cleandoc
 
 import pytest
 from pydantic import ValidationError
+from ruamel.yaml import CommentedMap
 
 from exasol.toolbox.util.workflows.patch_workflow import (
     ActionType,
@@ -24,6 +25,31 @@ class TestWorkflowPatcher:
     def test_step_customizations(step_customization_yaml, workflow_patcher):
         result = workflow_patcher.content
         assert workflow_patcher.get_as_string(result) == step_customization_yaml
+
+    @staticmethod
+    def test_extract_by_workflow_works_as_expected(
+        example_patcher_yaml, workflow_patcher_yaml, workflow_patcher
+    ):
+        content = f"""
+        {example_patcher_yaml.remove_jobs}
+        - name: "pr-merge.yml"
+          remove_jobs:
+           - publish-docs
+        """
+        content = cleandoc(content)
+        workflow_patcher_yaml.write_text(content)
+
+        result = workflow_patcher.extract_by_workflow("pr-merge.yml")
+        assert result == CommentedMap(
+            {"name": "pr-merge.yml", "remove_jobs": ["publish-docs"]}
+        )
+
+    @staticmethod
+    def test_extract_by_workflow_not_found_returns_none(
+        remove_job_yaml, workflow_patcher
+    ):
+        result = workflow_patcher.extract_by_workflow("pr-merge.yml")
+        assert result is None
 
 
 class TestStepCustomization:

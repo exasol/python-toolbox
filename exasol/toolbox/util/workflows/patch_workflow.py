@@ -115,3 +115,16 @@ class WorkflowPatcher(YamlRenderer):
             return loaded_yaml
         except ValidationError as exc:
             raise InvalidWorkflowPatcherYamlError(file_path=self.file_path) from exc
+
+    def extract_by_workflow(self, workflow_name: str) -> CommentedMap | None:
+        """
+        Extract from the `content` where `name` matches the `workflow_name`.
+        If the workflow is not found, then `None` is returned. It is an expected and
+        common use case that the `WorkflowPatcher` would only modify a few workflows
+        and not all of them.
+        """
+        inner_content = self.content["workflows"]
+        for workflow in inner_content:
+            if workflow["name"] == workflow_name:
+                return workflow
+        return None
