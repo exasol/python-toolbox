@@ -6,6 +6,7 @@
 .. toctree::
     :maxdepth: 2
 
+    introduction
     dependencies
     getting_started
     configuration

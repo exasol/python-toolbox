@@ -45,6 +45,7 @@ might want to ignore automatically applied formatting.
 |                       |   <line-to-ignore> # noqa: F401|    # ruff: noqa F401  |
 +-----------------------+--------------------------------+-----------------------+
 
+See also :ref:`ignore_ruff_findings`.
 
 In the ``checks.yml``, ``format:check`` wants me to reformat code I did not modify
 ------------------------------------------------------------------------------------
