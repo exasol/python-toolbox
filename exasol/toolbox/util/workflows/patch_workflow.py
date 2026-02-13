@@ -98,9 +98,9 @@ class WorkflowPatcherConfig(BaseModel):
 class WorkflowPatcher(YamlRenderer):
     """
     The :class:`WorkflowPatcher` enables users to define a YAML file
-    to customize PTB-provided workflows by removing or modifying jobs in the file.
-    A job can be modified by replacing or inserting steps.
-    The provided YAML file must meet the conditions of :class:`WorkflowPatcherConfig`.
+    to customize PTB-provided workflows by removing or modifying jobs.
+    A job can be modified by replacing or inserting steps. The provided
+    YAML file must meet the conditions of :class:`WorkflowPatcherConfig`.
     """
 
     @cached_property
