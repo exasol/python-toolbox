@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath("../"))
 # -- Project information -----------------------------------------------------
 
 project = "Exasol Toolbox"
-copyright = "2022, Exasol"  # pylint: disable=redefined-builtin
+copyright = "2026, Exasol"  # pylint: disable=redefined-builtin
 author = "Exasol"
 
 # -- General configuration ---------------------------------------------------

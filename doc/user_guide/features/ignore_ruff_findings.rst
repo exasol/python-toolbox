@@ -12,4 +12,7 @@ You can ignore this finding by appending a comment to the code line:
 
     from exasol.toolbox.nox.tasks import *  # noqa: F403
 
-See `Ruff documentation <https://docs.astral.sh/ruff/configuration>`_
+See also
+
+* `Ruff documentation <https://docs.astral.sh/ruff/configuration>`_
+* :ref:`Ignoring Ruff formatting<prevent_auto_format>`

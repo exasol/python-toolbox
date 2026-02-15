@@ -1,3 +1,5 @@
+.. _migrating_legacy_projects:
+
 Migrating Legacy Projects
 =========================
 
