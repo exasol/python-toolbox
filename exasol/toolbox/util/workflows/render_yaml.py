@@ -74,10 +74,10 @@ class YamlRenderer:
             workflow_string = self._render_with_jinja(raw_content)
             yaml = self._get_standard_yaml()
             return yaml.load(workflow_string)
-        except TemplateError as exc:
-            raise TemplateRenderingError(file_path=self.file_path) from exc
-        except YAMLError as exc:
-            raise YamlParsingError(file_path=self.file_path) from exc
+        except TemplateError as ex:
+            raise TemplateRenderingError(file_path=self.file_path) from ex
+        except YAMLError as ex:
+            raise YamlParsingError(file_path=self.file_path) from ex
 
     def get_as_string(self, yaml_dict: CommentedMap) -> str:
         """
@@ -89,5 +89,5 @@ class YamlRenderer:
                 yaml.dump(yaml_dict, stream)
                 workflow_string = stream.getvalue()
             return cleandoc(workflow_string)
-        except YAMLError as exc:
-            raise YamlOutputError(file_path=self.file_path) from exc
+        except YAMLError as ex:
+            raise YamlOutputError(file_path=self.file_path) from ex

@@ -31,8 +31,8 @@ class Workflow(BaseModel):
             )
             workflow = workflow_renderer.render()
             return cls(content=workflow)
-        except (TemplateRenderingError, YamlParsingError, YamlOutputError) as exc:
-            raise exc
-        except Exception as e:
+        except (TemplateRenderingError, YamlParsingError, YamlOutputError) as ex:
+            raise ex
+        except Exception as ex:
             # Wrap all other "non-special" exceptions
-            raise ValueError(f"Error rendering file: {file_path}") from e
+            raise ValueError(f"Error rendering file: {file_path}") from ex
