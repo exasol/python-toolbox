@@ -15,6 +15,7 @@ from ruamel.yaml import (
 )
 from ruamel.yaml.error import YAMLError
 
+from exasol.toolbox.util.workflows import logger
 from exasol.toolbox.util.workflows.exceptions import (
     TemplateRenderingError,
     YamlOutputError,
@@ -60,6 +61,11 @@ class YamlRenderer:
         """
         Render the template with Jinja.
         """
+        logger.debug(
+            "Render template with Jinja",
+            jinja_dict_source="PROJECT_CONFIG.github_template_dict",
+            jinja_dict_values=self.github_template_dict,
+        )
         jinja_template = jinja_env.from_string(input_str)
         return jinja_template.render(self.github_template_dict)
 
@@ -72,6 +78,7 @@ class YamlRenderer:
         try:
             workflow_string = self._render_with_jinja(raw_content)
             yaml = self._get_standard_yaml()
+            logger.debug("Parse template with ruamel-yaml")
             return yaml.load(workflow_string)
         except TemplateError as ex:
             raise TemplateRenderingError(file_path=self.file_path) from ex
@@ -84,6 +91,7 @@ class YamlRenderer:
         """
         yaml = self._get_standard_yaml()
         try:
+            logger.debug("Output workflow as string")
             with io.StringIO() as stream:
                 yaml.dump(yaml_dict, stream)
                 workflow_string = stream.getvalue()

@@ -1,0 +1,3 @@
+import structlog
+
+structlog.configure()
