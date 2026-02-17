@@ -37,13 +37,16 @@ class ExampleYaml:
 
 
 @pytest.fixture
-def workflow_patcher() -> WorkflowPatcher:
-    return WorkflowPatcher(github_template_dict=PROJECT_CONFIG.github_template_dict)
+def workflow_patcher_yaml(tmp_path: Path) -> Path:
+    return tmp_path / ".workflow-patcher.yml"
 
 
 @pytest.fixture
-def workflow_patcher_yaml(tmp_path: Path) -> Path:
-    return tmp_path / ".workflow-patcher.yml"
+def workflow_patcher(workflow_patcher_yaml) -> WorkflowPatcher:
+    return WorkflowPatcher(
+        github_template_dict=PROJECT_CONFIG.github_template_dict,
+        file_path=workflow_patcher_yaml,
+    )
 
 
 class TestWorkflowPatcher:
@@ -52,7 +55,7 @@ class TestWorkflowPatcher:
         content = cleandoc(ExampleYaml.remove_jobs)
         workflow_patcher_yaml.write_text(content)
 
-        yaml_dict = workflow_patcher.get_yaml_dict(workflow_patcher_yaml)
+        yaml_dict = workflow_patcher.get_yaml_dict()
 
         assert workflow_patcher.get_as_string(yaml_dict) == content
 
@@ -62,7 +65,7 @@ class TestWorkflowPatcher:
         content = cleandoc(ExampleYaml.step_customization.format(action=action.value))
         workflow_patcher_yaml.write_text(content)
 
-        yaml_dict = workflow_patcher.get_yaml_dict(workflow_patcher_yaml)
+        yaml_dict = workflow_patcher.get_yaml_dict()
 
         assert workflow_patcher.get_as_string(yaml_dict) == content
 
@@ -77,7 +80,7 @@ class TestStepCustomization:
         content = cleandoc(content)
         workflow_patcher_yaml.write_text(content)
 
-        yaml_dict = workflow_patcher.get_yaml_dict(workflow_patcher_yaml)
+        yaml_dict = workflow_patcher.get_yaml_dict()
 
         assert workflow_patcher.get_as_string(yaml_dict) == content
 
@@ -87,4 +90,4 @@ class TestStepCustomization:
         workflow_patcher_yaml.write_text(content)
 
         with pytest.raises(ValidationError, match="Input should be"):
-            workflow_patcher.get_yaml_dict(workflow_patcher_yaml)
+            workflow_patcher.get_yaml_dict()

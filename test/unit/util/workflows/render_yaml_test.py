@@ -1,4 +1,5 @@
 from inspect import cleandoc
+from pathlib import Path
 
 import pytest
 
@@ -7,13 +8,20 @@ from noxconfig import PROJECT_CONFIG
 
 
 @pytest.fixture
-def yaml_renderer() -> YamlRenderer:
-    return YamlRenderer(github_template_dict=PROJECT_CONFIG.github_template_dict)
+def file_path(tmp_path: Path) -> Path:
+    return tmp_path / "test.yml"
+
+
+@pytest.fixture
+def yaml_renderer(file_path) -> YamlRenderer:
+    return YamlRenderer(
+        github_template_dict=PROJECT_CONFIG.github_template_dict, file_path=file_path
+    )
 
 
 class TestTemplateRenderer:
     @staticmethod
-    def test_works_for_general_case(tmp_path, yaml_renderer):
+    def test_works_for_general_case(file_path, yaml_renderer):
         input_yaml = """
         name: Build & Publish
 
@@ -29,15 +37,14 @@ class TestTemplateRenderer:
             permissions:
               contents: write
         """
-        file_path = tmp_path / "dummy.yml"
         content = cleandoc(input_yaml)
         file_path.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(input_yaml)
 
     @staticmethod
-    def test_fixes_extra_horizontal_whitespace(tmp_path, yaml_renderer):
+    def test_fixes_extra_horizontal_whitespace(file_path, yaml_renderer):
         # required has 2 extra spaces
         input_yaml = """
         name: Build & Publish
@@ -59,15 +66,14 @@ class TestTemplateRenderer:
                 required: true
         """
 
-        file_path = tmp_path / "dummy.yml"
         content = cleandoc(input_yaml)
         file_path.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_keeps_comments(tmp_path, yaml_renderer):
+    def test_keeps_comments(file_path, yaml_renderer):
         input_yaml = """
         steps:
           # Comment in nested area
@@ -84,15 +90,14 @@ class TestTemplateRenderer:
           # Comment in step
         """
 
-        file_path = tmp_path / "dummy.yml"
         content = cleandoc(input_yaml)
         file_path.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_keeps_quotes_for_variables_as_is(tmp_path, yaml_renderer):
+    def test_keeps_quotes_for_variables_as_is(file_path, yaml_renderer):
         input_yaml = """
         - name: Build Artifacts
           run: poetry build
@@ -129,15 +134,14 @@ class TestTemplateRenderer:
             dist/*
         """
 
-        file_path = tmp_path / "dummy.yml"
         content = cleandoc(input_yaml)
         file_path.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_updates_jinja_variables(tmp_path, yaml_renderer):
+    def test_updates_jinja_variables(file_path, yaml_renderer):
         input_yaml = """
         - name: Setup Python & Poetry Environment
           uses: exasol/python-toolbox/.github/actions/python-environment@v5
@@ -153,15 +157,14 @@ class TestTemplateRenderer:
           poetry-version: "2.3.0"
         """
 
-        file_path = tmp_path / "dummy.yml"
         content = cleandoc(input_yaml)
         file_path.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_preserves_list_format(tmp_path, yaml_renderer):
+    def test_preserves_list_format(file_path, yaml_renderer):
         input_yaml = """
         on:
           pull_request:
@@ -178,9 +181,8 @@ class TestTemplateRenderer:
               python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         """
 
-        file_path = tmp_path / "dummy.yml"
         content = cleandoc(input_yaml)
         file_path.write_text(content)
 
-        yaml_dict = yaml_renderer.get_yaml_dict(file_path)
+        yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(input_yaml)

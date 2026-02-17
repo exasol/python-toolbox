@@ -1,5 +1,4 @@
 from enum import Enum
-from pathlib import Path
 from typing import Any
 
 from pydantic import (
@@ -90,7 +89,7 @@ class WorkflowPatcher(YamlRenderer):
     The provided YAML file must meet the conditions of :class:`WorkflowPatcherConfig`.
     """
 
-    def get_yaml_dict(self, file_path: Path) -> CommentedMap:
-        loaded_yaml = super().get_yaml_dict(file_path)
+    def get_yaml_dict(self) -> CommentedMap:
+        loaded_yaml = super().get_yaml_dict()
         WorkflowPatcherConfig.model_validate(loaded_yaml)
         return loaded_yaml
