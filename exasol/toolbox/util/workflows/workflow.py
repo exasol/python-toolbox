@@ -5,13 +5,13 @@ from pydantic import (
     BaseModel,
     ConfigDict,
 )
-
-from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
-from exasol.toolbox.util.workflows.render_yaml import (
+from toolbox.util.workflows.exceptions import (
     TemplateRenderingError,
     YamlOutputError,
     YamlParsingError,
 )
+
+from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
 
 
 class Workflow(BaseModel):

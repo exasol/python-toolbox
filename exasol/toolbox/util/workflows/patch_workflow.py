@@ -1,6 +1,5 @@
 from enum import Enum
 from functools import cached_property
-from pathlib import Path
 from typing import (
     Annotated,
     Any,
@@ -14,6 +13,7 @@ from pydantic import (
     ValidationError,
 )
 from ruamel.yaml import CommentedMap
+from toolbox.util.workflows.exceptions import InvalidWorkflowPatcherYamlError
 
 from exasol.toolbox.util.workflows.render_yaml import YamlRenderer
 
@@ -86,13 +86,6 @@ class WorkflowPatcherConfig(BaseModel):
     """
 
     workflows: list[Workflow]
-
-
-class InvalidWorkflowPatcherYamlError(Exception):
-    def __init__(self, file_path: Path):
-        super().__init__(
-            f"File '{file_path}' is malformed; it failed Pydantic validation."
-        )
 
 
 WorkflowCommentedMap: TypeAlias = Annotated[

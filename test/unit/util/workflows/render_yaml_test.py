@@ -8,11 +8,13 @@ from jinja2 import (
 )
 from ruamel.yaml.parser import ParserError
 from ruamel.yaml.representer import RepresenterError
-
-from exasol.toolbox.util.workflows.render_yaml import (
+from toolbox.util.workflows.exceptions import (
     TemplateRenderingError,
     YamlOutputError,
     YamlParsingError,
+)
+
+from exasol.toolbox.util.workflows.render_yaml import (
     YamlRenderer,
 )
 from noxconfig import PROJECT_CONFIG
@@ -211,7 +213,7 @@ class TestYamlRenderer:
         test_yml.write_text(content)
 
         with pytest.raises(
-            TemplateRenderingError, match="Check Jinja2-related errors."
+            TemplateRenderingError, match="Check for Jinja-related errors."
         ) as exc:
             yaml_renderer.get_yaml_dict()
         assert isinstance(exc.value.__cause__, UndefinedError)
@@ -229,7 +231,7 @@ class TestYamlRenderer:
         test_yml.write_text(content)
 
         with pytest.raises(
-            TemplateRenderingError, match="Check Jinja2-related errors."
+            TemplateRenderingError, match="Check for Jinja-related errors."
         ) as exc:
             yaml_renderer.get_yaml_dict()
         assert isinstance(exc.value.__cause__, TemplateSyntaxError)
@@ -257,7 +259,7 @@ class TestYamlRenderer:
         test_yml.write_text(cleandoc(bad_template))
 
         with pytest.raises(
-            YamlParsingError, match="Check for invalid YAML syntax in"
+            YamlParsingError, match="Check for invalid YAML syntax."
         ) as excinfo:
             yaml_renderer.get_yaml_dict()
 

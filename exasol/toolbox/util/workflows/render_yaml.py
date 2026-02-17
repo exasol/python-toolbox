@@ -14,6 +14,11 @@ from ruamel.yaml import (
     CommentedMap,
 )
 from ruamel.yaml.error import YAMLError
+from toolbox.util.workflows.exceptions import (
+    TemplateRenderingError,
+    YamlOutputError,
+    YamlParsingError,
+)
 
 jinja_env = Environment(
     variable_start_string="((",
@@ -24,42 +29,6 @@ jinja_env = Environment(
     # will be raised.
     undefined=StrictUndefined,
 )
-
-
-class YamlOutputError(Exception):
-    """
-    Raised when the final workflow cannot be exported as a YAML file.
-    This would likely indicate that one of the preceding transformation steps
-    led to a format that is no longer able to be exported as a YAML file.
-    """
-
-    def __init__(self, file_path: Path):
-        super().__init__(f"File '{file_path}' could not be output by ruamel-yaml.")
-
-
-class YamlParsingError(Exception):
-    """
-    Raised when the rendered template is not a valid YAML file, as it cannot be
-     parsed by ruamel-yaml.
-    """
-
-    def __init__(self, file_path: Path):
-        super().__init__(
-            f"File '{file_path}' could not be parsed by ruamel-yaml. "
-            "Check for invalid YAML syntax in the workflow template."
-        )
-
-
-class TemplateRenderingError(Exception):
-    """
-    Raised when Jinja2 fails to modify the template. It may be that a Jinja
-    variable was not defined, a brace was not closed, etc.
-    """
-
-    def __init__(self, file_path: Path):
-        super().__init__(
-            f"File '{file_path}' failed to render. Check Jinja2-related errors."
-        )
 
 
 @dataclass(frozen=True)

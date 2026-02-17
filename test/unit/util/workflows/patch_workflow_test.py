@@ -4,10 +4,10 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 from ruamel.yaml import CommentedMap
+from toolbox.util.workflows.exceptions import InvalidWorkflowPatcherYamlError
 
 from exasol.toolbox.util.workflows.patch_workflow import (
     ActionType,
-    InvalidWorkflowPatcherYamlError,
     WorkflowPatcher,
 )
 from noxconfig import PROJECT_CONFIG
