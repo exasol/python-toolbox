@@ -42,7 +42,7 @@ extensions = [
     "sphinx_copybutton",
     "exasol.toolbox.sphinx.multiversion",
 ]
-
+add_module_names = False
 intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 
 # Make sure the target is unique

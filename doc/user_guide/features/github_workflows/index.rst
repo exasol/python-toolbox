@@ -8,6 +8,7 @@ Enabling GitHub Workflows
     :hidden:
 
     configuration
+    troubleshooting
 
 The PTB ships with configurable GitHub workflow templates covering the most common
 CI/CD setup variants for Python projects. The templates are defined in:
