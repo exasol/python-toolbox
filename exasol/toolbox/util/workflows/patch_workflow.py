@@ -1,10 +1,17 @@
 from enum import Enum
-from typing import Any
+from functools import cached_property
+from pathlib import Path
+from typing import (
+    Annotated,
+    Any,
+    TypeAlias,
+)
 
 from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
+    ValidationError,
 )
 from ruamel.yaml import CommentedMap
 
@@ -81,6 +88,18 @@ class WorkflowPatcherConfig(BaseModel):
     workflows: list[Workflow]
 
 
+class InvalidWorkflowPatcherYamlError(Exception):
+    def __init__(self, file_path: Path):
+        super().__init__(
+            f"File '{file_path}' is malformed; it failed Pydantic validation."
+        )
+
+
+WorkflowCommentedMap: TypeAlias = Annotated[
+    CommentedMap, f"This CommentedMap is structured according to `{Workflow.__name__}`"
+]
+
+
 class WorkflowPatcher(YamlRenderer):
     """
     The :class:`WorkflowPatcher` enables users to define a YAML file
@@ -89,7 +108,28 @@ class WorkflowPatcher(YamlRenderer):
     The provided YAML file must meet the conditions of :class:`WorkflowPatcherConfig`.
     """
 
-    def get_yaml_dict(self) -> CommentedMap:
-        loaded_yaml = super().get_yaml_dict()
-        WorkflowPatcherConfig.model_validate(loaded_yaml)
-        return loaded_yaml
+    @cached_property
+    def content(self) -> CommentedMap:
+        """
+        The loaded YAML content. It loads on first access and stays cached even though
+        the class is frozen.
+        """
+        loaded_yaml = self.get_yaml_dict()
+        try:
+            WorkflowPatcherConfig.model_validate(loaded_yaml)
+            return loaded_yaml
+        except ValidationError as exc:
+            raise InvalidWorkflowPatcherYamlError(file_path=self.file_path) from exc
+
+    def extract_by_workflow(self, workflow_name: str) -> WorkflowCommentedMap | None:
+        """
+        Extract from the `content` where `name` matches the `workflow_name`. If the
+        workflow is not found, then `None` is returned. It is an expected and common
+        use case that the `WorkflowPatcher` would only modify a few workflows and not
+        all of them.
+        """
+        inner_content = self.content["workflows"]
+        for workflow in inner_content:
+            if workflow["name"] == workflow_name:
+                return workflow
+        return None
