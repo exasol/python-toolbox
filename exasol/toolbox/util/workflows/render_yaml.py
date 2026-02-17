@@ -4,15 +4,62 @@ from inspect import cleandoc
 from pathlib import Path
 from typing import Any
 
-from jinja2 import Environment
+from jinja2 import (
+    Environment,
+    StrictUndefined,
+    TemplateError,
+)
 from ruamel.yaml import (
     YAML,
     CommentedMap,
 )
+from ruamel.yaml.error import YAMLError
 
 jinja_env = Environment(
-    variable_start_string="((", variable_end_string="))", autoescape=True
+    variable_start_string="((",
+    variable_end_string="))",
+    autoescape=True,
+    # This requires that all Jinja variables must be defined in the provided
+    # dictionary. If not, then a `jinja2.exceptions.UndefinedError` exception
+    # will be raised.
+    undefined=StrictUndefined,
 )
+
+
+class YamlOutputError(Exception):
+    """
+    Raised when the final workflow cannot be exported as a YAML file.
+    This would likely indicate that one of the preceding transformation steps
+    led to a format that is no longer able to be exported as a YAML file.
+    """
+
+    def __init__(self, file_path: Path):
+        super().__init__(f"File '{file_path}' could not be output by ruamel-yaml.")
+
+
+class YamlParsingError(Exception):
+    """
+    Raised when the rendered template is not a valid YAML file, as it cannot be
+     parsed by ruamel-yaml.
+    """
+
+    def __init__(self, file_path: Path):
+        super().__init__(
+            f"File '{file_path}' could not be parsed by ruamel-yaml. "
+            "Check for invalid YAML syntax in the workflow template."
+        )
+
+
+class TemplateRenderingError(Exception):
+    """
+    Raised when Jinja2 fails to modify the template. It may be that a Jinja
+    variable was not defined, a brace was not closed, etc.
+    """
+
+    def __init__(self, file_path: Path):
+        super().__init__(
+            f"File '{file_path}' failed to render. Check Jinja2-related errors."
+        )
 
 
 @dataclass(frozen=True)
@@ -54,17 +101,24 @@ class YamlRenderer:
         with self.file_path.open("r", encoding="utf-8") as stream:
             raw_content = stream.read()
 
-        workflow_string = self._render_with_jinja(raw_content)
-
-        yaml = self._get_standard_yaml()
-        return yaml.load(workflow_string)
+        try:
+            workflow_string = self._render_with_jinja(raw_content)
+            yaml = self._get_standard_yaml()
+            return yaml.load(workflow_string)
+        except TemplateError as exc:
+            raise TemplateRenderingError(file_path=self.file_path) from exc
+        except YAMLError as exc:
+            raise YamlParsingError(file_path=self.file_path) from exc
 
     def get_as_string(self, yaml_dict: CommentedMap) -> str:
         """
         Output a YAML string.
         """
         yaml = self._get_standard_yaml()
-        with io.StringIO() as stream:
-            yaml.dump(yaml_dict, stream)
-            workflow_string = stream.getvalue()
-        return cleandoc(workflow_string)
+        try:
+            with io.StringIO() as stream:
+                yaml.dump(yaml_dict, stream)
+                workflow_string = stream.getvalue()
+            return cleandoc(workflow_string)
+        except YAMLError as exc:
+            raise YamlOutputError(file_path=self.file_path) from exc
