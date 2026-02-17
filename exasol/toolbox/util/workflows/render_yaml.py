@@ -67,9 +67,7 @@ class YamlRenderer:
         Load a file as a CommentedMap (dictionary form of a YAML), after
         rendering it with Jinja.
         """
-        with self.file_path.open("r", encoding="utf-8") as stream:
-            raw_content = stream.read()
-
+        raw_content = self.file_path.read_text()
         try:
             workflow_string = self._render_with_jinja(raw_content)
             yaml = self._get_standard_yaml()
