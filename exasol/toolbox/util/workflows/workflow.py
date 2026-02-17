@@ -5,11 +5,7 @@ from pydantic import (
     BaseModel,
     ConfigDict,
 )
-from toolbox.util.workflows.exceptions import (
-    TemplateRenderingError,
-    YamlOutputError,
-    YamlParsingError,
-)
+from toolbox.util.workflows.exceptions import YamlError
 
 from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
 
@@ -31,7 +27,7 @@ class Workflow(BaseModel):
             )
             workflow = workflow_renderer.render()
             return cls(content=workflow)
-        except (TemplateRenderingError, YamlParsingError, YamlOutputError) as ex:
+        except YamlError as ex:
             raise ex
         except Exception as ex:
             # Wrap all other "non-special" exceptions
