@@ -58,6 +58,7 @@ dependencies = [
     "typer[all]>=0.7.0",
     "twine>=6.1.0,<7",
     "sphinxcontrib-mermaid (>=2.0.0,<3.0.0)",
+    "structlog (>=25.5.0,<26.0.0)",
 ]
 
 [project.scripts]
