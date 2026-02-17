@@ -8,12 +8,12 @@ from jinja2 import (
 )
 from ruamel.yaml.parser import ParserError
 from ruamel.yaml.representer import RepresenterError
-from toolbox.util.workflows.exceptions import (
+
+from exasol.toolbox.util.workflows.exceptions import (
     TemplateRenderingError,
     YamlOutputError,
     YamlParsingError,
 )
-
 from exasol.toolbox.util.workflows.render_yaml import (
     YamlRenderer,
 )

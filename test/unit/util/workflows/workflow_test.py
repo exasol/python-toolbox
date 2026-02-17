@@ -1,12 +1,12 @@
 from unittest.mock import patch
 
 import pytest
-from toolbox.util.workflows.exceptions import (
+
+from exasol.toolbox.util.workflows.exceptions import (
     TemplateRenderingError,
     YamlOutputError,
     YamlParsingError,
 )
-
 from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
 from exasol.toolbox.util.workflows.workflow import Workflow
 from noxconfig import PROJECT_CONFIG

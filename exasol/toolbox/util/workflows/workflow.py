@@ -5,8 +5,8 @@ from pydantic import (
     BaseModel,
     ConfigDict,
 )
-from toolbox.util.workflows.exceptions import YamlError
 
+from exasol.toolbox.util.workflows.exceptions import YamlError
 from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
 
 

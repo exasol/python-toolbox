@@ -13,8 +13,8 @@ from pydantic import (
     ValidationError,
 )
 from ruamel.yaml import CommentedMap
-from toolbox.util.workflows.exceptions import InvalidWorkflowPatcherYamlError
 
+from exasol.toolbox.util.workflows.exceptions import InvalidWorkflowPatcherYamlError
 from exasol.toolbox.util.workflows.render_yaml import YamlRenderer
 
 

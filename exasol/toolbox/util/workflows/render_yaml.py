@@ -14,7 +14,8 @@ from ruamel.yaml import (
     CommentedMap,
 )
 from ruamel.yaml.error import YAMLError
-from toolbox.util.workflows.exceptions import (
+
+from exasol.toolbox.util.workflows.exceptions import (
     TemplateRenderingError,
     YamlOutputError,
     YamlParsingError,
