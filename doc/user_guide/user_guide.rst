@@ -36,14 +36,13 @@ In rare cases you may need to disable a particular finding reported by one of
 these tools, see :ref:`ptb_troubleshooting`.
 
 .. _Poetry: https://python-poetry.org
-.. _Nox: https://nox.thea.codes
-.. _Black: https://black.readthedocs.io
+.. _Nox: https://nox.thea.codes/en/stable/
+.. _Black: https://black.readthedocs.io/en/stable/
 .. _Ruff: https://docs.astral.sh/ruff
-.. _Pylint: https://pylint.readthedocs.io
-.. _Cookiecutter: https://cookiecutter.readthedocs.io
-.. _Mypy: https://mypy.readthedocs.io
-.. _Coverage: https://coverage.readthedocs.io
-.. _Bandit: https://bandit.readthedocs.io
+.. _Pylint: https://pylint.readthedocs.io/en/stable/
+.. _Cookiecutter: https://cookiecutter.readthedocs.io/en/stable/
+.. _Mypy: https://mypy.readthedocs.io/en/stable/
+.. _Coverage: https://coverage.readthedocs.io/en/7.13.4/
+.. _Bandit: https://bandit.readthedocs.io/en/latest/
 .. _Sphinx: https://www.sphinx-doc.org/en/master
 .. _Sonar: https://docs.sonarsource.com/sonarqube-server
-
