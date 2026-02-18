@@ -15,4 +15,4 @@ You can ignore this finding by appending a comment to the code line:
 See also
 
 * `Ruff documentation <https://docs.astral.sh/ruff/configuration>`_
-* :ref:`Ignoring Ruff formatting<prevent_auto_format>`
+* :ref:`prevent_auto_format`

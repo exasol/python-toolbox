@@ -11,7 +11,7 @@
     getting_started
     configuration
     features/index
-    troubleshooting
+    troubleshooting/index
     customization
     migrating
 
