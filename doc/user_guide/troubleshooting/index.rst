@@ -4,8 +4,8 @@ Troubleshooting
 ===============
 
 This page helps you in case some of the :ref:`tools employed by the PTB
-<user_guide>` do not exactly do what you want or might report errors you want to
-ignore for sound reasons.
+<user_guide>` do not exactly do what you want or might report errors you want
+to ignore for sound reasons.
 
 Here is a list of problems and error messages you might encounter along with
 proposed mitigations, some potentially specific to the related tool.
