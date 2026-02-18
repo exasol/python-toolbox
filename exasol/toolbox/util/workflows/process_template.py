@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from ruamel.yaml import CommentedMap
 
+from exasol.toolbox.util.workflows import logger
 from exasol.toolbox.util.workflows.exceptions import (
     YamlJobValueError,
     YamlStepIdValueError,
@@ -32,6 +33,7 @@ class WorkflowRenderer(YamlRenderer):
         workflow_dict = self.get_yaml_dict()
 
         if self.patch_yaml:
+            logger.debug("Modify workflow custom yaml")
             workflow_modifier = WorkflowModifier(
                 workflow_dict=workflow_dict, patch_yaml=self.patch_yaml
             )
@@ -65,12 +67,20 @@ class WorkflowModifier:
         """
         for patch in step_customizations:
             job_name = patch["job"]
-            idx = self._get_step_index(job_name=job_name, step_id=patch["step_id"])
+            patch_id = patch["step_id"]
+            idx = self._get_step_index(job_name=job_name, step_id=patch_id)
 
             step_list = self._get_step_list(job_name=job_name)
             if patch["action"] == ActionType.REPLACE.value:
+                logger.debug(
+                    f"Replace YAML at step_id '{patch_id}' in job '{job_name}'"
+                )
                 step_list[idx : idx + 1] = patch["content"]
+
             elif patch["action"] == ActionType.INSERT_AFTER.value:
+                logger.debug(
+                    f"Insert YAML after step_id '{patch_id}' in job '{job_name}'"
+                )
                 step_list[idx + 1 : idx + 1] = patch["content"]
 
     def _get_step_index(self, job_name: str, step_id: str) -> int:
@@ -87,6 +97,7 @@ class WorkflowModifier:
         """
         for job_name in remove_jobs:
             self._verify_job_exists(job_name)
+            logger.debug(f"Remove job '{job_name}'")
             self.jobs_dict.pop(job_name)
 
     def _verify_job_exists(self, job_name: str) -> None:
