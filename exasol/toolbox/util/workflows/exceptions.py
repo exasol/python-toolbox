@@ -54,6 +54,18 @@ class InvalidWorkflowPatcherYamlError(YamlError):
     message_template = "File '{file_path}' is malformed; it failed Pydantic validation."
 
 
+class InvalidWorkflowPatcherEntryError(YamlError):
+    """
+    Raised when the :class:`WorkflowPatcher` is used but one of the specified keys it
+    listed does not exist in the relevant workflow template file.
+    """
+
+    message_template = (
+        "In file '{file_path}', an entry '{entry}' does not exist in "
+        "the workflow template. Please fix the entry."
+    )
+
+
 class YamlKeyError(Exception):
     """
     Base exception for when a specified value cannot be found in a YAML.
