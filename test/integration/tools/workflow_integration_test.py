@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 import pytest
+from structlog.testing import capture_logs
 
 from exasol.toolbox.tools.workflow import CLI
 
@@ -67,10 +68,11 @@ def test_show_workflow(cli_runner):
     ],
 )
 def test_diff_workflow(cli_runner, tmp_path, workflow):
-    # set up with file in tmp_path so checks files are the same
-    cli_runner.invoke(CLI, ["install", workflow, str(tmp_path)])
+    with capture_logs():
+        # set up with file in tmp_path so checks files are the same
+        cli_runner.invoke(CLI, ["install", workflow, str(tmp_path)])
 
-    result = cli_runner.invoke(CLI, ["diff", workflow, str(tmp_path)])
+        result = cli_runner.invoke(CLI, ["diff", workflow, str(tmp_path)])
 
     assert result.exit_code == 0
     # as the files are the same, we expect no difference
@@ -118,7 +120,8 @@ class TestInstallWorkflow:
 class TestUpdateWorkflow:
     @staticmethod
     def test_when_file_does_not_previously_exist(cli_runner, tmp_path):
-        result = cli_runner.invoke(CLI, ["update", "checks", str(tmp_path)])
+        with capture_logs():
+            result = cli_runner.invoke(CLI, ["update", "checks", str(tmp_path)])
 
         assert result.exit_code == 0
         assert result.output.strip() == f"Updated checks in \n{tmp_path}/checks.yml"
