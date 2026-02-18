@@ -3,7 +3,7 @@
 Format Check Reports Unmodified Files
 =====================================
 
-Sometimes ``checks.yml`` or ``format:check`` reports formatting issues in
+Sometimes ``checks.yml`` or ``format:check`` report formatting issues in
 files that have not been modified.
 
 This is likely due to one of our tools (i.e. ``black``) being upgraded. Within the
@@ -21,7 +21,7 @@ If you encounter this scenario, please:
 #. Reset your ``poetry.lock`` to align with what's in the project's **default branch**.
 #. More selectively update your ``poetry.lock`` with `poetry update <package-name>`.
 #. Share with your team which tool & version led to the unexpected changes. So that
-   other PTB users do not experience the same difficulties, we will update the PTB with
+   other PTB users do not experience the same difficulties. We will update the PTB with
    a patch version to avoid this tool's version and later do a major release to better
    indicate the breaking changes. You could later create an issue in your GitHub
    repository to update to the new major version of the PTB & do the reformatting.

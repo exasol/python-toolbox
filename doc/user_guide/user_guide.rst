@@ -17,14 +17,14 @@
 
 Exasol's Python Toolbox (PTB) helps you creating and maintaining your Python projects.
 
-PTB simplifies keeping all of our projects up-to-date, secure, without bugs, using uniform code style and formatting, correctly typed, decent quality wrt. static code analysis, nicely documented, and equipped with a unified CI/CD pipeline for building, testing, and publishing their artifacts.
+PTB simplifies keeping all of your projects up-to-date, secure, without bugs, using uniform code style and formatting, correctly typed, decent quality wrt. static code analysis, nicely documented, and equipped with a unified CI/CD pipeline for building, testing, and publishing their artifacts.
 
 The PTB gains its name from employing a series of well-established tools to satisfy these goals:
 
 * `Poetry`_ for packaging and managing dependencies
 * `Nox`_ for using the tools via a common CLI
 * `Black`_ and `Ruff`_ for source code formatting
-* `Pylint`_ / ruff for linting
+* `Pylint`_ / `Ruff` for linting
 * `Cookiecutter`_ for setting up new projects from a uniform template
 * `Mypy`_ for static type checking
 * `Coverage`_ for measuring code coverage by tests
