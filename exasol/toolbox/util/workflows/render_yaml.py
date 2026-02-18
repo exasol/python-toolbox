@@ -4,14 +4,31 @@ from inspect import cleandoc
 from pathlib import Path
 from typing import Any
 
-from jinja2 import Environment
+from jinja2 import (
+    Environment,
+    StrictUndefined,
+    TemplateError,
+)
 from ruamel.yaml import (
     YAML,
     CommentedMap,
 )
+from ruamel.yaml.error import YAMLError
+
+from exasol.toolbox.util.workflows.exceptions import (
+    TemplateRenderingError,
+    YamlOutputError,
+    YamlParsingError,
+)
 
 jinja_env = Environment(
-    variable_start_string="((", variable_end_string="))", autoescape=True
+    variable_start_string="((",
+    variable_end_string="))",
+    autoescape=True,
+    # This requires that all Jinja variables must be defined in the provided
+    # dictionary. If not, then a `jinja2.exceptions.UndefinedError` exception
+    # will be raised.
+    undefined=StrictUndefined,
 )
 
 
@@ -25,6 +42,7 @@ class YamlRenderer:
     """
 
     github_template_dict: dict[str, Any]
+    file_path: Path
 
     @staticmethod
     def _get_standard_yaml() -> YAML:
@@ -45,25 +63,30 @@ class YamlRenderer:
         jinja_template = jinja_env.from_string(input_str)
         return jinja_template.render(self.github_template_dict)
 
-    def get_yaml_dict(self, file_path: Path) -> CommentedMap:
+    def get_yaml_dict(self) -> CommentedMap:
         """
         Load a file as a CommentedMap (dictionary form of a YAML), after
         rendering it with Jinja.
         """
-        with file_path.open("r", encoding="utf-8") as stream:
-            raw_content = stream.read()
-
-        workflow_string = self._render_with_jinja(raw_content)
-
-        yaml = self._get_standard_yaml()
-        return yaml.load(workflow_string)
+        raw_content = self.file_path.read_text()
+        try:
+            workflow_string = self._render_with_jinja(raw_content)
+            yaml = self._get_standard_yaml()
+            return yaml.load(workflow_string)
+        except TemplateError as ex:
+            raise TemplateRenderingError(file_path=self.file_path) from ex
+        except YAMLError as ex:
+            raise YamlParsingError(file_path=self.file_path) from ex
 
     def get_as_string(self, yaml_dict: CommentedMap) -> str:
         """
         Output a YAML string.
         """
         yaml = self._get_standard_yaml()
-        with io.StringIO() as stream:
-            yaml.dump(yaml_dict, stream)
-            workflow_string = stream.getvalue()
-        return cleandoc(workflow_string)
+        try:
+            with io.StringIO() as stream:
+                yaml.dump(yaml_dict, stream)
+                workflow_string = stream.getvalue()
+            return cleandoc(workflow_string)
+        except YAMLError as ex:
+            raise YamlOutputError(file_path=self.file_path) from ex

@@ -1,26 +1,15 @@
-import pytest
-from ruamel.yaml.parser import ParserError
+from unittest.mock import patch
 
+import pytest
+
+from exasol.toolbox.util.workflows.exceptions import (
+    TemplateRenderingError,
+    YamlOutputError,
+    YamlParsingError,
+)
+from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
 from exasol.toolbox.util.workflows.workflow import Workflow
 from noxconfig import PROJECT_CONFIG
-
-BAD_TEMPLATE = """
-name: Publish Documentation
-
-on:
-  workflow_call:
-  workflow_dispatch:
-
-jobs:
-
-  build-documentation:
-    runs-on: "ubuntu-24.04"
-    permissions:
-      contents: read
-    steps:
-      - name: SCM Checkout
-      uses: actions/checkout@v5
-"""
 
 TEMPLATE_DIR = PROJECT_CONFIG.source_code_path / "templates" / "github" / "workflows"
 
@@ -44,15 +33,32 @@ class TestWorkflow:
             )
 
     @staticmethod
-    def test_fails_when_yaml_malformed(tmp_path):
+    @pytest.mark.parametrize(
+        "raised_exc", [TemplateRenderingError, YamlParsingError, YamlOutputError]
+    )
+    def test_raises_custom_exceptions(tmp_path, raised_exc):
         file_path = tmp_path / "test.yaml"
-        file_path.write_text(BAD_TEMPLATE)
+        file_path.write_text("dummy content")
 
-        with pytest.raises(ValueError, match="Error rendering file") as excinfo:
-            Workflow.load_from_template(
-                file_path=file_path,
-                github_template_dict=PROJECT_CONFIG.github_template_dict,
-            )
+        with patch.object(
+            WorkflowRenderer, "render", side_effect=raised_exc(file_path=file_path)
+        ):
+            with pytest.raises(raised_exc):
+                Workflow.load_from_template(
+                    file_path=file_path,
+                    github_template_dict=PROJECT_CONFIG.github_template_dict,
+                )
 
-        assert isinstance(excinfo.value.__cause__, ParserError)
-        assert "while parsing a block collection" in str(excinfo.value.__cause__)
+    @staticmethod
+    def test_other_exceptions_raised_as_valuerror(tmp_path):
+        file_path = tmp_path / "test.yaml"
+        file_path.write_text("dummy content")
+
+        with patch.object(
+            WorkflowRenderer, "render", side_effect=AttributeError("unknown source")
+        ):
+            with pytest.raises(ValueError):
+                Workflow.load_from_template(
+                    file_path=file_path,
+                    github_template_dict=PROJECT_CONFIG.github_template_dict,
+                )
