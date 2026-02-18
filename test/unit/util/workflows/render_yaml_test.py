@@ -154,29 +154,6 @@ class TestYamlRenderer:
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_updates_jinja_variables(test_yml, yaml_renderer):
-        input_yaml = """
-        - name: Setup Python & Poetry Environment
-          uses: exasol/python-toolbox/.github/actions/python-environment@v5
-          with:
-            python-version: "(( minimum_python_version ))"
-            poetry-version: "(( dependency_manager_version ))"
-        """
-        expected_yaml = """
-        - name: Setup Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v5
-        with:
-          python-version: "3.10"
-          poetry-version: "2.3.0"
-        """
-
-        content = cleandoc(input_yaml)
-        test_yml.write_text(content)
-
-        yaml_dict = yaml_renderer.get_yaml_dict()
-        assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
-
-    @staticmethod
     def test_preserves_list_format(test_yml, yaml_renderer):
         input_yaml = """
         on:
@@ -199,6 +176,81 @@ class TestYamlRenderer:
 
         yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(input_yaml)
+
+    @staticmethod
+    def test_parsing_fails_when_yaml_malformed(test_yml, yaml_renderer):
+        bad_template = """
+        name: Publish Documentation
+
+        on:
+          workflow_call:
+          workflow_dispatch:
+
+        jobs:
+
+          build-documentation:
+            runs-on: "ubuntu-24.04"
+            permissions:
+              contents: read
+            steps:
+              - name: SCM Checkout
+              uses: actions/checkout@v5
+        """
+        test_yml.write_text(cleandoc(bad_template))
+
+        with pytest.raises(
+            YamlParsingError, match="Check for invalid YAML syntax."
+        ) as ex:
+            yaml_renderer.get_yaml_dict()
+
+        assert isinstance(ex.value.__cause__, ParserError)
+        assert "while parsing a block collection" in str(ex.value.__cause__)
+
+    @staticmethod
+    def test_yaml_cannot_output_to_string(test_yml, yaml_renderer):
+        input_yaml = """
+        steps:
+          # Comment in nested area
+          - name: SCM Checkout # Comment inline
+            uses: actions/checkout@v6
+            # Comment in step
+        """
+        content = cleandoc(input_yaml)
+        test_yml.write_text(content)
+
+        yaml_dict = yaml_renderer.get_yaml_dict()
+        yaml_dict["steps"][0]["name"] = lambda x: x + 1
+
+        with pytest.raises(YamlOutputError, match="could not be output") as ex:
+            yaml_renderer.get_as_string(yaml_dict)
+
+        assert isinstance(ex.value.__cause__, RepresenterError)
+        assert "cannot represent an object" in str(ex.value.__cause__)
+
+
+class TestYamlRendererJinja:
+    @staticmethod
+    def test_updates_jinja_variables(test_yml, yaml_renderer):
+        input_yaml = """
+        - name: Setup Python & Poetry Environment
+          uses: exasol/python-toolbox/.github/actions/python-environment@v5
+          with:
+            python-version: "(( minimum_python_version ))"
+            poetry-version: "(( dependency_manager_version ))"
+        """
+        expected_yaml = """
+        - name: Setup Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@v5
+        with:
+          python-version: "3.10"
+          poetry-version: "2.3.0"
+        """
+
+        content = cleandoc(input_yaml)
+        test_yml.write_text(content)
+
+        yaml_dict = yaml_renderer.get_yaml_dict()
+        assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
     def test_jinja_variable_unknown(test_yml, yaml_renderer):
@@ -232,57 +284,7 @@ class TestYamlRenderer:
 
         with pytest.raises(
             TemplateRenderingError, match="Check for Jinja-related errors."
-        ) as exc:
+        ) as ex:
             yaml_renderer.get_yaml_dict()
-        assert isinstance(exc.value.__cause__, TemplateSyntaxError)
-        assert "unexpected ')'" in str(exc.value.__cause__)
-
-    @staticmethod
-    def test_parsing_fails_when_yaml_malformed(test_yml, yaml_renderer):
-        bad_template = """
-        name: Publish Documentation
-
-        on:
-          workflow_call:
-          workflow_dispatch:
-
-        jobs:
-
-          build-documentation:
-            runs-on: "ubuntu-24.04"
-            permissions:
-              contents: read
-            steps:
-              - name: SCM Checkout
-              uses: actions/checkout@v5
-        """
-        test_yml.write_text(cleandoc(bad_template))
-
-        with pytest.raises(
-            YamlParsingError, match="Check for invalid YAML syntax."
-        ) as excinfo:
-            yaml_renderer.get_yaml_dict()
-
-        assert isinstance(excinfo.value.__cause__, ParserError)
-        assert "while parsing a block collection" in str(excinfo.value.__cause__)
-
-    @staticmethod
-    def test_yaml_cannot_output_to_string(test_yml, yaml_renderer):
-        input_yaml = """
-        steps:
-          # Comment in nested area
-          - name: SCM Checkout # Comment inline
-            uses: actions/checkout@v6
-            # Comment in step
-        """
-        content = cleandoc(input_yaml)
-        test_yml.write_text(content)
-
-        yaml_dict = yaml_renderer.get_yaml_dict()
-        yaml_dict["steps"][0]["name"] = lambda x: x + 1
-
-        with pytest.raises(YamlOutputError, match="could not be output") as excinfo:
-            yaml_renderer.get_as_string(yaml_dict)
-
-        assert isinstance(excinfo.value.__cause__, RepresenterError)
-        assert "cannot represent an object" in str(excinfo.value.__cause__)
+        assert isinstance(ex.value.__cause__, TemplateSyntaxError)
+        assert "unexpected ')'" in str(ex.value.__cause__)
