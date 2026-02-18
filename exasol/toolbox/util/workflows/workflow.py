@@ -31,6 +31,7 @@ class Workflow(BaseModel):
                 workflow_renderer = WorkflowRenderer(
                     github_template_dict=github_template_dict,
                     file_path=file_path,
+                    patch_yaml=None,
                 )
                 workflow = workflow_renderer.render()
                 return cls(content=workflow)
