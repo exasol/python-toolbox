@@ -1,13 +1,15 @@
 .. _GitHub Workflows:
 
-Enabling GitHub Workflows
+GitHub Workflow Templates
 =========================
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :hidden:
 
-    configuration
+    github_project_configuration
+    create_and_update
+    template_variables
 
 The PTB ships with configurable GitHub workflow templates covering the most common
 CI/CD setup variants for Python projects. The templates are defined in:
@@ -24,16 +26,6 @@ workflows from the templates.
 
    In most cases, we recommend using _all_ workflows without change to ensure
    consistent interdependencies. For more details, see :ref:`ci_actions`.
-
-Underlying the CLI, the PTB uses Jinja to dynamically generate project-specific
-workflows. The rendering process is supported by the ``github_template_dict`` found in
-your ``noxconfig.py::PROJECT_CONFIG``. This dictionary is inherited by default from
-``BaseConfig.py``, ensuring a standardized baseline that can be easily overridden, if
-necessary.
-
-.. literalinclude:: ../../../../exasol/toolbox/config.py
-  :language: python
-  :start-at: github_template_dict
 
 
 Workflows
@@ -112,7 +104,7 @@ Pull Request
 When any pull request is opened, synchronized, or reopened, then the ``ci.yml`` will be
 triggered.
 
-When configured as described on :ref:`github_workflows_configuration`, the
+When configured as described on :ref:`github_project_configuration`, the
 ``run-slow-tests`` job requires a developer to manually approve executing the slower
 workflows, like ``slow-checks.yml``. This allows developers to update their pull
 request more often and to only periodically run the more time-expensive tests.

@@ -6,6 +6,10 @@
 
 * #691: Started customization of PTB workflows by defining the YML schema
 
+## Documentation
+
+* #705: Described how the versions of poetry and python are retrieved
+
 ## Refactoring
 
 * #664: Removed deprecation warning for projects to switch over to BaseConfig
