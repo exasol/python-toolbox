@@ -47,7 +47,7 @@ jobs:
 
 @pytest.fixture
 def workflow_name():
-    return "checks.yml"
+    return "checks"
 
 
 @pytest.fixture

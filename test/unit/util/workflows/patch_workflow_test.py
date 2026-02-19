@@ -48,16 +48,16 @@ class TestWorkflowPatcher:
     ):
         content = f"""
         {example_patcher_yaml.remove_jobs}
-        - name: "pr-merge.yml"
+        - name: "pr-merge"
           remove_jobs:
            - publish-docs
         """
         content = cleandoc(content)
         workflow_patcher_yaml.write_text(content)
 
-        result = workflow_patcher.extract_by_workflow("pr-merge.yml")
+        result = workflow_patcher.extract_by_workflow("pr-merge")
         assert result == CommentedMap(
-            {"name": "pr-merge.yml", "remove_jobs": ["publish-docs"]}
+            {"name": "pr-merge", "remove_jobs": ["publish-docs"]}
         )
 
     @staticmethod
