@@ -66,12 +66,12 @@ class StepCustomization(BaseModel):
     content: list[StepContent]
 
 
-def validate_workflow_name(v: str) -> str:
-    if v not in WORKFLOW_TEMPLATE_OPTIONS.keys():
+def validate_workflow_name(workflow_name: str) -> str:
+    if workflow_name not in WORKFLOW_TEMPLATE_OPTIONS.keys():
         raise ValueError(
-            f"Invalid workflow: {v}. Must be one of {WORKFLOW_TEMPLATE_OPTIONS.keys()}"
+            f"Invalid workflow: {workflow_name}. Must be one of {WORKFLOW_TEMPLATE_OPTIONS.keys()}"
         )
-    return v
+    return workflow_name
 
 
 WorkflowName = Annotated[str, AfterValidator(validate_workflow_name)]
