@@ -26,7 +26,7 @@ class YamlOutputError(YamlError):
 class YamlParsingError(YamlError):
     """
     Raised when the rendered template is not a valid YAML file, as it cannot be
-     parsed by ruamel-yaml.
+    parsed by ruamel-yaml.
     """
 
     message_template = (
