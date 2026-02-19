@@ -266,10 +266,10 @@ class TestYamlRendererJinja:
 
         with pytest.raises(
             TemplateRenderingError, match="Check for Jinja-related errors."
-        ) as exc:
+        ) as ex:
             yaml_renderer.get_yaml_dict()
-        assert isinstance(exc.value.__cause__, UndefinedError)
-        assert "'bad_jinja' is undefined" in str(exc.value.__cause__)
+        assert isinstance(ex.value.__cause__, UndefinedError)
+        assert "'bad_jinja' is undefined" in str(ex.value.__cause__)
 
     @staticmethod
     def test_jinja_variable_unclosed(test_yml, yaml_renderer):
