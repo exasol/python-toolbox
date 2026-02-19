@@ -3,9 +3,7 @@ from inspect import cleandoc
 from pathlib import Path
 
 import pytest
-from pydantic import (
-    computed_field,
-)
+from pydantic import computed_field
 
 from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.util.workflows.patch_workflow import WorkflowPatcher

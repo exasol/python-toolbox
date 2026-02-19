@@ -23,7 +23,7 @@ def _create_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--name",  # Changed to singular
         default=ALL,
-        choices=["all"] + WORKFLOW_NAMES,
+        choices=WORKFLOW_NAMES,
         help="Select one template by name or 'all' to update everything.",
         required=True,
     )
