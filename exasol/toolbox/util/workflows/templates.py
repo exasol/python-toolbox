@@ -8,7 +8,8 @@ WORKFLOW_TEMPLATES_DIRECTORY = "exasol.toolbox.templates.github.workflows"
 
 def get_workflow_templates() -> Mapping[str, Path]:
     """
-    Returns a mapping where keys are filenames without the '.yml' extension.
+    Returns a mapping for workflow templates, where the keys are filenames without the
+    '.yml' extension and the values are the filepaths.
     """
     package_resources = resources.files(WORKFLOW_TEMPLATES_DIRECTORY)
     return {
