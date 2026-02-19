@@ -49,16 +49,6 @@ PTB has a default for these versions, but you can override it in file
 Some workflows are expected to not depend on a specific Python version and
 will use only the lowest Python version in the list specified above.
 
-If you want to use a different version, though, you can override the default
-in your ``PROJECT_CONFIG``:
-
-.. code-block:: shell
-
-    PROJECT_CONFIG = Config(
-        python_versions=("3.10", "3.12),
-        minimum_python_version="3.12",
-    )
-
 .. _update_workflows:
 
 Add all Workflows to Your Project
