@@ -8,15 +8,14 @@ from exasol.toolbox.util.workflows.exceptions import (
     YamlParsingError,
 )
 from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
+from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
 from exasol.toolbox.util.workflows.workflow import Workflow
 from noxconfig import PROJECT_CONFIG
-
-TEMPLATE_DIR = PROJECT_CONFIG.source_code_path / "templates" / "github" / "workflows"
 
 
 class TestWorkflow:
     @staticmethod
-    @pytest.mark.parametrize("template_path", list(TEMPLATE_DIR.glob("*.yml")))
+    @pytest.mark.parametrize("template_path", WORKFLOW_TEMPLATE_OPTIONS.values())
     def test_works_for_all_templates(template_path):
         Workflow.load_from_template(
             file_path=template_path,

@@ -12,13 +12,13 @@ from noxconfig import PROJECT_CONFIG
 class ExamplePatcherYaml:
     remove_jobs = """
         workflows:
-        - name: "checks.yml"
+        - name: "checks"
           remove_jobs:
             - build-documentation-and-check-links
         """
     step_customization = """
         workflows:
-        - name: "checks.yml"
+        - name: "checks"
           step_customizations:
             - action: {action}
               job: run-unit-tests

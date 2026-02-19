@@ -7,6 +7,7 @@ from typing import (
 )
 
 from pydantic import (
+    AfterValidator,
     BaseModel,
     ConfigDict,
     Field,
@@ -16,6 +17,7 @@ from ruamel.yaml import CommentedMap
 
 from exasol.toolbox.util.workflows.exceptions import InvalidWorkflowPatcherYamlError
 from exasol.toolbox.util.workflows.render_yaml import YamlRenderer
+from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
 
 
 class ActionType(str, Enum):
@@ -64,6 +66,17 @@ class StepCustomization(BaseModel):
     content: list[StepContent]
 
 
+def validate_workflow_name(workflow_name: str) -> str:
+    if workflow_name not in WORKFLOW_TEMPLATE_OPTIONS.keys():
+        raise ValueError(
+            f"Invalid workflow: {workflow_name}. Must be one of {WORKFLOW_TEMPLATE_OPTIONS.keys()}"
+        )
+    return workflow_name
+
+
+WorkflowName = Annotated[str, AfterValidator(validate_workflow_name)]
+
+
 class Workflow(BaseModel):
     """
     The :class:`Workflow` is used to specify which workflow should be modified.
@@ -73,7 +86,7 @@ class Workflow(BaseModel):
           should be modified.
     """
 
-    name: str
+    name: WorkflowName
     remove_jobs: list[str] = Field(default_factory=list)
     step_customizations: list[StepCustomization] = Field(default_factory=list)
 
