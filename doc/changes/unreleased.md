@@ -9,6 +9,7 @@
 ## Documentation
 
 * #705: Described how the versions of poetry and python are retrieved
+* #706: Added description how to ignore findings to the User Guide
 
 ## Refactoring
 
