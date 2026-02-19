@@ -101,3 +101,30 @@ class TestStepCustomization:
 
         underlying_error = ex.value.__cause__
         assert isinstance(underlying_error, ValidationError)
+        assert "Input should be 'INSERT_AFTER' or 'REPLACE'" in str(underlying_error)
+
+
+class TestWorkflow:
+    @staticmethod
+    def test_raises_error_for_unknown_workflow_name(
+        workflow_patcher_yaml, workflow_patcher
+    ):
+        content = """
+        workflows:
+        - name: "unknown-workflow"
+          remove_jobs:
+            - build-documentation-and-check-links
+        """
+        workflow_patcher_yaml.write_text(cleandoc(content))
+
+        with pytest.raises(
+            InvalidWorkflowPatcherYamlError,
+            match="is malformed; it failed Pydantic validation",
+        ) as ex:
+            workflow_patcher.content
+
+        underlying_error = ex.value.__cause__
+        assert isinstance(underlying_error, ValidationError)
+        assert "Invalid workflow: unknown-workflow. Must be one of dict_keys([" in str(
+            underlying_error
+        )
