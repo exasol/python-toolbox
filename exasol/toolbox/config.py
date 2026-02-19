@@ -266,6 +266,11 @@ class BaseConfig(BaseModel):
         """
         return self.source_code_path / "version.py"
 
+    @computed_field
+    @property
+    def github_workflow_directory(self) -> Path:
+        return self.root_path / ".github" / "workflows"
+
     @computed_field  # type: ignore[misc]
     @property
     def github_template_dict(self) -> dict[str, Any]:
