@@ -18,3 +18,4 @@ proposed mitigations, some potentially specific to the related tool.
    formatting_disable
    "F401 unused import" (reported by Ruff) <ignore_ruff_findings>
    Sonar findings <../features/metrics/ignore_findings>
+   debug_github_workflows
