@@ -8,6 +8,10 @@
 * #712: Added basic logging to workflow processing
 * #714: Added logic to modify a workflow using the .workflow-patcher.yml
 
+## Documentation
+
+* #706: Added description how to ignore findings to the User Guide
+
 ## Refactoring
 
 * #664: Removed deprecation warning for projects to switch over to BaseConfig
