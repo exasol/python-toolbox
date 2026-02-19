@@ -14,6 +14,7 @@ from pydantic import (
     ValidationError,
 )
 from ruamel.yaml import CommentedMap
+from structlog.contextvars import bound_contextvars
 
 from exasol.toolbox.util.workflows import logger
 from exasol.toolbox.util.workflows.exceptions import InvalidWorkflowPatcherYamlError
@@ -121,13 +122,15 @@ class WorkflowPatcher(YamlRenderer):
         The loaded YAML content. It loads on first access and stays cached even though
         the class is frozen.
         """
-        logger.info(f"Load workflow template: {file_path.name}")
-        loaded_yaml = self.get_yaml_dict()
-        try:
-            WorkflowPatcherConfig.model_validate(loaded_yaml)
-            return loaded_yaml
-        except ValidationError as ex:
-            raise InvalidWorkflowPatcherYamlError(file_path=self.file_path) from ex
+        with bound_contextvars(template_file_name=self.file_path.name):
+            logger.info(f"Load workflow patcher: {self.file_path.name}")
+            loaded_yaml = self.get_yaml_dict()
+            try:
+                logger.debug("Validate workflow patcher with Pydantic")
+                WorkflowPatcherConfig.model_validate(loaded_yaml)
+                return loaded_yaml
+            except ValidationError as ex:
+                raise InvalidWorkflowPatcherYamlError(file_path=self.file_path) from ex
 
     def extract_by_workflow(self, workflow_name: str) -> WorkflowCommentedMap | None:
         """

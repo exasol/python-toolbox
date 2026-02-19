@@ -89,7 +89,6 @@ def update_selected_workflow(workflow_name: WorkflowName, config: BaseConfig) ->
 
     workflow_patcher = None
     if config.github_workflow_patcher_yaml:
-        # TODO add logging to WorkflowPatcher process and check other paths ;)
         workflow_patcher = WorkflowPatcher(
             github_template_dict=config.github_template_dict,
             file_path=config.github_workflow_patcher_yaml,

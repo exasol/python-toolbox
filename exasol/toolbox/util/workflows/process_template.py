@@ -33,7 +33,7 @@ class WorkflowRenderer(YamlRenderer):
         workflow_dict = self.get_yaml_dict()
 
         if self.patch_yaml:
-            logger.debug("Modify workflow custom yaml")
+            logger.debug("Modify workflow with custom yaml")
             workflow_modifier = WorkflowModifier(
                 workflow_dict=workflow_dict, patch_yaml=self.patch_yaml
             )
