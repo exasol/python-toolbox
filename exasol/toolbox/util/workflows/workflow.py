@@ -14,9 +14,17 @@ from structlog.contextvars import (
     bound_contextvars,
 )
 
+from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.util.workflows import logger
-from exasol.toolbox.util.workflows.exceptions import YamlError
-from exasol.toolbox.util.workflows.patch_workflow import WorkflowCommentedMap
+from exasol.toolbox.util.workflows.exceptions import (
+    InvalidWorkflowPatcherEntryError,
+    YamlError,
+    YamlKeyError,
+)
+from exasol.toolbox.util.workflows.patch_workflow import (
+    WorkflowCommentedMap,
+    WorkflowPatcher,
+)
 from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
 from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
 
@@ -52,7 +60,7 @@ class Workflow(BaseModel):
                 )
                 workflow = workflow_renderer.render()
                 return cls(content=workflow)
-            except YamlError as ex:
+            except (YamlError, YamlKeyError) as ex:
                 raise ex
             except Exception as ex:
                 # Wrap all other "non-special" exceptions
@@ -67,3 +75,39 @@ def _select_workflows(workflow_name: WorkflowName) -> Mapping[str, Path]:
     if workflow_name == ALL:
         return WORKFLOW_TEMPLATE_OPTIONS
     return {workflow_name: WORKFLOW_TEMPLATE_OPTIONS[workflow_name]}
+
+
+def update_selected_workflow(workflow_name: WorkflowName, config: BaseConfig) -> None:
+    """
+    Updates a selected workflow or all workflows
+    """
+    workflow_dict = _select_workflows(workflow_name)
+    logger.info(f"Selected workflow(s) to update: {list(workflow_dict.keys())}")
+
+    workflow_patcher = None
+    if config.github_workflow_patcher_yaml:
+        # TODO add logging to WorkflowPatcher process and check other paths ;)
+        workflow_patcher = WorkflowPatcher(
+            github_template_dict=config.github_template_dict,
+            file_path=config.github_workflow_patcher_yaml,
+        )
+
+    for workflow_name in workflow_dict:
+        patch_yaml = None
+        if workflow_patcher:
+            patch_yaml = workflow_patcher.extract_by_workflow(
+                workflow_name=workflow_name
+            )
+
+        try:
+            workflow = Workflow.load_from_template(
+                file_path=workflow_dict[workflow_name],
+                github_template_dict=config.github_template_dict,
+                patch_yaml=patch_yaml,
+            )
+            file_path = config.github_workflow_directory / f"{workflow_name}.yml"
+            workflow.write_to_file(file_path=file_path)
+        except YamlKeyError as ex:
+            raise InvalidWorkflowPatcherEntryError(
+                file_path=config.github_workflow_patcher_yaml, entry=ex.entry
+            ) from ex

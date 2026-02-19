@@ -66,18 +66,34 @@ def step_customization_yaml(request, example_patcher_yaml, project_config):
     return content
 
 
-class Config(BaseConfig):
-    @computed_field  # type: ignore[misc]
-    @property
-    def github_workflow_patcher_yaml(self) -> Path | None:
-        """
-        Override for testing purposes
-        """
-        return self.root_path / ".workflow-patcher.yml"
+@pytest.fixture
+def project_config(tmp_path) -> BaseConfig:
+    class Config(BaseConfig):
+        @computed_field  # type: ignore[misc]
+        @property
+        def github_workflow_patcher_yaml(self) -> Path:
+            """
+            Override for testing purposes
+            """
+            return self.root_path / ".workflow-patcher.yml"
+
+    return Config(
+        root_path=tmp_path,
+        project_name="test",
+    )
 
 
 @pytest.fixture
-def project_config(tmp_path) -> Config:
+def project_config_without_patcher(tmp_path) -> BaseConfig:
+    class Config(BaseConfig):
+        @computed_field  # type: ignore[misc]
+        @property
+        def github_workflow_patcher_yaml(self) -> None:
+            """
+            Override for testing purposes
+            """
+            return None
+
     return Config(
         root_path=tmp_path,
         project_name="test",
