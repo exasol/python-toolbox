@@ -6,8 +6,8 @@ import pytest
 from pydantic import (
     computed_field,
 )
-from toolbox.config import BaseConfig
 
+from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.util.workflows.patch_workflow import WorkflowPatcher
 
 

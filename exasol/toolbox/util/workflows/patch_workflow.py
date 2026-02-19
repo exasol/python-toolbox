@@ -15,6 +15,7 @@ from pydantic import (
 )
 from ruamel.yaml import CommentedMap
 
+from exasol.toolbox.util.workflows import logger
 from exasol.toolbox.util.workflows.exceptions import InvalidWorkflowPatcherYamlError
 from exasol.toolbox.util.workflows.render_yaml import YamlRenderer
 from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
@@ -120,6 +121,7 @@ class WorkflowPatcher(YamlRenderer):
         The loaded YAML content. It loads on first access and stays cached even though
         the class is frozen.
         """
+        logger.info(f"Load workflow template: {file_path.name}")
         loaded_yaml = self.get_yaml_dict()
         try:
             WorkflowPatcherConfig.model_validate(loaded_yaml)
