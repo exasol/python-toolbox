@@ -111,5 +111,5 @@ def update_selected_workflow(workflow_name: WorkflowName, config: BaseConfig) ->
             workflow.write_to_file(file_path=file_path)
         except YamlKeyError as ex:
             raise InvalidWorkflowPatcherEntryError(
-                file_path=config.github_workflow_patcher_yaml, entry=ex.entry
+                file_path=config.github_workflow_patcher_yaml, entry=ex.entry  # type: ignore
             ) from ex
