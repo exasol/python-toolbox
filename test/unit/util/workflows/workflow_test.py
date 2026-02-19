@@ -15,7 +15,7 @@ from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
 from exasol.toolbox.util.workflows.workflow import (
     ALL,
     Workflow,
-    _select_workflows,
+    _select_workflow_template,
     update_selected_workflow,
 )
 
@@ -105,16 +105,16 @@ class TestWorkflow:
                 )
 
 
-class TestSelectWorkflow:
+class TestSelectWorkflowTemplate:
     @staticmethod
     def test_for_all_works_as_expected():
-        result = _select_workflows(ALL)
+        result = _select_workflow_template(ALL)
         assert result == WORKFLOW_TEMPLATE_OPTIONS
 
     @staticmethod
     @pytest.mark.parametrize("workflow_name", WORKFLOW_TEMPLATE_OPTIONS)
     def test_for_individual_workflows_works_as_expected(workflow_name):
-        result = _select_workflows(workflow_name)
+        result = _select_workflow_template(workflow_name)
         assert result == {workflow_name: WORKFLOW_TEMPLATE_OPTIONS[workflow_name]}
 
 

@@ -71,7 +71,10 @@ class Workflow(BaseModel):
         file_path.write_text(self.content + "\n")
 
 
-def _select_workflows(workflow_name: WorkflowName) -> Mapping[str, Path]:
+def _select_workflow_template(workflow_name: WorkflowName) -> Mapping[str, Path]:
+    """
+    Returns a mapping of a workflow template or of all workflow templates.
+    """
     if workflow_name == ALL:
         return WORKFLOW_TEMPLATE_OPTIONS
     return {workflow_name: WORKFLOW_TEMPLATE_OPTIONS[workflow_name]}
@@ -79,9 +82,9 @@ def _select_workflows(workflow_name: WorkflowName) -> Mapping[str, Path]:
 
 def update_selected_workflow(workflow_name: WorkflowName, config: BaseConfig) -> None:
     """
-    Updates a selected workflow or all workflows
+    Updates a selected workflow or all workflows.
     """
-    workflow_dict = _select_workflows(workflow_name)
+    workflow_dict = _select_workflow_template(workflow_name)
     logger.info(f"Selected workflow(s) to update: {list(workflow_dict.keys())}")
 
     workflow_patcher = None
