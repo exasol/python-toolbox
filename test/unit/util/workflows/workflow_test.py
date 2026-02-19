@@ -9,7 +9,11 @@ from exasol.toolbox.util.workflows.exceptions import (
 )
 from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
 from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
-from exasol.toolbox.util.workflows.workflow import Workflow
+from exasol.toolbox.util.workflows.workflow import (
+    ALL,
+    Workflow,
+    _select_workflows,
+)
 from noxconfig import PROJECT_CONFIG
 
 
@@ -61,3 +65,16 @@ class TestWorkflow:
                     file_path=file_path,
                     github_template_dict=PROJECT_CONFIG.github_template_dict,
                 )
+
+
+class TestSelectWorkflow:
+    @staticmethod
+    def test_for_all_works_as_expected():
+        result = _select_workflows(ALL)
+        assert result == WORKFLOW_TEMPLATE_OPTIONS
+
+    @staticmethod
+    @pytest.mark.parametrize("workflow_name", WORKFLOW_TEMPLATE_OPTIONS)
+    def test_for_individual_workflows_works_as_expected(workflow_name):
+        result = _select_workflows(workflow_name)
+        assert result == {workflow_name: WORKFLOW_TEMPLATE_OPTIONS[workflow_name]}
