@@ -96,8 +96,8 @@ class TestStepCustomization:
         with pytest.raises(
             InvalidWorkflowPatcherYamlError,
             match="is malformed; it failed Pydantic validation",
-        ) as exc:
+        ) as ex:
             workflow_patcher.content
 
-        underlying_error = exc.value.__cause__
+        underlying_error = ex.value.__cause__
         assert isinstance(underlying_error, ValidationError)

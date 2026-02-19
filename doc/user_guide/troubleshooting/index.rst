@@ -16,5 +16,6 @@ proposed mitigations, some potentially specific to the related tool.
    format_check_errors_due_to_configuration_issues
    format_check_reports_unmodified_files
    formatting_disable
-   "F403 unused import" (reported by Ruff) <ignore_ruff_findings>
+   "F401 unused import" (reported by Ruff) <ignore_ruff_findings>
    Sonar findings <../features/metrics/ignore_findings>
+   debug_github_workflows

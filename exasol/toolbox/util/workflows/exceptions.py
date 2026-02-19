@@ -26,7 +26,7 @@ class YamlOutputError(YamlError):
 class YamlParsingError(YamlError):
     """
     Raised when the rendered template is not a valid YAML file, as it cannot be
-     parsed by ruamel-yaml.
+    parsed by ruamel-yaml.
     """
 
     message_template = (
@@ -52,3 +52,58 @@ class InvalidWorkflowPatcherYamlError(YamlError):
     """
 
     message_template = "File '{file_path}' is malformed; it failed Pydantic validation."
+
+
+class InvalidWorkflowPatcherEntryError(YamlError):
+    """
+    Raised when the :class:`WorkflowPatcher` is used but one of the specified keys it
+    listed does not exist in the relevant workflow template file.
+    """
+
+    message_template = (
+        "In file '{file_path}', an entry '{entry}' does not exist in "
+        "the workflow template. Please fix the entry."
+    )
+
+
+class YamlKeyError(Exception):
+    """
+    Base exception for when a specified value cannot be found in a YAML.
+    """
+
+    message_template = "An error occurred with job: '{job_name}'"
+
+    def __init__(self, job_name: str):
+        self.job_name = job_name
+        # Format the template defined in the subclass
+        message = self.message_template.format(job_name=job_name)
+        super().__init__(message)
+
+
+class YamlJobValueError(Exception):
+    """
+    Raised when a job cannot be found in a YAML file.
+    """
+
+    message_template = "Job '{job_name}' could not be found"
+
+    def __init__(self, job_name: str):
+        self.job_name = job_name
+        # Format the template defined in the subclass
+        message = self.message_template.format(job_name=job_name)
+        super().__init__(message)
+
+
+class YamlStepIdValueError(YamlKeyError):
+    """
+    Raised when a step_id associated with a specific job cannot be found in a YAML file.
+    """
+
+    message_template = "Step_id '{step_id}' not found in job '{job_name}'"
+
+    def __init__(self, step_id: str, job_name: str):
+        self.step_id = step_id
+        self.job_name = job_name
+
+        message = self.message_template.format(step_id=step_id, job_name=job_name)
+        super(YamlKeyError, self).__init__(message)

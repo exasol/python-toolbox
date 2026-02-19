@@ -5,7 +5,11 @@ from pydantic import (
     BaseModel,
     ConfigDict,
 )
+from structlog.contextvars import (
+    bound_contextvars,
+)
 
+from exasol.toolbox.util.workflows import logger
 from exasol.toolbox.util.workflows.exceptions import YamlError
 from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
 
@@ -17,18 +21,22 @@ class Workflow(BaseModel):
 
     @classmethod
     def load_from_template(cls, file_path: Path, github_template_dict: dict[str, Any]):
-        if not file_path.exists():
-            raise FileNotFoundError(file_path)
+        with bound_contextvars(template_file_name=file_path.name):
+            logger.info("Load workflow from template")
 
-        try:
-            workflow_renderer = WorkflowRenderer(
-                github_template_dict=github_template_dict,
-                file_path=file_path,
-            )
-            workflow = workflow_renderer.render()
-            return cls(content=workflow)
-        except YamlError as ex:
-            raise ex
-        except Exception as ex:
-            # Wrap all other "non-special" exceptions
-            raise ValueError(f"Error rendering file: {file_path}") from ex
+            if not file_path.exists():
+                raise FileNotFoundError(file_path)
+
+            try:
+                workflow_renderer = WorkflowRenderer(
+                    github_template_dict=github_template_dict,
+                    file_path=file_path,
+                    patch_yaml=None,
+                )
+                workflow = workflow_renderer.render()
+                return cls(content=workflow)
+            except YamlError as ex:
+                raise ex
+            except Exception as ex:
+                # Wrap all other "non-special" exceptions
+                raise ValueError(f"Error rendering file: {file_path}") from ex

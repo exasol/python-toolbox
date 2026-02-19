@@ -5,6 +5,8 @@
 ## Feature
 
 * #691: Started customization of PTB workflows by defining the YML schema
+* #712: Added basic logging to workflow processing
+* #714: Added logic to modify a workflow using the .workflow-patcher.yml
 
 ## Documentation
 
