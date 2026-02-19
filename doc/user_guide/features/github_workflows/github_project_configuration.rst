@@ -32,7 +32,7 @@ related *token* or other credentials. These credentials can be acquired by
 registering on the service's website.
 
 In many cases your company or organization may manage the credentials
-centrally and enable to use the in multiple projects. The credentials can be
+centrally and enable the use in multiple projects. The credentials can be
 managed as Secrets in GitHub and can be made accessible to GitHub projects and
 used by their workflows.
 

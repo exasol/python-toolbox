@@ -46,7 +46,7 @@ PTB has a default for these versions, but you can override it in file
         exasol_versions=("7.1.30", "8.29.13", "2025.1.8"),
     )
 
-Some workflows are expected to not depend on a specific python version and
+Some workflows are expected to not depend on a specific Python version and
 will use only the lowest Python version in the list specified above.
 
 If you want to use a different version, though, you can override the default
