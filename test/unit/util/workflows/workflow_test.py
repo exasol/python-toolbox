@@ -1,3 +1,4 @@
+from inspect import cleandoc
 from unittest.mock import patch
 
 import pytest
@@ -19,12 +20,47 @@ from noxconfig import PROJECT_CONFIG
 
 class TestWorkflow:
     @staticmethod
+    def test_works_as_expected(tmp_path):
+        input_yaml = """
+        # This is a useful comment.
+        - name: Setup Python & Poetry Environment
+          uses: exasol/python-toolbox/.github/actions/python-environment@v5
+          with:
+            python-version: "(( minimum_python_version ))"
+            poetry-version: "(( dependency_manager_version ))"
+        """
+        expected_yaml = """
+        # This is a useful comment.
+        - name: Setup Python & Poetry Environment
+          uses: exasol/python-toolbox/.github/actions/python-environment@v5
+          with:
+            python-version: "3.10"
+            poetry-version: "2.3.0"
+        """
+        input_file_path = tmp_path / "test.yml"
+        content = cleandoc(input_yaml)
+        input_file_path.write_text(content)
+
+        workflow = Workflow.load_from_template(
+            file_path=input_file_path,
+            github_template_dict=PROJECT_CONFIG.github_template_dict,
+        )
+        output_file_path = tmp_path / f"{input_file_path.name}"
+        workflow.write_to_file(file_path=output_file_path)
+
+        assert output_file_path.read_text() == cleandoc(expected_yaml) + "\n"
+
+    @staticmethod
     @pytest.mark.parametrize("template_path", WORKFLOW_TEMPLATE_OPTIONS.values())
-    def test_works_for_all_templates(template_path):
-        Workflow.load_from_template(
+    def test_works_for_all_templates(tmp_path, template_path):
+        workflow = Workflow.load_from_template(
             file_path=template_path,
             github_template_dict=PROJECT_CONFIG.github_template_dict,
         )
+        file_path = tmp_path / f"{template_path.name}"
+        workflow.write_to_file(file_path=file_path)
+
+        assert file_path.read_text() != ""
 
     @staticmethod
     def test_fails_when_yaml_does_not_exist(tmp_path):

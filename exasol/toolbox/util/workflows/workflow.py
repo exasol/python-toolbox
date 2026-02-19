@@ -58,6 +58,10 @@ class Workflow(BaseModel):
                 # Wrap all other "non-special" exceptions
                 raise ValueError(f"Error rendering file: {file_path}") from ex
 
+    def write_to_file(self, file_path: Path) -> None:
+        logger.info(f"Write out workflow: {file_path.name}", file_path=file_path)
+        file_path.write_text(self.content + "\n")
+
 
 def _select_workflows(workflow_name: WorkflowName) -> Mapping[str, Path]:
     if workflow_name == ALL:
