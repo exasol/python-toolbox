@@ -73,7 +73,8 @@ class Workflow(BaseModel):
 
 def _select_workflow_template(workflow_name: WorkflowChoice) -> Mapping[str, Path]:
     """
-    Returns a mapping of a workflow template or of all workflow templates.
+    Returns a mapping of workflow names to paths. Can be a single item or all workflow
+    templates.
     """
     if workflow_name == ALL:
         return WORKFLOW_TEMPLATE_OPTIONS
