@@ -47,7 +47,7 @@ class Workflow(BaseModel):
         patch_yaml: WorkflowCommentedMap | None = None,
     ):
         with bound_contextvars(template_file_name=file_path.name):
-            logger.info(f"Load workflow template: {file_path.name}")
+            logger.info(f"Load workflow template: %s", file_path.name)
 
             if not file_path.exists():
                 raise FileNotFoundError(file_path)
@@ -66,9 +66,9 @@ class Workflow(BaseModel):
                 # Wrap all other "non-special" exceptions
                 raise ValueError(f"Error rendering file: {file_path}") from ex
 
-    def write_to_file(self, file_path: Path) -> None:
-        logger.info(f"Write out workflow: {file_path.name}", file_path=file_path)
-        file_path.write_text(self.content + "\n")
+    def write_to_file(self, path: Path) -> None:
+        logger.info("Write workflow file %s", path.name)
+        path.write_text(self.content + "\n")
 
 
 def _select_workflow_template(workflow_name: WorkflowName) -> Mapping[str, Path]:
