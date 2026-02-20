@@ -90,7 +90,7 @@ from exasol.toolbox.nox._dependencies import (
 from exasol.toolbox.nox._package_version import version_check
 
 from exasol.toolbox.nox._package import package_check
-from exasol.toolbox.nox._workflow import update_workflow
+from exasol.toolbox.nox._workflow import generate_workflow
 
 # isort: on
 # fmt: on

@@ -21,7 +21,7 @@ def _create_parser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument(
-        "--name",  # Changed to singular
+        "--name",
         default=ALL,
         choices=WORKFLOW_NAMES,
         help="Select one template by name or 'all' to update everything.",
@@ -30,15 +30,14 @@ def _create_parser() -> argparse.ArgumentParser:
     return parser
 
 
-@nox.session(name="workflow:update", python=False)
-def update_workflow(session: Session) -> None:
+@nox.session(name="workflow:generate", python=False)
+def generate_workflow(session: Session) -> None:
     """
-    Update (or install if it's not yet existing) one or all generated GitHub workflow(s)
+    Generate or update the specified GitHub workflow or all of them.
     """
     parser = _create_parser()
     args = parser.parse_args(session.posargs)
 
-    # Ensure that the GitHub workflow directory exists
     PROJECT_CONFIG.github_workflow_directory.mkdir(parents=True, exist_ok=True)
 
     update_selected_workflow(workflow_name=args.name, config=PROJECT_CONFIG)

@@ -4,7 +4,7 @@ import pytest
 from pydantic import computed_field
 
 from exasol.toolbox.config import BaseConfig
-from exasol.toolbox.nox._workflow import update_workflow
+from exasol.toolbox.nox._workflow import generate_workflow
 from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
 from exasol.toolbox.util.workflows.workflow import ALL
 
@@ -31,7 +31,7 @@ def nox_session_runner_posargs(request):
     return ["--name", request.param]
 
 
-class TestUpdateWorkflow:
+class TestGenerateWorkflow:
     @staticmethod
     @pytest.mark.parametrize(
         "nox_session_runner_posargs, expected_count",
@@ -48,7 +48,7 @@ class TestUpdateWorkflow:
             "exasol.toolbox.nox._workflow.PROJECT_CONFIG",
             new=project_config_without_patcher,
         ):
-            update_workflow(nox_session)
+            generate_workflow(nox_session)
 
         count = sum(
             1
@@ -73,6 +73,6 @@ class TestUpdateWorkflow:
         ):
 
             with pytest.raises(SystemExit):
-                update_workflow(nox_session)
+                generate_workflow(nox_session)
 
             assert "invalid choice: 'not-a-valid-name'" in capsys.readouterr().err
