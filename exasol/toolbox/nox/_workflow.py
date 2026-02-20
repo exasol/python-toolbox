@@ -15,8 +15,8 @@ from noxconfig import PROJECT_CONFIG
 
 def _create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="nox -s workflow:update",
-        usage="nox -s workflow:update -- [-h] --name",
+        prog="nox -s workflow:generate",
+        usage="nox -s workflow:generate -- [-h] --name",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
