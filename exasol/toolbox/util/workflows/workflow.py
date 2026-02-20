@@ -47,7 +47,7 @@ class Workflow(BaseModel):
         patch_yaml: WorkflowCommentedMap | None = None,
     ):
         with bound_contextvars(template_file_name=file_path.name):
-            logger.info(f"Load workflow template: %s", file_path.name)
+            logger.info("Load workflow template: %s", file_path.name)
 
             if not file_path.exists():
                 raise FileNotFoundError(file_path)

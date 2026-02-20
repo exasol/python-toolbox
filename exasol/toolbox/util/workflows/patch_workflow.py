@@ -123,7 +123,7 @@ class WorkflowPatcher(YamlRenderer):
         the class is frozen.
         """
         with bound_contextvars(template_file_name=self.file_path.name):
-            logger.info(f"Load workflow patcher: {self.file_path.name}")
+            logger.info("Load workflow patcher: %s", self.file_path.name)
             loaded_yaml = self.get_yaml_dict()
             try:
                 logger.debug("Validate workflow patcher with Pydantic")
