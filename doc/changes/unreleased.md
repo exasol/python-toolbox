@@ -8,6 +8,7 @@
 * #712: Added basic logging to workflow processing
 * #714: Added logic to modify a workflow using the .workflow-patcher.yml
 * #717: Restricted workflow names in .workflow-patcher.yml to template workflow names
+* #719: Added nox session `workflow:generate` to generate/update workflows using the `.workflow-patcher.yml` (if desired)
 
 ## Documentation
 

@@ -8,7 +8,6 @@ from exasol.toolbox.util.workflows.exceptions import (
 from exasol.toolbox.util.workflows.patch_workflow import ActionType
 from exasol.toolbox.util.workflows.process_template import WorkflowModifier
 from exasol.toolbox.util.workflows.render_yaml import YamlRenderer
-from noxconfig import PROJECT_CONFIG
 
 WORKFLOW_YAML = """
 name: Checks
@@ -58,9 +57,9 @@ def checks_yaml(tmp_path, workflow_name):
 
 
 @pytest.fixture
-def workflow_dict(checks_yaml) -> CommentedMap:
+def workflow_dict(checks_yaml, project_config) -> CommentedMap:
     return YamlRenderer(
-        github_template_dict=PROJECT_CONFIG.github_template_dict, file_path=checks_yaml
+        github_template_dict=project_config.github_template_dict, file_path=checks_yaml
     ).get_yaml_dict()
 
 

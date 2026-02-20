@@ -268,6 +268,11 @@ class BaseConfig(BaseModel):
 
     @computed_field  # type: ignore[misc]
     @property
+    def github_workflow_directory(self) -> Path:
+        return self.root_path / ".github" / "workflows"
+
+    @computed_field  # type: ignore[misc]
+    @property
     def github_template_dict(self) -> dict[str, Any]:
         """
         Dictionary of variables to dynamically render Jinja2 templates into valid YAML

@@ -10,7 +10,6 @@ from exasol.toolbox.util.workflows.patch_workflow import (
     ActionType,
     WorkflowPatcher,
 )
-from noxconfig import PROJECT_CONFIG
 
 
 @pytest.fixture
@@ -19,9 +18,9 @@ def workflow_patcher_yaml(tmp_path: Path) -> Path:
 
 
 @pytest.fixture
-def workflow_patcher(workflow_patcher_yaml) -> WorkflowPatcher:
+def workflow_patcher(workflow_patcher_yaml, project_config) -> WorkflowPatcher:
     return WorkflowPatcher(
-        github_template_dict=PROJECT_CONFIG.github_template_dict,
+        github_template_dict=project_config.github_template_dict,
         file_path=workflow_patcher_yaml,
     )
 

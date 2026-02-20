@@ -2,7 +2,7 @@ from exasol.toolbox.util.workflows.templates import get_workflow_templates
 from noxconfig import PROJECT_CONFIG
 
 
-def test_get_workflow_templates():
+def test_get_workflow_templates(project_config):
     result = get_workflow_templates()
 
     assert result.keys() == {

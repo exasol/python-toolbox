@@ -76,7 +76,7 @@ def install_workflow(
         template=workflow, dest=dest, pkg=PKG, template_type=TEMPLATE_TYPE
     )
     warnings.warn(
-        "\033[31m`tbx workflow install` is deprecated; this will be replaced by a nox session after 2026-04-22\033[0m",
+        "\033[31m`tbx workflow install` is deprecated; this will be replaced by the Nox session `workflow:generate` after 2026-04-22\033[0m",
         category=FutureWarning,
         stacklevel=2,
     )
@@ -101,7 +101,7 @@ def update_workflow(
         template_type=TEMPLATE_TYPE,
     )
     warnings.warn(
-        "\033[31m`tbx workflow update` is deprecated; this will be replaced by a nox session after 2026-04-22\033[0m",
+        "\033[31m`tbx workflow update` is deprecated; this will be replaced by the Nox session `workflow:generate`  after 2026-04-22\033[0m",
         category=FutureWarning,
         stacklevel=2,
     )

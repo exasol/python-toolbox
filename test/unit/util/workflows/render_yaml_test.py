@@ -17,7 +17,6 @@ from exasol.toolbox.util.workflows.exceptions import (
 from exasol.toolbox.util.workflows.render_yaml import (
     YamlRenderer,
 )
-from noxconfig import PROJECT_CONFIG
 
 
 @pytest.fixture
@@ -26,9 +25,9 @@ def test_yml(tmp_path: Path) -> Path:
 
 
 @pytest.fixture
-def yaml_renderer(test_yml) -> YamlRenderer:
+def yaml_renderer(test_yml, project_config) -> YamlRenderer:
     return YamlRenderer(
-        github_template_dict=PROJECT_CONFIG.github_template_dict, file_path=test_yml
+        github_template_dict=project_config.github_template_dict, file_path=test_yml
     )
 
 

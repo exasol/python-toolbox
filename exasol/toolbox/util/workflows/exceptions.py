@@ -1,15 +1,18 @@
+from collections.abc import Mapping
 from pathlib import Path
 
 
 class YamlError(Exception):
-    """Base exception for YAML errors."""
+    """
+    Base exception for YAML errors.
+    """
 
     message_template = "An error occurred with file: {file_path}"
 
-    def __init__(self, file_path: Path):
+    def __init__(self, file_path: Path, **kwargs):
         self.file_path = file_path
         # Format the template defined in the subclass
-        message = self.message_template.format(file_path=file_path)
+        message = self.message_template.format(file_path=file_path, **kwargs)
         super().__init__(message)
 
 
@@ -73,25 +76,26 @@ class YamlKeyError(Exception):
 
     message_template = "An error occurred with job: '{job_name}'"
 
-    def __init__(self, job_name: str):
-        self.job_name = job_name
-        # Format the template defined in the subclass
-        message = self.message_template.format(job_name=job_name)
-        super().__init__(message)
+    def __init__(self, **kwargs):
+        # Store all attributes dynamically (job_name, step_id, etc.)
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+        self._data = kwargs
+        # Format the template using the passed-in arguments
+        super().__init__(self.message_template.format(**kwargs))
+
+    @property
+    def entry(self) -> Mapping[str, str]:
+        return self._data
 
 
-class YamlJobValueError(Exception):
+class YamlJobValueError(YamlKeyError):
     """
     Raised when a job cannot be found in a YAML file.
     """
 
     message_template = "Job '{job_name}' could not be found"
-
-    def __init__(self, job_name: str):
-        self.job_name = job_name
-        # Format the template defined in the subclass
-        message = self.message_template.format(job_name=job_name)
-        super().__init__(message)
 
 
 class YamlStepIdValueError(YamlKeyError):
@@ -100,10 +104,3 @@ class YamlStepIdValueError(YamlKeyError):
     """
 
     message_template = "Step_id '{step_id}' not found in job '{job_name}'"
-
-    def __init__(self, step_id: str, job_name: str):
-        self.step_id = step_id
-        self.job_name = job_name
-
-        message = self.message_template.format(step_id=step_id, job_name=job_name)
-        super(YamlKeyError, self).__init__(message)

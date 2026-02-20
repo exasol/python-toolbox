@@ -15,7 +15,7 @@ from exasol.toolbox.util.version import Version
 
 class TestBaseConfig:
     @staticmethod
-    def test_works_as_defined(test_project_config_factory):
+    def test_works_as_defined(tmp_path, test_project_config_factory):
         config = test_project_config_factory()
 
         root_path = config.root_path
@@ -34,6 +34,7 @@ class TestBaseConfig:
                 "dist",
                 "venv",
             ),
+            "github_workflow_directory": tmp_path / ".github" / "workflows",
             "github_workflow_patcher_yaml": None,
             "github_template_dict": {
                 "dependency_manager_version": "2.3.0",
