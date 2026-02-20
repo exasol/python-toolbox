@@ -16,7 +16,7 @@ from exasol.toolbox.util.workflows.workflow import (
     ALL,
     Workflow,
     _select_workflow_template,
-    update_selected_workflow,
+    update_workflow,
 )
 
 
@@ -118,7 +118,7 @@ class TestSelectWorkflowTemplate:
         assert result == {workflow_name: WORKFLOW_TEMPLATE_OPTIONS[workflow_name]}
 
 
-class TestUpdateSelectedWorkflow:
+class TestUpdateWorkflow:
     @staticmethod
     def test_works_as_expected_without_patcher(project_config_without_patcher):
         workflow_name = "merge-gate"
@@ -130,7 +130,7 @@ class TestUpdateSelectedWorkflow:
             / f"{workflow_name}.yml"
         )
 
-        update_selected_workflow(
+        update_workflow(
             workflow_name=workflow_name, config=project_config_without_patcher
         )
         result = expected_file_path.read_text()
@@ -154,7 +154,7 @@ class TestUpdateSelectedWorkflow:
         assert removed_job_name in remove_job_yaml
         assert removed_job_name in input_text
 
-        update_selected_workflow(workflow_name="checks", config=project_config)
+        update_workflow(workflow_name="checks", config=project_config)
         result = expected_file_path.read_text()
 
         # We compare only a subselection to verify that the files are roughly the
@@ -176,7 +176,7 @@ class TestUpdateSelectedWorkflow:
             project_config.github_workflow_directory / f"{workflow_name}.yml"
         )
 
-        update_selected_workflow(workflow_name=workflow_name, config=project_config)
+        update_workflow(workflow_name=workflow_name, config=project_config)
         result = expected_file_path.read_text()
 
         # Currently, we check only a subselection as we must preserve formatting for tbx
@@ -194,7 +194,7 @@ class TestUpdateSelectedWorkflow:
         project_config.github_workflow_patcher_yaml.write_text(patcher_yml)
 
         with pytest.raises(InvalidWorkflowPatcherEntryError) as ex:
-            update_selected_workflow(workflow_name="checks", config=project_config)
+            update_workflow(workflow_name="checks", config=project_config)
 
         assert (
             f"In file '{project_config.github_workflow_patcher_yaml}', "

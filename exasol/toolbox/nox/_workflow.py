@@ -8,7 +8,7 @@ from nox import Session
 from exasol.toolbox.util.workflows.workflow import (
     ALL,
     WORKFLOW_NAMES,
-    update_selected_workflow,
+    update_workflow,
 )
 from noxconfig import PROJECT_CONFIG
 
@@ -40,4 +40,4 @@ def generate_workflow(session: Session) -> None:
 
     PROJECT_CONFIG.github_workflow_directory.mkdir(parents=True, exist_ok=True)
 
-    update_selected_workflow(workflow_name=args.name, config=PROJECT_CONFIG)
+    update_workflow(workflow_name=args.name, config=PROJECT_CONFIG)

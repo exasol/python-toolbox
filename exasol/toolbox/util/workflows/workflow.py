@@ -66,9 +66,9 @@ class Workflow(BaseModel):
                 # Wrap all other "non-special" exceptions
                 raise ValueError(f"Error rendering file: {file_path}") from ex
 
-    def write_to_file(self, path: Path) -> None:
-        logger.info("Write workflow file %s", path.name)
-        path.write_text(self.content + "\n")
+    def write_to_file(self, file_path: Path) -> None:
+        logger.info("Write workflow file %s", file_path.name)
+        file_path.write_text(self.content + "\n")
 
 
 def _select_workflow_template(workflow_name: WorkflowName) -> Mapping[str, Path]:
@@ -80,7 +80,7 @@ def _select_workflow_template(workflow_name: WorkflowName) -> Mapping[str, Path]
     return {workflow_name: WORKFLOW_TEMPLATE_OPTIONS[workflow_name]}
 
 
-def update_selected_workflow(workflow_name: WorkflowName, config: BaseConfig) -> None:
+def update_workflow(workflow_name: WorkflowName, config: BaseConfig) -> None:
     """
     Updates a selected workflow or all workflows.
     """
