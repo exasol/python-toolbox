@@ -28,7 +28,7 @@ def project_config_without_patcher(tmp_path) -> BaseConfig:
 
 @pytest.fixture
 def nox_session_runner_posargs(request):
-    return ["--name", request.param]
+    return [request.param]
 
 
 class TestGenerateWorkflow:

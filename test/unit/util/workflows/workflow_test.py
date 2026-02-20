@@ -131,7 +131,7 @@ class TestUpdateWorkflow:
         )
 
         update_workflow(
-            workflow_name=workflow_name, config=project_config_without_patcher
+            workflow_choice=workflow_name, config=project_config_without_patcher
         )
         result = expected_file_path.read_text()
 
@@ -154,7 +154,7 @@ class TestUpdateWorkflow:
         assert removed_job_name in remove_job_yaml
         assert removed_job_name in input_text
 
-        update_workflow(workflow_name="checks", config=project_config)
+        update_workflow(workflow_choice="checks", config=project_config)
         result = expected_file_path.read_text()
 
         # We compare only a subselection to verify that the files are roughly the
@@ -176,7 +176,7 @@ class TestUpdateWorkflow:
             project_config.github_workflow_directory / f"{workflow_name}.yml"
         )
 
-        update_workflow(workflow_name=workflow_name, config=project_config)
+        update_workflow(workflow_choice=workflow_name, config=project_config)
         result = expected_file_path.read_text()
 
         # Currently, we check only a subselection as we must preserve formatting for tbx
@@ -194,7 +194,7 @@ class TestUpdateWorkflow:
         project_config.github_workflow_patcher_yaml.write_text(patcher_yml)
 
         with pytest.raises(InvalidWorkflowPatcherEntryError) as ex:
-            update_workflow(workflow_name="checks", config=project_config)
+            update_workflow(workflow_choice="checks", config=project_config)
 
         assert (
             f"In file '{project_config.github_workflow_patcher_yaml}', "

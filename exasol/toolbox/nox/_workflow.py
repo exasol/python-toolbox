@@ -6,8 +6,7 @@ import nox
 from nox import Session
 
 from exasol.toolbox.util.workflows.workflow import (
-    ALL,
-    WORKFLOW_NAMES,
+    WORKFLOW_CHOICES,
     update_workflow,
 )
 from noxconfig import PROJECT_CONFIG
@@ -16,16 +15,14 @@ from noxconfig import PROJECT_CONFIG
 def _create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="nox -s workflow:generate",
-        usage="nox -s workflow:generate -- [-h] --name",
+        usage="nox -s workflow:generate -- [-h]  <workflow_choice>",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
     parser.add_argument(
-        "--name",
-        default=ALL,
-        choices=WORKFLOW_NAMES,
-        help="Select one template by name or 'all' to update everything.",
-        required=True,
+        "workflow_choice",
+        choices=WORKFLOW_CHOICES,
+        help="Select one workflow or 'all' to all workflows.",
     )
     return parser
 
@@ -40,4 +37,4 @@ def generate_workflow(session: Session) -> None:
 
     PROJECT_CONFIG.github_workflow_directory.mkdir(parents=True, exist_ok=True)
 
-    update_workflow(workflow_name=args.name, config=PROJECT_CONFIG)
+    update_workflow(workflow_choice=args.workflow_choice, config=PROJECT_CONFIG)

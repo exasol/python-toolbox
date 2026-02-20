@@ -29,9 +29,9 @@ from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
 from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
 
 ALL: Final[str] = "all"
-WORKFLOW_NAMES: Final[list[str]] = [ALL, *WORKFLOW_TEMPLATE_OPTIONS.keys()]
+WORKFLOW_CHOICES: Final[list[str]] = [ALL, *WORKFLOW_TEMPLATE_OPTIONS.keys()]
 
-WorkflowName = Annotated[str, f"Should be a value from {WORKFLOW_NAMES}"]
+WorkflowChoice = Annotated[str, f"Should be a value from {WORKFLOW_CHOICES}"]
 
 
 class Workflow(BaseModel):
@@ -71,7 +71,7 @@ class Workflow(BaseModel):
         file_path.write_text(self.content + "\n")
 
 
-def _select_workflow_template(workflow_name: WorkflowName) -> Mapping[str, Path]:
+def _select_workflow_template(workflow_name: WorkflowChoice) -> Mapping[str, Path]:
     """
     Returns a mapping of a workflow template or of all workflow templates.
     """
@@ -80,11 +80,11 @@ def _select_workflow_template(workflow_name: WorkflowName) -> Mapping[str, Path]
     return {workflow_name: WORKFLOW_TEMPLATE_OPTIONS[workflow_name]}
 
 
-def update_workflow(workflow_name: WorkflowName, config: BaseConfig) -> None:
+def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None:
     """
     Updates a selected workflow or all workflows.
     """
-    workflow_dict = _select_workflow_template(workflow_name)
+    workflow_dict = _select_workflow_template(workflow_choice)
     logger.info(f"Selected workflow(s) to update: {list(workflow_dict.keys())}")
 
     workflow_patcher = None
