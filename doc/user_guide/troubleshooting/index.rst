@@ -19,3 +19,7 @@ proposed mitigations, some potentially specific to the related tool.
    "F401 unused import" (reported by Ruff) <ignore_ruff_findings>
    Sonar findings <../features/metrics/ignore_findings>
    debug_github_workflows
+
+Additional Instructions
+
+* :ref:`Ask for manual approval before running slow or expensive tests <manual_approval>`
