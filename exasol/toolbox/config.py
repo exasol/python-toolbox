@@ -161,9 +161,10 @@ class BaseConfig(BaseModel):
         default=(),
         description="""
         This is used to provide hooks to extend one or more of the Nox sessions provided
-        by the python-toolbox. As described on the plugins pages:
-            - https://exasol.github.io/python-toolbox/main/user_guide/customization.html#plugins
-            - https://exasol.github.io/python-toolbox/main/developer_guide/plugins.html,
+        by the python-toolbox. As described on the plugins pages:\n\n
+        * https://exasol.github.io/python-toolbox/main/user_guide/customization.html#plugins
+        * https://exasol.github.io/python-toolbox/main/developer_guide/plugins.html
+
         possible plugin options are defined in ``exasol.toolbox.nox.plugins.NoxTasks``.
         """,
     )
@@ -172,8 +173,8 @@ class BaseConfig(BaseModel):
         description="""
         This is used to define which dependency manager is used to install dependencies
         in the CI. For more details on which PTB version pairs with which
-        dependency manager, see:
-            https://exasol.github.io/python-toolbox/main/user_guide/dependencies.html
+        dependency manager, see:\n\n
+        * https://exasol.github.io/python-toolbox/main/user_guide/dependencies.html
         """,
     )
     os_version: str = Field(

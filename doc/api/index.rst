@@ -8,3 +8,4 @@
 
     base_config
     workflow_exceptions
+    workflow_patcher_config

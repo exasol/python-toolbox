@@ -8,12 +8,13 @@
 * #712: Added basic logging to workflow processing
 * #714: Added logic to modify a workflow using the .workflow-patcher.yml
 * #717: Restricted workflow names in .workflow-patcher.yml to template workflow names
-* #719: Added nox session `workflow:generate` to generate/update workflows using the `.workflow-patcher.yml` (if desired)
+* #719: Added Nox session `workflow:generate` to generate/update workflows using the `.workflow-patcher.yml` (if desired)
 
 ## Documentation
 
 * #705: Described how the versions of poetry and python are retrieved
 * #706: Added description how to ignore findings to the User Guide
+* #720: Added documentation for Nox session `workflow:generate`
 
 ## Refactoring
 
