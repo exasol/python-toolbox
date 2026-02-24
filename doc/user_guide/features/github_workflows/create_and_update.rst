@@ -49,6 +49,24 @@ The PTB has a default for these versions, but you can override it in the
 Some workflows are expected to not depend on a specific Python version and
 will use only the lowest Python version in the list specified above.
 
+.. _customize_workflows:
+
+Customize Workflows for Your Project
+------------------------------------
+
+The PTB allows you to customise workflows by targeting specific jobs or steps:
+
+* Remove a job by its job_name.
+* Replace a step (referenced by step_id) with one or more new steps.
+* Insert steps after a specific step_id.
+
+.. note::
+
+   These operations do not currently cascade. For example, removing a job
+   without accounting for its downstream dependencies may result in errors.
+   You must manually adjust any subsequent steps that rely on the removed
+   job's or step's output.
+
 .. _update_workflows:
 
 Add all Workflows to Your Project
@@ -56,11 +74,26 @@ Add all Workflows to Your Project
 
 .. code-block:: shell
 
-    tbx workflow install all
+    poetry run -- nox -s workflow:generate -- all
 
 .. warning::
-    #. If you already have various workflows, you may want to run the
-       :code:`update` command instead of the :code:`install` command.
+    Some workflows depend on other workflows. Please ensure you have all
+    the required workflows if you do not install all of them.
 
-    #. Some workflows depend on other workflows. Please ensure you have all
-       the required workflows if you do not install all of them.
+.. note::
+
+   The commands:
+
+   * ``tbx workflow install all`` - used to install workflows
+   * ``tbx workflow update all`` - used to update workflows
+
+   are considered historic variants of this command.
+
+   **Deprecation Notice:**
+   These ``tbx`` endpoints are marked as **deprecated** and are scheduled for removal
+   by **April 22nd, 2025**.
+
+   Please note that these legacy commands do not allow users to use their specified
+   ``.workflow-patcher.yml`` file to further customise or patch workflows. Users
+   should transition to the ``nox``-based command to leverage full customisation
+   features.
