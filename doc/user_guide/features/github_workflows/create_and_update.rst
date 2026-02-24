@@ -67,6 +67,10 @@ The PTB allows you to customise workflows by targeting specific jobs or steps:
    You must manually adjust any subsequent steps that rely on the removed
    job's or step's output.
 
+To utilize this feature, create a ``.workflow-patcher.yml`` file in your project's
+root directory. This will be automatically detected, validated by a pydantic model, and
+used when you :ref:`install or update your workflows <update_workflows>`.
+
 .. _update_workflows:
 
 Add all Workflows to Your Project
