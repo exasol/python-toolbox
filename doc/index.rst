@@ -52,5 +52,5 @@ Documentation of the Exasol-Toolbox
    developer_guide/developer_guide
    tools
    github_actions/github_actions
-   api
+   api/index
    changes/changelog

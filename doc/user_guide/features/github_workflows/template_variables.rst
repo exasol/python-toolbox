@@ -12,3 +12,4 @@ necessary.
 .. literalinclude:: ../../../../exasol/toolbox/config.py
   :language: python
   :start-at: github_template_dict
+  :end-before: @computed_field

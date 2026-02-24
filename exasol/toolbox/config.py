@@ -44,7 +44,7 @@ def filter_not_specified_methods(
 ) -> tuple[str, ...]:
     """
     Filter methods which were specified with a @hookimpl but where not specified
-    in `exasol.toolbox.nox.plugins.NoxTasks`.
+    in ``exasol.toolbox.nox.plugins.NoxTasks``.
     """
     return tuple(name for name, _ in methods if name not in METHODS_SPECIFIED_FOR_HOOKS)
 
@@ -52,7 +52,7 @@ def filter_not_specified_methods(
 def validate_plugin_hook(plugin_class: type[Any]):
     """
     Validate methods in a class for at least one pluggy @hookimpl marker and verifies
-    that this method is also specified in `exasol.toolbox.nox.plugins.NoxTasks`.
+    that this method is also specified in ``exasol.toolbox.nox.plugins.NoxTasks``.
     """
     methods_with_hook = get_methods_with_hook_implementation(plugin_class=plugin_class)
 
@@ -154,7 +154,7 @@ class BaseConfig(BaseModel):
         This is used to extend the default excluded_python_paths. If a more general
         path that would be seen in other projects, like .venv, needs to be added into
         this argument, please instead modify the
-        `exasol.toolbox.config.DEFAULT_EXCLUDED_PATHS`.
+        ``exasol.toolbox.config.DEFAULT_EXCLUDED_PATHS``.
         """,
     )
     plugins_for_nox_sessions: tuple[ValidPluginHook, ...] = Field(
@@ -164,7 +164,7 @@ class BaseConfig(BaseModel):
         by the python-toolbox. As described on the plugins pages:
             - https://exasol.github.io/python-toolbox/main/user_guide/customization.html#plugins
             - https://exasol.github.io/python-toolbox/main/developer_guide/plugins.html,
-        possible plugin options are defined in `exasol.toolbox.nox.plugins.NoxTasks`.
+        possible plugin options are defined in ``exasol.toolbox.nox.plugins.NoxTasks``.
         """,
     )
     dependency_manager: DependencyManager = Field(
@@ -199,10 +199,10 @@ class BaseConfig(BaseModel):
     @property
     def minimum_python_version(self) -> str:
         """
-        Minimum Python version declared from the `python_versions` list
+        Minimum Python version declared from the ``python_versions`` list
 
         This is used in specific testing scenarios where it would be either
-        costly to run the tests for all `python_versions` or we need a single metric.
+        costly to run the tests for all ``python_versions`` or we need a single metric.
         """
         versioned = [Version.from_string(v) for v in self.python_versions]
         min_version = min(versioned)
@@ -219,9 +219,10 @@ class BaseConfig(BaseModel):
           - lint:code
           - lint:security
           - lint:typing
+
         where it is desired to restrict which Python files are considered within the
-        PROJECT_CONFIG.source_code_path path, like excluding `dist`, `.eggs`. As such,
-        this property is used to exclude such undesired paths.
+        ``PROJECT_CONFIG.source_code_path`` path, like excluding ``dist``, ``.eggs``.
+        As such, this property is used to exclude such undesired paths.
         """
         return tuple(
             sorted(DEFAULT_EXCLUDED_PATHS.union(set(self.add_to_excluded_python_paths)))
@@ -244,7 +245,7 @@ class BaseConfig(BaseModel):
     @property
     def sonar_code_path(self) -> Path:
         """
-        Relative path needed in nox session `sonar:check` to create the coverage XML
+        Relative path needed in Nox session ``sonar:check`` to create the coverage XML.
         """
         return self.source_code_path.relative_to(self.root_path)
 
@@ -269,6 +270,9 @@ class BaseConfig(BaseModel):
     @computed_field  # type: ignore[misc]
     @property
     def github_workflow_directory(self) -> Path:
+        """
+        Path to the GitHub workflow directory.
+        """
         return self.root_path / ".github" / "workflows"
 
     @computed_field  # type: ignore[misc]
@@ -290,7 +294,7 @@ class BaseConfig(BaseModel):
     def github_workflow_patcher_yaml(self) -> Path | None:
         """
         For customizing the GitHub workflow templates provided by the PTB,
-        a project can define a `.workflow-patcher.yml` file containing instructions to
+        a project can define a ``.workflow-patcher.yml`` file containing instructions to
         delete or modify jobs in the PTB template. Modification includes replacing and
         inserting steps.
 
