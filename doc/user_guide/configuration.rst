@@ -11,3 +11,4 @@ especially when starting a new project.
 
    features/metrics/sonar
    Formatting <features/formatting_code/configuration>
+   features/github_workflows/github_project_configuration

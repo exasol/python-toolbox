@@ -3,12 +3,12 @@
 Creating and Updating the GitHub Workflows in Your Project
 ==========================================================
 
-PTB can initially generate the GitHub workflows in your project and also
+The PTB can initially generate the GitHub workflows in your project and also
 update existing workflows.
 
 The workflows are based on Jinja templates with variables populated by the
-PTB. The PTB reads the values from various places within your project, see
-:ref:`template_variables`.
+PTB. The PTB reads the values from various attributes and properties of your
+project's config, see :ref:`template_variables`.
 
 Please note that the PTB only updates the values in the GitHub workflows when
 *updating* the workflows. So, after updating the :ref:`list of Python versions
@@ -36,8 +36,8 @@ Many workflows are using a Build-matrix to iterate over multiple versions of
 Python and/or the Exasol Docker DB. This is to make sure your code is valid,
 free of bugs and working correctly for each combination of these items.
 
-PTB has a default for these versions, but you can override it in file
-``noxconfig.py``, e.g.
+The PTB has a default for these versions, but you can override it in the
+``noxconfig.py`` file, e.g.
 
 .. code-block:: shell
 

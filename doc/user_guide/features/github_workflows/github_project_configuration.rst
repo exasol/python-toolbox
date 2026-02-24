@@ -7,8 +7,9 @@ Branch Protection
 -----------------
 
 The best and most maintainable way to have solid branch protection
-(:code:`Settings/Branches/main`) is to require the workflow :code:`CI / Allow
-Merge` to pass successfully.
+(:code:`Settings/Branches/main`) is to require the workflow :code:`merge-gate / Allow
+Merge` to pass successfully. Additionally, if it make sense for your project,
+you can further require that ``SonarCloud Code Analysis`` passes.
 
 .. note::
    Setting the required status checks to pass before merging is only possible
@@ -17,7 +18,7 @@ Merge` to pass successfully.
 Manual Approval
 ---------------
 
-If your CI workflow involves slow or expensive steps you can guard these to be
+If your CI workflow involves slow or expensive steps, you can guard these to be
 executed only after manual approval. The CI workflow will automatically create
 a GitHub environment named :code:`manual-approval`. You only need to add
 reviewers in (:code:`Settings/Environments/manual-approval`) and move the
@@ -27,11 +28,11 @@ file :code:`.github/workflows/merge-gate.yml`.
 Secrets
 -------
 
-For accessing specific services in the Internet, your project often needs a
+For accessing specific services in the internet, your project often needs a
 related *token* or other credentials. These credentials can be acquired by
 registering on the service's website.
 
-In many cases your company or organization may manage the credentials
+In many cases, your company or organization may manage the credentials
 centrally and enable the use in multiple projects. The credentials can be
 managed as Secrets in GitHub and can be made accessible to GitHub projects and
 used by their workflows.
