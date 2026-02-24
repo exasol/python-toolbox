@@ -29,6 +29,7 @@ author = "Exasol"
 extensions = [
     "sphinx.ext.todo",
     "sphinx.ext.autodoc",
+    "sphinxcontrib.autodoc_pydantic",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.intersphinx",
