@@ -10,6 +10,7 @@ GitHub Workflow Templates
     github_project_configuration
     create_and_update
     template_variables
+    workflow_patcher
 
 The PTB ships with configurable GitHub workflow templates covering the most common
 CI/CD setup variants for Python projects. The templates are defined in:
