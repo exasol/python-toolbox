@@ -29,7 +29,7 @@ workflows from the templates.
    consistent interdependencies. For more details, see :ref:`ci_actions`.
 
    The deprecated alternate is to use the CLI provided by
-   ``poetry run -- tbx workflow --help``. This will be removed by April 22nd, 2025.
+   ``poetry run -- tbx workflow --help``. This will be removed by April 22nd, 2026.
 
 Workflows
 ---------

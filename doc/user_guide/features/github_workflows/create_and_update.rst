@@ -76,7 +76,7 @@ used when you :ref:`install or update your workflows <update_workflows>`.
   The pydantic validation checks that the yml file is in the expected format
   and that the specified workflow names exist. However, when a workflow is being
   generated, each removed job or modified step_id is checked to see if it exists.
-  If it does not an exist, an exception will be raised (:ref:`workflow_exceptions`).
+  If it does not exist, an exception will be raised (:ref:`workflow_exceptions`).
 
 .. _update_workflows:
 
@@ -102,7 +102,7 @@ Add all Workflows to Your Project
 
    **Deprecation Notice:**
    These ``tbx`` endpoints are marked as **deprecated** and are scheduled for removal
-   by **April 22nd, 2025**.
+   by **April 22nd, 2026**.
 
    Please note that these legacy commands do not allow users to use their specified
    ``.workflow-patcher.yml`` file to further customise or patch workflows. Users
