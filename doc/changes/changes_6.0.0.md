@@ -1,4 +1,4 @@
-# 6.0.0 - 2026-02-25
+# 6.0.0 - 2026-02-26
 
 ## Summary
 
@@ -6,7 +6,7 @@ In this major version:
 * the Nox session `workflow:generate` has been added to replace the deprecated
 `tbx workflow install` and `tbx workflow update`. It has the additional feature
 that users may customize the PTB provided workflows with a `.workflow-patcher.yml`
-file.
+file, as detailed in [Customize Workflows for Your Project](https://exasol.github.io/python-toolbox/main/user_guide/features/github_workflows/create_and_update.html#customize-workflows-for-your-project).
 * the GitHub workflow templates have been modified to include step_ids and to follow
 an AP-format naming convention, as such it is anticipated that updating the workflows
 results in several small changes.
