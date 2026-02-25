@@ -21,7 +21,7 @@ Poetry Version
 PTB has a default value for the Poetry version but you can override it in file
 ``noxconfig.py``, e.g.
 
-.. code-block:: shell
+.. code-block:: python
 
     PROJECT_CONFIG = Config(
         dependency_manager=DependencyManager(name="poetry", version="2.3.0"),
@@ -39,7 +39,7 @@ free of bugs and working correctly for each combination of these items.
 The PTB has a default for these versions, but you can override it in the
 ``noxconfig.py`` file, e.g.
 
-.. code-block:: shell
+.. code-block:: python
 
     PROJECT_CONFIG = Config(
         python_versions=("3.10", "3.12),
