@@ -151,10 +151,10 @@ class TestChangelogs:
         result = changelogs._describe_dependency_changes()
         assert result == (
             "\n"
-            "### `main`\n"
+            "### `main`\n\n"
             "* Updated dependency `package1:0.0.1` to `0.1.0`\n"
             "\n"
-            "### `dev`\n"
+            "### `dev`\n\n"
             "* Added dependency `package2:0.2.0`\n"
         )
 
@@ -165,10 +165,10 @@ class TestChangelogs:
         result = changelogs._describe_dependency_changes()
         assert result == (
             "\n"
-            "### `main`\n"
+            "### `main`\n\n"
             "* Added dependency `package1:0.1.0`\n"
             "\n"
-            "### `dev`\n"
+            "### `dev`\n\n"
             "* Added dependency `package2:0.2.0`\n"
         )
 
@@ -227,9 +227,11 @@ class TestChangelogs:
             ## Dependency Updates
 
             ### `main`
+
             * Updated dependency `package1:0.0.1` to `0.1.0`
 
             ### `dev`
+
             * Added dependency `package2:0.2.0`
             """
             )
