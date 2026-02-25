@@ -64,3 +64,12 @@ class TestSpecificNoxTasks:
         output = run_command(release_prepare)
 
         assert output.returncode == 0
+
+    def test_install_github_workflows(self, poetry_path, run_command):
+        install_workflows = self._command(poetry_path, task="workflow:generate",
+                                        add_ons=["all"])
+        output = run_command(install_workflows)
+        assert output.returncode == 0
+
+        file_list = run_command(["ls", ".github/workflows"]).stdout.splitlines()
+        assert len(file_list) == 13
