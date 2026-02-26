@@ -1,0 +1,23 @@
+workflows:
+  - name: checks
+    step_customizations:
+      - action: REPLACE
+        job: run-unit-tests
+        step_id: check-out-repository
+        content:
+          # The PTB has unit tests which require the fetch-depth to be 0.
+          - name: Check out Repository
+            id: check-out-repository
+            uses: actions/checkout@v6
+            with:
+              fetch-depth: 0
+  - name: slow-checks
+    step_customizations:
+      - action: REPLACE
+        job: run-integration-tests
+        step_id: run-integration-tests
+        content:
+          # The PTB integration tests do not need an Exasol Database
+          - name: Run Integration Tests
+            id: run-integration-tests
+            run: poetry run -- nox -s test:integration -- --coverage
