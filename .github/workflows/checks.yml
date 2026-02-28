@@ -232,7 +232,7 @@ jobs:
         run: poetry run -- nox -s lint:import
 
   run-unit-tests:
-    name: Run Unit Tests (Python-${{ matrix.python-versions }})
+    name: Unit Tests (Python-${{ matrix.python-versions }})
     runs-on: "ubuntu-24.04"
     permissions:
       contents: read
