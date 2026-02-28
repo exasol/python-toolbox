@@ -96,7 +96,9 @@ DEFAULT_EXCLUDED_PATHS = {
     "dist",
     "venv",
 }
-
+"""
+Default paths ignored by :meth:`BaseConfig.excluded_python_paths`.
+"""
 
 class DependencyManager(BaseModel):
     # Restricted to only allow "poetry" at the moment
@@ -148,15 +150,17 @@ class BaseConfig(BaseModel):
         default=False,
         description="If true, creates also the major version tags (v*) automatically",
     )
-    add_to_excluded_python_paths: tuple[str, ...] = Field(
+    add_to_excluded_python_paths: tuple[str | Path, ...] = Field(
         default=(),
         description="""
-        This is used to extend the default excluded_python_paths. If a more general
-        path that would be seen in other projects, like .venv, needs to be added into
-        this argument, please instead modify the
-        ``exasol.toolbox.config.DEFAULT_EXCLUDED_PATHS``.
+        Extends the default set of paths to be ignored by the
+        PTB, defined in ``DEFAULT_EXCLUDED_PATHS``, see ``excluded_python_paths``.
         """,
     )
+    """
+    Extends the default set of paths to be ignored by the PTB, defined in
+    :data:`DEFAULT_EXCLUDED_PATHS`.
+    """
     plugins_for_nox_sessions: tuple[ValidPluginHook, ...] = Field(
         default=(),
         description="""
@@ -212,22 +216,24 @@ class BaseConfig(BaseModel):
 
     @computed_field  # type: ignore[misc]
     @property
-    def excluded_python_paths(self) -> tuple[str, ...]:
+    def excluded_python_paths(self) -> tuple[Path, ...]:
         """
-        There are certain nox sessions:
+        For nox sessions as listed below, this property defines which
+        paths to ignore below ``PROJECT_CONFIG.root_path``. By default ignores
+        the paths in :data:`DEFAULT_EXCLUDED_PATHS`, incl. ``dist`` and
+        ``.eggs``.  Additional paths can be configured with
+        :meth:`BaseConfig.add_to_excluded_python_paths`.
+
+        Affected nox sessions:
           - format:check
           - format:fix
           - lint:code
           - lint:security
           - lint:typing
-
-        where it is desired to restrict which Python files are considered within the
-        ``PROJECT_CONFIG.source_code_path`` path, like excluding ``dist``, ``.eggs``.
-        As such, this property is used to exclude such undesired paths.
         """
-        return tuple(
-            sorted(DEFAULT_EXCLUDED_PATHS.union(set(self.add_to_excluded_python_paths)))
-        )
+        excluded = DEFAULT_EXCLUDED_PATHS.union(set(self.add_to_excluded_python_paths))
+        return tuple(self.root_path / p for p in sorted(excluded))
+
 
     @computed_field  # type: ignore[misc]
     @property

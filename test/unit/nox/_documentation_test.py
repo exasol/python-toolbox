@@ -52,6 +52,7 @@ def set_up_doc_with_link(config, index):
 
 
 class TestDocsListLinks:
+    @pytest.mark.slow
     @staticmethod
     def test_works_as_expected(nox_session, config, set_up_doc_with_link, capsys):
         with patch("exasol.toolbox.nox._documentation.PROJECT_CONFIG", new=config):
@@ -71,6 +72,7 @@ class TestDocsListLinks:
                     docs_list_links(nox_session)
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize(
     "file_content, expected_code, expected_message",
     [

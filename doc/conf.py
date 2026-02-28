@@ -52,6 +52,8 @@ source_suffix = {
     ".md": "markdown",
 }
 
+# autodoc_typehints = "description"
+
 todo_include_todos = True
 
 # Add any paths that contain templates here, relative to this directory.

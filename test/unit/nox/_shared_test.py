@@ -36,7 +36,8 @@ def create_files(tmp_path, directories):
         directory_path = tmp_path / directory
         directory_path.mkdir(parents=True, exist_ok=True)
 
-        file_path = directory_path / f"{directory}-dummy.py"
+        file_path = directory_path / f"{directory}/dummy.py"
+        file_path.parent.mkdir(exist_ok=True)
         file_path.touch()
         file_list.append(file_path)
 
@@ -58,4 +59,4 @@ def test_get_filtered_python_files(
         actual = get_filtered_python_files(tmp_path)
 
     assert len(actual) == 1
-    assert "toolbox-dummy" in actual[0]
+    assert "toolbox/dummy" in actual[0]
