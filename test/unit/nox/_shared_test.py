@@ -26,7 +26,9 @@ def excluded_python_path():
 @pytest.fixture
 def directories(test_project_config_factory, package_directory, excluded_python_path):
     config = test_project_config_factory()
-    additional = set(config.root_path / d for d in (package_directory, excluded_python_path))
+    additional = {
+        config.root_path / d for d in (package_directory, excluded_python_path)
+    }
     yield set(config.excluded_python_paths).union(additional)
 
 
