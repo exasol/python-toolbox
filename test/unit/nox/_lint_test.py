@@ -46,6 +46,7 @@ def file_with_multiple_problems(config):
     return file_path
 
 
+@pytest.mark.slow
 def test_lint(nox_session, config, file_with_multiple_problems):
     with patch("exasol.toolbox.nox._lint.PROJECT_CONFIG", new=config):
         with pytest.raises(CommandFailed, match="Returned code 20"):
@@ -74,6 +75,7 @@ def test_type_check(nox_session, config, file_with_multiple_problems, caplog):
     )
 
 
+@pytest.mark.slow
 def test_security_lint(nox_session, config, file_with_multiple_problems):
     with patch("exasol.toolbox.nox._lint.PROJECT_CONFIG", new=config):
         security_lint(session=nox_session)

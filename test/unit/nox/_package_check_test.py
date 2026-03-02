@@ -13,6 +13,7 @@ from exasol.toolbox.nox._package import (
 )
 
 
+@pytest.mark.slow
 class TestDistributionCheck:
     @staticmethod
     def test_works_as_expected(nox_session):

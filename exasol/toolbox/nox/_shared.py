@@ -31,11 +31,12 @@ def get_filtered_python_files(project_root: Path) -> list[str]:
     Returns iterable of Python files after removing excluded paths
     """
     files = project_root.glob("**/*.py")
-    return [
-        f"{path}"
-        for path in files
-        if not set(path.parts).intersection(PROJECT_CONFIG.excluded_python_paths)
-    ]
+
+    def exclude(path: Path):
+        current = set(path.parents) | {path}
+        return current.intersection(PROJECT_CONFIG.excluded_python_paths)
+
+    return [f"{path}" for path in files if not exclude(path)]
 
 
 def _version(session: Session, mode: Mode) -> None:
