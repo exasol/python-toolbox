@@ -15,3 +15,4 @@ Please see the user guide for details.
 ## Refactoring
 
 * #728: Updated to latest PTB workflows and added `.workflow-patcher.yml`
+* #736: Capitalized and shorten names of GitHub workflows

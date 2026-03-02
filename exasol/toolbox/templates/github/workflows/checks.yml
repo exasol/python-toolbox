@@ -211,7 +211,7 @@ jobs:
         run: poetry run -- nox -s package:check
 
   run-unit-tests:
-    name: Run Unit Tests (Python-${{ matrix.python-versions }})
+    name: Unit Tests (Python-${{ matrix.python-versions }})
     runs-on: "(( os_version ))"
     permissions:
       contents: read
