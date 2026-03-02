@@ -100,8 +100,8 @@ def poetry_2_1_pyproject_toml(cwd, create_poetry_project):
     return PoetryToml.load_from_toml(working_directory=older_project_path)
 
 
+@pytest.mark.slow
 class TestPoetryToml:
-    @pytest.mark.slow
     @staticmethod
     def test_get_section_dict_exists(created_pyproject_toml):
         result = created_pyproject_toml.get_section_dict("project")
@@ -181,6 +181,7 @@ class TestPoetryDependencies:
         assert result == DIRECT_DEPENDENCIES
 
 
+@pytest.mark.slow
 def test_get_dependencies():
     result = get_dependencies(PROJECT_CONFIG.root_path)
 
@@ -189,6 +190,7 @@ def test_get_dependencies():
     assert result.keys()
 
 
+@pytest.mark.slow
 def test_get_dependencies_from_latest_tag():
     result = get_dependencies_from_latest_tag(root_path=PROJECT_CONFIG.root_path)
 

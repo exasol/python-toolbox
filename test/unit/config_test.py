@@ -19,7 +19,7 @@ def expand_paths(config: BaseConfig, dirnames: Iterable[str]) -> tuple[Path, ...
     Interpret the directory names relative to the current project's
     root_path and return a tuple of Path instances.
     """
-    return tuple(config.root_path / d for d in dirnames)
+    return tuple(sorted(config.root_path / d for d in dirnames))
 
 
 class TestBaseConfig:
@@ -27,14 +27,13 @@ class TestBaseConfig:
     def test_works_as_defined(tmp_path, test_project_config_factory):
         config = test_project_config_factory()
         root_path = config.root_path
-        expected_excluded_paths = expand_paths(config, DEFAULT_EXCLUDED_PATHS)
         assert config.model_dump() == {
             "add_to_excluded_python_paths": (),
             "create_major_version_tags": False,
             "dependency_manager": {"name": "poetry", "version": "2.3.0"},
             "documentation_path": root_path / "doc",
             "exasol_versions": ("7.1.30", "8.29.13", "2025.1.8"),
-            "excluded_python_paths": expected_excluded_paths,
+            "excluded_python_paths": expand_paths(config, DEFAULT_EXCLUDED_PATHS),
             "github_workflow_directory": tmp_path / ".github" / "workflows",
             "github_workflow_patcher_yaml": None,
             "github_template_dict": {
