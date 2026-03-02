@@ -219,8 +219,8 @@ class BaseConfig(BaseModel):
     @property
     def excluded_python_paths(self) -> tuple[Path, ...]:
         """
-        For nox sessions as listed below, this property defines which
-        paths to ignore below ``PROJECT_CONFIG.root_path``. By default ignores
+        For nox sessions (listed below), this property defines which
+        paths to ignore below ``PROJECT_CONFIG.root_path``. By default, this ignores
         the paths in :data:`DEFAULT_EXCLUDED_PATHS`, incl. ``dist`` and
         ``.eggs``.  Additional paths can be configured with
         :meth:`BaseConfig.add_to_excluded_python_paths`.

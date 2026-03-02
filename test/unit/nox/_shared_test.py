@@ -40,7 +40,7 @@ def create_files(tmp_path, directories: list[Path]) -> list[Path]:
         # excluded.
         sample = f"{path.name}/sample.py"
 
-        # Expected to included, as using parent.name only as substring of its
+        # Expected to be included, as using parent.name only as substring of its
         # file name.
         included_1 = f"{path.name}_2_included.py"
 
