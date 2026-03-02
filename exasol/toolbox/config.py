@@ -154,10 +154,14 @@ class BaseConfig(BaseModel):
     add_to_excluded_python_paths: tuple[str | Path, ...] = Field(
         default=(),
         description="""
-        Extends the default set of paths to be ignored by the PTB, defined in
-        :data:`DEFAULT_EXCLUDED_PATHS`, see also ``excluded_python_paths``.
+        Extends the default set of paths to be ignored by the
+        PTB, defined in ``DEFAULT_EXCLUDED_PATHS``, see ``excluded_python_paths``.
         """,
     )
+    """
+    Extends the default set of paths to be ignored by the PTB, defined in
+    :data:`DEFAULT_EXCLUDED_PATHS`.
+    """
     plugins_for_nox_sessions: tuple[ValidPluginHook, ...] = Field(
         default=(),
         description="""
@@ -215,8 +219,8 @@ class BaseConfig(BaseModel):
     @property
     def excluded_python_paths(self) -> tuple[Path, ...]:
         """
-        For nox sessions (listed below), this property defines which
-        paths to ignore below ``PROJECT_CONFIG.root_path``. By default, this ignores
+        For nox sessions as listed below, this property defines which
+        paths to ignore below ``PROJECT_CONFIG.root_path``. By default ignores
         the paths in :data:`DEFAULT_EXCLUDED_PATHS`, incl. ``dist`` and
         ``.eggs``.  Additional paths can be configured with
         :meth:`BaseConfig.add_to_excluded_python_paths`.
