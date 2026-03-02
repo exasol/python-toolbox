@@ -154,14 +154,10 @@ class BaseConfig(BaseModel):
     add_to_excluded_python_paths: tuple[str | Path, ...] = Field(
         default=(),
         description="""
-        Extends the default set of paths to be ignored by the
-        PTB, defined in ``DEFAULT_EXCLUDED_PATHS``, see ``excluded_python_paths``.
+        Extends the default set of paths to be ignored by the PTB, defined in
+        :data:`DEFAULT_EXCLUDED_PATHS`, see also ``excluded_python_paths``.
         """,
     )
-    """
-    Extends the default set of paths to be ignored by the PTB, defined in
-    :data:`DEFAULT_EXCLUDED_PATHS`.
-    """
     plugins_for_nox_sessions: tuple[ValidPluginHook, ...] = Field(
         default=(),
         description="""
