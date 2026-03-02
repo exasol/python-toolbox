@@ -2,7 +2,9 @@
 
 ## Summary
 
-This release changes the semantics of field `PROJECT_CONFIG.add_to_excluded_python_paths`.
+This release renamed some of the GitHub workflows which requires to update your branch protection. It needs to be `Merge Gate / Allow Merge` in contrast to `merge-gate / Allow Merge` in the past.
+
+This release also changes the semantics of field `PROJECT_CONFIG.add_to_excluded_python_paths`.
 
 Before, a `.venv` directory would have be excluded no matter what parent directory structure it had. Now, only ROOT_PATH / `.venv` would be excluded. If you have multiple paths like `.venv` before, you will need to specifically specify them relative to the ROOT_PATH.
 
