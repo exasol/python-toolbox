@@ -23,27 +23,33 @@ script to alternatives, consider maintaining a local copy as part of your infras
 
 For full documentation, visit https://python-poetry.org/docs/#installation.
 """
+import sys
+
+
 # Eager version check so we fail nicely before possible syntax errors
+if sys.version_info < (3, 6):  # noqa: UP036
+    sys.stdout.write("Poetry installer requires Python 3.6 or newer to run!\n")
+    sys.exit(1)
+
+
 import argparse
 import json
 import os
 import re
 import shutil
 import subprocess
-import sys
 import sysconfig
 import tempfile
-from contextlib import (
-    closing,
-    contextmanager,
-)
+
+from contextlib import closing
+from contextlib import contextmanager
 from functools import cmp_to_key
 from io import UnsupportedOperation
 from pathlib import Path
-from urllib.request import (
-    Request,
-    urlopen,
-)
+from typing import Optional
+from urllib.request import Request
+from urllib.request import urlopen
+
 
 SHELL = os.getenv("SHELL", "")
 WINDOWS = sys.platform.startswith("win") or (sys.platform == "cli" and os.name == "nt")
@@ -281,7 +287,7 @@ echo 'if (-not (Get-Command poetry -ErrorAction Ignore)) {{ $env:Path += ";{poet
 
 
 class PoetryInstallationError(RuntimeError):
-    def __init__(self, return_code: int = 0, log: str | None = None):
+    def __init__(self, return_code: int = 0, log: Optional[str] = None):
         super().__init__()
         self.return_code = return_code
         self.log = log
@@ -485,12 +491,12 @@ class Installer:
 
     def __init__(
         self,
-        version: str | None = None,
+        version: Optional[str] = None,
         preview: bool = False,
         force: bool = False,
         accept_all: bool = False,
-        git: str | None = None,
-        path: str | None = None,
+        git: Optional[str] = None,
+        path: Optional[str] = None,
     ) -> None:
         self._version = version
         self._preview = preview
@@ -728,13 +734,12 @@ class Installer:
             )
         )
 
-    def get_windows_path_var(self) -> str | None:
+    def get_windows_path_var(self) -> Optional[str]:
         import winreg
 
-        with (
-            winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as root,
-            winreg.OpenKey(root, "Environment", 0, winreg.KEY_ALL_ACCESS) as key,
-        ):
+        with winreg.ConnectRegistry(
+            None, winreg.HKEY_CURRENT_USER
+        ) as root, winreg.OpenKey(root, "Environment", 0, winreg.KEY_ALL_ACCESS) as key:
             path, _ = winreg.QueryValueEx(key, "PATH")
 
             return path
