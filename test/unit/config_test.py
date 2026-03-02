@@ -27,15 +27,6 @@ class TestBaseConfig:
     def test_works_as_defined(tmp_path, test_project_config_factory):
         config = test_project_config_factory()
         root_path = config.root_path
-        expected_excluded_dir_names = (
-            ".eggs",
-            ".html-documentation",
-            ".poetry",
-            ".sonar",
-            ".venv",
-            "dist",
-            "venv",
-        )
         expected_excluded_paths = expand_paths(config, DEFAULT_EXCLUDED_PATHS)
         assert config.model_dump() == {
             "add_to_excluded_python_paths": (),
