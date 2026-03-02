@@ -36,7 +36,7 @@ class TestBaseConfig:
             "dist",
             "venv",
         )
-        expected_excluded_paths = expand_paths(config, expected_excluded_dir_names)
+        expected_excluded_paths = expand_paths(config, DEFAULT_EXCLUDED_PATHS)
         assert config.model_dump() == {
             "add_to_excluded_python_paths": (),
             "create_major_version_tags": False,
