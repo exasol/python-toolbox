@@ -2,9 +2,9 @@
 
 ## Summary
 
-This release changes the semantics of field `PROJECT_CONFIG.add_to_excluded_python_paths`. Before, this was a string making PTB ignore each file with this string in its path.
+This release changes the semantics of field `PROJECT_CONFIG.add_to_excluded_python_paths`.
 
-With this release, an arbitrary string or Path in `PROJECT_CONFIG.add_to_excluded_python_paths` is interpreted relative to the project root. Thus, this change will make PTB ignore only files below a specific path.
+Before, a `.venv` directory would have be excluded no matter what parent directory structure it had. Now, only ROOT_PATH / `.venv` would be excluded. If you have multiple paths like `.venv` before, you will need to specifically specify them relative to the ROOT_PATH.
 
 Please see the user guide for details.
 
