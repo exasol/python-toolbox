@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from pathlib import Path
 
 import pytest
@@ -13,27 +14,36 @@ from exasol.toolbox.nox.plugin import hookimpl
 from exasol.toolbox.util.version import Version
 
 
+def expand_paths(config: BaseConfig, dirnames: Iterable[str]) -> tuple[Path, ...]:
+    """
+    Interpret the directory names relative to the current project's
+    root_path and return a tuple of Path instances.
+    """
+    return tuple(config.root_path / d for d in dirnames)
+
+
 class TestBaseConfig:
     @staticmethod
     def test_works_as_defined(tmp_path, test_project_config_factory):
         config = test_project_config_factory()
-
         root_path = config.root_path
+        expected_excluded_dir_names = (
+            ".eggs",
+            ".html-documentation",
+            ".poetry",
+            ".sonar",
+            ".venv",
+            "dist",
+            "venv",
+        )
+        expected_excluded_paths = expand_paths(config, expected_excluded_dir_names)
         assert config.model_dump() == {
             "add_to_excluded_python_paths": (),
             "create_major_version_tags": False,
             "dependency_manager": {"name": "poetry", "version": "2.3.0"},
             "documentation_path": root_path / "doc",
             "exasol_versions": ("7.1.30", "8.29.13", "2025.1.8"),
-            "excluded_python_paths": (
-                ".eggs",
-                ".html-documentation",
-                ".poetry",
-                ".sonar",
-                ".venv",
-                "dist",
-                "venv",
-            ),
+            "excluded_python_paths": expected_excluded_paths,
             "github_workflow_directory": tmp_path / ".github" / "workflows",
             "github_workflow_patcher_yaml": None,
             "github_template_dict": {
@@ -152,7 +162,8 @@ def test_excluded_python_paths(
     conf = test_project_config_factory(
         add_to_excluded_python_paths=add_to_excluded_python_paths
     )
-    assert sorted(conf.excluded_python_paths) == sorted(expected)
+    expected_excluded_paths = expand_paths(conf, expected)
+    assert sorted(conf.excluded_python_paths) == sorted(expected_excluded_paths)
 
 
 class WithHook:
