@@ -100,6 +100,7 @@ DEFAULT_EXCLUDED_PATHS = {
 Default paths ignored by :meth:`BaseConfig.excluded_python_paths`.
 """
 
+
 class DependencyManager(BaseModel):
     # Restricted to only allow "poetry" at the moment
     name: Literal["poetry"]
@@ -233,7 +234,6 @@ class BaseConfig(BaseModel):
         """
         excluded = DEFAULT_EXCLUDED_PATHS.union(set(self.add_to_excluded_python_paths))
         return tuple(self.root_path / p for p in sorted(excluded))
-
 
     @computed_field  # type: ignore[misc]
     @property

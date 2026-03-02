@@ -32,7 +32,8 @@ def get_filtered_python_files(project_root: Path) -> list[str]:
     """
     files = project_root.glob("**/*.py")
     return [
-        f"{path}" for path in files
+        f"{path}"
+        for path in files
         if not set(path.parents).intersection(PROJECT_CONFIG.excluded_python_paths)
     ]
 
