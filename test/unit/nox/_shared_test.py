@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -24,23 +25,35 @@ def excluded_python_path():
 
 @pytest.fixture
 def directories(test_project_config_factory, package_directory, excluded_python_path):
-    yield set(test_project_config_factory().excluded_python_paths).union(
-        {package_directory, excluded_python_path}
-    )
+    config = test_project_config_factory()
+    additional = {
+        config.root_path / d for d in (package_directory, excluded_python_path)
+    }
+    yield set(config.excluded_python_paths).union(additional)
 
 
 @pytest.fixture
-def create_files(tmp_path, directories):
-    file_list = []
-    for directory in directories:
-        directory_path = tmp_path / directory
-        directory_path.mkdir(parents=True, exist_ok=True)
+def create_files(tmp_path, directories: list[Path]) -> list[Path]:
+    result = []
+    for path in directories:
+        # Expected to be ignored if its parent directory is configured as
+        # excluded.
+        sample = f"{path.name}/sample.py"
 
-        file_path = directory_path / f"{directory}-dummy.py"
-        file_path.touch()
-        file_list.append(file_path)
+        # Expected to be included, as using parent.name only as substring of its
+        # file name.
+        included_1 = f"{path.name}_2_included.py"
 
-    yield file_list
+        # Expected to be included, as having a different parent directory.
+        included_2 = f"other/{path.name}/2_included.py"
+
+        for relative in [sample, included_1, included_2]:
+            file = path.parent / relative
+            file.parent.mkdir(parents=True, exist_ok=True)
+            file.touch()
+            result.append(file)
+
+    return result
 
 
 def test_get_filtered_python_files(
@@ -57,5 +70,7 @@ def test_get_filtered_python_files(
     with patch("exasol.toolbox.nox._shared.PROJECT_CONFIG", config):
         actual = get_filtered_python_files(tmp_path)
 
-    assert len(actual) == 1
-    assert "toolbox-dummy" in actual[0]
+    assert len(actual) == 19
+    exceptions = [f for f in actual if f.endswith("sample.py")]
+    assert len(exceptions) == 1
+    assert "toolbox/sample.py" in exceptions[0]

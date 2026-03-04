@@ -44,6 +44,7 @@ def file_without_blank_line(config):
 
 
 class TestCodeFormat:
+    @pytest.mark.slow
     @staticmethod
     def test_isort_mode_fix(nox_session, file_with_not_ordered_import):
         _code_format(
@@ -69,6 +70,7 @@ class TestCodeFormat:
         )
         assert file_with_not_ordered_import.read_text() == "import isort\nimport black"
 
+    @pytest.mark.slow
     @staticmethod
     def test_black_mode_fix(nox_session, file_without_blank_line):
         _code_format(
@@ -78,6 +80,7 @@ class TestCodeFormat:
         )
         assert file_without_blank_line.read_text() == "import black\nimport isort\n"
 
+    @pytest.mark.slow
     @staticmethod
     def test_black_mode_check(nox_session, file_without_blank_line, caplog):
         with pytest.raises(CommandFailed):
@@ -156,6 +159,7 @@ def file_with_multiple_problems(tmp_path):
     return file_path
 
 
+@pytest.mark.slow
 def test_fix_format(nox_session, config, file_with_multiple_problems):
     with patch("exasol.toolbox.nox._format.PROJECT_CONFIG", new=config):
         with patch("exasol.toolbox.nox._format._version") as version:

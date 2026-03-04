@@ -107,7 +107,7 @@ class Changelogs:
             ).changes
             if changes:
                 changes_str = "\n".join(str(change) for change in changes)
-                changes_by_group.append(f"\n### `{group}`\n{changes_str}\n")
+                changes_by_group.append(f"\n### `{group}`\n\n{changes_str}\n")
         return "".join(changes_by_group)
 
     @staticmethod

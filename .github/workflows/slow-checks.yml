@@ -29,15 +29,14 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v5
+        uses: exasol/python-toolbox/.github/actions/python-environment@v6
         with:
           python-version: ${{ matrix.python-version }}
           poetry-version: "2.3.0"
 
       - name: Run Integration Tests
         id: run-integration-tests
-        run: poetry run -- nox -s test:integration -- --coverage --db-version ${{ matrix.exasol-version }}
-
+        run: poetry run -- nox -s test:integration -- --coverage
       - name: Upload Artifacts
         id: upload-artifacts
         uses: actions/upload-artifact@v6

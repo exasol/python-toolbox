@@ -2,22 +2,19 @@
 
 ## Summary
 
-## Feature
+This release renamed some of the GitHub workflows which requires to update your branch protection. It needs to be `Merge Gate / Allow Merge` in contrast to `merge-gate / Allow Merge` in the past.
 
-* #691: Started customization of PTB workflows by defining the YML schema
-* #712: Added basic logging to workflow processing
-* #714: Added logic to modify a workflow using the .workflow-patcher.yml
-* #717: Restricted workflow names in .workflow-patcher.yml to template workflow names
-* #719: Added nox session `workflow:generate` to generate/update workflows using the `.workflow-patcher.yml` (if desired)
+This release also changes the semantics of field `PROJECT_CONFIG.add_to_excluded_python_paths`.
 
-## Documentation
+Before, a `.venv` directory would have be excluded no matter what parent directory structure it had. Now, only ROOT_PATH / `.venv` would be excluded. If you have multiple paths like `.venv` before, you will need to specifically specify them relative to the ROOT_PATH.
 
-* #705: Described how the versions of poetry and python are retrieved
-* #706: Added description how to ignore findings to the User Guide
+Please see the user guide for details.
+
+## Features
+
+* #697: Supported multi-part paths in `add_to_excluded_python_paths`
 
 ## Refactoring
 
-* #664: Removed deprecation warning for projects to switch over to BaseConfig
-* #637: Added id to workflow templates  & synchronized on naming conventions
-* #702: Fixed StepCustomization.content to list[StepContent] and security concern for `update_cookiecutter_default`
-* #710: Refactored and added custom exceptions to YamlRender-based classes
+* #728: Updated to latest PTB workflows and added `.workflow-patcher.yml`
+* #736: Capitalized and shorten names of GitHub workflows

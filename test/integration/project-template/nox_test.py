@@ -1,6 +1,3 @@
-from typing import Optional
-
-
 class TestSpecificNoxTasks:
     """
     Within the PTB, we have nox tasks that are inherently dependent upon other ones
@@ -16,8 +13,9 @@ class TestSpecificNoxTasks:
     """
 
     @staticmethod
-    def _command(poetry_path: str, task: str,
-                 add_ons: Optional[list[str]] = None) -> list[str]:
+    def _command(
+        poetry_path: str, task: str, add_ons: list[str] | None = None
+    ) -> list[str]:
         base = [poetry_path, "run", "--", "nox", "-s", task]
         if add_ons:
             base = base + ["--"] + add_ons
@@ -37,8 +35,9 @@ class TestSpecificNoxTasks:
         run_command(lint_security)
         test_unit = self._command(poetry_path, "test:unit", ["--coverage"])
         run_command(test_unit)
-        test_integration = self._command(poetry_path, "test:integration",
-                                         ["--coverage"])
+        test_integration = self._command(
+            poetry_path, "test:integration", ["--coverage"]
+        )
         run_command(test_integration)
         # `artifacts:copy` is skipped here. This step has the pre-requisite that files
         # were uploaded to & then downloaded from the GitHub run's artifacts.
@@ -60,7 +59,21 @@ class TestSpecificNoxTasks:
         assert output.returncode == 0
 
     def test_release_prepare(self, poetry_path, run_command):
-        release_prepare = self._command(poetry_path, task="release:prepare", add_ons=["--type", "minor", "--no-pr", "--no-branch", "--no-add"])
+        release_prepare = self._command(
+            poetry_path,
+            task="release:prepare",
+            add_ons=["--type", "minor", "--no-pr", "--no-branch", "--no-add"],
+        )
         output = run_command(release_prepare)
 
         assert output.returncode == 0
+
+    def test_install_github_workflows(self, poetry_path, run_command):
+        install_workflows = self._command(
+            poetry_path, task="workflow:generate", add_ons=["all"]
+        )
+        output = run_command(install_workflows)
+        assert output.returncode == 0
+
+        file_list = run_command(["ls", ".github/workflows"]).stdout.splitlines()
+        assert len(file_list) == 13

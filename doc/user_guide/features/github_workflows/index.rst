@@ -10,6 +10,7 @@ GitHub Workflow Templates
     github_project_configuration
     create_and_update
     template_variables
+    workflow_patcher
 
 The PTB ships with configurable GitHub workflow templates covering the most common
 CI/CD setup variants for Python projects. The templates are defined in:
@@ -20,13 +21,15 @@ workflows from the templates.
 
 .. code-block:: bash
 
-    poetry run -- tbx workflow --help
+    poetry run -- nox -s workflow:generate --help
 
 .. attention::
 
    In most cases, we recommend using _all_ workflows without change to ensure
    consistent interdependencies. For more details, see :ref:`ci_actions`.
 
+   The deprecated alternate is to use the CLI provided by
+   ``poetry run -- tbx workflow --help``. This will be removed by April 22nd, 2026.
 
 Workflows
 ---------

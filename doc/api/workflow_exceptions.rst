@@ -1,8 +1,3 @@
-.. _api:
-
-:octicon:`cpu` API Reference
-=============================
-
 .. _workflow_exceptions:
 
 Workflow Exceptions

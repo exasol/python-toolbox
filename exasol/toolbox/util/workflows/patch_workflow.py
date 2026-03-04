@@ -32,8 +32,8 @@ class StepContent(BaseModel):
     The :class:`StepContent` is used to lightly validate the content which
     would be used to REPLACE or INSERT_AFTER the specified step in the GitHub workflow.
 
-    With the value `ConfigDict(extra="allow")`, this model allows for further fields
-    (e.g. `dummy`) to be specified without any validation. This design choice was
+    With the value ``ConfigDict(extra="allow")``, this model allows for further fields
+    (e.g. ``dummy``) to be specified without any validation. This design choice was
     intentional, as GitHub already allows additional fields and may specify more fields
     than what has been specified in this model.
 
@@ -54,12 +54,13 @@ class StepContent(BaseModel):
 
 class StepCustomization(BaseModel):
     """
-    The :class:`StepCustomization` is used to specify the desired modification:
-      * REPLACE - means that the contents of the specified `step_id` should be replaced
-        with whatever `content` is provided.
-      * INSERT_AFTER - means that the specified `content` should be inserted after
-        the specified `step_id`.
-    For a given step
+    The :class:`StepCustomization` is used to specify the desired modification.
+    An ``action`` of ``ActionType``:
+
+    * ``REPLACE`` - means that the contents of the specified ``step_id`` should be
+      replaced with whatever ``content`` is provided.
+    * ``INSERT_AFTER`` - means that the specified `content` should be inserted after
+      the specified ``step_id``.
     """
 
     action: ActionType
@@ -69,6 +70,10 @@ class StepCustomization(BaseModel):
 
 
 def validate_workflow_name(workflow_name: str) -> str:
+    """
+    Validates that the given ``workflow_name`` is a valid workflow name provided by
+    the PTB.
+    """
     if workflow_name not in WORKFLOW_TEMPLATE_OPTIONS.keys():
         raise ValueError(
             f"Invalid workflow: {workflow_name}. Must be one of {WORKFLOW_TEMPLATE_OPTIONS.keys()}"
@@ -82,10 +87,12 @@ WorkflowName = Annotated[str, AfterValidator(validate_workflow_name)]
 class Workflow(BaseModel):
     """
     The :class:`Workflow` is used to specify which workflow should be modified.
-    This is determined by the workflow `name`. A workflow can be modified by specifying:
-       * `remove_jobs` - job names in this list will be removed from the workflow.
-       * `step_customization` - items in this list indicate which job's step
-          should be modified.
+    This is determined by the workflow ``name``. A workflow can be modified by
+    specifying:
+
+    * ``remove_jobs`` - job names in this list will be removed from the workflow.
+    * ``step_customization`` - items in this list indicate which job's step
+      should be modified.
     """
 
     name: WorkflowName
@@ -95,9 +102,9 @@ class Workflow(BaseModel):
 
 class WorkflowPatcherConfig(BaseModel):
     """
-    The :class:`WorkflowPatcherConfig` is used to validate the expected format for
-    the `.workflow-patcher.yml`, which is used to modify the workflow templates provided
-    by the PTB.
+    The :class:`WorkflowPatcherConfig` is used to validate the expected format
+    for the ``.workflow-patcher.yml``, which is used to modify the workflow
+    templates provided by the PTB.
     """
 
     workflows: list[Workflow]
