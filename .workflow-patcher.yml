@@ -18,6 +18,6 @@ workflows:
         step_id: run-integration-tests
         content:
           # The PTB integration tests do not need an Exasol Database
-          - name: Run Integration Tests
+          - name: Integration Tests
             id: run-integration-tests
             run: poetry run -- nox -s test:integration -- --coverage
