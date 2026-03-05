@@ -9,7 +9,7 @@ on:
 
 jobs:
   merge-gate:
-    name: Merge Gate
+    name: Checks
     uses: ./.github/workflows/merge-gate.yml
     secrets: inherit
     permissions:
@@ -18,7 +18,7 @@ jobs:
   report:
     name: Report
     needs:
-     - merge-gate
+      - merge-gate
     uses: ./.github/workflows/report.yml
     secrets: inherit
     permissions:

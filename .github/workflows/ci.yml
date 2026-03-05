@@ -9,7 +9,7 @@ on:
 
 jobs:
   merge-gate:
-    name: Merge Gate
+    name: Checks
     uses: ./.github/workflows/merge-gate.yml
     secrets: inherit
     permissions:

@@ -6,6 +6,7 @@ on:
 jobs:
 
   report:
+    name: Quality Metrics
     runs-on: "ubuntu-24.04"
     permissions:
       contents: read
@@ -58,7 +59,7 @@ jobs:
 
       - name: Generate GitHub Summary
         id: generate-github-summary
-        run: |-
+        run: |
           echo -e "# Summary\n" >> $GITHUB_STEP_SUMMARY
           poetry run -- nox -s project:report -- --format markdown >> $GITHUB_STEP_SUMMARY
           poetry run -- nox -s dependency:licenses >> $GITHUB_STEP_SUMMARY

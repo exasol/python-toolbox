@@ -6,6 +6,7 @@ on:
 jobs:
 
   report:
+    name: Quality Metrics
     runs-on: "(( os_version ))"
     permissions:
       contents: read

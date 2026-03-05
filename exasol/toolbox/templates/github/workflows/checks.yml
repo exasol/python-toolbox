@@ -5,7 +5,7 @@ on:
 
 jobs:
   check-version:
-    name: Check Version
+    name: Version
     runs-on: "(( os_version ))"
     permissions:
       contents: read
@@ -51,7 +51,7 @@ jobs:
         run: poetry run -- nox -s links:check
 
   check-changelog-was-updated:
-    name: Check Changelog was Updated
+    name: Changelog
     runs-on: "(( os_version ))"
     permissions:
       contents: read
@@ -134,7 +134,7 @@ jobs:
         run: poetry run -- nox -s lint:typing
 
   audit-security:
-    name: Audit Security (Python-${{ matrix.python-versions }})
+    name: Security (Python-${{ matrix.python-versions }})
     runs-on: "(( os_version ))"
     permissions:
       contents: read
@@ -168,7 +168,7 @@ jobs:
           include-hidden-files: true
 
   check-format:
-    name: Check Format
+    name: Format
     runs-on: "(( os_version ))"
     permissions:
       contents: read

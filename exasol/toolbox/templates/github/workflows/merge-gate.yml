@@ -5,7 +5,7 @@ on:
 
 jobs:
   run-fast-checks:
-    name: Fast Checks
+    name: Fast
     uses: ./.github/workflows/checks.yml
     permissions:
       contents: read
@@ -24,9 +24,9 @@ jobs:
         run: echo "Slow tests approved"
 
   run-slow-checks:
-    name: Slow Checks
+    name: Slow
     needs:
-     - approve-run-slow-tests
+      - approve-run-slow-tests
     uses: ./.github/workflows/slow-checks.yml
     secrets: inherit
     permissions:
@@ -40,8 +40,8 @@ jobs:
       contents: read
     # If you need additional jobs to be part of the merge gate, add them below
     needs:
-     - run-fast-checks
-     - run-slow-checks
+      - run-fast-checks
+      - run-slow-checks
     # Each job requires a step, so we added this dummy step.
     steps:
       - name: Approve
