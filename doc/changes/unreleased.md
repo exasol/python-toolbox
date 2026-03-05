@@ -2,7 +2,7 @@
 
 ## Summary
 
-This release renamed some of the GitHub workflows which requires to update your branch protection. It needs to be `Merge Gate / Allow Merge` in contrast to `merge-gate / Allow Merge` in the past.
+This release renamed some of the GitHub workflows which requires to update your branch protection. It needs to be `Checks / Allow Merge` in contrast to `merge-gate / Allow Merge` in the past.
 
 This release also changes the semantics of field `PROJECT_CONFIG.add_to_excluded_python_paths`.
 
