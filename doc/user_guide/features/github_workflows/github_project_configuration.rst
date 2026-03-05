@@ -15,6 +15,8 @@ you can further require that ``SonarCloud Code Analysis`` passes.
    Setting the required status checks to pass before merging is only possible
    after running a CI build at **least once** on the affected branch.
 
+.. _manual_approval:
+
 Manual Approval
 ---------------
 

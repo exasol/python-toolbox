@@ -21,7 +21,7 @@ Configuration
 
 .. _configure_sonar_public_project:
 
-**Public** GitHub repository
+**Public** GitHub Repository
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 In GitHub
 """""""""
@@ -42,7 +42,7 @@ In Sonar
   * Project key should follow this pattern, e.g. ``com.exasol:python-toolbox``
   * To alter the project further, you will need the help of a SonarQube Admin.
 
-In the code
+In the Code
 """""""""""
 #. In the ``noxconfig.py``, the relative path to the project's source code is defined with ``Config.sonar_code_path``.
 #. Add the following to the project's file ``pyproject.toml``
@@ -60,7 +60,7 @@ In the code
 
 .. _configure_sonar_private_project:
 
-**Private** GitHub repository
+**Private** GitHub Repository
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 See the company wiki for details on how to use Exasol's on-prem SonarQube cluster
 and the needed steps to configure for a private GitHub repository.
@@ -73,12 +73,15 @@ and the needed steps to configure for a private GitHub repository.
 
 .. _configuration_general_remarks:
 
-General remarks
-^^^^^^^^^^^^^^^^^^^
+General Remarks
+^^^^^^^^^^^^^^^
 For additional configuration information, see `Sonar's analysis parameters <https://docs.sonarsource.com/sonarqube-server/2025.1/analyzing-source-code/analysis-parameters>`__ page.
 
-``exclusions``
-""""""""""""""
+.. _sonar_exclude_files:
+
+Exclude Files from SonarQube Static Code Analysis
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 With the value of ``exclusions``, you can exclude files and directories of your
 project from Sonar's analysis:
 
@@ -88,6 +91,6 @@ project from Sonar's analysis:
 
 See the `Sonar Matching Patterns`_ for more details.
 
-By default, the nox session ``sonar:check`` only analyses the source code,
-as specified by the ``PROJECT_CONFIG.sonar_code_path``, so directories outside of this
-are already excluded from being analyzed.
+The Nox session ``sonar:check`` only analyses the source code, as specified by
+the ``PROJECT_CONFIG.sonar_code_path``, so directories outside of this are
+already excluded from being analyzed by default.

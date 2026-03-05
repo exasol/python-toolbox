@@ -54,7 +54,7 @@ For example, if test execution isn't performed in the standard way (e.g., :code:
    * Implement functionality for an :ref:`existing extension point <plugins>` in the `python-toolbox`_
    * Add additional configuration parameters in :code:`noxconfig.py` or :code:`pyproject.toml`
    * Add additional parameterization to tasks
-   * :code:`pytest plugins` can take care of a specific test preparation need, e.g., `pytest-backend <https://github.com/exasol/pytest-plugins/tree/main/pytest-backend>`_
+   * :code:`pytest plugins` can take care of a specific test preparation need, e.g., `pytest-backend <https://github.com/exasol/pytest-backend>`_
 
 
 .. code-block:: python

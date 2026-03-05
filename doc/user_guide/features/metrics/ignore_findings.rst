@@ -39,6 +39,9 @@ relevant line of code:
 
     subprocess.run(args)  # nosec: B603 - risk of untrusted input is accepted
 
+The keyword ``nosec`` is defined by `Bandit <bandit_exclusions_>`_ in this case.
+
+.. _bandit_exclusions: https://bandit.readthedocs.io/en/latest/config.html#exclusions
 
 Alternatively, you could also accept a finding in the Sonar UI:
 
