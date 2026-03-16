@@ -28,7 +28,7 @@ classifiers = [
 ]
 dependencies = [
     "bandit[toml]>=1.7.9,<2",
-    "black>=24.1.0,<26",
+    "black>=26.3.1,<27",
     "coverage>=6.4.4,<8.0.0",
     "furo>=2022.9.15",
     "importlib-resources>=5.12.0",
