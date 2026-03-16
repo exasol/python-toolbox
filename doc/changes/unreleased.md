@@ -10,9 +10,15 @@ Before, a `.venv` directory would have be excluded no matter what parent directo
 
 Please see the user guide for details.
 
+Additionally the release updates the references to GitHub actions `cache` and `setup-python` to avoid using deprecated Node.js 20 actions.
+
 ## Features
 
 * #697: Supported multi-part paths in `add_to_excluded_python_paths`
+
+## Security Issues
+
+* #745: Updated references to GitHub actions cache and setup-python
 
 ## Refactoring
 
