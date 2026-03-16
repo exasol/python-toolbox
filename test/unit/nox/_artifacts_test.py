@@ -343,9 +343,7 @@ class TestPrepareCoverageXml:
         monkeypatch.setattr(_artifacts, "COVERAGE_XML", coverage_xml)
         _create_coverage_file(coverage_db, COVERAGE_TABLES)
 
-        with pytest.raises(
-            _SessionQuit, match="isn't a coverage data file"
-        ):
+        with pytest.raises(_SessionQuit, match="isn't a coverage data file"):
             _prepare_coverage_xml(nox_session, tmp_path, cwd=tmp_path)
 
         assert coverage_db.exists()
