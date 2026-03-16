@@ -344,7 +344,7 @@ class TestPrepareCoverageXml:
         _create_coverage_file(coverage_db, COVERAGE_TABLES)
 
         with pytest.raises(
-            _SessionQuit, match="doesn't seem to be a coverage data file"
+            _SessionQuit, match="isn't a coverage data file"
         ):
             _prepare_coverage_xml(nox_session, tmp_path, cwd=tmp_path)
 
