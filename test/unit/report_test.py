@@ -76,8 +76,7 @@ def named_temp_file(tmp_path):
     "content,expected",
     [
         (
-            cleandoc(
-                """
+            cleandoc("""
     ************* Module doc.user_guide.modules.sphinx.multiversion.conf
     doc/user_guide/modules/sphinx/multiversion/conf.py:8:0: W0622: Redefining built-in 'copyright' (redefined-builtin)
     doc/user_guide/modules/sphinx/multiversion/conf.py:4:0: C0103: Constant name "author" doesn't conform to UPPER_CASE naming style (invalid-name)
@@ -95,8 +94,7 @@ def named_temp_file(tmp_path):
 
     ------------------------------------------------------------------
     Your code has been rated at 7.80/10 (previous run: 7.86/10, -0.05)
-    """
-            ),
+    """),
             Rating.B,
         ),
         (

@@ -44,8 +44,7 @@ class TestCreateSecurityIssue:
         "expected,issue",
         [
             (
-                cleandoc(
-                    """
+                cleandoc("""
                     ## Summary
                     Random Multiline
                     Description
@@ -57,8 +56,7 @@ class TestCreateSecurityIssue:
                     ## References
                     - https://www.example.com
                     - https://www.foobar.com
-                    """
-                ),
+                    """),
                 security.Issue(
                     cve="CVE-2023-39410",
                     cwe="CWE-XYZ",

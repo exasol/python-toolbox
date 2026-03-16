@@ -16,6 +16,10 @@ Additionally the release updates the references to GitHub actions `cache` and `s
 
 * #697: Supported multi-part paths in `add_to_excluded_python_paths`
 
+## Security Issues
+
+* #748: Updated dependency to `black`
+
 ## Refactoring
 
 * #728: Updated to latest PTB workflows and added `.workflow-patcher.yml`

@@ -13,8 +13,7 @@ from exasol.toolbox.util.version import Version
 
 
 class SampleContent:
-    changelog = "\n" + cleandoc(
-        """
+    changelog = "\n" + cleandoc("""
         Summary of changes.
 
         ## Added
@@ -25,10 +24,8 @@ class SampleContent:
 
         ## Fixed
         * Fixed nasty bug
-        """
-    )
-    changes = cleandoc(
-        """
+        """)
+    changes = cleandoc("""
         # Changelog
 
         * [unreleased](unreleased.md)
@@ -41,10 +38,8 @@ class SampleContent:
         unreleased
         changes_0.1.0
         ```
-        """
-    )
-    altered_changes = cleandoc(
-        """
+        """)
+    altered_changes = cleandoc("""
         # Changelog
 
         * [unreleased](unreleased.md)
@@ -59,8 +54,7 @@ class SampleContent:
         changes_1.0.0
         changes_0.1.0
         ```
-        """
-    )
+        """)
 
 
 @pytest.fixture(scope="function")
@@ -207,9 +201,7 @@ class TestChangelogs:
         # versioned.md
         saved_text = changelogs.versioned_changelog_md.read_text()
         assert (
-            saved_text
-            == cleandoc(
-                f"""# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
+            saved_text == cleandoc(f"""# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
 
             ## Summary
 
@@ -233,9 +225,7 @@ class TestChangelogs:
             ### `dev`
 
             * Added dependency `package2:0.2.0`
-            """
-            )
-            + "\n"
+            """) + "\n"
         )
 
     @staticmethod
@@ -250,10 +240,7 @@ class TestChangelogs:
         assert changelogs.unreleased_md.read_text() == UNRELEASED_INITIAL_CONTENT
         # versioned.md
         saved_text = changelogs.versioned_changelog_md.read_text()
-        assert (
-            saved_text
-            == cleandoc(
-                f"""
+        assert saved_text == cleandoc(f"""
                 # 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
 
                 ## Summary
@@ -268,7 +255,4 @@ class TestChangelogs:
 
                 ## Fixed
                 * Fixed nasty bug
-                """
-            )
-            + "\n"
-        )
+                """) + "\n"

@@ -280,14 +280,12 @@ class TestCopyArtifacts:
             copy_artifacts(session)
         captured = capsys.readouterr()
         assert re.match(
-            cleandoc(
-                """
+            cleandoc("""
                 Could not find any file .*/coverage-python9.9\\*/.coverage
                 File not found .*/lint-python9.9/.lint.txt
                 File not found .*/lint-python9.9/.lint.json
                 File not found .*/security-python9.9/.security.json
-                """
-            ),
+                """),
             captured.err,
         )
 
@@ -313,13 +311,11 @@ class TestCopyArtifacts:
             EndsWith("coverage-python9.9-slow/.coverage"),
         )
         assert re.match(
-            cleandoc(
-                """
+            cleandoc("""
                 Copying file .*/lint-python9.9/.lint.txt
                 Copying file .*/lint-python9.9/.lint.json
                 Copying file .*/security-python9.9/.security.json
-                """
-            ),
+                """),
             captured.err,
         )
         for f in [".lint.txt", ".lint.json", ".security.json"]:

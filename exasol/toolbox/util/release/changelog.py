@@ -13,16 +13,11 @@ from exasol.toolbox.util.dependencies.shared_models import LatestTagNotFoundErro
 from exasol.toolbox.util.dependencies.track_changes import DependencyChanges
 from exasol.toolbox.util.version import Version
 
-UNRELEASED_INITIAL_CONTENT = (
-    cleandoc(
-        """
+UNRELEASED_INITIAL_CONTENT = cleandoc("""
     # Unreleased
 
     ## Summary
-    """
-    )
-    + "\n"
-)
+    """) + "\n"
 
 
 class Changelogs:
