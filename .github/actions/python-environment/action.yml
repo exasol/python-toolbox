@@ -34,7 +34,7 @@ runs:
 
 
     - name: Set up Python (${{ inputs.python-version}})
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ inputs.python-version }}
 
@@ -68,7 +68,7 @@ runs:
     - name: Cache Poetry environment
       if: inputs.use-cache == 'true'
       id: cache-poetry-env
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ${{ steps.setup-cache-variables.outputs.POETRY_ENV_PATH }}
         key: poetry-env-${{ steps.setup-cache-variables.outputs.POETRY_SHA }}-${{ steps.setup-cache-variables.outputs.IMAGE_OS }}-${{ steps.setup-cache-variables.outputs.IMAGE_VERSION }}-${{ runner.arch }}-${{ inputs.poetry-version }}-${{ inputs.python-version }}-${{ inputs.extras }}
