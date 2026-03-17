@@ -23,12 +23,10 @@ def create_poetry_project(tmp_path, sample_vulnerability, poetry_path):
         env={},
     )
 
-    poetry_export = cleandoc(
-        """
+    poetry_export = cleandoc("""
     [tool.poetry.requires-plugins]
     poetry-plugin-export = ">=1.8"
-    """
-    )
+    """)
 
     with (poetry_root_dir / "pyproject.toml").open("a") as f:
         f.write(poetry_export)

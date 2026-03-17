@@ -167,18 +167,12 @@ def test_fix_format(nox_session, config, file_with_multiple_problems):
             version.return_value = True
             fix_format(nox_session)
 
-    assert (
-        file_with_multiple_problems.read_text()
-        == cleandoc(
-            """
+    assert file_with_multiple_problems.read_text() == cleandoc("""
             import numpy as np
 
             x: int | str = 2
             y: np.ndarray = np.array([1, 2, 3])
-        """
-        )
-        + "\n"
-    )
+        """) + "\n"
 
 
 def test_check_format(nox_session, config, file_with_multiple_problems, caplog, capsys):

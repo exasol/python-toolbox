@@ -28,7 +28,7 @@ classifiers = [
 ]
 dependencies = [
     "bandit[toml]>=1.7.9,<2",
-    "black>=24.1.0,<26",
+    "black>=26.3.1,<27",
     "coverage>=6.4.4,<8.0.0",
     "furo>=2022.9.15",
     "importlib-resources>=5.12.0",
@@ -38,7 +38,7 @@ dependencies = [
     "mypy>=0.971",
     "myst-parser>=2.0.0,<4",
     "nox>=2022.8.7",
-    "pip-audit>=2.7.3,<3",
+    "pip-audit>=2.7.3,<2.10.0", # see issue https://github.com/exasol/python-toolbox/issues/750
     "pip-licenses>=5.0.0,<6",
     "pluggy>=1.5.0,<2",
     "pre-commit>=4,<5",

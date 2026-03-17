@@ -200,11 +200,9 @@ def from_json(report_str: str, prefix: Path) -> Iterable[SecurityIssue]:
 
 
 def issues_to_markdown(issues: Iterable[SecurityIssue]) -> str:
-    template = cleandoc(
-        """
+    template = cleandoc("""
         {header}{rows}
-    """
-    )
+    """)
 
     def _header():
         header = "# Security\n\n"
@@ -233,8 +231,7 @@ def security_issue_body(issue: Issue) -> str:
     def as_markdown_listing(elements: Iterable[str]):
         return "\n".join(f"- {element}" for element in elements)
 
-    body = cleandoc(
-        """
+    body = cleandoc("""
         ## Summary
         {description}
 
@@ -243,8 +240,7 @@ def security_issue_body(issue: Issue) -> str:
 
         ## References
         {references}
-        """
-    )
+        """)
     return body.format(
         cve=issue.cve,
         cwe=issue.cwe,

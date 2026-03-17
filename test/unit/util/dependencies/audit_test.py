@@ -106,8 +106,7 @@ class TestVulnerability:
         assert result.vulnerability_id == expected
 
     def test_subsection_for_changelog_summary(self, sample_vulnerability):
-        expected = cleandoc(
-            """
+        expected = cleandoc("""
             ### CVE-2025-27516 in jinja2:3.1.5
 
             An oversight in how the Jinja sandboxed environment interacts with the
@@ -118,8 +117,7 @@ class TestVulnerability:
 
             * https://github.com/advisories/GHSA-cpwx-vrp4-4pq7
             * https://nvd.nist.gov/vuln/detail/CVE-2025-27516
-            """
-        )
+            """)
         assert (
             sample_vulnerability.vulnerability.subsection_for_changelog_summary
             == expected
