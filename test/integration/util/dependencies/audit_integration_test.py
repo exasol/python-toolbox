@@ -78,7 +78,9 @@ class PoetryProject:
 
 
 @pytest.fixture
-def create_poetry_project(tmp_path, sample_vulnerability, poetry_path, ptb_minimum_python_version):
+def create_poetry_project(
+    tmp_path, sample_vulnerability, poetry_path, ptb_minimum_python_version
+):
     project = (
         PoetryProject(poetry_path, tmp_path / "vulnerability")
         .create()
