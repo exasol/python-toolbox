@@ -27,6 +27,9 @@ PIP_AUDIT_VULNERABILITY_PATTERN = (
 )
 
 
+PipAuditEntry = dict[str, str | list[str] | tuple[str, ...]]
+
+
 @dataclass
 class PipAuditException(Exception):
     return_code: int
@@ -102,7 +105,7 @@ class Vulnerability(BaseModel):
         )
 
     @property
-    def security_issue_entry(self) -> dict[str, str | list[str] | tuple[str, ...]]:
+    def security_issue_entry(self) -> PipAuditEntry:
         return {
             "name": self.package.name,
             "version": str(self.package.version),
@@ -132,10 +135,20 @@ class Vulnerability(BaseModel):
         """
         Create a subsection to be included in the Summary section of a versioned changelog.
         """
-        links_join = "\n* ".join(sorted(self.reference_links))
-        references_subsection = f"\n#### References:\n\n* {links_join}\n\n "
-        subsection = f"### {self.vulnerability_id} in {self.package.coordinates}\n\n{self.description}\n{references_subsection}"
-        return cleandoc(subsection.strip())
+        indent = " " * 12
+        references = f"\n{indent}".join(f"* {link}" for link in sorted(self.reference_links))
+        description = self.description.replace("\n", f"\n{indent}")
+        return cleandoc(
+            f"""
+            ### {self.vulnerability_id} in {self.package.coordinates}
+
+            {description}
+
+            #### References
+
+            {references}
+            """
+        )
 
 
 def audit_poetry_files(working_directory: Path) -> str:
@@ -215,7 +228,7 @@ class Vulnerabilities(BaseModel):
         return Vulnerabilities(vulnerabilities=vulnerabilities)
 
     @property
-    def security_issue_dict(self) -> list[dict[str, str | list[str] | tuple[str, ...]]]:
+    def security_issue_dict(self) -> PipAuditEntry:
         return [
             vulnerability.security_issue_entry for vulnerability in self.vulnerabilities
         ]
