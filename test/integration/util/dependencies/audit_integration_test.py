@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import re
 import subprocess
-import sys
 from inspect import cleandoc
 from pathlib import Path
 
@@ -53,20 +52,15 @@ class PoetryProject:
         aux_subprocess(self.poetry, "new", self.name, cwd=self.dir.parent)
         return self
 
-    def use_python_version(self, version: sys.version_info) -> PoetryProject:
+    def set_minimum_python_version(self, version: str) -> PoetryProject:
         content = self.toml.read_text()
-        python_version = f"{version.major}.{version.minor}"
-        python_version = "3.10"
         changed = re.sub(
             r'^requires-python = ".*"$',
-            f'requires-python = ">={python_version}"',
+            f'requires-python = ">={version}"',
             content,
             flags=re.MULTILINE,
         )
         self.toml.write_text(changed)
-        # aux_subprocess(
-        #     self.poetry, "env", "use", f"python{python_version}", cwd=self.dir
-        # )
         return self
 
     def add_package(self, spec: str) -> PoetryProject:
@@ -84,11 +78,11 @@ class PoetryProject:
 
 
 @pytest.fixture
-def create_poetry_project(tmp_path, sample_vulnerability, poetry_path):
+def create_poetry_project(tmp_path, sample_vulnerability, poetry_path, ptb_minimum_python_version):
     project = (
         PoetryProject(poetry_path, tmp_path / "vulnerability")
         .create()
-        .use_python_version(sys.version_info)
+        .set_minimum_python_version(ptb_minimum_python_version)
         .add_package(
             f"{sample_vulnerability.package_name}==" f"{sample_vulnerability.version}"
         )
