@@ -53,15 +53,19 @@ class PoetryProject:
         aux_subprocess(self.poetry, "new", self.name, cwd=self.dir.parent)
         return self
 
-    def set_minimum_python_version(self, version: sys.version_info) -> PoetryProject:
+    def set_python_version(self, version: sys.version_info) -> PoetryProject:
         content = self.toml.read_text()
+        python_version = f"{version.major}.{version.minor}"
         changed = re.sub(
             r'^requires-python = ".*"$',
-            f'requires-python = ">={version.major}.{version.minor}"',
+            f'requires-python = ">={python_version}"',
             content,
             flags=re.MULTILINE,
         )
         self.toml.write_text(changed)
+        aux_subprocess(
+            self.poetry, "env", "use", f"python{python_version}", cwd=self.dir
+        )
         return self
 
     def add_package(self, spec: str) -> PoetryProject:
