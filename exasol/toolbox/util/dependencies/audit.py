@@ -32,14 +32,13 @@ PipAuditEntry = dict[str, str | list[str] | tuple[str, ...]]
 
 @dataclass
 class PipAuditException(Exception):
-    return_code: int
+    returncode: int
     stdout: str
     stderr: str
 
-    def __init__(self, subprocess_output: subprocess.CompletedProcess) -> None:
-        self.return_code = subprocess_output.returncode
-        self.stdout = subprocess_output.stdout
-        self.stderr = subprocess_output.stderr
+    @classmethod
+    def from_subprocess(cls, proc: subprocess.CompletedProcess) -> PipAuditException:
+        return cls(proc.returncode, proc.stdout, proc.stderr)
 
 
 class VulnerabilitySource(str, Enum):
@@ -172,7 +171,7 @@ def audit_poetry_files(working_directory: Path) -> str:
         cwd=working_directory,
     )  # nosec
     if output.returncode != 0:
-        raise PipAuditException(subprocess_output=output)
+        raise PipAuditException.from_subprocess(output)
 
     with tempfile.TemporaryDirectory() as path:
         tmpdir = Path(path)
@@ -192,7 +191,7 @@ def audit_poetry_files(working_directory: Path) -> str:
         # they both map to returncode = 1, so we have our own logic to raise errors
         # for the case of 2) and not 1).
         if not search(PIP_AUDIT_VULNERABILITY_PATTERN, output.stderr.strip()):
-            raise PipAuditException(subprocess_output=output)
+            raise PipAuditException.from_subprocess(output)
     return output.stdout
 
 

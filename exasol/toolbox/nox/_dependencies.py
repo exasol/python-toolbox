@@ -35,7 +35,7 @@ def audit(session: Session) -> None:
     try:
         vulnerabilities = Vulnerabilities.load_from_pip_audit(working_directory=Path())
     except PipAuditException as e:
-        session.error(e.return_code, e.stdout, e.stderr)
+        session.error(e.returncode, e.stdout, e.stderr)
 
     security_issue_dict = vulnerabilities.security_issue_dict
     print(json.dumps(security_issue_dict, indent=2))
