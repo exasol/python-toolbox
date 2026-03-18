@@ -53,7 +53,7 @@ class PoetryProject:
         aux_subprocess(self.poetry, "new", self.name, cwd=self.dir.parent)
         return self
 
-    def set_python_version(self, version: sys.version_info) -> PoetryProject:
+    def use_python_version(self, version: sys.version_info) -> PoetryProject:
         content = self.toml.read_text()
         python_version = f"{version.major}.{version.minor}"
         changed = re.sub(
@@ -87,7 +87,7 @@ def create_poetry_project(tmp_path, sample_vulnerability, poetry_path):
     project = (
         PoetryProject(poetry_path, tmp_path / "vulnerability")
         .create()
-        .set_minimum_python_version(sys.version_info)
+        .use_python_version(sys.version_info)
         .add_package(
             f"{sample_vulnerability.package_name}==" f"{sample_vulnerability.version}"
         )
