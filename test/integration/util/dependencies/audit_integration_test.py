@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import re
 import subprocess
@@ -34,42 +36,67 @@ def aux_subprocess(*cmd, **kwargs) -> subprocess.CompletedProcess:
     return subprocess.run(cmd, **kwargs_with_defaults)
 
 
-def set_minimum_python_version(file: Path, version):
-    content = file.read_text()
-    changed = re.sub(
-        r'^requires-python = ".*"$',
-        f'requires-python = ">={version.major}.{version.minor}"',
-        content,
-        flags=re.MULTILINE,
-    )
-    file.write_text(changed)
+class PoetryProject:
+    def __init__(self, poetry_path: Path, path: Path):
+        self.poetry = poetry_path
+        self.dir = path
+
+    @property
+    def name(self) -> str:
+        return self.dir.name
+
+    @property
+    def toml(self) -> Path:
+        return self.dir / "pyproject.toml"
+
+    def create(self) -> PoetryProject:
+        aux_subprocess(self.poetry, "new", self.name, cwd=self.dir.parent)
+        return self
+
+    def set_minimum_python_version(self, version: sys.version_info) -> PoetryProject:
+        content = self.toml.read_text()
+        changed = re.sub(
+            r'^requires-python = ".*"$',
+            f'requires-python = ">={version.major}.{version.minor}"',
+            content,
+            flags=re.MULTILINE,
+        )
+        self.toml.write_text(changed)
+        return self
+
+    def add_package(self, spec: str) -> PoetryProject:
+        aux_subprocess(self.poetry, "add", spec, cwd=self.dir)
+        return self
+
+    def add_to_toml(self, content: str) -> PoetryProject:
+        with self.toml.open("a") as f:
+            f.write(cleandoc(content))
+        return self
+
+    def install(self) -> PoetryProject:
+        aux_subprocess(self.poetry, "install", cwd=self.dir)
+        return self
 
 
 @pytest.fixture
 def create_poetry_project(tmp_path, sample_vulnerability, poetry_path):
-    project_name = "vulnerability"
-    aux_subprocess(poetry_path, "new", project_name, cwd=tmp_path)
-
-    poetry_root_dir = tmp_path / project_name
-    set_minimum_python_version(poetry_root_dir / "pyproject.toml", sys.version_info)
-    aux_subprocess(
-        poetry_path,
-        "add",
-        f"{sample_vulnerability.package_name}=={sample_vulnerability.version}",
-        cwd=poetry_root_dir,
+    project = (
+        PoetryProject(poetry_path, tmp_path / "vulnerability")
+        .create()
+        .set_minimum_python_version(sys.version_info)
+        .add_package(
+            f"{sample_vulnerability.package_name}=="
+            f"{sample_vulnerability.version}"
+        )
+        .add_to_toml(
+            """
+            [tool.poetry.requires-plugins]
+            poetry-plugin-export = ">=1.8"
+            """
+        )
+        .install()
     )
-
-    poetry_export = cleandoc(
-        """
-        [tool.poetry.requires-plugins]
-        poetry-plugin-export = ">=1.8"
-        """
-    )
-    with (poetry_root_dir / "pyproject.toml").open("a") as f:
-        f.write(poetry_export)
-
-    aux_subprocess(poetry_path, "install", cwd=poetry_root_dir)
-    return poetry_root_dir
+    return project.dir
 
 
 def without_vuln_descriptions(dep: PipAuditEntry):
