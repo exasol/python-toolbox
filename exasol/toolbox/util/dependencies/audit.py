@@ -136,10 +136,11 @@ class Vulnerability(BaseModel):
         Create a subsection to be included in the Summary section of a versioned changelog.
         """
         indent = " " * 12
-        references = f"\n{indent}".join(f"* {link}" for link in sorted(self.reference_links))
+        references = f"\n{indent}".join(
+            f"* {link}" for link in sorted(self.reference_links)
+        )
         description = self.description.replace("\n", f"\n{indent}")
-        return cleandoc(
-            f"""
+        return cleandoc(f"""
             ### {self.vulnerability_id} in {self.package.coordinates}
 
             {description}
@@ -147,8 +148,7 @@ class Vulnerability(BaseModel):
             #### References
 
             {references}
-            """
-        )
+            """)
 
 
 def audit_poetry_files(working_directory: Path) -> str:
@@ -228,7 +228,7 @@ class Vulnerabilities(BaseModel):
         return Vulnerabilities(vulnerabilities=vulnerabilities)
 
     @property
-    def security_issue_dict(self) -> PipAuditEntry:
+    def security_issue_dict(self) -> list[PipAuditEntry]:
         return [
             vulnerability.security_issue_entry for vulnerability in self.vulnerabilities
         ]

@@ -85,15 +85,12 @@ def create_poetry_project(tmp_path, sample_vulnerability, poetry_path):
         .create()
         .set_minimum_python_version(sys.version_info)
         .add_package(
-            f"{sample_vulnerability.package_name}=="
-            f"{sample_vulnerability.version}"
+            f"{sample_vulnerability.package_name}==" f"{sample_vulnerability.version}"
         )
-        .add_to_toml(
-            """
+        .add_to_toml("""
             [tool.poetry.requires-plugins]
             poetry-plugin-export = ">=1.8"
-            """
-        )
+            """)
         .install()
     )
     return project.dir
@@ -106,10 +103,7 @@ def without_vuln_descriptions(dep: PipAuditEntry):
     def without_descriptions(vulnerabilities):
         return [strip_description(v) for v in vulnerabilities]
 
-    return {
-        k: (without_descriptions(v) if k == "vulns" else v)
-        for k, v in dep.items()
-    }
+    return {k: (without_descriptions(v) if k == "vulns" else v) for k, v in dep.items()}
 
 
 def find_dependency(dependencies: list[PipAuditEntry], name: str) -> PipAuditEntry:
