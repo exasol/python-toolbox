@@ -56,6 +56,7 @@ class PoetryProject:
     def use_python_version(self, version: sys.version_info) -> PoetryProject:
         content = self.toml.read_text()
         python_version = f"{version.major}.{version.minor}"
+        python_version = "3.10"
         changed = re.sub(
             r'^requires-python = ".*"$',
             f'requires-python = ">={python_version}"',
@@ -63,9 +64,9 @@ class PoetryProject:
             flags=re.MULTILINE,
         )
         self.toml.write_text(changed)
-        aux_subprocess(
-            self.poetry, "env", "use", f"python{python_version}", cwd=self.dir
-        )
+        # aux_subprocess(
+        #     self.poetry, "env", "use", f"python{python_version}", cwd=self.dir
+        # )
         return self
 
     def add_package(self, spec: str) -> PoetryProject:
