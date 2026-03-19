@@ -8,7 +8,10 @@ from exasol.toolbox.tools.security import (
     Issue,
     _issues_as_json_str,
 )
-from exasol.toolbox.util.dependencies.audit import Vulnerability
+from exasol.toolbox.util.dependencies.audit import (
+    PipAuditEntry,
+    Vulnerability,
+)
 
 
 class SampleVulnerability:
@@ -24,11 +27,11 @@ class SampleVulnerability:
     )
 
     @property
-    def pip_audit_vuln_entry(self) -> dict[str, str | list[str]]:
+    def pip_audit_vuln_entry(self) -> PipAuditEntry:
         return {
-            "id": self.vulnerability_id,
+            "id": self.cve_id,
             "fix_versions": [self.fix_version],
-            "aliases": [self.cve_id],
+            "aliases": [self.vulnerability_id],
             "description": self.description,
         }
 
@@ -59,7 +62,7 @@ class SampleVulnerability:
         return json.dumps([self.security_issue_entry], indent=2) + "\n"
 
     @property
-    def security_issue_entry(self) -> dict[str, str | list[str] | tuple[str, ...]]:
+    def security_issue_entry(self) -> PipAuditEntry:
         return {
             "name": self.package_name,
             "version": self.version,
