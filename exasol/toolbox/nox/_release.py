@@ -133,9 +133,7 @@ def prepare_release(session: Session) -> None:
     _ = _update_project_version(session, new_version)
 
     changed_files = (
-        _get_changelogs(version=new_version)
-        .prepare_release()
-        .get_changed_files()
+        _get_changelogs(version=new_version).prepare_release().get_changed_files()
     )
 
     pm = NoxTasks.plugin_manager(PROJECT_CONFIG)
@@ -168,6 +166,7 @@ def prepare_release(session: Session) -> None:
             "--body",
             '""',
         )
+
 
 @nox.session(name="release:update", python=False)
 def release_update(session: Session) -> None:

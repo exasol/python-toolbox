@@ -157,15 +157,11 @@ class Changelogs:
         Update the updated dependencies in the latest versioned changelog.
         """
 
+        content = self.versioned_changelog_md.read_text()
+        flags = re.DOTALL | re.MULTILINE
+        stripped = re.sub(r"^{DEPENDENCY_UPDATES}.*", "", content, flags=flags)
         dependency_changes = self._report_dependency_changes()
-        old_content = self.versioned_changelog_md.read_text()
-        new_content = re.sub(
-            r"^{DEPENDENCY_UPDATES}.*",
-            dependency_changes + "\n",
-            old_content,
-            flags=re.DOTALL | re.MULTILINE
-        )
-        self.versioned_changelog_md.write_text(new_content)
+        self.versioned_changelog_md.write_text(f"{stripped}\n{dependency_changes}")
         return self
 
     def prepare_release(self) -> Changelogs:
