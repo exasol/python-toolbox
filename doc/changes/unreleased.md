@@ -2,6 +2,10 @@
 
 ## Summary
 
+## Features
+
+* #740: Added nox session `release:update`
+
 ## Security Issues
 
 * #748: Updated dependency to `black`

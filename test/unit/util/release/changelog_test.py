@@ -141,8 +141,8 @@ class TestChangelogs:
         assert actual == expected
 
     @staticmethod
-    def test_describe_dependency_changes(changelogs, mock_dependencies):
-        result = changelogs._describe_dependency_changes()
+    def test_dependency_changes(changelogs, mock_dependencies):
+        result = changelogs._dependency_changes()
         assert result == (
             "\n"
             "### `main`\n\n"
@@ -153,10 +153,10 @@ class TestChangelogs:
         )
 
     @staticmethod
-    def test_describe_dependency_changes_without_latest_version(
+    def test_dependency_changes_without_latest_version(
         changelogs, mock_new_dependencies
     ):
-        result = changelogs._describe_dependency_changes()
+        result = changelogs._dependency_changes()
         assert result == (
             "\n"
             "### `main`\n\n"
@@ -183,16 +183,16 @@ class TestChangelogs:
         assert result == expected
 
     @staticmethod
-    def test_update_changelog_table_of_contents(changelogs, changes_md):
-        changelogs._update_changelog_table_of_contents()
+    def test_update_table_of_contents(changelogs, changes_md):
+        changelogs._update_table_of_contents()
 
         assert changelogs.changelog_md.read_text() == SampleContent.altered_changes
 
     @staticmethod
-    def test_update_changelogs_for_release(
+    def test_prepare_release(
         changelogs, mock_dependencies, unreleased_md, changes_md
     ):
-        changelogs.update_changelogs_for_release()
+        changelogs.prepare_release()
 
         # changes.md
         assert changelogs.changelog_md.read_text() == SampleContent.altered_changes
@@ -229,10 +229,10 @@ class TestChangelogs:
         )
 
     @staticmethod
-    def test_update_changelogs_for_release_with_no_dependencies(
+    def test_prepare_release_with_no_dependencies(
         changelogs, mock_no_dependencies, unreleased_md, changes_md
     ):
-        changelogs.update_changelogs_for_release()
+        changelogs.prepare_release()
 
         # changes.md
         assert changelogs.changelog_md.read_text() == SampleContent.altered_changes
