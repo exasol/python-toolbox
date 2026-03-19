@@ -34,8 +34,8 @@ class TestVulnerability:
         result = sample_vulnerability.vulnerability
         assert result == Vulnerability(
             package=sample_vulnerability.vulnerability.package,
-            id=sample_vulnerability.vulnerability_id,
-            aliases=[sample_vulnerability.cve_id],
+            id=sample_vulnerability.cve_id,
+            aliases=[sample_vulnerability.vulnerability_id],
             fix_versions=[sample_vulnerability.fix_version],
             description=sample_vulnerability.description,
         )
@@ -113,7 +113,7 @@ class TestVulnerability:
             `|attr` filter allows an attacker that controls the content of a template
             to execute arbitrary Python code.
 
-            #### References:
+            #### References
 
             * https://github.com/advisories/GHSA-cpwx-vrp4-4pq7
             * https://nvd.nist.gov/vuln/detail/CVE-2025-27516
