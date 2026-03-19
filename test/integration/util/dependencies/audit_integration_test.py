@@ -55,7 +55,7 @@ class PoetryProject:
     def set_minimum_python_version(self, version: str) -> PoetryProject:
         content = self.toml.read_text()
         changed = re.sub(
-            r'^requires-python = ".*"$',
+            r'^requires-python\s*=\s*".*"$',
             f'requires-python = ">={version}"',
             content,
             flags=re.MULTILINE,
