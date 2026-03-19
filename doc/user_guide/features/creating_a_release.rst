@@ -1,7 +1,7 @@
-Creating a release
+Creating a Release
 ==================
 
-Preparing a release
+Preparing a Release
 +++++++++++++++++++
 
 #. Prepare the project for a new release
@@ -53,18 +53,18 @@ Preparing a release
     Your ``PROJECT_CONFIG`` needs to have the flag
     ``create_major_version_tags=True``.
 
-Updating Depedencies After Having Prepared the Release
-++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Updating Dependencies After Having Prepared the Release
++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 If you already ran nox session ``release:prepare`` but afterwards still some
 dependencies needed to be updated you can update the dependency changes in the
 changelog by running nox session ``release:update``.
 
 
-What to do if the release failed?
+What to do if the Release Failed?
 +++++++++++++++++++++++++++++++++
 
-The release failed during pre-release checks
+The Release Failed During Pre-Release Checks
 --------------------------------------------
 
 #. Delete the local tag
@@ -83,7 +83,7 @@ The release failed during pre-release checks
 #. Start the release process from the beginning
 
 
-One of the release steps failed (Partial Release)
+One of the Release Steps Failed (Partial Release)
 -------------------------------------------------
 #. Check the GitHub action/workflow to see which steps failed
 #. Finish or redo the failed release steps manually
