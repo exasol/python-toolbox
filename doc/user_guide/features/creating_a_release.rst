@@ -56,9 +56,9 @@ Preparing a Release
 Updating Dependencies After Having Prepared the Release
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-If you already ran nox session ``release:prepare`` but afterwards still some
-dependencies needed to be updated you can update the dependency changes in the
-changelog by running nox session ``release:update``.
+If you need to update some more dependencies after running the nox session
+``release:prepare`` you can update them in the changelog by running the nox
+session ``release:update``.
 
 
 What to do if the Release Failed?
