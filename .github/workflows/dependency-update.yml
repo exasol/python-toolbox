@@ -1,0 +1,60 @@
+name: Dependency Update
+
+on:
+  schedule:
+    # Every Monday at 03:00 UTC
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+jobs:
+  dependency-update:
+    name: Dependency Update
+    runs-on: "ubuntu-24.04"
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Check out Repository
+        id: check-out-repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python & Poetry Environment
+        id: set-up-python-and-poetry-environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@v6
+        with:
+          python-version: "3.10"
+          poetry-version: "2.3.0"
+
+      - name: Audit Dependencies
+        id: audit-dependencies
+        run: poetry run -- nox -s dependency:audit
+
+      - name: Update Dependencies
+        id: update-dependencies
+        run: poetry update
+
+      - name: Check for poetry.lock Changes
+        id: check-for-poetry-lock-changes
+        run: |
+          if git diff --quiet -- poetry.lock; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Pull Request
+        id: create-pull-request
+        if: steps.check-for-poetry-lock-changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "Update poetry.lock"
+          branch: dependency-update/poetry-lock
+          delete-branch: true
+          title: "Update poetry.lock"
+          body: |-
+            Automated dependency update for `poetry.lock`.
+
+            This PR was created by the dependency update workflow after running:
+            - `poetry run -- nox -s dependency:audit`
+            - `poetry update`
