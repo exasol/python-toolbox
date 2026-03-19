@@ -90,7 +90,7 @@ One of the Release Steps Failed (Partial Release)
 
 .. note:: Example
 
-    **Scenario**: Publishing of the release on GitHub was successfully but
+    **Scenario**: Publishing of the release on GitHub was successful but
     during the PyPi release, the upload step was interrupted.
 
     **Solution**: Manually push the package to PyPi
