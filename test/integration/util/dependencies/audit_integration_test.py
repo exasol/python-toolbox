@@ -53,6 +53,15 @@ class PoetryProject:
         return self
 
     def set_minimum_python_version(self, version: str) -> PoetryProject:
+        """
+        Set the minimum python version in pyproject.toml.  However, the
+        sample poetry project will still use the system's default python
+        version.
+
+        Calling "poetry env use python..." for other python versions fails,
+        because aux_subprocess() uses an empty environment hiding the python
+        version of the overall venv used by pytest.
+        """
         content = self.toml.read_text()
         changed = re.sub(
             r'^requires-python\s*=\s*".*"$',
