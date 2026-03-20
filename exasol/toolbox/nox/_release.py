@@ -33,7 +33,7 @@ def _create_parser() -> argparse.ArgumentParser:
         "-t",
         "--type",
         type=ReleaseTypes,
-        help="specifies which type of upgrade is to be performed",
+        help="Specifies which part of the version number to increase.",
         required=True,
         default=argparse.SUPPRESS,
     )
@@ -41,19 +41,19 @@ def _create_parser() -> argparse.ArgumentParser:
         "--no-add",
         default=False,
         action="store_true",
-        help="Neither add nor commit the changes",
+        help="Neither add nor commit the changes.",
     )
     parser.add_argument(
         "--no-branch",
         default=False,
         action="store_true",
-        help="Do not create a branch to commit the changes on",
+        help="Do not create a branch to commit the changes on.",
     )
     parser.add_argument(
         "--no-pr",
         default=False,
         action="store_true",
-        help="Do not create a pull request for the changes",
+        help="Do not create a pull request for the changes.",
     )
     return parser
 
@@ -62,6 +62,14 @@ def _update_project_version(session: Session, version: Version) -> Version:
     session.run("poetry", "version", f"{version}")
     _version(session, Mode.Fix)
     return version
+
+
+def _get_changelogs(version: Version) -> Changelogs:
+    return Changelogs(
+        changes_path=PROJECT_CONFIG.documentation_path / "changes",
+        root_path=PROJECT_CONFIG.root_path,
+        version=version,
+    )
 
 
 def _add_files_to_index(session: Session, files: list[Path]) -> None:
@@ -124,13 +132,9 @@ def prepare_release(session: Session) -> None:
 
     _ = _update_project_version(session, new_version)
 
-    changelogs = Changelogs(
-        changes_path=PROJECT_CONFIG.documentation_path / "changes",
-        root_path=PROJECT_CONFIG.root_path,
-        version=new_version,
+    changed_files = (
+        _get_changelogs(version=new_version).prepare_release().get_changed_files()
     )
-    changelogs.update_changelogs_for_release()
-    changed_files = changelogs.get_changed_files()
 
     pm = NoxTasks.plugin_manager(PROJECT_CONFIG)
     pm.hook.prepare_release_update_version(
@@ -164,7 +168,14 @@ def prepare_release(session: Session) -> None:
         )
 
 
+@nox.session(name="release:update", python=False)
+def release_update(session: Session) -> None:
+    """Update the changelog of the release already prepared."""
+    version = Version.from_poetry()
+    _get_changelogs(version).update_latest()
+
+
 @nox.session(name="release:trigger", python=False)
 def trigger_release(session: Session) -> None:
-    """trigger an automatic project release"""
+    """Trigger an automatic project release."""
     print(f"new version: {_trigger_release(PROJECT_CONFIG)}")

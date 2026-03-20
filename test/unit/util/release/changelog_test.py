@@ -1,9 +1,10 @@
 from datetime import datetime
 from inspect import cleandoc
-from unittest import mock
+from unittest.mock import Mock
 
 import pytest
 
+import exasol.toolbox.util.release.changelog as impl
 from exasol.toolbox.util.dependencies.shared_models import LatestTagNotFoundError
 from exasol.toolbox.util.release.changelog import (
     UNRELEASED_INITIAL_CONTENT,
@@ -57,6 +58,37 @@ class SampleContent:
         """)
 
 
+def expected_changes_file_content(with_dependencies: bool = False):
+    header = cleandoc(f"""
+        # 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
+
+        ## Summary
+
+        Summary of changes.
+
+        ## Added
+        * Added Awesome feature
+
+        ## Changed
+        * Some behaviour
+
+        ## Fixed
+        * Fixed nasty bug
+        """)
+    dependencies = cleandoc(f"""
+        ## Dependency Updates
+
+        ### `main`
+
+        * Updated dependency `package1:0.0.1` to `0.1.0`
+
+        ### `dev`
+
+        * Added dependency `package2:0.2.0`
+        """)
+    return f"{header}\n\n{dependencies}\n" if with_dependencies else f"{header}\n"
+
+
 @pytest.fixture(scope="function")
 def changes_md(changelogs):
     changelogs.changelog_md.write_text(SampleContent.changes)
@@ -69,36 +101,28 @@ def unreleased_md(changelogs):
     )
 
 
-@pytest.fixture(scope="function")
-def mock_dependencies(dependencies, previous_dependencies):
-    with mock.patch.multiple(
-        "exasol.toolbox.util.release.changelog",
-        get_dependencies_from_latest_tag=lambda root_path: previous_dependencies,
-        get_dependencies=lambda working_directory: dependencies,
+def mock_changelog(monkeypatch, old_dependencies, new_dependencies):
+    for func, value in (
+        ("get_dependencies_from_latest_tag", old_dependencies),
+        ("get_dependencies", new_dependencies),
     ):
-        yield
-
-
-@pytest.fixture(scope="function")
-def mock_new_dependencies(dependencies):
-    mock_latest_tag_not_found_error = mock.Mock(side_effect=LatestTagNotFoundError)
-
-    with mock.patch.multiple(
-        "exasol.toolbox.util.release.changelog",
-        get_dependencies_from_latest_tag=mock_latest_tag_not_found_error,
-        get_dependencies=lambda working_directory: dependencies,
-    ):
-        yield
+        mock = value if isinstance(value, Mock) else Mock(return_value=value)
+        monkeypatch.setattr(impl, func, mock)
 
 
 @pytest.fixture(scope="function")
-def mock_no_dependencies():
-    with mock.patch.multiple(
-        "exasol.toolbox.util.release.changelog",
-        get_dependencies_from_latest_tag=lambda root_path: {},
-        get_dependencies=lambda working_directory: {},
-    ):
-        yield
+def mock_dependencies(monkeypatch, previous_dependencies, dependencies):
+    mock_changelog(monkeypatch, previous_dependencies, dependencies)
+
+
+@pytest.fixture(scope="function")
+def mock_new_dependencies(monkeypatch, dependencies):
+    mock_changelog(monkeypatch, Mock(side_effect=LatestTagNotFoundError), dependencies)
+
+
+@pytest.fixture(scope="function")
+def mock_no_dependencies(monkeypatch):
+    mock_changelog(monkeypatch, {}, {})
 
 
 @pytest.fixture(scope="function")
@@ -141,8 +165,8 @@ class TestChangelogs:
         assert actual == expected
 
     @staticmethod
-    def test_describe_dependency_changes(changelogs, mock_dependencies):
-        result = changelogs._describe_dependency_changes()
+    def test_dependency_changes(changelogs, mock_dependencies):
+        result = changelogs._dependency_changes()
         assert result == (
             "\n"
             "### `main`\n\n"
@@ -153,10 +177,10 @@ class TestChangelogs:
         )
 
     @staticmethod
-    def test_describe_dependency_changes_without_latest_version(
+    def test_dependency_changes_without_latest_version(
         changelogs, mock_new_dependencies
     ):
-        result = changelogs._describe_dependency_changes()
+        result = changelogs._dependency_changes()
         assert result == (
             "\n"
             "### `main`\n\n"
@@ -183,76 +207,42 @@ class TestChangelogs:
         assert result == expected
 
     @staticmethod
-    def test_update_changelog_table_of_contents(changelogs, changes_md):
-        changelogs._update_changelog_table_of_contents()
+    def test_update_table_of_contents(changelogs, changes_md):
+        changelogs._update_table_of_contents()
 
         assert changelogs.changelog_md.read_text() == SampleContent.altered_changes
 
     @staticmethod
-    def test_update_changelogs_for_release(
-        changelogs, mock_dependencies, unreleased_md, changes_md
-    ):
-        changelogs.update_changelogs_for_release()
-
-        # changes.md
+    def test_prepare_release(changelogs, mock_dependencies, unreleased_md, changes_md):
+        changelogs.prepare_release()
         assert changelogs.changelog_md.read_text() == SampleContent.altered_changes
-        # unreleased.md
         assert changelogs.unreleased_md.read_text() == UNRELEASED_INITIAL_CONTENT
-        # versioned.md
-        saved_text = changelogs.versioned_changelog_md.read_text()
-        assert (
-            saved_text == cleandoc(f"""# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
-
-            ## Summary
-
-            Summary of changes.
-
-            ## Added
-            * Added Awesome feature
-
-            ## Changed
-            * Some behaviour
-
-            ## Fixed
-            * Fixed nasty bug
-
-            ## Dependency Updates
-
-            ### `main`
-
-            * Updated dependency `package1:0.0.1` to `0.1.0`
-
-            ### `dev`
-
-            * Added dependency `package2:0.2.0`
-            """) + "\n"
-        )
+        versioned = changelogs.versioned_changelog_md.read_text()
+        assert versioned == expected_changes_file_content(with_dependencies=True)
 
     @staticmethod
-    def test_update_changelogs_for_release_with_no_dependencies(
+    def test_update_latest(
+        monkeypatch,
+        mock_no_dependencies,
+        previous_dependencies,
+        dependencies,
+        changelogs,
+        unreleased_md,
+        changes_md,
+    ):
+        changelogs.prepare_release()
+        mock_changelog(monkeypatch, previous_dependencies, dependencies)
+        changelogs.update_latest()
+        versioned = changelogs.versioned_changelog_md.read_text()
+        assert versioned == expected_changes_file_content(with_dependencies=True)
+
+    @staticmethod
+    def test_prepare_release_with_no_dependencies(
         changelogs, mock_no_dependencies, unreleased_md, changes_md
     ):
-        changelogs.update_changelogs_for_release()
+        changelogs.prepare_release()
 
-        # changes.md
         assert changelogs.changelog_md.read_text() == SampleContent.altered_changes
-        # unreleased.md
         assert changelogs.unreleased_md.read_text() == UNRELEASED_INITIAL_CONTENT
-        # versioned.md
-        saved_text = changelogs.versioned_changelog_md.read_text()
-        assert saved_text == cleandoc(f"""
-                # 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}
-
-                ## Summary
-
-                Summary of changes.
-
-                ## Added
-                * Added Awesome feature
-
-                ## Changed
-                * Some behaviour
-
-                ## Fixed
-                * Fixed nasty bug
-                """) + "\n"
+        versioned = changelogs.versioned_changelog_md.read_text()
+        assert versioned == expected_changes_file_content()

@@ -6,13 +6,13 @@ Features
 .. toctree::
    :maxdepth: 2
 
-   metrics/collecting_metrics
-   creating_a_release
-   documentation/index
-   git_hooks/index
-   github_workflows/index
    formatting_code/index
+   github_workflows/index
+   documentation/index
+   creating_a_release
    managing_dependencies
+   git_hooks/index
+   metrics/collecting_metrics
 
 Uniform Project Layout
 ----------------------

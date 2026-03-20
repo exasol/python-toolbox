@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from collections import OrderedDict
 from datetime import datetime
 from inspect import cleandoc
@@ -18,6 +19,8 @@ UNRELEASED_INITIAL_CONTENT = cleandoc("""
 
     ## Summary
     """) + "\n"
+
+DEPENDENCY_UPDATES = "## Dependency Updates\n"
 
 
 class Changelogs:
@@ -41,6 +44,7 @@ class Changelogs:
         """
         Write a new unreleased changelog file.
         """
+
         self.unreleased_md.write_text(UNRELEASED_INITIAL_CONTENT)
 
     def _create_versioned_changelog(self, unreleased_content: str) -> None:
@@ -50,30 +54,30 @@ class Changelogs:
         Args:
             unreleased_content: the content of the (not yet versioned) changes
         """
+
         header = f"# {self.version} - {datetime.today().strftime('%Y-%m-%d')}"
-
-        dependency_content = ""
-        if dependency_changes := self._describe_dependency_changes():
-            dependency_content = f"## Dependency Updates\n{dependency_changes}"
-
-        template = cleandoc(f"{header}\n\n{unreleased_content}\n{dependency_content}")
+        dependency_changes = self._report_dependency_changes()
+        template = cleandoc(f"{header}\n\n{unreleased_content}\n{dependency_changes}")
         self.versioned_changelog_md.write_text(template + "\n")
 
     def _extract_unreleased_notes(self) -> str:
         """
         Extract (not yet versioned) changes from `unreleased.md`.
         """
+
         with self.unreleased_md.open(mode="r", encoding="utf-8") as f:
             # skip header when reading in file, as contains # Unreleased
             lines = f.readlines()[1:]
         unreleased_content = cleandoc("".join(lines))
         return unreleased_content + "\n"
 
-    def _describe_dependency_changes(self) -> str:
+    def _dependency_changes(self) -> str:
         """
-        Describe the dependency changes between the latest tag and the current version
-        for use in the versioned changes file.
+        Return the dependency changes between the latest tag and the
+        current version for use in the versioned changes file in markdown
+        format. If there are no changes, return an empty string.
         """
+
         try:
             previous_dependencies_in_groups = get_dependencies_from_latest_tag(
                 root_path=self.root_path
@@ -112,6 +116,7 @@ class Changelogs:
             - `main` group should always be first
             - remaining groups are sorted alphabetically
         """
+
         main = "main"
         if main not in groups:
             # sorted converts set to list
@@ -120,10 +125,10 @@ class Changelogs:
         # sorted converts set to list
         return [main] + sorted(remaining_groups)
 
-    def _update_changelog_table_of_contents(self) -> None:
+    def _update_table_of_contents(self) -> None:
         """
-        Read in existing `changelog.md` and append to appropriate sections
-        before writing out to again.
+        Read the existing `changelog.md`, append the latest changes file
+        to the relevant sections, and write the updated changelog.md again.
         """
         updated_content = []
         with self.changelog_md.open(mode="r", encoding="utf-8") as f:
@@ -142,7 +147,24 @@ class Changelogs:
     def get_changed_files(self) -> list[Path]:
         return [self.unreleased_md, self.versioned_changelog_md, self.changelog_md]
 
-    def update_changelogs_for_release(self) -> None:
+    def _report_dependency_changes(self) -> str:
+        if changes := self._dependency_changes():
+            return f"{DEPENDENCY_UPDATES}{changes}"
+        return ""
+
+    def update_latest(self) -> Changelogs:
+        """
+        Update the updated dependencies in the latest versioned changelog.
+        """
+
+        content = self.versioned_changelog_md.read_text()
+        flags = re.DOTALL | re.MULTILINE
+        stripped = re.sub(r"^{DEPENDENCY_UPDATES}.*", "", content, flags=flags)
+        dependency_changes = self._report_dependency_changes()
+        self.versioned_changelog_md.write_text(f"{stripped}\n{dependency_changes}")
+        return self
+
+    def prepare_release(self) -> Changelogs:
         """
         Rotates the changelogs as is needed for a release.
 
@@ -157,4 +179,5 @@ class Changelogs:
 
         # update other changelogs now that versioned changelog exists
         self._create_new_unreleased()
-        self._update_changelog_table_of_contents()
+        self._update_table_of_contents()
+        return self
