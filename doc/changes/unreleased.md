@@ -18,4 +18,4 @@ To ensure usage of secure packages, it is up to the user to similarly relock the
 
 ## Security Issues
 
-* #759: Fixed vulnerabilities by re-locking transitive dependencies
+* #759: Fixed vulnerabilities by re-locking transitive dependencies & updated `actions/deploy-pages` from v4 to v5
