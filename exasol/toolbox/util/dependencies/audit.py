@@ -177,7 +177,7 @@ def audit_poetry_files(working_directory: Path) -> str:
         tmpdir = Path(path)
         (tmpdir / requirements_txt).write_text(output.stdout)
 
-        command = ["pip-audit", "-r", requirements_txt, "-f", "json"]
+        command = ["pip-audit", "--disable-pip", "-r", requirements_txt, "-f", "json"]
         output = subprocess.run(
             command,
             capture_output=True,

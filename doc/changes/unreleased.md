@@ -15,6 +15,7 @@ To ensure usage of secure packages, it is up to the user to similarly relock the
 ## Features
 
 * #740: Added nox session `release:update`
+* #402: Created nox task to detect resolved GitHub security issues
 
 ## Security Issues
 
