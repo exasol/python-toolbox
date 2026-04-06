@@ -17,7 +17,7 @@ from exasol.toolbox.util.dependencies.licenses import (
     get_licenses,
 )
 from exasol.toolbox.util.dependencies.poetry_dependencies import get_dependencies
-from exasol.toolbox.util.dependencies.track_vulnerabilities import SecurityAudit
+from exasol.toolbox.util.dependencies.track_vulnerabilities import DependenciesAudit
 from noxconfig import PROJECT_CONFIG
 
 
@@ -32,7 +32,8 @@ def dependency_licenses(session: Session) -> None:
     print(license_markdown.to_markdown())
 
 
-@nox.session(name="dependency:audit", python=False)
+# Probably this session is obsolete
+@nox.session(name="dependency:audit-old", python=False)
 def audit(session: Session) -> None:
     """Report known vulnerabilities."""
 
@@ -45,11 +46,11 @@ def audit(session: Session) -> None:
     print(json.dumps(security_issue_dict, indent=2))
 
 
-@nox.session(name="security:audit", python=False)
-def security_audit(session: Session) -> None:
+@nox.session(name="vulnerabilities:resolved", python=False)
+def report_resolved_vulnerabilities(session: Session) -> None:
     """Report resolved vulnerabilities in dependencies."""
     path = PROJECT_CONFIG.root_path
-    audit = SecurityAudit(
+    audit = DependenciesAudit(
         previous_vulnerabilities=get_vulnerabilities_from_latest_tag(path),
         current_vulnerabilities=get_vulnerabilities(path),
     )

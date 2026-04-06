@@ -1,6 +1,6 @@
 from exasol.toolbox.util.dependencies.audit import Vulnerability
 from exasol.toolbox.util.dependencies.track_vulnerabilities import (
-    SecurityAudit,
+    DependenciesAudit,
     VulnerabilityMatcher,
 )
 
@@ -37,15 +37,15 @@ class TestVulnerabilityMatcher:
         assert matcher.is_resolved(vuln)
 
 
-class TestSecurityAudit:
+class TestDependenciesAudit:
     def test_no_vulnerabilities_for_previous_and_current(self):
-        audit = SecurityAudit(
+        audit = DependenciesAudit(
             previous_vulnerabilities=[], current_vulnerabilities=[]
         )
         assert audit.resolved_vulnerabilities == []
 
     def test_vulnerability_in_current_but_not_present(self, sample_vulnerability):
-        audit = SecurityAudit(
+        audit = DependenciesAudit(
             previous_vulnerabilities=[],
             current_vulnerabilities=[sample_vulnerability.vulnerability],
         )
@@ -53,7 +53,7 @@ class TestSecurityAudit:
         assert audit.resolved_vulnerabilities == []
 
     def test_resolved_vulnerabilities(self, sample_vulnerability):
-        audit = SecurityAudit(
+        audit = DependenciesAudit(
             previous_vulnerabilities=[sample_vulnerability.vulnerability],
             current_vulnerabilities=[],
         )

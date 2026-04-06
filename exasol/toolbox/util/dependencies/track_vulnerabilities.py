@@ -40,7 +40,7 @@ class VulnerabilityMatcher:
         return not refs.intersection(current)
 
 
-class SecurityAudit(BaseModel):
+class DependenciesAudit(BaseModel):
     """
     Compare previous vulnerabilities to current ones and create a report
     about the resolved vulnerabilities.
