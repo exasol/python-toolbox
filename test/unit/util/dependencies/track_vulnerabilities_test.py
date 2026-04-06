@@ -42,7 +42,7 @@ class TestSecurityAudit:
         audit = SecurityAudit(
             previous_vulnerabilities=[], current_vulnerabilities=[]
         )
-        assert audit.resolved == []
+        assert audit.resolved_vulnerabilities == []
 
     def test_vulnerability_in_current_but_not_present(self, sample_vulnerability):
         audit = SecurityAudit(
@@ -50,11 +50,11 @@ class TestSecurityAudit:
             current_vulnerabilities=[sample_vulnerability.vulnerability],
         )
         # only care about "resolved" vulnerabilities, not new ones
-        assert audit.resolved == []
+        assert audit.resolved_vulnerabilities == []
 
     def test_resolved_vulnerabilities(self, sample_vulnerability):
         audit = SecurityAudit(
             previous_vulnerabilities=[sample_vulnerability.vulnerability],
             current_vulnerabilities=[],
         )
-        assert audit.resolved == [sample_vulnerability.vulnerability]
+        assert audit.resolved_vulnerabilities == [sample_vulnerability.vulnerability]

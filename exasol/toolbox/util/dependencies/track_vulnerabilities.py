@@ -52,7 +52,7 @@ class SecurityAudit(BaseModel):
     current_vulnerabilities: list[Vulnerability]
 
     @property
-    def resolved(self) -> list[Vulnerability]:
+    def resolved_vulnerabilities(self) -> list[Vulnerability]:
         """
         Return the list of resolved vulnerabilities.
         """
@@ -63,7 +63,7 @@ class SecurityAudit(BaseModel):
         ]
 
     def report_resolved_vulnerabilities(self) -> str:
-        if not (resolved := self.resolved):
+        if not (resolved := self.resolved_vulnerabilities):
             return ""
         header = cleandoc(
             """
