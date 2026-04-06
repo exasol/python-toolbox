@@ -239,6 +239,6 @@ def get_vulnerabilities(working_directory: Path) -> list[Vulnerability]:
     ).vulnerabilities
 
 
-def get_vulnerabilities_from_latest_tag(root_path: Path):
+def get_vulnerabilities_from_latest_tag(root_path: Path) -> list[Vulnerability]:
     with poetry_files_from_latest_tag(root_path=root_path) as tmp_dir:
         return get_vulnerabilities(working_directory=tmp_dir)
