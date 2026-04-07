@@ -16,39 +16,46 @@ class Scenario:
         return Section("# title", self.body)
 
 
-WITHOUT_MATCHING_PREFIX = pytest.param(
-    Scenario("body", expected_suffix="body"),
-    id="without_matching_prefix",
+NO_MATCHING_PREFIX = Scenario("body", expected_suffix="body")
+
+MATCHING_PREFIX_BUT_NO_LIST = Scenario(
+    body="""
+    Prefix first line
+
+    Another line
+    """,
+    expected_suffix="",
 )
 
-MATCHING_PREFIX_BUT_WITHOUT_LIST = pytest.param(
-    Scenario(
-        body="""
-        Prefix first line
+MATCHING_PREFIX_AND_LIST = Scenario(
+    body="""
+    Prefix first line
 
-        Another line
-        """,
-        expected_suffix="",
-    ),
-    id="matching_prefix_but_without_list",
+    Another line
+
+    * item 1
+    * item 2
+    """,
+    expected_suffix="""
+    * item 1
+    * item 2
+    """,
 )
 
-MATCHING_PREFIX_AND_LIST = pytest.param(
-    Scenario(
-        """
-        Prefix first line
 
-        Another line
+LIST_WITH_DASHES = Scenario(
+    body="""
+    Prefix first line
 
-        * item 1
-        * item 2
-        """,
-        expected_suffix="""
-        * item 1
-        * item 2
-        """,
-    ),
-    id="matching_prefix_and_list",
+    Another line
+
+    - item 1
+    - item 2
+    """,
+    expected_suffix="""
+    - item 1
+    - item 2
+    """,
 )
 
 
@@ -64,12 +71,14 @@ SAMPLE_PREFIX = cleandoc("""
 @pytest.mark.parametrize(
     "scenario",
     [
-        WITHOUT_MATCHING_PREFIX,
-        MATCHING_PREFIX_BUT_WITHOUT_LIST,
-        MATCHING_PREFIX_AND_LIST,
+        pytest.param(NO_MATCHING_PREFIX, id="no_matching_prefix"),
+        pytest.param(MATCHING_PREFIX_BUT_NO_LIST, id="matching_prefix_but_no_list"),
+        pytest.param(MATCHING_PREFIX_AND_LIST, id="matching_prefix_and_list"),
+        pytest.param(LIST_WITH_DASHES, id="list_with_dashes"),
     ],
 )
 def test_replace_prefix(scenario):
     testee = scenario.create_testee()
     testee.replace_prefix(SAMPLE_PREFIX)
+    expected = f"{SAMPLE_PREFIX}{scenario.expected_suffix}"
     assert testee.body == f"{SAMPLE_PREFIX}{scenario.expected_suffix}"

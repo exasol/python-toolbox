@@ -59,8 +59,8 @@ class Section:
         flags = re.DOTALL | re.MULTILINE
         if not self.body.startswith(prefix.splitlines()[0]):
             self.body = f"{prefix}\n\n{self.body}" if self.body else prefix
-        elif re.search(r"^\*", self.body, flags=flags):
-            suffix = re.sub(r".*?^\*", "*", self.body, count=1, flags=flags)
+        elif re.search(r"^[*-] ", self.body, flags=flags):
+            suffix = re.sub(r".*?^([*-])", r"\1", self.body, count=1, flags=flags)
             self.body = f"{prefix}\n\n{suffix}"
         else:
             self.body = prefix
