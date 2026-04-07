@@ -22,6 +22,9 @@ UNRELEASED_INITIAL_CONTENT = cleandoc("""
 
 DEPENDENCY_UPDATES = "## Dependency Updates\n"
 
+TITLE = "Dependency Updates"
+HEADING = "## {TITLE}\n"
+
 
 class Changelogs:
     def __init__(self, changes_path: Path, root_path: Path, version: Version) -> None:
@@ -149,7 +152,7 @@ class Changelogs:
 
     def _report_dependency_changes(self) -> str:
         if changes := self._dependency_changes():
-            return f"{DEPENDENCY_UPDATES}{changes}"
+            return f"## {TITLE}\n{changes}"
         return ""
 
     def update_latest(self) -> Changelogs:
