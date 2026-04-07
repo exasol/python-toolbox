@@ -17,7 +17,9 @@ features, documentation, and refactorings.
 For the sake of simplicity, class ChangesFile maintains the sections as a
 sequence, ignoring their hierarchy.
 
-Each section may consist of a prefix and a suffix, either might be empty. The
+Each section is identified by its title which should be unique.
+
+A section may consist of a prefix and a suffix, either might be empty. The
 prefix are some introductory sentences, the suffix is the list of issues in
 this section.
 
@@ -53,8 +55,7 @@ class Section:
         Prepends the specified prefix to the body of the section.
 
         If the body starts with the first line of the specified prefix, then
-        replace the body's prefix. The body's prefix is all text before a
-        markdown list.
+        replace the body's prefix.
         """
         flags = re.DOTALL | re.MULTILINE
         if not self.body.startswith(prefix.splitlines()[0]):
