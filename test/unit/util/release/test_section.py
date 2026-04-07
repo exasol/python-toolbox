@@ -52,15 +52,13 @@ MATCHING_PREFIX_AND_LIST = pytest.param(
 )
 
 
-SAMPLE_PREFIX = cleandoc(
-    """
+SAMPLE_PREFIX = cleandoc("""
     Prefix first line
 
     | col 1 | col 2 |
     |-------|-------|
     | abc   | 123   |
-    """
-)
+    """)
 
 
 @pytest.mark.parametrize(

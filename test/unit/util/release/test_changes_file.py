@@ -90,12 +90,12 @@ def test_number_of_sections(scenario: Scenario):
 
 @pytest.mark.parametrize("scenario", [EMPTY, MINIMAL, SPECIAL_CHAR_SECTION, WITH_SUBSECTION])
 def test_get(scenario: Scenario):
-    assert all(scenario.testee.get(s) for s in scenario.expected_sections)
+    assert all(scenario.testee.get_section(s) for s in scenario.expected_sections)
 
 
 @pytest.mark.parametrize("scenario", [EMPTY, MINIMAL, WITH_SUBSECTION])
 def test_missing_section(scenario: Scenario):
-    assert scenario.testee.get("non existing") is None
+    assert scenario.testee.get_section("non existing") is None
 
 
 @pytest.mark.parametrize("scenario", [EMPTY, MINIMAL, WITH_SUBSECTION])
@@ -110,12 +110,11 @@ def sample_section():
 
 @pytest.mark.parametrize("scenario", [MINIMAL, WITH_SUBSECTION])
 def test_add_non_empty(scenario: Scenario, sample_section):
-    scenario.testee.add(sample_section)
+    scenario.testee.add_section(sample_section)
     assert scenario.testee.sections[1] == sample_section
 
 
 @pytest.mark.parametrize("scenario", [EMPTY])
 def test_add_empty(scenario: Scenario, sample_section):
-    scenario.testee.add(sample_section)
+    scenario.testee.add_section(sample_section)
     assert scenario.testee.sections[0] == sample_section
-

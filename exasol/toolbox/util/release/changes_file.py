@@ -1,3 +1,30 @@
+"""
+A project's Changelog is expected to list the changes coming with each of
+the project's releases. The Changelog contains a file changelog.md with the
+table of contents. and zero or more changes files. All files are in Markdown
+syntax.
+
+Each changes file is named changes_*.md and describes the changes for a
+specific release. The * in the file name is identical to the version number of
+the related release.
+
+Each changes file starts with a section describing the version number, date
+and name of the release and one or more subsections. The first subsection is a
+summary, each other subsection lists the issues (aka. tickets) of a particular
+category the are resolved by this release. Categories are security, bugfixes,
+features, documentation, and refactorings.
+
+For the sake of simplicity, class ChangesFile maintains the sections as a
+sequence, ignoring their hierarchy.
+
+Each section may consist of a prefix and a suffix, either might be empty. The
+prefix are some introductory sentences, the suffix is the list of issues in
+this section.
+
+Method Section.replace_prefix() adds such a prefix or replaces it, when the
+section already has one.
+"""
+
 from __future__ import annotations
 
 import re
@@ -6,7 +33,10 @@ from inspect import cleandoc
 
 
 class ParseError(Exception):
-    ...
+    """
+    Indicates inconsistencies when parsing a changelog from raw
+    text. E.g. a section with a body but no title.
+    """
 
 
 @dataclass
@@ -44,7 +74,7 @@ class ChangesFile:
 
     sections: list[Section]
 
-    def get(self, title: str) -> Section | None:
+    def get_section(self, title: str) -> Section | None:
         """
         Retrieve the section with the specified title.
         """
@@ -52,7 +82,7 @@ class ChangesFile:
         pattern = re.compile(f"#+ {re.escape(title)}$")
         return next((s for s in self.sections if pattern.match(s.title)), None)
 
-    def add(self, section: Section, pos: int = 1) -> None:
+    def add_section(self, section: Section, pos: int = 1) -> None:
         """
         Insert the specified section at the specified position.
         """
@@ -93,8 +123,8 @@ class ChangesFile:
 
 
 def sample():
-    changes = ChangesFile()
-    if section := changes.section(name):
+    changes = ChangesFile.parse(content)
+    if section := changes.get_section(title):
         section.replace_prefix(body)
     else:
-        changes.add_section(name, body)
+        changes.add_section(Section(title, body))
