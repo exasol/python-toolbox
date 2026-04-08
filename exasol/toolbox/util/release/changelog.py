@@ -12,6 +12,7 @@ from exasol.toolbox.util.dependencies.poetry_dependencies import (
 )
 from exasol.toolbox.util.dependencies.shared_models import LatestTagNotFoundError
 from exasol.toolbox.util.dependencies.track_changes import DependencyChanges
+from exasol.toolbox.util.release.markdown import Markdown
 from exasol.toolbox.util.version import Version
 
 UNRELEASED_INITIAL_CONTENT = cleandoc("""
@@ -23,7 +24,6 @@ UNRELEASED_INITIAL_CONTENT = cleandoc("""
 DEPENDENCY_UPDATES = "## Dependency Updates\n"
 
 TITLE = "Dependency Updates"
-HEADING = "## {TITLE}\n"
 
 
 class Changelogs:
@@ -50,7 +50,12 @@ class Changelogs:
 
         self.unreleased_md.write_text(UNRELEASED_INITIAL_CONTENT)
 
-    def _create_versioned_changelog(self, unreleased_content: str) -> None:
+    def _dependency_changes(self) -> Markdown | None:
+        if sections := list(self._dependency_changes()):
+            return Markdown(f"## {TITLE}", intro="", items="", sections)
+        return None
+
+    def _create_versioned_changes(self, unreleased_content: str) -> None:
         """
         Create a versioned changes file.
 
@@ -58,23 +63,38 @@ class Changelogs:
             unreleased_content: the content of the (not yet versioned) changes
         """
 
-        header = f"# {self.version} - {datetime.today().strftime('%Y-%m-%d')}"
-        dependency_changes = self._report_dependency_changes()
-        template = cleandoc(f"{header}\n\n{unreleased_content}\n{dependency_changes}")
-        self.versioned_changelog_md.write_text(template + "\n")
+        versioned = Markdown.parse(unreleased_content)
+        versioned.title = f"# {self.version} - {datetime.today().strftime('%Y-%m-%d')}"
+        if section := self._dependency_section():
+            versioned.add_child(section)
+        self.versioned_changelog_md.write_text(versioned.rendered)
 
-    def _extract_unreleased_notes(self) -> str:
-        """
-        Extract (not yet versioned) changes from `unreleased.md`.
-        """
+    # def _create_versioned_changelog(self, unreleased_content: str) -> None:
+    #     """
+    #     Create a versioned changes file.
+    #
+    #     Args:
+    #         unreleased_content: the content of the (not yet versioned) changes
+    #     """
+    #
+    #     header = f"# {self.version} - {datetime.today().strftime('%Y-%m-%d')}"
+    #     dependency_changes = self._report_dependency_changes()
+    #     template = cleandoc(f"{header}\n\n{unreleased_content}\n{dependency_changes}")
+    #     self.versioned_changelog_md.write_text(template + "\n")
 
-        with self.unreleased_md.open(mode="r", encoding="utf-8") as f:
-            # skip header when reading in file, as contains # Unreleased
-            lines = f.readlines()[1:]
-        unreleased_content = cleandoc("".join(lines))
-        return unreleased_content + "\n"
+    # def _extract_unreleased_notes(self) -> str:
+    #     """
+    #     Extract (not yet versioned) changes from `unreleased.md`.
+    #     """
+    #
+    #     with self.unreleased_md.open(mode="r", encoding="utf-8") as f:
+    #         # skip header when reading in file, as contains # Unreleased
+    #         lines = f.readlines()[1:]
+    #     unreleased_content = cleandoc("".join(lines))
+    #     return unreleased_content + "\n"
 
-    def _dependency_changes(self) -> str:
+    # former: _dependency_changes
+    def _dependency_sections(self) -> Generator[Markdown]: # str:
         """
         Return the dependency changes between the latest tag and the
         current version for use in the versioned changes file in markdown
@@ -94,8 +114,8 @@ class Changelogs:
             working_directory=self.root_path
         )
 
-        changes_by_group: list[str] = []
-        # dict.keys() returns a set
+        ## former:
+        ## changes_by_group: list[str] = []
         all_groups = (
             previous_dependencies_in_groups.keys()
             | current_dependencies_in_groups.keys()
@@ -109,8 +129,9 @@ class Changelogs:
             ).changes
             if changes:
                 changes_str = "\n".join(str(change) for change in changes)
-                changes_by_group.append(f"\n### `{group}`\n\n{changes_str}\n")
-        return "".join(changes_by_group)
+                yield Markdown(f"### `{group}`", items=changes_str)
+                # changes_by_group.append(f"\n### `{group}`\n\n{changes_str}\n")
+        ## return "".join(changes_by_group)
 
     @staticmethod
     def _sort_groups(groups: set[str]) -> list[str]:
@@ -176,9 +197,12 @@ class Changelogs:
           3. Updates the table of contents in the `changelog.md` with the new `changes_<version>.md`
         """
 
-        # create versioned changelog
-        unreleased_content = self._extract_unreleased_notes()
-        self._create_versioned_changelog(unreleased_content)
+        unreleased = self.unreleased_md.read_text()
+        self._create_versioned_changes(unreleased)
+
+        # # create versioned changelog
+        # unreleased_content = self._extract_unreleased_notes()
+        # self._create_versioned_changelog(unreleased_content)
 
         # update other changelogs now that versioned changelog exists
         self._create_new_unreleased()
