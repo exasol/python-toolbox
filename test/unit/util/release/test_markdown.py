@@ -3,7 +3,7 @@ from inspect import cleandoc
 import pytest
 
 from exasol.toolbox.util.release.markdown import (
-    HierarchyError,
+    IllegalChild,
     Markdown,
     ParseError,
 )
@@ -64,7 +64,7 @@ WITH_CHILD = Scenario(
     * item 1
     * item 2
     """,
-    expected_children=["Child"],
+    expected_children=["## Child"],
 )
 
 TWO_CHILDREN = Scenario(
@@ -89,7 +89,7 @@ TWO_CHILDREN = Scenario(
 
     bbb
     """,
-    expected_children=["C1", "C2"],
+    expected_children=["## C1", "## C2"],
 )
 
 
@@ -121,27 +121,18 @@ NESTED = Scenario(
 
     bbb
     """,
-    expected_children=["Child A", "Child B"],
+    expected_children=["## Child A", "## Child B"],
 )
 
 
-SPECIAL_CHAR_TITLE = "+ special [char] * title"
-SPECIAL_CHAR_CHILD = Scenario(
-    initial=f"""
-    # title
+@pytest.fixture
+def sample_child() -> Markdown:
+    return Markdown(title="## New", intro="intro")
 
-    ## {SPECIAL_CHAR_TITLE}
-    body
-    """,
-    expected_output=f"""
-    # title
 
-    ## {SPECIAL_CHAR_TITLE}
-
-    body
-    """,
-    expected_children=[SPECIAL_CHAR_TITLE],
-)
+@pytest.fixture
+def illegal_child() -> Markdown:
+    return Markdown(title="# Top-level", intro="intro")
 
 
 def test_no_title_error():
@@ -157,7 +148,12 @@ def test_additional_line_error():
         Markdown.parse(INVALID_MARKDOWN)
 
 
-ALL_SCENARIOS = [MINIMAL, WITH_CHILD, TWO_CHILDREN, NESTED, SPECIAL_CHAR_CHILD]
+def test_constructor_illegal_child(illegal_child: Markdown):
+    with pytest.raises(IllegalChild):
+        Markdown("# title", children=[illegal_child])
+
+
+ALL_SCENARIOS = [MINIMAL, WITH_CHILD, TWO_CHILDREN, NESTED]
 
 
 @pytest.mark.parametrize("scenario", ALL_SCENARIOS)
@@ -180,11 +176,6 @@ def test_rendered(scenario: Scenario):
     assert scenario.create_testee().rendered == scenario.expected_output
 
 
-@pytest.fixture
-def sample_child() -> Markdown:
-    return Markdown(title="## New", intro="intro", items="", children=[])
-
-
 @pytest.mark.parametrize(
     "scenario, pos",
     [
@@ -199,18 +190,39 @@ def test_add_child(sample_child: Markdown, scenario: Scenario, pos: int):
     assert testee.children[pos] == sample_child
 
 
-@pytest.fixture
-def illegal_child() -> Markdown:
-    return Markdown(title="# Top-level", intro="intro", items="", children=[])
+def test_replace_illegal_child(illegal_child):
+    testee = WITH_CHILD.create_testee()
+    with pytest.raises(IllegalChild):
+        testee.replace_child(illegal_child)
 
 
 @pytest.mark.parametrize("scenario", ALL_SCENARIOS)
-def test_illegal_child(illegal_child: Markdown, scenario: Scenario):
+def test_replace_existing_child(scenario: Scenario):
+    testee = WITH_CHILD.create_testee()
+    old_child = testee.children[0]
+    old_rendered = testee.rendered
+    new_child = Markdown(old_child.title, "new intro")
+    expected = old_rendered.replace(old_child.rendered, new_child.rendered)
+    testee.replace_child(new_child)
+    assert testee.rendered == expected
+
+
+@pytest.mark.parametrize("scenario", ALL_SCENARIOS)
+def test_replace_non_existing_child(scenario: Scenario, sample_child: Markdown):
     testee = scenario.create_testee()
-    with pytest.raises(HierarchyError):
+    expected = len(testee.children) + 1
+    testee.replace_child(sample_child)
+    assert len(testee.children) == expected
+    assert testee.children[-1] == sample_child
+
+
+@pytest.mark.parametrize("scenario", ALL_SCENARIOS)
+def test_add_illegal_child(illegal_child: Markdown, scenario: Scenario):
+    testee = scenario.create_testee()
+    with pytest.raises(IllegalChild):
         testee.add_child(illegal_child)
 
 
 def test_nested():
     testee = NESTED.create_testee()
-    assert testee.child("Child A").child("Grand Child") is not None
+    assert testee.child("## Child A").child("### Grand Child") is not None
