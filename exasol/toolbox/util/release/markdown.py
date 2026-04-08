@@ -29,11 +29,6 @@ refactorings.
 from __future__ import annotations
 
 import io
-import re
-from dataclasses import dataclass
-from inspect import cleandoc
-
-from dataclasses import field
 
 
 class ParseError(Exception):
@@ -43,7 +38,7 @@ class ParseError(Exception):
     """
 
 
-class HierarchyError(Exception):
+class IllegalChild(Exception):
     """
     When adding a child to a parent with higher level title.
     """
@@ -69,39 +64,70 @@ def level(title: str) -> int:
     return len(title) - len(title.lstrip("#"))
 
 
-@dataclass
 class Markdown:
     """
     Represents a Markdown file or a section within a Markdown file.
     """
 
-    def __init__(self, title: str, intro: str, items: str, children: list[Markdown]):
+    def __init__(
+        self,
+        title: str,
+        intro: str = "",
+        items: str = "",
+        children: list[Markdown] | None = None,
+    ):
         self.title = title.rstrip("\n")
         self.intro = intro
         self.items = items
+        children = children or []
+        for child in children:
+            self._check(child)
         self.children = children
 
     def can_contain(self, child: Markdown) -> bool:
         return level(self.title) < level(child.title)
 
+    def find(self, child_title: str) -> tuple[int, Markdown] | None:
+        """
+        Return index and child having the specified title, or None if
+        there is none.
+        """
+        for i, child in enumerate(self.children):
+            if child.title == child_title:
+                return i, child
+        return None
+
     def child(self, title: str) -> Markdown | None:
         """
         Retrieve the child with the specified title.
         """
+        return found[1] if (found := self.find(title)) else None
 
-        pattern = re.compile(f"#+ {re.escape(title)}$")
-        return next((c for c in self.children if pattern.match(c.title)), None)
+    def _check(self, child: Markdown) -> Markdown:
+        if not self.can_contain(child):
+            raise IllegalChild(
+                f'Markdown section "{self.title}" cannot have "{child.title}" as child.'
+            )
+        return child
 
     def add_child(self, child: Markdown, pos: int = 1) -> None:
         """
         Insert the specified section as child at the specified position.
         """
 
-        if not self.can_contain(child):
-            raise HierarchyError(
-                f'Markdown section "{self.title}" cannot have "{child.title}" as child.'
-            )
-        self.children.insert(pos, child)
+        self.children.insert(pos, self._check(child))
+
+    def replace_child(self, child: Markdown) -> None:
+        """
+        If there is a child with the same title then replace this child
+        otherwise append the specified child.
+        """
+
+        self._check(child)
+        if found := self.find(child.title):
+            self.children[found[0]] = child
+        else:
+            self.children.append(child)
 
     @property
     def rendered(self) -> str:
@@ -146,11 +172,14 @@ class Markdown:
             children.append(child)
         return Markdown(title, intro.strip("\n"), items.strip("\n"), children), line
 
+
 def sample():
+    content = ""
     changes = Markdown.parse(content)
     resolved_vulnerabilities = ""
     intro = resolved_vulnerabilities
+    title = "# title"
     if section := changes.child(title):
         section.intro = intro
     else:
-        changes.add_child(Section(title, intro, items="", []))
+        changes.add_child(Markdown(title, intro))
