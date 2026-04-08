@@ -117,7 +117,7 @@ class Markdown:
 
         self.children.insert(pos, self._check(child))
 
-    def replace_child(self, child: Markdown) -> None:
+    def replace_child(self, child: Markdown) -> Markdown:
         """
         If there is a child with the same title then replace this child
         otherwise append the specified child.
@@ -128,6 +128,7 @@ class Markdown:
             self.children[found[0]] = child
         else:
             self.children.append(child)
+        return self
 
     @property
     def rendered(self) -> str:
@@ -136,6 +137,13 @@ class Markdown:
             yield from (c.rendered for c in self.children)
 
         return "\n\n".join(e for e in elements() if e)
+
+    def __eq__(self, other) -> bool:
+        return isinstance(other, Markdown) and self.rendered == other.rendered
+
+    @classmethod
+    def read(cls, path: Path) -> Markdown:
+        return cls.parse(path.read_text())
 
     @classmethod
     def parse(cls, content: str) -> Markdown:

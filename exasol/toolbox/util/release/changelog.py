@@ -22,7 +22,7 @@ UNRELEASED_INITIAL_CONTENT = cleandoc("""
     """) + "\n"
 
 
-class Changelogs:
+class Changelog:
     def __init__(self, changes_path: Path, root_path: Path, version: Version) -> None:
         """
         Args:
@@ -34,9 +34,9 @@ class Changelogs:
         """
 
         self.version = version
-        self.unreleased_md: Path = changes_path / "unreleased.md"
-        self.versioned_changelog_md: Path = changes_path / f"changes_{version}.md"
-        self.changelog_md: Path = changes_path / "changelog.md"
+        self.unreleased: Path = changes_path / "unreleased.md"
+        self.versioned_changes: Path = changes_path / f"changes_{version}.md"
+        self.changelog: Path = changes_path / "changelog.md"
         self.root_path: Path = root_path
 
     def _create_new_unreleased(self):
@@ -44,12 +44,7 @@ class Changelogs:
         Write a new unreleased changelog file.
         """
 
-        self.unreleased_md.write_text(UNRELEASED_INITIAL_CONTENT)
-
-    def _dependency_changes(self) -> Markdown | None:
-        if sections := list(self._dependency_changes()):
-            return Markdown(f"## Dependency Updates", children=sections)
-        return None
+        self.unreleased.write_text(UNRELEASED_INITIAL_CONTENT)
 
     def _dependency_sections(self) -> Generator[Markdown]:
         """
@@ -80,6 +75,11 @@ class Changelogs:
                 items = "\n".join(str(change) for change in changes)
                 yield Markdown(f"### `{group}`", items=items)
 
+    def _dependency_changes(self) -> Markdown | None:
+        if sections := list(self._dependency_sections()):
+            return Markdown(f"## Dependency Updates", children=sections)
+        return None
+
     @staticmethod
     def _sort_groups(groups: set[str]) -> list[str]:
         """
@@ -102,7 +102,7 @@ class Changelogs:
         to the relevant sections, and write the updated changelog.md again.
         """
         updated_content = []
-        with self.changelog_md.open(mode="r", encoding="utf-8") as f:
+        with self.changelog.open(mode="r", encoding="utf-8") as f:
             for line in f:
                 updated_content.append(line)
                 if line.startswith("* [unreleased]"):
@@ -113,10 +113,10 @@ class Changelogs:
                     updated_content.append(f"changes_{self.version}\n")
         updated_content_str = "".join(updated_content)
 
-        self.changelog_md.write_text(updated_content_str)
+        self.changelog.write_text(updated_content_str)
 
     def get_changed_files(self) -> list[Path]:
-        return [self.unreleased_md, self.versioned_changelog_md, self.changelog_md]
+        return [self.unreleased, self.versioned_changes, self.changelog]
 
     def _resolved_vulnerabilities(self) -> Markdown | None:
         report = DependenciesAudit(
@@ -142,9 +142,9 @@ class Changelogs:
         #         section.intro = resolved_vulnerabilities
         #     else:
         #         versioned.add_child(resolved_vulnerabilities)
-        self.versioned_changelog_md.write_text(versioned.rendered)
+        self.versioned_changes.write_text(versioned.rendered)
 
-    def prepare_release(self) -> Changelogs:
+    def prepare_release(self) -> Changelog:
         """
         Rotates the changelogs as is needed for a release.
 
@@ -153,7 +153,7 @@ class Changelogs:
           3. Updates the table of contents in the `changelog.md` with the new `changes_<version>.md`
         """
 
-        content = self.unreleased_md.read_text()
+        content = self.unreleased.read_text()
         self._create_versioned_changes(content)
 
         # update other changelogs now that versioned changelog exists
@@ -161,11 +161,11 @@ class Changelogs:
         self._update_table_of_contents()
         return self
 
-    def update_latest(self) -> Changelogs:
+    def update_latest(self) -> Changelog:
         """
         Update the updated dependencies in the latest versioned changelog.
         """
 
-        content = self.versioned_changelog_md.read_text()
+        content = self.versioned_changes.read_text()
         self._create_versioned_changes(content)
         return self
