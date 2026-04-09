@@ -6,12 +6,17 @@ from datetime import datetime
 from inspect import cleandoc
 from pathlib import Path
 
+from exasol.toolbox.util.dependencies.audit import (
+    get_vulnerabilities,
+    get_vulnerabilities_from_latest_tag,
+)
 from exasol.toolbox.util.dependencies.poetry_dependencies import (
     get_dependencies,
     get_dependencies_from_latest_tag,
 )
 from exasol.toolbox.util.dependencies.shared_models import LatestTagNotFoundError
 from exasol.toolbox.util.dependencies.track_changes import DependencyChanges
+from exasol.toolbox.util.dependencies.track_vulnerabilities import DependenciesAudit
 from exasol.toolbox.util.release.markdown import Markdown
 from exasol.toolbox.util.version import Version
 
@@ -120,8 +125,8 @@ class Changelog:
 
     def _resolved_vulnerabilities(self) -> Markdown | None:
         report = DependenciesAudit(
-            previous_vulnerabilities=get_vulnerabilities_from_latest_tag(path),
-            current_vulnerabilities=get_vulnerabilities(path),
+            previous_vulnerabilities=get_vulnerabilities_from_latest_tag(self.root_path),
+            current_vulnerabilities=get_vulnerabilities(self.root_path),
         ).report_resolved_vulnerabilities()
         return Markdown("## Security Issues", report) if report else None
 
@@ -137,11 +142,11 @@ class Changelog:
         versioned.title = f"# {self.version} - {datetime.today().strftime('%Y-%m-%d')}"
         if dependency_changes := self._dependency_changes():
             versioned.replace_or_append_child(dependency_changes)
-        # if resolved_vulnerabilities := self._resolved_vulnerabilities():
-        #     if section := versioned.child(resolved_vulnerabilities.title):
-        #         section.intro = resolved_vulnerabilities
-        #     else:
-        #         versioned.add_child(resolved_vulnerabilities)
+        if resolved_vulnerabilities := self._resolved_vulnerabilities():
+            if section := versioned.child(resolved_vulnerabilities.title):
+                section.intro = resolved_vulnerabilities
+            else:
+                versioned.add_child(resolved_vulnerabilities)
         self.versioned_changes.write_text(versioned.rendered)
 
     def prepare_release(self) -> Changelog:

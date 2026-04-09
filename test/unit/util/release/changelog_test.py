@@ -15,6 +15,7 @@ from exasol.toolbox.util.release.changelog import (
 from exasol.toolbox.util.release.markdown import Markdown
 from exasol.toolbox.util.version import Version
 
+import pytest
 
 class SampleData:
     def __init__(self, unreleased: str, old_changelog: str, new_changelog: str):
@@ -121,31 +122,55 @@ def unreleased_md(changelog):
     changelog.unreleased.write_text(SAMPLE.unreleased)
 
 
-def mock_changelog(monkeypatch, old_dependencies, new_dependencies):
-    for func, value in (
-        ("get_dependencies_from_latest_tag", old_dependencies),
-        ("get_dependencies", new_dependencies),
+DependencyChanges = tuple[Mock | dict, Mock | dict] | None
+VulnerabilityChanges = tuple[Mock | dict, Mock | dict] | None
+
+
+@pytest.fixture
+def mock_changelog(monkeypatch) -> Callable[[DependencyChanges, VulnerabilityChanges], None]:
+    """
+    Enable simulating pecific changes in dependencies or vulnerabilities
+    between the latest tag (last release) and the current release.
+    """
+    def mock(
+        dependencies: DependencyChanges = None,
+        vulnerabilities: VulnerabilityChanges = None,
     ):
-        mock = value if isinstance(value, Mock) else Mock(return_value=value)
-        monkeypatch.setattr(impl, func, mock)
+        dependencies = dependencies or ({}, {})
+        vulnerabilities = vulnerabilities or ([], [])
+        for func, value in (
+            ("get_dependencies_from_latest_tag", dependencies[0]),
+            ("get_dependencies", dependencies[1]),
+            ("get_vulnerabilities_from_latest_tag", vulnerabilities[0]),
+            ("get_vulnerabilities", vulnerabilities[1]),
+        ):
+            mock = value if isinstance(value, Mock) else Mock(return_value=value)
+            monkeypatch.setattr(impl, func, mock)
+
+    return mock
 
 
 @pytest.fixture(scope="function")
-def mock_dependencies(monkeypatch, previous_dependencies, dependencies):
-    mock_changelog(monkeypatch, previous_dependencies, dependencies)
+def mock_no_dependencies(mock_changelog):
+    mock_changelog()
 
 
 @pytest.fixture(scope="function")
-def mock_new_dependencies(monkeypatch, dependencies):
-    mock_changelog(monkeypatch, Mock(side_effect=LatestTagNotFoundError), dependencies)
+def mock_dependencies(mock_changelog, previous_dependencies, dependencies):
+    mock_changelog(dependencies=(previous_dependencies, dependencies))
 
 
 @pytest.fixture(scope="function")
-def mock_no_dependencies(monkeypatch):
-    mock_changelog(monkeypatch, {}, {})
+def mock_new_dependencies(mock_changelog, dependencies):
+    mock_changelog(dependencies=(Mock(side_effect=LatestTagNotFoundError), dependencies))
 
 
-class TestChangelogs:
+@pytest.fixture(scope="function")
+def mock_no_vulnerabilities(mock_changelog):
+    mock_changelog()
+
+
+class TestChangelog:
     """
     As some methods in the class `Changelog` modify files, it is required
     that the fixtures which create the sample files (changelog.md,
@@ -217,7 +242,6 @@ class TestChangelogs:
     @staticmethod
     def test_update_table_of_contents(changelog, changes_md):
         changelog._update_table_of_contents()
-
         assert changelog.changelog.read_text() == SAMPLE.new_changelog
 
     @staticmethod
@@ -230,16 +254,16 @@ class TestChangelogs:
 
     @staticmethod
     def test_update_latest(
-        monkeypatch,
-        mock_no_dependencies,
+        mock_changelog,
         previous_dependencies,
         dependencies,
         changelog,
         unreleased_md,
         changes_md,
     ):
+        mock_changelog()
         changelog.prepare_release()
-        mock_changelog(monkeypatch, previous_dependencies, dependencies)
+        mock_changelog(dependencies=(previous_dependencies, dependencies))
         changelog.update_latest()
         versioned = Markdown.read(changelog.versioned_changes)
         assert versioned == expected_changes_file_content(with_dependencies=True)
