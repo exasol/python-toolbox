@@ -1,34 +1,23 @@
 """
-A project's Changelog is expected to list the changes coming with each of
-the project's releases. The Changelog contains a file changelog.md with the
-table of contents. and zero or more changes files.
+Class Markdown represents a file in markdown syntax with some additional
+constraints:
 
-Each changes file is named changes_*.md and describes the changes for a
-specific release. The * in the file name equals the version number of the
-related release.
+* The file must start with a title in the first line.
+* Each subsequent title must be of a higher level, ie. start with more "#"
+  characters than the top-level title.
 
-All files are in Markdown syntax, divided into sections.  Each section is
-identified by its title which should be unique as is represented by class
-Markdown.
+Each title starts a section, optionally containing an additional intro and a
+bullet list of items.
 
-A section may consist of a prefix and a suffix, either might be empty. The
-prefix are some introductory sentences, the suffix is the list of issues in
-this section. Optionally each section can contain subsections as children.
-
-Method Markdown.replace_prefix() adds such a prefix or replaces it, when the
-section already has one.
-
-The first line of each changes file must be the title describing the version
-number, date and name of the release, followed by zero or multiple
-sections. The first section is a summary, each other section lists the issues
-(aka. tickets) of a particular category the are resolved by this
-release. Categories are security, bugfixes, features, documentation, and
-refactorings.
+Each section can also contain subsections as children, hence sections can be
+nested up to the top-level section representing the whole file.
 """
 
 from __future__ import annotations
 
 import io
+from pathlib import Path
+from typing import Optional
 
 
 class ParseError(Exception):
@@ -110,14 +99,15 @@ class Markdown:
             )
         return child
 
-    def add_child(self, child: Markdown, pos: int = 1) -> None:
+    def add_child(self, child: Markdown, pos: int = 1) -> Markdown:
         """
         Insert the specified section as child at the specified position.
         """
 
         self.children.insert(pos, self._check(child))
+        return self
 
-    def replace_child(self, child: Markdown) -> None:
+    def replace_or_append_child(self, child: Markdown) -> Markdown:
         """
         If there is a child with the same title then replace this child
         otherwise append the specified child.
@@ -128,6 +118,7 @@ class Markdown:
             self.children[found[0]] = child
         else:
             self.children.append(child)
+        return self
 
     @property
     def rendered(self) -> str:
@@ -137,9 +128,32 @@ class Markdown:
 
         return "\n\n".join(e for e in elements() if e)
 
+    def __eq__(self, other) -> bool:
+        return isinstance(other, Markdown) and self.rendered == other.rendered
+
     @classmethod
-    def parse(cls, content: str) -> Markdown:
-        stream = io.StringIO(content)
+    def read(cls, file: Path) -> Markdown:
+        """
+        Parse Markdown instance from the provided file.
+        """
+
+        with file.open("r") as stream:
+            return cls.parse(stream)
+
+    @classmethod
+    def from_text(cls, text: str) -> Markdown:
+        """
+        Parse Markdown instance from the provided text.
+        """
+
+        return cls.parse(io.StringIO(text))
+
+    @classmethod
+    def parse(cls, stream: io.TextIOBase) -> Markdown:
+        """
+        Parse Markdown instance from the provided stream.
+        """
+
         line = stream.readline()
         if not is_title(line):
             raise ParseError(
@@ -171,15 +185,3 @@ class Markdown:
             child, line = Markdown._parse(stream, title=line)
             children.append(child)
         return Markdown(title, intro.strip("\n"), items.strip("\n"), children), line
-
-
-def sample():
-    content = ""
-    changes = Markdown.parse(content)
-    resolved_vulnerabilities = ""
-    intro = resolved_vulnerabilities
-    title = "# title"
-    if section := changes.child(title):
-        section.intro = intro
-    else:
-        changes.add_child(Markdown(title, intro))
