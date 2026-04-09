@@ -8,9 +8,6 @@ from exasol.toolbox.util.release.markdown import (
     ParseError,
 )
 
-import pytest
-import pytest
-import pytest
 
 class Scenario:
     def __init__(
