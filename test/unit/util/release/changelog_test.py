@@ -2,6 +2,10 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from datetime import datetime
+from enum import (
+    Flag,
+    auto,
+)
 from inspect import cleandoc
 from unittest.mock import Mock
 
@@ -68,31 +72,41 @@ class SampleContent:
         """)
 
 
-def expected_changes_file_content(
-    with_dependencies: bool = False,
-    with_vulnerabilities: bool = False,
+class Expect(Flag):
+    NONE = auto()
+    VULNERABILITIES = auto()
+    VULNERABILITIES_INSERTED = auto()
+    DEPENDENCIES = auto()
+
+
+def expected_changes(
+    unreleased: str = SampleContent.unreleased,
+    include: Expect = Expect.NONE,
 ) -> Markdown:
     dependencies = _markdown(f"""
-        ## Dependency Updates
-        ### `main`
-        * Updated dependency `package1:0.0.1` to `0.1.0`
-        ### `dev`
-        * Added dependency `package2:0.2.0`
-        """)
+    ## Dependency Updates
+    ### `main`
+    * Updated dependency `package1:0.0.1` to `0.1.0`
+    ### `dev`
+    * Added dependency `package2:0.2.0`
+    """)
+
     vulnerabilities = _markdown("""
-        ## Security Issues
+    ## Security Issues
 
-        This release fixes vulnerabilities by updating dependencies:
+    This release fixes vulnerabilities by updating dependencies:
 
-        | Dependency | Vulnerability | Affected | Fixed in |
-        |------------|---------------|----------|----------|
-        | jinja2 | CVE-2025-27516 | 3.1.5 | 3.1.6 |
-        """)
-    changes = Markdown.from_text(SampleContent.unreleased)
+    | Dependency | Vulnerability | Affected | Fixed in |
+    |------------|---------------|----------|----------|
+    | jinja2 | CVE-2025-27516 | 3.1.5 | 3.1.6 |
+    """)
+    changes = Markdown.from_text(unreleased)
     changes.title = f"# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}"
-    if with_vulnerabilities:
+    if Expect.VULNERABILITIES in include:
         changes.add_child(vulnerabilities)
-    if with_dependencies:
+    if Expect.VULNERABILITIES_INSERTED in include:
+        changes.child("## Security Issues").intro = (vulnerabilities.intro)
+    if Expect.DEPENDENCIES in include:
         changes.replace_or_append_child(dependencies)
     return changes
 
@@ -109,13 +123,24 @@ def changelog(tmp_path) -> Changelog:
 
 
 @pytest.fixture(scope="function")
-def changes_md(changelog):
+def changelog_md(changelog):
     changelog.changelog.write_text(SampleContent.old_changelog)
 
 
 @pytest.fixture(scope="function")
 def unreleased_md(changelog):
     changelog.unreleased.write_text(SampleContent.unreleased)
+
+
+@pytest.fixture(scope="function")
+def unreleased_with_security_issues(changelog) -> str:
+    security = _markdown("""
+    ## Security Issues
+    * #123: Fixed vulnerability
+    """)
+    md = _markdown(SampleContent.unreleased).add_child(security)
+    changelog.unreleased.write_text(md.rendered)
+    return md.rendered
 
 
 DependencyChanges = tuple[Mock | dict, Mock | dict] | None
@@ -176,7 +201,12 @@ def vulnerability_changes(sample_vulnerability) -> VulnerabilityChanges:
 
 
 @pytest.fixture(scope="function")
-def mock_dependencies_and_vulnerabiltiies(
+def mock_vulnerabilties(mock_changelog, vulnerability_changes):
+    mock_changelog(vulnerabilities=vulnerability_changes)
+
+
+@pytest.fixture(scope="function")
+def mock_dependencies_and_vulnerabilties(
     mock_changelog, dependency_changes, vulnerability_changes
 ):
     mock_changelog(dependency_changes, vulnerability_changes)
@@ -256,32 +286,22 @@ class TestChangelog:
         assert result == expected
 
     @staticmethod
-    def test_update_table_of_contents(changelog, changes_md):
+    def test_update_table_of_contents(changelog, changelog_md):
         changelog._update_table_of_contents()
         assert changelog.changelog.read_text() == SampleContent.new_changelog
 
     @staticmethod
-    def test_prepare_release(changelog, mock_dependencies, unreleased_md, changes_md):
-        changelog.prepare_release()
-        assert changelog.changelog.read_text() == SampleContent.new_changelog
-        assert changelog.unreleased.read_text() == UNRELEASED_INITIAL_CONTENT
-        versioned = Markdown.read(changelog.versioned_changes)
-        assert versioned == expected_changes_file_content(with_dependencies=True)
-
-    @staticmethod
-    def test_2prepare_release(
+    def test_prepare_release(
         changelog,
-        mock_dependencies_and_vulnerabiltiies,
+        mock_dependencies_and_vulnerabilties,
         unreleased_md,
-        changes_md,
+        changelog_md,
     ):
         changelog.prepare_release()
         assert changelog.changelog.read_text() == SampleContent.new_changelog
         assert changelog.unreleased.read_text() == UNRELEASED_INITIAL_CONTENT
         versioned = Markdown.read(changelog.versioned_changes)
-        expected = expected_changes_file_content(
-            with_dependencies=True, with_vulnerabilities=True
-        )
+        expected = expected_changes(include=Expect.DEPENDENCIES | Expect.VULNERABILITIES)
         assert versioned == expected
 
     @staticmethod
@@ -291,25 +311,38 @@ class TestChangelog:
         vulnerability_changes,
         changelog,
         unreleased_md,
-        changes_md,
+        changelog_md,
     ):
         mock_changelog()
         changelog.prepare_release()
         mock_changelog(dependency_changes, vulnerability_changes)
         changelog.update_latest()
         versioned = Markdown.read(changelog.versioned_changes)
-        expected = expected_changes_file_content(
-            with_dependencies=True, with_vulnerabilities=True,
-        )
+        expected = expected_changes(include=Expect.DEPENDENCIES | Expect.VULNERABILITIES)
         assert versioned == expected
 
     @staticmethod
     def test_prepare_release_with_no_dependencies(
-        changelog, mock_no_dependencies, unreleased_md, changes_md
+        changelog, mock_no_dependencies, unreleased_md, changelog_md
     ):
         changelog.prepare_release()
 
         assert changelog.changelog.read_text() == SampleContent.new_changelog
         assert changelog.unreleased.read_text() == UNRELEASED_INITIAL_CONTENT
         versioned = Markdown.read(changelog.versioned_changes)
-        assert versioned == expected_changes_file_content()
+        assert versioned == expected_changes()
+
+    @staticmethod
+    def test_prepare_release_with_security_issues(
+        changelog,
+        mock_vulnerabilties,
+        unreleased_with_security_issues,
+        changelog_md,
+    ):
+        changelog.prepare_release()
+        versioned = Markdown.read(changelog.versioned_changes)
+        expected = expected_changes(
+            unreleased_with_security_issues,
+            include=Expect.VULNERABILITIES_INSERTED,
+        )
+        assert versioned == expected

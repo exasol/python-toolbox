@@ -38,7 +38,7 @@ def is_title(line: str) -> bool:
 
 
 def is_list_item(line: str) -> bool:
-    return line and (line.startswith("#") or line.startswith("-"))
+    return line and (line.startswith("*") or line.startswith("-"))
 
 
 def is_intro(line: str) -> bool:
@@ -181,7 +181,7 @@ class Markdown:
             intro += line
             line = stream.readline()
         if is_list_item(line):
-            while not is_title(line):
+            while line and not is_title(line):
                 items += line
                 line = stream.readline()
         while is_title(line) and level(title) < level(line):

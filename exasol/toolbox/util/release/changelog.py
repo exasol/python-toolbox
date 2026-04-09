@@ -144,7 +144,7 @@ class Changelog:
             versioned.replace_or_append_child(dependency_changes)
         if resolved_vulnerabilities := self._resolved_vulnerabilities():
             if section := versioned.child(resolved_vulnerabilities.title):
-                section.intro = resolved_vulnerabilities
+                section.intro = resolved_vulnerabilities.intro
             else:
                 versioned.add_child(resolved_vulnerabilities)
         self.versioned_changes.write_text(versioned.rendered)
