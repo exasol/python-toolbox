@@ -17,16 +17,12 @@ from exasol.toolbox.util.version import Version
 
 import pytest
 
-class SampleData:
-    def __init__(self, unreleased: str, old_changelog: str, new_changelog: str):
-        self.unreleased = Markdown.from_text(unreleased).rendered
-        self.unreleased_body = "\n".join(self.unreleased.splitlines()[1:])
-        self.old_changelog = old_changelog
-        self.new_changelog = new_changelog
+def _markdown(content: str) -> Markdown:
+    return Markdown.from_text(cleandoc(content))
 
 
-SAMPLE = SampleData(
-    unreleased=cleandoc(
+class SampleContent:
+    unreleased = _markdown(
         """
         # Unreleased
         ## Summary
@@ -41,8 +37,8 @@ SAMPLE = SampleData(
         ## Refactorings
         * Some refactoring
         """
-    ),
-    old_changelog=cleandoc(
+    ).rendered
+    old_changelog = cleandoc(
         """
         # Changelog
 
@@ -57,8 +53,8 @@ SAMPLE = SampleData(
         changes_0.1.0
         ```
         """
-    ),
-    new_changelog=cleandoc(
+    )
+    new_changelog = cleandoc(
         """
         # Changelog
 
@@ -75,16 +71,11 @@ SAMPLE = SampleData(
         changes_0.1.0
         ```
         """
-    ),
-)
-
-
-def _markdown(content: str) -> Markdown:
-    return Markdown.from_text(cleandoc(content))
+    )
 
 
 def expected_changes_file_content(with_dependencies: bool = False) -> Markdown:
-    changes = Markdown.from_text(SAMPLE.unreleased)
+    changes = Markdown.from_text(SampleContent.unreleased)
     changes.title = f"# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}"
     if not with_dependencies:
         return changes
@@ -114,12 +105,12 @@ def changelog(tmp_path) -> Changelog:
 
 @pytest.fixture(scope="function")
 def changes_md(changelog):
-    changelog.changelog.write_text(SAMPLE.old_changelog)
+    changelog.changelog.write_text(SampleContent.old_changelog)
 
 
 @pytest.fixture(scope="function")
 def unreleased_md(changelog):
-    changelog.unreleased.write_text(SAMPLE.unreleased)
+    changelog.unreleased.write_text(SampleContent.unreleased)
 
 
 DependencyChanges = tuple[Mock | dict, Mock | dict] | None
@@ -187,11 +178,12 @@ class TestChangelog:
 
     @staticmethod
     def test_create_versioned_changes(changelog, mock_dependencies):
-        changelog._create_versioned_changes(SAMPLE.unreleased)
+        changelog._create_versioned_changes(SampleContent.unreleased)
         saved_text = changelog.versioned_changes.read_text()
 
         assert "1.0.0" in saved_text
-        assert SAMPLE.unreleased_body in saved_text
+        unreleased_body = "\n".join(SampleContent.unreleased.splitlines()[1:])
+        assert unreleased_body in saved_text
 
     @staticmethod
     def test_dependency_changes(changelog, mock_dependencies):
@@ -242,12 +234,12 @@ class TestChangelog:
     @staticmethod
     def test_update_table_of_contents(changelog, changes_md):
         changelog._update_table_of_contents()
-        assert changelog.changelog.read_text() == SAMPLE.new_changelog
+        assert changelog.changelog.read_text() == SampleContent.new_changelog
 
     @staticmethod
     def test_prepare_release(changelog, mock_dependencies, unreleased_md, changes_md):
         changelog.prepare_release()
-        assert changelog.changelog.read_text() == SAMPLE.new_changelog
+        assert changelog.changelog.read_text() == SampleContent.new_changelog
         assert changelog.unreleased.read_text() == UNRELEASED_INITIAL_CONTENT
         versioned = Markdown.read(changelog.versioned_changes)
         assert versioned == expected_changes_file_content(with_dependencies=True)
@@ -274,7 +266,7 @@ class TestChangelog:
     ):
         changelog.prepare_release()
 
-        assert changelog.changelog.read_text() == SAMPLE.new_changelog
+        assert changelog.changelog.read_text() == SampleContent.new_changelog
         assert changelog.unreleased.read_text() == UNRELEASED_INITIAL_CONTENT
         versioned = Markdown.read(changelog.versioned_changes)
         assert versioned == expected_changes_file_content()
