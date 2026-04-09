@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import datetime
 from inspect import cleandoc
 from unittest.mock import Mock
@@ -15,15 +16,13 @@ from exasol.toolbox.util.release.changelog import (
 from exasol.toolbox.util.release.markdown import Markdown
 from exasol.toolbox.util.version import Version
 
-import pytest
 
 def _markdown(content: str) -> Markdown:
     return Markdown.from_text(cleandoc(content))
 
 
 class SampleContent:
-    unreleased = _markdown(
-        """
+    unreleased = _markdown("""
         # Unreleased
         ## Summary
         Summary of changes.
@@ -36,10 +35,8 @@ class SampleContent:
 
         ## Refactorings
         * Some refactoring
-        """
-    ).rendered
-    old_changelog = cleandoc(
-        """
+        """).rendered
+    old_changelog = cleandoc("""
         # Changelog
 
         * [unreleased](unreleased.md)
@@ -52,10 +49,8 @@ class SampleContent:
         unreleased
         changes_0.1.0
         ```
-        """
-    )
-    new_changelog = cleandoc(
-        """
+        """)
+    new_changelog = cleandoc("""
         # Changelog
 
         * [unreleased](unreleased.md)
@@ -70,26 +65,36 @@ class SampleContent:
         changes_1.0.0
         changes_0.1.0
         ```
-        """
-    )
+        """)
 
 
-def expected_changes_file_content(with_dependencies: bool = False) -> Markdown:
-    changes = Markdown.from_text(SampleContent.unreleased)
-    changes.title = f"# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}"
-    if not with_dependencies:
-        return changes
-
-    dependencies = _markdown(
-        f"""
+def expected_changes_file_content(
+    with_dependencies: bool = False,
+    with_vulnerabilities: bool = False,
+) -> Markdown:
+    dependencies = _markdown(f"""
         ## Dependency Updates
         ### `main`
         * Updated dependency `package1:0.0.1` to `0.1.0`
         ### `dev`
         * Added dependency `package2:0.2.0`
-        """
-    )
-    return changes.replace_or_append_child(dependencies)
+        """)
+    vulnerabilities = _markdown("""
+        ## Security Issues
+
+        This release fixes vulnerabilities by updating dependencies:
+
+        | Dependency | Vulnerability | Affected | Fixed in |
+        |------------|---------------|----------|----------|
+        | jinja2 | CVE-2025-27516 | 3.1.5 | 3.1.6 |
+        """)
+    changes = Markdown.from_text(SampleContent.unreleased)
+    changes.title = f"# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}"
+    if with_vulnerabilities:
+        changes.add_child(vulnerabilities)
+    if with_dependencies:
+        changes.replace_or_append_child(dependencies)
+    return changes
 
 
 @pytest.fixture(scope="function")
@@ -117,12 +122,20 @@ DependencyChanges = tuple[Mock | dict, Mock | dict] | None
 VulnerabilityChanges = tuple[Mock | dict, Mock | dict] | None
 
 
+@pytest.fixture(scope="function")
+def dependency_changes(previous_dependencies, dependencies) -> DependencyChanges:
+    return (previous_dependencies, dependencies)
+
+
 @pytest.fixture
-def mock_changelog(monkeypatch) -> Callable[[DependencyChanges, VulnerabilityChanges], None]:
+def mock_changelog(
+    monkeypatch,
+) -> Callable[[DependencyChanges, VulnerabilityChanges], None]:
     """
     Enable simulating pecific changes in dependencies or vulnerabilities
     between the latest tag (last release) and the current release.
     """
+
     def mock(
         dependencies: DependencyChanges = None,
         vulnerabilities: VulnerabilityChanges = None,
@@ -147,18 +160,33 @@ def mock_no_dependencies(mock_changelog):
 
 
 @pytest.fixture(scope="function")
-def mock_dependencies(mock_changelog, previous_dependencies, dependencies):
-    mock_changelog(dependencies=(previous_dependencies, dependencies))
+def mock_dependencies(mock_changelog, dependency_changes):
+    mock_changelog(dependencies=dependency_changes)
+
+
+@pytest.fixture(scope="function")
+def vulnerability_changes(sample_vulnerability) -> VulnerabilityChanges:
+    """
+    Simulate resolved vulnerabilities.
+    """
+
+    previous = [sample_vulnerability.vulnerability]
+    current = []
+    return (previous, current)
+
+
+@pytest.fixture(scope="function")
+def mock_dependencies_and_vulnerabiltiies(
+    mock_changelog, dependency_changes, vulnerability_changes
+):
+    mock_changelog(dependency_changes, vulnerability_changes)
 
 
 @pytest.fixture(scope="function")
 def mock_new_dependencies(mock_changelog, dependencies):
-    mock_changelog(dependencies=(Mock(side_effect=LatestTagNotFoundError), dependencies))
-
-
-@pytest.fixture(scope="function")
-def mock_no_vulnerabilities(mock_changelog):
-    mock_changelog()
+    mock_changelog(
+        dependencies=(Mock(side_effect=LatestTagNotFoundError), dependencies)
+    )
 
 
 class TestChangelog:
@@ -188,15 +216,13 @@ class TestChangelog:
     @staticmethod
     def test_dependency_changes(changelog, mock_dependencies):
         actual = changelog._dependency_changes()
-        expected = _markdown(
-            """
+        expected = _markdown("""
             ## Dependency Updates
             ### `main`
             * Updated dependency `package1:0.0.1` to `0.1.0`
             ### `dev`
             * Added dependency `package2:0.2.0`
-            """
-        )
+            """)
         assert expected == actual
 
     @staticmethod
@@ -204,15 +230,13 @@ class TestChangelog:
         changelog, mock_new_dependencies
     ):
         actual = changelog._dependency_changes()
-        expected = _markdown(
-            """
+        expected = _markdown("""
             ## Dependency Updates
             ### `main`
             * Added dependency `package1:0.1.0`
             ### `dev`
             * Added dependency `package2:0.2.0`
-            """
-        )
+            """)
         assert expected == actual
 
     @staticmethod
@@ -245,20 +269,39 @@ class TestChangelog:
         assert versioned == expected_changes_file_content(with_dependencies=True)
 
     @staticmethod
+    def test_2prepare_release(
+        changelog,
+        mock_dependencies_and_vulnerabiltiies,
+        unreleased_md,
+        changes_md,
+    ):
+        changelog.prepare_release()
+        assert changelog.changelog.read_text() == SampleContent.new_changelog
+        assert changelog.unreleased.read_text() == UNRELEASED_INITIAL_CONTENT
+        versioned = Markdown.read(changelog.versioned_changes)
+        expected = expected_changes_file_content(
+            with_dependencies=True, with_vulnerabilities=True
+        )
+        assert versioned == expected
+
+    @staticmethod
     def test_update_latest(
         mock_changelog,
-        previous_dependencies,
-        dependencies,
+        dependency_changes,
+        vulnerability_changes,
         changelog,
         unreleased_md,
         changes_md,
     ):
         mock_changelog()
         changelog.prepare_release()
-        mock_changelog(dependencies=(previous_dependencies, dependencies))
+        mock_changelog(dependency_changes, vulnerability_changes)
         changelog.update_latest()
         versioned = Markdown.read(changelog.versioned_changes)
-        assert versioned == expected_changes_file_content(with_dependencies=True)
+        expected = expected_changes_file_content(
+            with_dependencies=True, with_vulnerabilities=True,
+        )
+        assert versioned == expected
 
     @staticmethod
     def test_prepare_release_with_no_dependencies(

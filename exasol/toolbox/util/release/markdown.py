@@ -131,6 +131,9 @@ class Markdown:
     def __eq__(self, other) -> bool:
         return isinstance(other, Markdown) and self.rendered == other.rendered
 
+    def __str__(self) -> str:
+        return self.rendered
+
     @classmethod
     def read(cls, file: Path) -> Markdown:
         """
