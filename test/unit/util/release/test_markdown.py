@@ -8,8 +8,6 @@ from exasol.toolbox.util.release.markdown import (
     ParseError,
 )
 
-import pytest
-import pytest
 
 class Scenario:
     def __init__(
@@ -153,6 +151,15 @@ def test_additional_line_error():
 def test_constructor_illegal_child(illegal_child: Markdown):
     with pytest.raises(IllegalChild):
         Markdown("# title", children=[illegal_child])
+
+
+def test_no_intro() -> None:
+    content = """
+    # title
+    * #123: Fixed vulnerability
+    """
+    testee = Markdown.from_text(cleandoc(content))
+    assert testee == Markdown("# title", "", "* #123: Fixed vulnerability")
 
 
 def test_equals() -> None:

@@ -38,7 +38,7 @@ def is_title(line: str) -> bool:
 
 
 def is_list_item(line: str) -> bool:
-    return line and (line.startswith("#") or line.startswith("-"))
+    return line and (line.startswith("*") or line.startswith("-"))
 
 
 def is_intro(line: str) -> bool:
@@ -131,6 +131,9 @@ class Markdown:
     def __eq__(self, other) -> bool:
         return isinstance(other, Markdown) and self.rendered == other.rendered
 
+    def __str__(self) -> str:
+        return self.rendered
+
     @classmethod
     def read(cls, file: Path) -> Markdown:
         """
@@ -178,7 +181,7 @@ class Markdown:
             intro += line
             line = stream.readline()
         if is_list_item(line):
-            while not is_title(line):
+            while line and not is_title(line):
                 items += line
                 line = stream.readline()
         while is_title(line) and level(title) < level(line):
