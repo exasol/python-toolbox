@@ -18,7 +18,7 @@ from exasol.toolbox.util.version import Version
 
 class SampleData:
     def __init__(self, unreleased: str, old_changelog: str, new_changelog: str):
-        self.unreleased = Markdown.parse(unreleased).rendered
+        self.unreleased = Markdown.from_text(unreleased).rendered
         self.unreleased_body = "\n".join(self.unreleased.splitlines()[1:])
         self.old_changelog = old_changelog
         self.new_changelog = new_changelog
@@ -79,11 +79,11 @@ SAMPLE = SampleData(
 
 
 def _markdown(content: str) -> Markdown:
-    return Markdown.parse(cleandoc(content))
+    return Markdown.from_text(cleandoc(content))
 
 
 def expected_changes_file_content(with_dependencies: bool = False) -> Markdown:
-    changes = Markdown.parse(SAMPLE.unreleased)
+    changes = Markdown.from_text(SAMPLE.unreleased)
     changes.title = f"# 1.0.0 - {datetime.today().strftime('%Y-%m-%d')}"
     if not with_dependencies:
         return changes
@@ -97,7 +97,7 @@ def expected_changes_file_content(with_dependencies: bool = False) -> Markdown:
         * Added dependency `package2:0.2.0`
         """
     )
-    return changes.replace_child(dependencies)
+    return changes.replace_or_append_child(dependencies)
 
 
 @pytest.fixture(scope="function")

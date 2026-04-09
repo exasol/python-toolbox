@@ -8,6 +8,8 @@ from exasol.toolbox.util.release.markdown import (
     ParseError,
 )
 
+import pytest
+import pytest
 
 class Scenario:
     def __init__(
@@ -18,7 +20,7 @@ class Scenario:
         self.expected_children = expected_children
 
     def create_testee(self) -> Markdown:
-        return Markdown.parse(self.initial)
+        return Markdown.from_text(self.initial)
 
 
 INVALID_MARKDOWN = cleandoc("""
@@ -137,7 +139,7 @@ def illegal_child() -> Markdown:
 
 def test_no_title_error():
     with pytest.raises(ParseError, match="First line of markdown file must be a title"):
-        Markdown.parse("body\n# title")
+        Markdown.from_text("body\n# title")
 
 
 def test_additional_line_error():
@@ -145,12 +147,26 @@ def test_additional_line_error():
         'additional line "# Another Title" after top-level section "# Title".'
     )
     with pytest.raises(ParseError, match=expected_error):
-        Markdown.parse(INVALID_MARKDOWN)
+        Markdown.from_text(INVALID_MARKDOWN)
 
 
 def test_constructor_illegal_child(illegal_child: Markdown):
     with pytest.raises(IllegalChild):
         Markdown("# title", children=[illegal_child])
+
+
+def test_equals() -> None:
+    testee = MINIMAL.create_testee()
+    other = MINIMAL.create_testee()
+    assert other == testee
+    other.title = "# other"
+    assert other != testee
+
+
+def test_test_read(tmp_path) -> None:
+    file = tmp_path / "sample.md"
+    file.write_text(MINIMAL.initial)
+    assert Markdown.read(file) == MINIMAL.create_testee()
 
 
 ALL_SCENARIOS = [MINIMAL, WITH_CHILD, TWO_CHILDREN, NESTED]
@@ -193,7 +209,7 @@ def test_add_child(sample_child: Markdown, scenario: Scenario, pos: int):
 def test_replace_illegal_child(illegal_child):
     testee = WITH_CHILD.create_testee()
     with pytest.raises(IllegalChild):
-        testee.replace_child(illegal_child)
+        testee.replace_or_append_child(illegal_child)
 
 
 @pytest.mark.parametrize("scenario", ALL_SCENARIOS)
@@ -203,7 +219,7 @@ def test_replace_existing_child(scenario: Scenario):
     old_rendered = testee.rendered
     new_child = Markdown(old_child.title, "new intro")
     expected = old_rendered.replace(old_child.rendered, new_child.rendered)
-    testee.replace_child(new_child)
+    testee.replace_or_append_child(new_child)
     assert testee.rendered == expected
 
 
@@ -211,7 +227,7 @@ def test_replace_existing_child(scenario: Scenario):
 def test_replace_non_existing_child(scenario: Scenario, sample_child: Markdown):
     testee = scenario.create_testee()
     expected = len(testee.children) + 1
-    testee.replace_child(sample_child)
+    testee.replace_or_append_child(sample_child)
     assert len(testee.children) == expected
     assert testee.children[-1] == sample_child
 

@@ -133,10 +133,10 @@ class Changelog:
             unreleased_content: the content of the (not yet versioned) changes
         """
 
-        versioned = Markdown.parse(initial_content)
+        versioned = Markdown.from_text(initial_content)
         versioned.title = f"# {self.version} - {datetime.today().strftime('%Y-%m-%d')}"
         if dependency_changes := self._dependency_changes():
-            versioned.replace_child(dependency_changes)
+            versioned.replace_or_append_child(dependency_changes)
         # if resolved_vulnerabilities := self._resolved_vulnerabilities():
         #     if section := versioned.child(resolved_vulnerabilities.title):
         #         section.intro = resolved_vulnerabilities
