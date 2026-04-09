@@ -32,8 +32,7 @@ def dependency_licenses(session: Session) -> None:
     print(license_markdown.to_markdown())
 
 
-# Probably this session is obsolete
-@nox.session(name="dependency:audit-old", python=False)
+@nox.session(name="dependency:audit", python=False)
 def audit(session: Session) -> None:
     """Report known vulnerabilities."""
 
