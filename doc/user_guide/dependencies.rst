@@ -56,7 +56,7 @@ system-wide Poetry installation to most effectively use Poetry ``2.3.0``:
     * `PEP-735 <https://peps.python.org/pep-0735/>`__
 
     .. note::
-        Note that `uvx migrate-to-uv <https://github.com/mkniewallner/migrate-to-uv>`__
+        Note that `uvx migrate-to-uv <https://github.com/osprey-oss/migrate-to-uv>`__
         seems to do a good job with automating many of the PEP-related changes.
         Though, a developer should take care to verify the changes, as some are unneeded
         as it completes the migration to ``uv`` which the PTB does NOT yet support.
