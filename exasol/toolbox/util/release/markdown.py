@@ -129,7 +129,13 @@ class Markdown:
         return "\n\n".join(e for e in elements() if e)
 
     def __eq__(self, other) -> bool:
-        return isinstance(other, Markdown) and self.rendered == other.rendered
+        return (
+            isinstance(other, Markdown)
+            and other.title == self.title
+            and other.intro == self.intro
+            and other.items == self.items
+            and other.children == self.children
+        )
 
     def __str__(self) -> str:
         return self.rendered
