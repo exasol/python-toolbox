@@ -6,7 +6,8 @@ This release fixes vulnerabilities by updating transitive dependencies in the `p
 
 | Dependency   | Version | ID             | Fix Versions | Updated to |
 |--------------|---------|----------------|--------------|------------|
-| cryptography | 46.0.5  | CVE-2026-34073 | 46.0.6       | 46.0.6     |
+| cryptography | 46.0.5  | CVE-2026-34073 | 46.0.6       | 46.0.7     |
+| cryptography | 46.0.6  | CVE-2026-39892 | 46.0.7       | 46.0.7     |
 | pygments     | 2.19.2  | CVE-2026-4539  | 2.20.0       | 2.20.0     |
 | requests     | 2.32.5  | CVE-2026-25645 | 2.33.0       | 2.33.1     |
 
