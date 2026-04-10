@@ -130,11 +130,11 @@ class Markdown:
 
     def __eq__(self, other) -> bool:
         return (
-            isinstance(other, Markdown) and
-            other.title == self.title and
-            other.intro == self.intro and
-            other.items == self.items and
-            other.children == self.children
+            isinstance(other, Markdown)
+            and other.title == self.title
+            and other.intro == self.intro
+            and other.items == self.items
+            and other.children == self.children
         )
 
     def __str__(self) -> str:
