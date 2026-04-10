@@ -146,7 +146,7 @@ def test_additional_line_error():
     Some text.
     # Another Title
     """)
-    
+
     expected_error = (
         'additional line "# Another Title" after top-level section "# Title".'
     )
@@ -159,51 +159,54 @@ def test_constructor_illegal_child():
         Markdown("# title", children=[ILLEGAL_CHILD])
 
 
-@pytest.mark.parametrize("content, expected", [
-    pytest.param(
-        """
+@pytest.mark.parametrize(
+    "content, expected",
+    [
+        pytest.param(
+            """
         # title
         """,
-        Markdown("# title"),
-        id="only_title",
-    ),
-    pytest.param(
-        """
+            Markdown("# title"),
+            id="only_title",
+        ),
+        pytest.param(
+            """
         # title
         intro
         """,
-        Markdown("# title", "intro"),
-        id="intro",
-    ),
-    pytest.param(
-        """
+            Markdown("# title", "intro"),
+            id="intro",
+        ),
+        pytest.param(
+            """
         # title
         * item 1
         """,
-        Markdown("# title", "", "* item 1"),
-        id="items",
-    ),
-    pytest.param(
-        """
+            Markdown("# title", "", "* item 1"),
+            id="items",
+        ),
+        pytest.param(
+            """
         # title
         intro
         * item 1
         * item 2
         """,
-        Markdown("# title", "intro", "* item 1\n* item 2"),
-        id="intro_and_items",
-    ),
-    pytest.param(
-        """
+            Markdown("# title", "intro", "* item 1\n* item 2"),
+            id="intro_and_items",
+        ),
+        pytest.param(
+            """
         # title
         intro
         - item 1
         - item 2
         """,
-        Markdown("# title", "intro", "- item 1\n- item 2"),
-        id="intro_dash_items",
-    ),
-])
+            Markdown("# title", "intro", "- item 1\n- item 2"),
+            id="intro_dash_items",
+        ),
+    ],
+)
 def test_equals(content: str, expected: Markdown) -> None:
     assert Markdown.from_text(cleandoc(content)) == expected
 
