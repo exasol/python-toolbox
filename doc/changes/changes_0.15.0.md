@@ -24,5 +24,5 @@
 
 ## 🔩 Internal
 
-* Update depdency constraints
+* Update dependency constraints
 * Relock dependencies
