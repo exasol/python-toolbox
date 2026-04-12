@@ -11,7 +11,7 @@ Managing Dependencies and Vulnerabilities
 |                              |                | vulnerabilities in our dependencies |
 +------------------------------+----------------+-------------------------------------+
 | ``vulnerabilities:resolved`` | No             | Uses ``pip-audit`` to report known  |
-|                              |                | vulnerabilities in depdendencies    |
+|                              |                | vulnerabilities in dependencies     |
 |                              |                | that have been resolved in          |
 |                              |                | comparison to the last release.     |
 +------------------------------+----------------+-------------------------------------+
