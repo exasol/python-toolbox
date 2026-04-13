@@ -49,6 +49,7 @@ class TestListWorkflows:
         assert "report" in result.output
         assert "slow-checks" in result.output
 
+
 def test_show_workflow(cli_runner):
     result = cli_runner.invoke(CLI, ["show", "checks"])
 

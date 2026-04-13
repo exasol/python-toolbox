@@ -11,6 +11,7 @@ def test_get_workflow_templates(project_config):
         "check-release-tag",
         "checks",
         "ci",
+        "dependency-update",
         "gh-pages",
         "matrix-all",
         "matrix-exasol",

@@ -5,11 +5,12 @@ on:
     # Every Monday at 03:00 UTC
     - cron: "0 3 * * 1"
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   dependency-update:
     name: Dependency Update
-    runs-on: "(( os_version ))"
+    runs-on: "ubuntu-24.04"
     permissions:
       contents: write
       pull-requests: write
@@ -18,24 +19,33 @@ jobs:
       - name: Check out Repository
         id: check-out-repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v6
         with:
-          python-version: "(( minimum_python_version ))"
-          poetry-version: "(( dependency_manager_version ))"
+          python-version: "3.10"
+          poetry-version: "2.3.0"
 
       - name: Audit Dependencies
         id: audit-dependencies
-        run: poetry run -- nox -s dependency:audit
+        shell: bash
+        run: |
+          poetry run -- nox -s dependency:audit | tee vulnerabilities.json
+          LENGTH=$(jq 'length' vulnerabilities.json)
+          echo "count=$LENGTH" >> "$GITHUB_OUTPUT"
 
       - name: Update Dependencies
         id: update-dependencies
+        if: steps.audit-dependencies.outputs.count > 0
         run: poetry update
 
       - name: Check for poetry.lock Changes
         id: check-for-poetry-lock-changes
+        if: steps.audit-dependencies.outputs.count > 0
+        shell: bash
         run: |
           if git diff --quiet -- poetry.lock; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -43,18 +53,45 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Create Pull Request
-        id: create-pull-request
+      - name: Configure git
+        id: configure-git
         if: steps.check-for-poetry-lock-changes.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v7
-        with:
-          commit-message: "Update poetry.lock"
-          branch: dependency-update/poetry-lock
-          delete-branch: true
-          title: "Update poetry.lock"
-          body: |
-            Automated dependency update for `poetry.lock`.
+        shell: bash
+        run: |
+          git config --global user.email "opensource@exasol.com"
+          git config --global user.name "Automatic Dependency Updater"
 
-            This PR was created by the dependency update workflow after running:
-            - `poetry run -- nox -s dependency:audit`
-            - `poetry update`
+      - name: Create branch
+        id: create-branch
+        if: steps.check-for-poetry-lock-changes.outputs.changed == 'true' && github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          branch_name="dependency-update/poetry-lock"
+          echo "Creating branch $branch_name"
+          git checkout -b "$branch_name"
+
+      - name: Commit changes & push
+        id: publish-branch
+        if: steps.check-for-poetry-lock-changes.outputs.changed == 'true' && startsWith(github.ref, 'refs/heads/')
+        shell: bash
+        run: |
+          branch_name=$(git rev-parse --abbrev-ref HEAD)
+          git add poetry.lock
+          git commit --message "Update poetry.lock"
+          git push --set-upstream origin "$branch_name"
+
+      - name: Create pull request
+        id: create-pr
+        if: steps.check-for-poetry-lock-changes.outputs.changed == 'true' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh pr create \
+            --base main \
+            --title "Update poetry.lock" \
+            --body "Automated dependency update for \`poetry.lock\`.
+
+          This PR was created by the dependency update workflow after running:
+          - \`poetry run -- nox -s dependency:audit\`
+          - \`poetry update\`"
