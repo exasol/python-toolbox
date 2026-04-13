@@ -18,8 +18,10 @@ jobs:
   report:
     name: Report
     needs:
-     - merge-gate
+      - merge-gate
     uses: ./.github/workflows/report.yml
+    with:
+      upload-metrics: ${{ github.event_name == 'schedule' }}
     secrets: inherit
     permissions:
       contents: read

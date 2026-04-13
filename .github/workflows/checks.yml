@@ -4,14 +4,6 @@ on:
   workflow_call:
 
 jobs:
-  inspect:
-    runs-on: "ubuntu-24.04"
-    steps:
-      - name: Check trigger
-        run: |
-          echo "is scheduled? ${{ github.event_name == 'schedule' }}"
-          echo "github.event_name: ${{ github.event_name }}"
-
   check-version:
     name: Check Version
     runs-on: "ubuntu-24.04"
