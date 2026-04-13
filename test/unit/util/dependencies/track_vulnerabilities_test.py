@@ -1,7 +1,32 @@
+import pytest
+
+from exasol.toolbox.util.dependencies.audit import Vulnerability
 from exasol.toolbox.util.dependencies.track_vulnerabilities import (
     DependenciesAudit,
     VulnerabilityMatcher,
 )
+
+
+@pytest.fixture
+def flipped_id_vulnerability(sample_vulnerability) -> Vulnerability:
+    """
+    Returns an instance of SampleVulnerability equal to
+    sample_vulnerability() but with ID and first alias flipped to verify
+    handling of vulnerabilities with changed ID.
+    """
+
+    other = sample_vulnerability
+    vuln_entry = {
+        "aliases": [other.vulnerability_id],
+        "id": other.cve_id,
+        "fix_versions": other.vulnerability.fix_versions,
+        "description": other.description,
+    }
+    return Vulnerability.from_audit_entry(
+        package_name=other.package_name,
+        version=other.version,
+        vuln_entry=vuln_entry,
+    )
 
 
 class TestVulnerabilityMatcher:
