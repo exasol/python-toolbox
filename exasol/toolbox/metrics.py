@@ -307,13 +307,11 @@ def _markdown(report: Report) -> str:
         for name, entry in entries.items()
     )
 
-    return cleandoc(
-        """
+    return cleandoc("""
     {heading}
     {seperator}
     {entries}
-    """
-    ).format(
+    """).format(
         heading=row.format("Category", "Status"),
         seperator=row.format("-" * col1_width, "-" * col2_width),
         entries="\n".join(rows),

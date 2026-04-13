@@ -1,7 +1,7 @@
-Creating a release
+Creating a Release
 ==================
 
-Preparing a release
+Preparing a Release
 +++++++++++++++++++
 
 #. Prepare the project for a new release
@@ -10,15 +10,18 @@ Preparing a release
 
          nox -s release:prepare -- --type {major,minor,patch}
 
-    The ``release:prepare`` nox session affects the ``pyproject.toml``, ``version.py``, and files in the ``doc/changes`` directory:
+    The ``release:prepare`` nox session affects the ``pyproject.toml``,
+    ``version.py``, and files in the ``doc/changes`` directory:
 
     * Creates & switches to a release branch (can be skipped with ``--no-branch``)
     * Updates the version in the ``pyproject.toml`` and ``version.py``
-    * Moves the content of unreleased changes file ``unreleased.md`` to a versioned changes file ``changes_<version>.md``
+    * Moves the content of unreleased changes file ``unreleased.md`` to a
+      versioned changes file ``changes_<version>.md``
     * Adds a description of dependency changes to the versioned changes file:
 
       * Only direct dependencies are described, no transitive dependencies
-      * Changes are detected by comparing the current content of file ``poetry.lock`` to the latest Git tag.
+      * Changes are detected by comparing the current content of file
+        ``poetry.lock`` to the latest Git tag.
     * Updates the ``changelog.md`` list with the newly created versioned changes file
     * Commits the changes (can be skipped with ``--no-add``)
     * Pushes the changes and creates a PR (can be skipped with ``--no-pr``)
@@ -34,22 +37,34 @@ Preparing a release
     Use the nox session ``release:trigger`` to:
 
     * Switch to & pull the changes from the default branch
-    * Verify that the version to be released does not already have a git tag or GitHub release
-    * Create a new tag & push it to the default branch, which will trigger the GitHub workflow ``cd.yml``
+    * Verify that the version to be released does not already have a git tag
+      or GitHub release
+    * Create a new tag & push it to the default branch, which will trigger the
+      GitHub workflow ``cd.yml``
 
-    Additionally, if enabled in your project config, the task will create an additional tag with pattern ``v<MAJOR_VERSION>``.
-    This is especially useful if other projects use Github actions of your project, for example:
+    Additionally, if enabled in your project config, the task will create an
+    additional tag with pattern ``v<MAJOR_VERSION>``.  This is especially
+    useful if other projects use Github actions of your project, for example:
 
     .. code-block:: yaml
 
         uses: exasol/your_project/.github/actions/your_action@v1
 
-    Your ``PROJECT_CONFIG`` needs to have the flag ``create_major_version_tags=True``.
+    Your ``PROJECT_CONFIG`` needs to have the flag
+    ``create_major_version_tags=True``.
 
-What to do if the release failed?
+Updating Dependencies After Having Prepared the Release
++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+If you need to update some more dependencies after running the nox session
+``release:prepare`` you can update them in the changelog by running the nox
+session ``release:update``.
+
+
+What to do if the Release Failed?
 +++++++++++++++++++++++++++++++++
 
-The release failed during pre-release checks
+The Release Failed During Pre-Release Checks
 --------------------------------------------
 
 #. Delete the local tag
@@ -68,13 +83,14 @@ The release failed during pre-release checks
 #. Start the release process from the beginning
 
 
-One of the release steps failed (Partial Release)
+One of the Release Steps Failed (Partial Release)
 -------------------------------------------------
 #. Check the GitHub action/workflow to see which steps failed
 #. Finish or redo the failed release steps manually
 
 .. note:: Example
 
-    **Scenario**: Publishing of the release on GitHub was successfully but during the PyPi release, the upload step was interrupted.
+    **Scenario**: Publishing of the release on GitHub was successful but
+    during the PyPi release, the upload step was interrupted.
 
     **Solution**: Manually push the package to PyPi

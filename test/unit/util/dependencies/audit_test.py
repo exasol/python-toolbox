@@ -34,8 +34,8 @@ class TestVulnerability:
         result = sample_vulnerability.vulnerability
         assert result == Vulnerability(
             package=sample_vulnerability.vulnerability.package,
-            id=sample_vulnerability.vulnerability_id,
-            aliases=[sample_vulnerability.cve_id],
+            id=sample_vulnerability.cve_id,
+            aliases=[sample_vulnerability.vulnerability_id],
             fix_versions=[sample_vulnerability.fix_version],
             description=sample_vulnerability.description,
         )
@@ -106,20 +106,18 @@ class TestVulnerability:
         assert result.vulnerability_id == expected
 
     def test_subsection_for_changelog_summary(self, sample_vulnerability):
-        expected = cleandoc(
-            """
+        expected = cleandoc("""
             ### CVE-2025-27516 in jinja2:3.1.5
 
             An oversight in how the Jinja sandboxed environment interacts with the
             `|attr` filter allows an attacker that controls the content of a template
             to execute arbitrary Python code.
 
-            #### References:
+            #### References
 
             * https://github.com/advisories/GHSA-cpwx-vrp4-4pq7
             * https://nvd.nist.gov/vuln/detail/CVE-2025-27516
-            """
-        )
+            """)
         assert (
             sample_vulnerability.vulnerability.subsection_for_changelog_summary
             == expected

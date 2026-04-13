@@ -27,16 +27,18 @@ PIP_AUDIT_VULNERABILITY_PATTERN = (
 )
 
 
+PipAuditEntry = dict[str, str | list[str] | tuple[str, ...]]
+
+
 @dataclass
 class PipAuditException(Exception):
-    return_code: int
+    returncode: int
     stdout: str
     stderr: str
 
-    def __init__(self, subprocess_output: subprocess.CompletedProcess) -> None:
-        self.return_code = subprocess_output.returncode
-        self.stdout = subprocess_output.stdout
-        self.stderr = subprocess_output.stderr
+    @classmethod
+    def from_subprocess(cls, proc: subprocess.CompletedProcess) -> PipAuditException:
+        return cls(proc.returncode, proc.stdout, proc.stderr)
 
 
 class VulnerabilitySource(str, Enum):
@@ -102,7 +104,7 @@ class Vulnerability(BaseModel):
         )
 
     @property
-    def security_issue_entry(self) -> dict[str, str | list[str] | tuple[str, ...]]:
+    def security_issue_entry(self) -> PipAuditEntry:
         return {
             "name": self.package.name,
             "version": str(self.package.version),
@@ -132,10 +134,20 @@ class Vulnerability(BaseModel):
         """
         Create a subsection to be included in the Summary section of a versioned changelog.
         """
-        links_join = "\n* ".join(sorted(self.reference_links))
-        references_subsection = f"\n#### References:\n\n* {links_join}\n\n "
-        subsection = f"### {self.vulnerability_id} in {self.package.coordinates}\n\n{self.description}\n{references_subsection}"
-        return cleandoc(subsection.strip())
+        indent = " " * 12
+        references = f"\n{indent}".join(
+            f"* {link}" for link in sorted(self.reference_links)
+        )
+        description = self.description.replace("\n", f"\n{indent}")
+        return cleandoc(f"""
+            ### {self.vulnerability_id} in {self.package.coordinates}
+
+            {description}
+
+            #### References
+
+            {references}
+            """)
 
 
 def audit_poetry_files(working_directory: Path) -> str:
@@ -159,7 +171,7 @@ def audit_poetry_files(working_directory: Path) -> str:
         cwd=working_directory,
     )  # nosec
     if output.returncode != 0:
-        raise PipAuditException(subprocess_output=output)
+        raise PipAuditException.from_subprocess(output)
 
     with tempfile.TemporaryDirectory() as path:
         tmpdir = Path(path)
@@ -179,7 +191,7 @@ def audit_poetry_files(working_directory: Path) -> str:
         # they both map to returncode = 1, so we have our own logic to raise errors
         # for the case of 2) and not 1).
         if not search(PIP_AUDIT_VULNERABILITY_PATTERN, output.stderr.strip()):
-            raise PipAuditException(subprocess_output=output)
+            raise PipAuditException.from_subprocess(output)
     return output.stdout
 
 
@@ -215,7 +227,7 @@ class Vulnerabilities(BaseModel):
         return Vulnerabilities(vulnerabilities=vulnerabilities)
 
     @property
-    def security_issue_dict(self) -> list[dict[str, str | list[str] | tuple[str, ...]]]:
+    def security_issue_dict(self) -> list[PipAuditEntry]:
         return [
             vulnerability.security_issue_entry for vulnerability in self.vulnerabilities
         ]

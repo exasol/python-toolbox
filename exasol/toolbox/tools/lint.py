@@ -58,11 +58,9 @@ def lint_issue_to_markdown(lint_issues: Iterable[Finding]) -> str:
             rows += f"|{finding.message}|\n"
         return rows
 
-    template = cleandoc(
-        """
+    template = cleandoc("""
         {header}{rows}
-        """
-    )
+        """)
     lint_issues = sorted(lint_issues, key=lambda i: (i.path, i.message_id, i.line))
     return template.format(header=_header(), rows=_rows(lint_issues))
 
