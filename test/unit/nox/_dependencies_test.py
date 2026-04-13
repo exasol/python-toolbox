@@ -13,7 +13,9 @@ def test_audit(monkeypatch, nox_session, sample_vulnerability, capsys):
     assert capsys.readouterr().out == sample_vulnerability.nox_dependencies_audit
 
 
-def test_report_resolved_vulnerabilities(monkeypatch, nox_session, capsys, sample_vulnerability):
+def test_report_resolved_vulnerabilities(
+    monkeypatch, nox_session, capsys, sample_vulnerability
+):
     monkeypatch.setattr(
         _dependencies,
         "get_vulnerabilities_from_latest_tag",
