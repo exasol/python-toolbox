@@ -8,6 +8,12 @@ on:
     - cron: "0 0 1/7 * *"
 
 jobs:
+  inspect:
+    runs-on: "ubuntu-24.04"
+    steps:
+      - name: Check trigger
+        run: echo "is scheduled? ${{ github.event_name == 'schedule' }}"
+
   merge-gate:
     name: Merge Gate
     uses: ./.github/workflows/merge-gate.yml
@@ -21,7 +27,7 @@ jobs:
       - merge-gate
     uses: ./.github/workflows/report.yml
     with:
-      upload-metrics: true
+      upload-metrics: ${{ github.event_name == 'schedule' }}
     secrets: inherit
     permissions:
       contents: read
