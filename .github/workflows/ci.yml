@@ -20,6 +20,8 @@ jobs:
     needs:
       - merge-gate
     uses: ./.github/workflows/report.yml
+    with:
+      upload-metrics: true
     secrets: inherit
     permissions:
       contents: read
