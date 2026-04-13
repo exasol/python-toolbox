@@ -112,31 +112,47 @@ When configured as described on :ref:`github_project_configuration`, the
 workflows, like ``slow-checks.yml``. This allows developers to update their pull
 request more often and to only periodically run the more time-expensive tests.
 
+The `report.yml` is called twice:
+#. after the steps in `checks.yml` successfully finish - this allows developers
+to get faster feedback for linting, security, and unit test coverage.
+#. after the steps in `slow-checks.yml` successfully finish - this gives developers an
+overview of the total coverage, as well as the information provided from running
+the `checks.yml`
+
+In both scenarios, the results are posted in the PR and made available on Sonar's UI.
+Note that Sonar does not keep historical information, so it will only show the latest
+information provided to it.
+
 If one of the jobs in the chain fails (or if ``run-slow-tests`` is not approved),
 then the subsequent jobs will not be started.
 
 .. mermaid::
 
     graph TD
-        %% Workflow Triggers (Solid Lines)
-        ci[ci.yml] --> merge-gate[merge-gate.yml]
-        ci --> metrics[report.yml]
+        %% Define Nodes
+        ci_job[ci.yml]
+        gate[merge-gate.yml]
+        checks[checks.yml]
+        slow_run[run-slow-tests]
+        slow_checks[slow-checks.yml]
+        report[report.yml]
+        approver[approve-merge]
 
-        merge-gate --> fast-checks[checks.yml]
-        merge-gate --> run-slow-tests[run-slow-tests]
-        run-slow-tests -.->|needs| slow-checks[slow-checks.yml]
+        %% Workflow Triggers
+        ci_job --> gate
+        gate --> checks
+        gate --> slow_run
+        slow_run -.->|needs| slow_checks
 
-        %% Dependencies / Waiting (Dotted Lines)
-        fast-checks -.->|needs| approve-merge[approve-merge]
-        slow-checks -.->|needs| approve-merge
+        %% Dependencies
+        checks -.->|needs| report
+        checks -.->|needs| approver
+        slow_checks -.->|needs| approver
+        approver -.->|needs| report
 
-        %% Final Dependency
-        approve-merge -.->|needs| metrics
-
-        %% Visual Styling to distinguish jobs
-        style approve-merge fill:#fff,stroke:#333,stroke-dasharray: 5 5
-        style run-slow-tests fill:#fff,stroke:#333,stroke-dasharray: 5 5
-
+        %% Styling
+        style approver fill:#fff,stroke:#333,stroke-dasharray: 5 5
+        style slow_run fill:#fff,stroke:#333,stroke-dasharray: 5 5
 
 .. _pr_merge_yml:
 
