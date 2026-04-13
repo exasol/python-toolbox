@@ -7,7 +7,7 @@ Branch Protection
 -----------------
 
 The best and most maintainable way to have solid branch protection
-(:code:`Settings/Branches/main`) is to require the workflow :code:`merge-gate / Allow
+(:code:`Settings/Branches/main`) is to require the workflow :code:`Merge Gate / Allow
 Merge` to pass successfully. Additionally, if it makes sense for your project,
 you can further require that ``SonarCloud Code Analysis`` passes.
 
