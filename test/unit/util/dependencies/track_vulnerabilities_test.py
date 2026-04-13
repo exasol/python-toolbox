@@ -1,4 +1,3 @@
-from exasol.toolbox.util.dependencies.audit import Vulnerability
 from exasol.toolbox.util.dependencies.track_vulnerabilities import (
     DependenciesAudit,
     VulnerabilityMatcher,
@@ -11,8 +10,12 @@ class TestVulnerabilityMatcher:
         matcher = VulnerabilityMatcher(current_vulnerabilities=[vuln])
         assert not matcher.is_resolved(vuln)
 
-    def test_changed_id_not_resolved(self, sample_vulnerability, flipped_id_vulnerability):
-        matcher = VulnerabilityMatcher(current_vulnerabilities=[flipped_id_vulnerability])
+    def test_changed_id_not_resolved(
+        self, sample_vulnerability, flipped_id_vulnerability
+    ):
+        matcher = VulnerabilityMatcher(
+            current_vulnerabilities=[flipped_id_vulnerability]
+        )
         assert not matcher.is_resolved(sample_vulnerability.vulnerability)
 
     def test_resolved(self, sample_vulnerability):

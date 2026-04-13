@@ -176,7 +176,9 @@ def sample_maven_vulnerabilities() -> SampleMavenVulnerabilities:
 
 
 @pytest.fixture
-def flipped_id_vulnerability(sample_vulnerability: SampleVulnerability) -> SampleVulnerability:
+def flipped_id_vulnerability(
+    sample_vulnerability: SampleVulnerability,
+) -> SampleVulnerability:
     """
     Returns an instance of SampleVulnerability equal to
     sample_vulnerability() but with ID and first alias flipped to verify
