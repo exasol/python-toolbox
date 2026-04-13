@@ -1,5 +1,4 @@
 from inspect import cleandoc
-from typing import Dict
 
 from pydantic import (
     BaseModel,
