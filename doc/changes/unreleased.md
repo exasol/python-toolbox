@@ -11,6 +11,8 @@ The `report.yml` is also called after the `checks.yml` completes. This allows us
 to get linting, security, and unit test coverage before running the `slow-checks.yml`,
 as described in the [Pull Request description](https://exasol.github.io/python-toolbox/main/user_guide/features/github_workflows/index.html#pull-request).
 
+This release also adds a `vulnerabilities:resolved` Nox session, which reports GitHub security issues resolved since the last release.
+
 This release fixes a vulnerability by updating the `poetry.lock` file.
 
 | Name   | Version | ID             | Fix Versions | Updated to |
@@ -18,6 +20,10 @@ This release fixes a vulnerability by updating the `poetry.lock` file.
 | pytest | 9.0.2   | CVE-2025-71176 | 9.0.3        | 9.0.3      |
 
 To ensure usage of secure packages, it is up to the user to similarly relock their dependencies.
+
+## Features
+
+* #402: Created nox session `vulnerabilities:resolved` to report resolved GitHub security issues
 
 ## Refactoring
 

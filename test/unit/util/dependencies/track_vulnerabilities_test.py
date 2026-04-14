@@ -1,55 +1,80 @@
+import pytest
+
+from exasol.toolbox.util.dependencies.audit import Vulnerability
 from exasol.toolbox.util.dependencies.track_vulnerabilities import (
-    ResolvedVulnerabilities,
+    DependenciesAudit,
+    VulnerabilityMatcher,
 )
 
 
-class TestResolvedVulnerabilities:
-    def test_vulnerability_present_for_previous_and_current(self, sample_vulnerability):
-        vuln = sample_vulnerability.vulnerability
-        resolved = ResolvedVulnerabilities(
-            previous_vulnerabilities=[vuln], current_vulnerabilities=[vuln]
-        )
-        assert resolved._is_resolved(vuln) is False
+@pytest.fixture
+def flipped_id_vulnerability(sample_vulnerability) -> Vulnerability:
+    """
+    Returns an instance of SampleVulnerability equal to
+    sample_vulnerability() but with ID and first alias flipped to verify
+    handling of vulnerabilities with changed ID.
+    """
 
-    def test_vulnerability_present_for_previous_and_current_with_different_id(
-        self, sample_vulnerability
+    other = sample_vulnerability
+    vuln_entry = {
+        "aliases": [other.cve_id],
+        "id": other.vulnerability_id,
+        "fix_versions": other.vulnerability.fix_versions,
+        "description": other.description,
+    }
+    return Vulnerability.from_audit_entry(
+        package_name=other.package_name,
+        version=other.version,
+        vuln_entry=vuln_entry,
+    )
+
+
+class TestVulnerabilityMatcher:
+    def test_not_resolved(self, sample_vulnerability):
+        vuln = sample_vulnerability.vulnerability
+        matcher = VulnerabilityMatcher(current_vulnerabilities=[vuln])
+        assert not matcher.is_resolved(vuln)
+
+    def test_changed_id_not_resolved(
+        self, sample_vulnerability, flipped_id_vulnerability
     ):
-        vuln2 = sample_vulnerability.vulnerability.__dict__.copy()
-        vuln2["version"] = sample_vulnerability.version
-        # flipping aliases & id to ensure can match across types
-        vuln2["aliases"] = [sample_vulnerability.vulnerability_id]
-        vuln2["id"] = sample_vulnerability.cve_id
+        """
+        Simulate a vulnerability to be still present, but it's ID having
+        changed over time.
 
-        resolved = ResolvedVulnerabilities(
-            previous_vulnerabilities=[sample_vulnerability.vulnerability],
-            current_vulnerabilities=[vuln2],
+        The test verifies that the vulnerability (using the original ID) is
+        still matched as "not resolved".
+        """
+
+        matcher = VulnerabilityMatcher(
+            current_vulnerabilities=[flipped_id_vulnerability]
         )
-        assert resolved._is_resolved(sample_vulnerability.vulnerability) is False
+        assert not matcher.is_resolved(sample_vulnerability.vulnerability)
 
-    def test_vulnerability_in_previous_resolved_in_current(self, sample_vulnerability):
+    def test_resolved(self, sample_vulnerability):
         vuln = sample_vulnerability.vulnerability
-        resolved = ResolvedVulnerabilities(
-            previous_vulnerabilities=[vuln], current_vulnerabilities=[]
-        )
-        assert resolved._is_resolved(vuln) is True
+        matcher = VulnerabilityMatcher(current_vulnerabilities=[])
+        assert matcher.is_resolved(vuln)
 
+
+class TestDependenciesAudit:
     def test_no_vulnerabilities_for_previous_and_current(self):
-        resolved = ResolvedVulnerabilities(
+        audit = DependenciesAudit(
             previous_vulnerabilities=[], current_vulnerabilities=[]
         )
-        assert resolved.resolutions == []
+        assert audit.resolved_vulnerabilities == []
 
     def test_vulnerability_in_current_but_not_present(self, sample_vulnerability):
-        resolved = ResolvedVulnerabilities(
+        audit = DependenciesAudit(
             previous_vulnerabilities=[],
             current_vulnerabilities=[sample_vulnerability.vulnerability],
         )
         # only care about "resolved" vulnerabilities, not new ones
-        assert resolved.resolutions == []
+        assert audit.resolved_vulnerabilities == []
 
     def test_resolved_vulnerabilities(self, sample_vulnerability):
-        resolved = ResolvedVulnerabilities(
+        audit = DependenciesAudit(
             previous_vulnerabilities=[sample_vulnerability.vulnerability],
             current_vulnerabilities=[],
         )
-        assert resolved.resolutions == [sample_vulnerability.vulnerability]
+        assert audit.resolved_vulnerabilities == [sample_vulnerability.vulnerability]
