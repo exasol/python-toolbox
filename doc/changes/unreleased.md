@@ -11,7 +11,7 @@ The `report.yml` is also called after the `checks.yml` completes. This allows us
 to get linting, security, and unit test coverage before running the `slow-checks.yml`,
 as described in the [Pull Request description](https://exasol.github.io/python-toolbox/main/user_guide/features/github_workflows/index.html#pull-request).
 
-This release also adds nox session `vulnerabilities:resolved` reporting resolved GitHub security issues since the last release.
+This release also adds a `vulnerabilities:resolved` Nox session, which reports GitHub security issues resolved since the last release.
 
 ## Features
 
