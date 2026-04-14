@@ -24,6 +24,7 @@ To ensure usage of secure packages, it is up to the user to similarly relock the
 ## Features
 
 * #402: Created nox session `vulnerabilities:resolved` to report resolved GitHub security issues
+* #733: Adjusted structlog and log level for workflow generation
 
 ## Refactoring
 
