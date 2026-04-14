@@ -4,8 +4,6 @@ import os
 import structlog
 from structlog.dev import ConsoleRenderer
 from structlog.processors import (
-    CallsiteParameter,
-    CallsiteParameterAdder,
     TimeStamper,
     add_log_level,
     format_exc_info,
@@ -18,16 +16,10 @@ structlog.configure(
     processors=[
         # 1. Enrich the data first
         add_log_level,
-        TimeStamper(fmt="iso"),
-        CallsiteParameterAdder(
-            {
-                CallsiteParameter.MODULE,
-                CallsiteParameter.FUNC_NAME,
-            }
-        ),
+        TimeStamper(fmt="%Y-%m-%d %H:%M:%S"),
         # 2. Handle exceptions
         format_exc_info,
-        # 3. Rendering option
-        ConsoleRenderer(),
+        # 3. Render
+        ConsoleRenderer(pad_level=False),
     ],
 )
