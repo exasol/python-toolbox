@@ -8,4 +8,3 @@
 
     python_environment
     security_issues
-    dependency_update
