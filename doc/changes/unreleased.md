@@ -19,3 +19,7 @@ as described in the [Pull Request description](https://exasol.github.io/python-t
 ## Bugfix
 
 * #766: Fixed `action/upload-pages-artifact` from v5 to v5.0.0
+
+## Feature
+
+* #733: Adjusted structlog and log level for workflow generation
