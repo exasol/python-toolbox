@@ -17,8 +17,8 @@ def flipped_id_vulnerability(sample_vulnerability) -> Vulnerability:
 
     other = sample_vulnerability
     vuln_entry = {
-        "aliases": [other.vulnerability_id],
-        "id": other.cve_id,
+        "aliases": [other.cve_id],
+        "id": other.vulnerability_id,
         "fix_versions": other.vulnerability.fix_versions,
         "description": other.description,
     }
@@ -38,6 +38,14 @@ class TestVulnerabilityMatcher:
     def test_changed_id_not_resolved(
         self, sample_vulnerability, flipped_id_vulnerability
     ):
+        """
+        Simulate a vulnerability to be still present, but it's ID having
+        changed over time.
+
+        The test verifies that the vulnerability (using the original ID) is
+        still matched as "not resolved".
+        """
+
         matcher = VulnerabilityMatcher(
             current_vulnerabilities=[flipped_id_vulnerability]
         )
