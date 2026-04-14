@@ -29,7 +29,7 @@ jobs:
 
   approve-run-slow-tests:
     name: Approve Running Slow Tests?
-    if: ${{ inputs.root-event != 'scheduled' }}
+    if: ${{ inputs.root-event != 'schedule' }}
     runs-on: "(( os_version ))"
     permissions:
       contents: read
