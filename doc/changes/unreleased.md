@@ -13,6 +13,14 @@ as described in the [Pull Request description](https://exasol.github.io/python-t
 
 This release also adds a `vulnerabilities:resolved` Nox session, which reports GitHub security issues resolved since the last release.
 
+This release fixes a vulnerability by updating the `poetry.lock` file.
+
+| Name   | Version | ID             | Fix Versions | Updated to |
+|--------|---------|----------------|--------------|------------|
+| pytest | 9.0.2   | CVE-2025-71176 | 9.0.3        | 9.0.3      |
+
+To ensure usage of secure packages, it is up to the user to similarly relock their dependencies.
+
 ## Features
 
 * #402: Created nox session `vulnerabilities:resolved` to report resolved GitHub security issues
@@ -25,3 +33,7 @@ This release also adds a `vulnerabilities:resolved` Nox session, which reports G
 ## Bugfix
 
 * #766: Fixed `action/upload-pages-artifact` from v5 to v5.0.0
+
+## Security
+
+* #774: Fixed vulnerability by re-locking `pytest` in the `poetry.lock`
