@@ -38,7 +38,7 @@ jobs:
 
   deploy-documentation:
     needs:
-     - build-documentation
+      - build-documentation
     permissions:
       contents: read
       pages: write

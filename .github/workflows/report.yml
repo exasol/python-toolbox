@@ -2,6 +2,11 @@ name: Status Report
 
 on:
   workflow_call:
+    inputs:
+      upload-metrics:
+          description: Whether to upload file metrics.json as artifact
+          type: boolean
+          default: false
 
 jobs:
 
@@ -50,6 +55,7 @@ jobs:
         run: poetry run -- nox -s project:report -- --format json | tee metrics.json
 
       - name: Upload Artifacts
+        if: ${{ inputs.upload-metrics }}
         id: upload-artifacts
         uses: actions/upload-artifact@v7
         with:

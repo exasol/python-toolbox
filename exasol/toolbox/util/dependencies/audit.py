@@ -177,7 +177,11 @@ def audit_poetry_files(working_directory: Path) -> str:
         tmpdir = Path(path)
         (tmpdir / requirements_txt).write_text(output.stdout)
 
-        command = ["pip-audit", "-r", requirements_txt, "-f", "json"]
+        # CLI option `--disable-pip` skips dependency resolution in pip.  The
+        # option can be used with hashed requirements files (which is the case
+        # here) to avoid `pip-audit` installing an isolated environment and
+        # speed up the audit significantly.
+        command = ["pip-audit", "--disable-pip", "-r", requirements_txt, "-f", "json"]
         output = subprocess.run(
             command,
             capture_output=True,
@@ -239,6 +243,6 @@ def get_vulnerabilities(working_directory: Path) -> list[Vulnerability]:
     ).vulnerabilities
 
 
-def get_vulnerabilities_from_latest_tag(root_path: Path):
+def get_vulnerabilities_from_latest_tag(root_path: Path) -> list[Vulnerability]:
     with poetry_files_from_latest_tag(root_path=root_path) as tmp_dir:
         return get_vulnerabilities(working_directory=tmp_dir)
