@@ -11,6 +11,14 @@ The `report.yml` is also called after the `checks.yml` completes. This allows us
 to get linting, security, and unit test coverage before running the `slow-checks.yml`,
 as described in the [Pull Request description](https://exasol.github.io/python-toolbox/main/user_guide/features/github_workflows/index.html#pull-request).
 
+This release fixes a vulnerability by updating the `poetry.lock` file.
+
+| Name   | Version | ID             | Fix Versions | Updated to |
+|--------|---------|----------------|--------------|------------|
+| pytest | 9.0.2   | CVE-2025-71176 | 9.0.3        | 9.0.3      |
+
+To ensure usage of secure packages, it is up to the user to similarly relock their dependencies.
+
 ## Refactoring
 
 * #764: Updated `action/upload-pages-artifact` from v4 to [v5](https://github.com/actions/upload-pages-artifact/releases/tag/v5.0.0)
@@ -23,3 +31,7 @@ as described in the [Pull Request description](https://exasol.github.io/python-t
 ## Feature
 
 * #733: Adjusted structlog and log level for workflow generation
+
+## Security
+
+* #774: Fixed vulnerability by re-locking `pytest` in the `poetry.lock`
