@@ -1,5 +1,6 @@
 from collections.abc import Iterable
 from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
 from pydantic_core._pydantic_core import ValidationError
@@ -9,6 +10,7 @@ from exasol.toolbox.config import (
     BaseConfig,
     DependencyManager,
     valid_version_string,
+    warnings,
 )
 from exasol.toolbox.nox.plugin import hookimpl
 from exasol.toolbox.util.version import Version
@@ -202,9 +204,19 @@ class TestPlugins:
 
 class TestDependencyManager:
     @staticmethod
-    @pytest.mark.parametrize("version", ["2.1.4", "2.3.0", "2.9.9"])
-    def test_works_as_expected(version):
+    @pytest.mark.parametrize(
+        "version, expected_warning",
+        [
+            ("2.1.4", None),
+            ("2.3.0", None),
+            ("2.9.9", "Poetry version exceeds last tested version"),
+        ],
+    )
+    def test_works_as_expected(version, expected_warning, monkeypatch):
+        monkeypatch.setattr(warnings, "warn", Mock())
         DependencyManager(name="poetry", version=version)
+        if expected_warning:
+            assert expected_warning in warnings.warn.call_args.args[0]
 
     @staticmethod
     def test_raises_exception_when_not_supported_name():

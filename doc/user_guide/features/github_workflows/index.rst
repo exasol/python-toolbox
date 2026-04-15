@@ -126,12 +126,13 @@ When configured as described on :ref:`github_project_configuration`, the
 workflows, like ``slow-checks.yml``. This allows developers to update their pull
 request more often and to only periodically run the more time-expensive tests.
 
-The `report.yml` is called twice:
-#. after the steps in `checks.yml` successfully finish - this allows developers
-to get faster feedback for linting, security, and unit test coverage.
-#. after the steps in `slow-checks.yml` successfully finish - this gives developers an
-overview of the total coverage, as well as the information provided from running
-the `checks.yml`
+The ``report.yml`` is called twice:
+
+#. after the steps in ``checks.yml`` successfully finish - this allows developers
+   to get faster feedback for linting, security, and unit test coverage.
+#. after the steps in ``slow-checks.yml`` successfully finish - this gives developers an
+   overview of the total coverage, as well as the information provided from running
+   the ``checks.yml``
 
 In both scenarios, the results are posted in the PR and made available on Sonar's UI.
 Note that Sonar does not keep historical information, so it will only show the latest
