@@ -33,15 +33,15 @@ class IllegalChild(Exception):
 
 
 def is_title(line: str) -> bool:
-    return line and line.startswith("#")
+    return bool(line) and line.startswith("#")
 
 
 def is_list_item(line: str) -> bool:
-    return line and (line.startswith("*") or line.startswith("-"))
+    return bool(line) and (line.startswith("*") or line.startswith("-"))
 
 
 def is_intro(line: str) -> bool:
-    return line and not is_title(line) and not is_list_item(line)
+    return bool(line) and not is_title(line) and not is_list_item(line)
 
 
 def level(title: str) -> int:
