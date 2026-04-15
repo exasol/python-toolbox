@@ -1,3 +1,5 @@
+import pytest
+
 from exasol.toolbox.util.dependencies.audit import Vulnerability
 from exasol.toolbox.util.dependencies.track_vulnerabilities import (
     DependenciesAudit,
@@ -5,11 +7,18 @@ from exasol.toolbox.util.dependencies.track_vulnerabilities import (
 )
 
 
-def _flip_id_and_alias(vulnerability: SampleVulnerability):
-    other = vulnerability
+@pytest.fixture
+def flipped_id_vulnerability(sample_vulnerability) -> Vulnerability:
+    """
+    Returns an instance of SampleVulnerability equal to
+    sample_vulnerability() but with ID and first alias flipped to verify
+    handling of vulnerabilities with changed ID.
+    """
+
+    other = sample_vulnerability
     vuln_entry = {
-        "aliases": [other.vulnerability_id],
-        "id": other.cve_id,
+        "aliases": [other.cve_id],
+        "id": other.vulnerability_id,
         "fix_versions": other.vulnerability.fix_versions,
         "description": other.description,
     }
@@ -26,9 +35,20 @@ class TestVulnerabilityMatcher:
         matcher = VulnerabilityMatcher(current_vulnerabilities=[vuln])
         assert not matcher.is_resolved(vuln)
 
-    def test_changed_id_not_resolved(self, sample_vulnerability):
-        vuln2 = _flip_id_and_alias(sample_vulnerability)
-        matcher = VulnerabilityMatcher(current_vulnerabilities=[vuln2])
+    def test_changed_id_not_resolved(
+        self, sample_vulnerability, flipped_id_vulnerability
+    ):
+        """
+        Simulate a vulnerability to be still present, but it's ID having
+        changed over time.
+
+        The test verifies that the vulnerability (using the original ID) is
+        still matched as "not resolved".
+        """
+
+        matcher = VulnerabilityMatcher(
+            current_vulnerabilities=[flipped_id_vulnerability]
+        )
         assert not matcher.is_resolved(sample_vulnerability.vulnerability)
 
     def test_resolved(self, sample_vulnerability):

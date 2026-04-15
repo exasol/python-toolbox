@@ -1,5 +1,4 @@
 from inspect import cleandoc
-from typing import Dict
 
 from pydantic import (
     BaseModel,
@@ -15,8 +14,7 @@ class VulnerabilityMatcher:
         # * keys: package names
         # * values: set of each vulnerability's references
         self._references = {
-            v.package.name: set(v.references)
-            for v in current_vulnerabilities
+            v.package.name: set(v.references) for v in current_vulnerabilities
         }
 
     def is_resolved(self, vuln: Vulnerability) -> bool:
@@ -58,25 +56,28 @@ class DependenciesAudit(BaseModel):
         """
         matcher = VulnerabilityMatcher(self.current_vulnerabilities)
         return [
-            vuln for vuln in self.previous_vulnerabilities
-            if matcher.is_resolved(vuln)
+            vuln for vuln in self.previous_vulnerabilities if matcher.is_resolved(vuln)
         ]
 
     def report_resolved_vulnerabilities(self) -> str:
         if not (resolved := self.resolved_vulnerabilities):
             return ""
-        header = cleandoc(
-            """
+        header = cleandoc("""
             ## Fixed Vulnerabilities
 
             This release fixes vulnerabilities by updating dependencies:
 
             | Dependency | Vulnerability | Affected | Fixed in |
             |------------|---------------|----------|----------|
-            """
-        )
+            """)
+
         def formatted(vuln: Vulnerability) -> str:
-            columns = (vuln.package.name, vuln.id, str(vuln.package.version), vuln.fix_versions[0])
+            columns = (
+                vuln.package.name,
+                vuln.id,
+                str(vuln.package.version),
+                vuln.fix_versions[0],
+            )
             return f'| {" | ".join(columns)} |'
 
         body = "\n".join(formatted(v) for v in resolved)

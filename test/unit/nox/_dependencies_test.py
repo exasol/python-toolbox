@@ -4,7 +4,6 @@ from exasol.toolbox.nox import _dependencies
 from exasol.toolbox.util.dependencies.audit import Vulnerabilities
 
 
-# Proposal: Remove this test and the related nox task under test
 def test_audit(monkeypatch, nox_session, sample_vulnerability, capsys):
     monkeypatch.setattr(_dependencies, "Vulnerabilities", Mock())
     _dependencies.Vulnerabilities.load_from_pip_audit.return_value = Vulnerabilities(
@@ -14,7 +13,9 @@ def test_audit(monkeypatch, nox_session, sample_vulnerability, capsys):
     assert capsys.readouterr().out == sample_vulnerability.nox_dependencies_audit
 
 
-def test_report_resolved_vulnerabilities(monkeypatch, nox_session, capsys, sample_vulnerability):
+def test_report_resolved_vulnerabilities(
+    monkeypatch, nox_session, capsys, sample_vulnerability
+):
     monkeypatch.setattr(
         _dependencies,
         "get_vulnerabilities_from_latest_tag",

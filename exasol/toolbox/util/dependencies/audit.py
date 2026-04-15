@@ -177,6 +177,10 @@ def audit_poetry_files(working_directory: Path) -> str:
         tmpdir = Path(path)
         (tmpdir / requirements_txt).write_text(output.stdout)
 
+        # CLI option `--disable-pip` skips dependency resolution in pip.  The
+        # option can be used with hashed requirements files (which is the case
+        # here) to avoid `pip-audit` installing an isolated environment and
+        # speed up the audit significantly.
         command = ["pip-audit", "--disable-pip", "-r", requirements_txt, "-f", "json"]
         output = subprocess.run(
             command,
