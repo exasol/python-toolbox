@@ -1,10 +1,5 @@
-import re
 from enum import (
     Enum,
-)
-from pathlib import Path
-from typing import (
-    Any,
 )
 
 
@@ -70,48 +65,3 @@ class Rating(Enum):
             raise ValueError(
                 "Uncategorized score, score should be in the following interval [0,6]."
             )
-
-
-def _static_code_analysis(file: str | Path) -> Rating:
-    def pylint(f: str | Path) -> Rating:
-        expr = re.compile(r"^Your code has been rated at (\d+.\d+)/.*", re.MULTILINE)
-        with open(f, encoding="utf-8") as results:
-            data = results.read()
-
-        matches = expr.search(data)
-        if matches:
-            groups = matches.groups()
-        try:
-            group = groups[0]
-            score = Rating.from_score(float(group))
-        except Exception:
-            score = Rating.NotAvailable
-
-        return score
-
-    pylint_score = pylint(file)
-    return pylint_score
-
-
-def _bandit_scoring(ratings: list[dict[str, Any]]) -> float:
-    def char(value: str, default: str = "H") -> str:
-        if value in ["HIGH", "MEDIUM", "LOW"]:
-            return value[0]
-        return default
-
-    weight = {
-        "LL": 1 / 18,
-        "LM": 1 / 15,
-        "LH": 1 / 12,
-        "ML": 1 / 9,
-        "MM": 1 / 6,
-        "MH": 1 / 3,
-    }
-    exp = 0.0
-    for infos in ratings:
-        severity = infos["issue_severity"]
-        if severity == "HIGH":
-            return 0.0
-        index = char(severity) + char(infos["issue_confidence"])
-        exp += weight[index]
-    return 6 * (2**-exp)

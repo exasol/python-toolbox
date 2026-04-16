@@ -1,11 +1,7 @@
-from inspect import cleandoc
-
 import pytest
 
 from exasol.toolbox.metrics import (
     Rating,
-    _bandit_scoring,
-    _static_code_analysis,
 )
 
 
@@ -72,45 +68,6 @@ def named_temp_file(tmp_path):
         file.unlink()
 
 
-@pytest.mark.parametrize(
-    "content,expected",
-    [
-        (
-            cleandoc("""
-    ************* Module doc.user_guide.modules.sphinx.multiversion.conf
-    doc/user_guide/modules/sphinx/multiversion/conf.py:8:0: W0622: Redefining built-in 'copyright' (redefined-builtin)
-    doc/user_guide/modules/sphinx/multiversion/conf.py:4:0: C0103: Constant name "author" doesn't conform to UPPER_CASE naming style (invalid-name)
-    doc/user_guide/modules/sphinx/multiversion/conf.py:5:0: C0103: Constant name "project" doesn't conform to UPPER_CASE naming style (invalid-name)
-    doc/user_guide/modules/sphinx/multiversion/conf.py:6:0: C0103: Constant name "release" doesn't conform to UPPER_CASE naming style (invalid-name)
-    doc/user_guide/modules/sphinx/multiversion/conf.py:7:0: C0103: Constant name "version" doesn't conform to UPPER_CASE naming style (invalid-name)
-    doc/user_guide/modules/sphinx/multiversion/conf.py:8:12: C0209: Formatting a regular string which could be a f-string (consider-using-f-string)
-    doc/user_guide/modules/sphinx/multiversion/conf.py:10:0: C0103: Constant name "html_theme" doesn't conform to UPPER_CASE naming style (invalid-name)
-    doc/user_guide/modules/sphinx/multiversion/conf.py:19:0: C0103: Constant name "html_last_updated_fmt" doesn't conform to UPPER_CASE naming style (invalid-name)
-    doc/user_guide/modules/sphinx/multiversion/conf.py:20:0: C0103: Constant name "master_doc" doesn't conform to UPPER_CASE naming style (invalid-name)
-    doc/user_guide/modules/sphinx/multiversion/conf.py:21:0: C0103: Constant name "pygments_style" doesn't conform to UPPER_CASE naming style (invalid-name)
-    doc/user_guide/modules/sphinx/multiversion/conf.py:41:0: C0103: Constant name "smv_remote_whitelist" doesn't conform to UPPER_CASE naming style (invalid-name)
-    doc/user_guide/modules/sphinx/multiversion/conf.py:42:0: C0103: Constant name "smv_branch_whitelist" doesn't conform to UPPER_CASE naming style (invalid-name)
-    doc/user_guide/modules/sphinx/multiversion/conf.py:43:0: C0103: Constant name "smv_tag_whitelist" doesn't conform to UPPER_CASE naming style (invalid-name)
-
-    ------------------------------------------------------------------
-    Your code has been rated at 7.80/10 (previous run: 7.86/10, -0.05)
-    """),
-            Rating.B,
-        ),
-        (
-            "",
-            Rating.NotAvailable,
-        ),
-    ],
-)
-def test_static_code_analysis(
-    named_temp_file, content, expected
-):  # pylint: disable=redefined-outer-name
-    coverage_report = named_temp_file(name=".lint.txt", content=content)
-    actual = _static_code_analysis(coverage_report)
-    assert actual == expected
-
-
 def _level(char):
     levels = {"H": "HIGH", "M": "MEDIUM", "L": "LOW"}
     return levels[char]
@@ -126,31 +83,3 @@ def _ratings(cases):
             }
         )
     return output
-
-
-@pytest.mark.parametrize(
-    "given,expected",
-    [
-        (["HH", "LL"], 0),
-        (["HM", "LM", "ML"], 0),
-        (["HL", "MH"], 0),
-        ([], 6),
-    ],
-)
-def test_bandit_value(given, expected):
-    assert _bandit_scoring(_ratings(given)) == expected
-
-
-@pytest.mark.parametrize(
-    "lower,higher",
-    [
-        (["HL"], ["MH"]),
-        (["MH"], ["MM"]),
-        (["MM"], ["ML"]),
-        (["HL"], ["LL"]),
-        (["LL"], []),
-        (["MH", "LL"], ["MH"]),
-    ],
-)
-def test_bandit_order(lower, higher):
-    assert _bandit_scoring(_ratings(lower)) < _bandit_scoring(_ratings(higher))
