@@ -8,7 +8,6 @@ regarding Coverage, Security, and Static Code Analysis.
    :maxdepth: 2
    :hidden:
 
-   project_report
    sonar
    ignore_findings
 
@@ -44,26 +43,23 @@ The GitHub workflows of your project can:
 Reporting Metrics
 +++++++++++++++++
 
-Currently, the PTB offers two methods to aggregate the :ref:`generated_metrics`
+Currently, the PTB offers one method to aggregate the :ref:`generated_metrics`
 into a report:
 
-#. Nox session ``project:report``
-    This is an Exasol-specific summarization tool. For more information, see :ref:`project_report`.
-
-#. SonarQube analysis
+* SonarQube analysis
     This summarization tool feeds into a feature-rich UI provided by
     `Sonar <https://docs.sonarsource.com/sonarqube-server>`__. For further
     details, see :ref:`sonarqube_analysis`
 
-Both of these reporting options require that the generated files from the
+This reporting option require that the generated files from the
 generated metrics are existing and in the expected formats. As there are
 metrics for different Python versions, the PTB uses only the metrics
 associated with the Python version named first in the attribute
 ``python_versions`` of class ``Config`` to the reporting metrics tools.
 
 To perform this validation, there are two nox sessions. Due to the direct
-dependence on the nox session ``project:report`` and SonarQube Analysis on the
-aforementioned nox sessions, all of these are executed in succession in the CI's ``report.yml``.
+dependence on the SonarQube Analysis on the aforementioned nox sessions, all
+of these are executed in succession in the CI's ``report.yml``.
 
 +--------------------------+----------------------------------------------------------+
 | Nox session              | Actions                                                  |
