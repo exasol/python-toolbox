@@ -47,39 +47,3 @@ def test_rating_from_score(score, expected):
 def test_rating_from_score_throws_exception_for_unknown_value():
     with pytest.raises(ValueError):
         _ = Rating.from_score(100)
-
-
-@pytest.fixture
-def named_temp_file(tmp_path):
-    files = []
-
-    def _factory(name, content):
-        path = tmp_path / name
-        mode = "w" if not isinstance(content, bytes) else "wb"
-        with open(path, mode) as f:
-            f.write(content)
-            files.append(path)
-
-        return path
-
-    yield _factory
-
-    for file in files:
-        file.unlink()
-
-
-def _level(char):
-    levels = {"H": "HIGH", "M": "MEDIUM", "L": "LOW"}
-    return levels[char]
-
-
-def _ratings(cases):
-    output = []
-    for rating in cases:
-        output.append(
-            {
-                "issue_severity": _level(rating[0]),
-                "issue_confidence": _level(rating[1]),
-            }
-        )
-    return output
