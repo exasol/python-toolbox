@@ -39,7 +39,7 @@ class TestVulnerabilityMatcher:
         self, sample_vulnerability, flipped_id_vulnerability
     ):
         """
-        Simulate a vulnerability to be still present, but it's ID having
+        Simulate a vulnerability to be still present, but its ID having
         changed over time.
 
         The test verifies that the vulnerability (using the original ID) is
