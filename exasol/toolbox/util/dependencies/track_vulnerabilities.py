@@ -1,3 +1,4 @@
+from collections import defaultdict
 from inspect import cleandoc
 
 from pydantic import (
@@ -12,10 +13,10 @@ class VulnerabilityMatcher:
     def __init__(self, current_vulnerabilities: list[Vulnerability]):
         # Dict of current vulnerabilities:
         # * keys: package names
-        # * values: set of each vulnerability's references
-        self._references = {
-            v.package.name: set(v.references) for v in current_vulnerabilities
-        }
+        # * values: set of each vulnerability's references combined
+        self._references = defaultdict(set)
+        for v in current_vulnerabilities:
+            self._references[v.package.name].update(v.references)
 
     def is_resolved(self, vuln: Vulnerability) -> bool:
         """
@@ -34,8 +35,8 @@ class VulnerabilityMatcher:
         vulnerability.
         """
         refs = set(vuln.references)
-        current = self._references.get(vuln.package.name, set())
-        return not refs.intersection(current)
+        current_refs = self._references.get(vuln.package.name, set())
+        return refs.isdisjoint(current_refs)
 
 
 class DependenciesAudit(BaseModel):
