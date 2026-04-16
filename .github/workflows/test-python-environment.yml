@@ -12,7 +12,7 @@ jobs:
     outputs:
       should_run: ${{ steps.diff.outputs.should_run }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - id: diff
