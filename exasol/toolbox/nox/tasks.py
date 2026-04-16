@@ -41,7 +41,6 @@ def check(session: Session) -> None:
     _type_check(session, py_files)
     _coverage(session, PROJECT_CONFIG, context)
 
-from exasol.toolbox.nox._metrics import report
 from exasol.toolbox.nox._test import (
     _coverage,
     coverage,

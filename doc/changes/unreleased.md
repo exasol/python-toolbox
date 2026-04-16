@@ -9,3 +9,4 @@
 ## Refactoring
 
 * #731: Reduced costly `test-python-environment.yml` to run when triggered on `main` or when the files related to the action are altered
+* #785: Remove nox session `project:report`, as superceded by Sonar usage
