@@ -192,24 +192,6 @@ def technical_debt() -> Rating:
     return Rating.NotAvailable
 
 
-def create_report(
-    commit: str,
-    date: datetime.datetime | None = None,
-    coverage_report: str | Path = ".coverage",
-    pylint_report: str | Path = ".lint.txt",
-    bandit_report: str | Path = ".security.json",
-) -> Report:
-    return Report(
-        commit=commit,
-        date=date if date is not None else datetime.datetime.now(),
-        coverage=total_coverage(coverage_report),
-        maintainability=maintainability(pylint_report),
-        reliability=reliability(),
-        security=security(bandit_report),
-        technical_debt=technical_debt(),
-    )
-
-
 class Format(Enum):
     Text = auto()
     Json = auto()
@@ -334,8 +316,3 @@ def _text(report: Report) -> str:
     return "\n".join(
         [line.format(_name(key), _value(value)) for key, value in entries.items()]
     )
-
-
-def format_report(report: Report, fmt: Format) -> str:
-    dispatcher = {Format.Json: _json, Format.Markdown: _markdown, Format.Text: _text}
-    return dispatcher[fmt](report)
