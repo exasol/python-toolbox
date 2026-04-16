@@ -3,18 +3,12 @@ import json
 import re
 import subprocess
 import sys
-from collections import defaultdict
-from collections.abc import Callable
 from dataclasses import (
-    asdict,
     dataclass,
 )
 from enum import (
     Enum,
-    auto,
 )
-from functools import singledispatch
-from inspect import cleandoc
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import (
@@ -186,133 +180,3 @@ def _bandit_scoring(ratings: list[dict[str, Any]]) -> float:
         index = char(severity) + char(infos["issue_confidence"])
         exp += weight[index]
     return 6 * (2**-exp)
-
-
-def technical_debt() -> Rating:
-    return Rating.NotAvailable
-
-
-class Format(Enum):
-    Text = auto()
-    Json = auto()
-    Markdown = auto()
-
-    @staticmethod
-    def from_string(value: str) -> "Format":
-        key = value.lower()
-        dispatcher = {
-            "json": Format.Json,
-            "markdown": Format.Markdown,
-            "text": Format.Text,
-        }
-        try:
-            fmt = dispatcher[key]
-        except KeyError as ex:
-            raise ValueError(f"No known conversion for [{value}]") from ex
-        return fmt
-
-
-@singledispatch
-def color(value: Any) -> str:
-    return ""
-
-
-@color.register
-def _rating_color(value: Rating) -> str:
-    return {
-        Rating.A: "brightgreen",
-        Rating.B: "green",
-        Rating.C: "yellowgreen",
-        Rating.D: "yellow",
-        Rating.E: "orange",
-        Rating.F: "red",
-        Rating.NotAvailable: "black",
-    }[value]
-
-
-@color.register(float)
-@color.register(int)
-def _coverage_color(value: float | int) -> str:
-    if 0 <= value < 20:
-        return _rating_color(Rating.F)
-    elif 20 <= value < 50:
-        return _rating_color(Rating.E)
-    elif 50 <= value < 70:
-        return _rating_color(Rating.D)
-    elif 70 <= value < 80:
-        return _rating_color(Rating.C)
-    elif 80 <= value < 90:
-        return _rating_color(Rating.B)
-    elif 90 <= value <= 100:
-        return _rating_color(Rating.A)
-    else:
-        return _rating_color(Rating.NotAvailable)
-
-
-def _json(report: Report) -> str:
-    def identity(obj: Any) -> Any:
-        return obj
-
-    transformation: dict[type, Callable[[Any], Any]] = defaultdict(
-        lambda: identity,
-        {
-            Rating: lambda value: f"{value:n}",
-            datetime.datetime: lambda value: str(value),
-        },
-    )
-    data = asdict(report)
-    normalized = {k: transformation[type(v)](v) for k, v in data.items()}
-    return json.dumps(normalized)
-
-
-def _markdown(report: Report) -> str:
-    col1_width = 25
-    col2_width = 75
-
-    def _key(name: str) -> str:
-        return name.lower().replace(" ", "_")
-
-    data = asdict(report)
-    colors = {name: color(data[name]) for name in data}
-    entries = {
-        "Commit": "{value}",
-        "Date": "{value}",
-        "Coverage": "![Coverage](https://img.shields.io/badge/-{value:.2f}%25-{color})",
-        "Maintainability": "![Maintainability](https://img.shields.io/badge/-{value:n}-{color})",
-        "Reliability": "![Reliability](https://img.shields.io/badge/-{value:n}-{color})",
-        "Security": "![Security](https://img.shields.io/badge/-{value:n}-{color})",
-        "Technical Debt": "![Technical Debt](https://img.shields.io/badge/-{value:n}-{color})",
-    }
-    row = f"| {{0:<{col1_width}}} | {{1:<{col2_width}}} | "
-    rows = (
-        row.format(name, entry.format(value=data[_key(name)], color=colors[_key(name)]))
-        for name, entry in entries.items()
-    )
-
-    return cleandoc("""
-    {heading}
-    {seperator}
-    {entries}
-    """).format(
-        heading=row.format("Category", "Status"),
-        seperator=row.format("-" * col1_width, "-" * col2_width),
-        entries="\n".join(rows),
-    )
-
-
-def _text(report: Report) -> str:
-    def _name(key: str) -> str:
-        return f"{key[0].upper()}{key[1:]}:"
-
-    def _value(value: Any) -> str:
-        if isinstance(value, (int, float)):
-            return f"{value:.2f}%"
-        elif isinstance(value, Rating):
-            return f"{value:n}"
-        return str(value)
-
-    line = "{0:<25}{1:<75}"
-    entries = asdict(report)
-    return "\n".join(
-        [line.format(_name(key), _value(value)) for key, value in entries.items()]
-    )
