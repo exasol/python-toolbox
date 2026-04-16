@@ -16,6 +16,7 @@ nested up to the top-level section representing the whole file.
 from __future__ import annotations
 
 import io
+import re
 from pathlib import Path
 
 
@@ -37,7 +38,7 @@ def is_title(line: str) -> bool:
 
 
 def is_list_item(line: str) -> bool:
-    return bool(line) and (line.startswith("*") or line.startswith("-"))
+    return bool(re.match(r"^([*-]|[0-9]+\.)", line))
 
 
 def is_intro(line: str) -> bool:

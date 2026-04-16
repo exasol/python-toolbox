@@ -6,6 +6,7 @@ from exasol.toolbox.util.release.markdown import (
     IllegalChild,
     Markdown,
     ParseError,
+    is_list_item,
 )
 
 
@@ -135,6 +136,22 @@ ILLEGAL_CHILD = _markdown("""
    """)
 
 
+@pytest.mark.parametrize("line, expected", [
+    ("- line", True),
+    ("-line", True),
+    ("* line", True),
+    ("*line", True),
+    ("1. line", True),
+    ("123. line", True),
+    ("123.line", True),
+    (". line", False),
+    ("line", False),
+    ("", False),
+])
+def test_is_list_item(line, expected):
+    assert is_list_item(line) == expected
+
+
 def test_no_title_error():
     with pytest.raises(ParseError, match="First line of markdown file must be a title"):
         Markdown.from_text("body\n# title")
@@ -204,6 +221,16 @@ def test_constructor_illegal_child():
         """,
             Markdown("# title", "intro", "- item 1\n- item 2"),
             id="intro_dash_items",
+        ),
+        pytest.param(
+            """
+        # title
+        intro
+        1. item 1
+        2. item 2
+        """,
+            Markdown("# title", "intro", "1. item 1\n2. item 2"),
+            id="intro_numbered_items",
         ),
     ],
 )
