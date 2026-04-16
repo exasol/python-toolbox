@@ -51,7 +51,7 @@ into a report:
     `Sonar <https://docs.sonarsource.com/sonarqube-server>`__. For further
     details, see :ref:`sonarqube_analysis`
 
-This reporting option require that the generated files from the
+This reporting option requires that the generated files from the
 generated metrics are existing and in the expected formats. As there are
 metrics for different Python versions, the PTB uses only the metrics
 associated with the Python version named first in the attribute
