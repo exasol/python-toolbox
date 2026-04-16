@@ -305,4 +305,4 @@ def test_add_illegal_child(scenario: Scenario):
 
 def test_nested():
     testee = NESTED.create_testee()
-    assert testee.child("## Child A").child("### Grand Child") is not None
+    assert testee.child("## Child A").child("### Grand Child").title == "### Grand Child"

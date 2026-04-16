@@ -1,9 +1,9 @@
 """
-Class Markdown represents a file in markdown syntax with some additional
+Class Markdown represents a file in Markdown syntax with some additional
 constraints:
 
 * The file must start with a title in the first line.
-* Each subsequent title must be of a higher level, ie. start with more "#"
+* Each subsequent title must be of a higher level, i.e. start with more "#"
   characters than the top-level title.
 
 Each title starts a section, optionally containing an additional intro and a
@@ -108,8 +108,8 @@ class Markdown:
 
     def replace_or_append_child(self, child: Markdown) -> Markdown:
         """
-        If there is a child with the same title then replace this child
-        otherwise append the specified child.
+        If there is a child with the same title, then replace this child;
+        otherwise, append the specified child.
         """
 
         self._check(child)
@@ -192,4 +192,4 @@ class Markdown:
         while is_title(line) and level(title) < level(line):
             child, line = Markdown._parse(stream, title=line)
             children.append(child)
-        return Markdown(title, intro.strip("\n"), items.strip("\n"), children), line
+        return cls(title, intro.strip("\n"), items.strip("\n"), children), line
