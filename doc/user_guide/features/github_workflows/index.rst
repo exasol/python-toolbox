@@ -61,6 +61,9 @@ Workflows
      - Pull request and monthly
      - Executes the continuous integration suite by calling ``merge-gate.yml`` and
        ``report.yml``. See :ref:`ci_yml` for a graph of workflow calls.
+   * - ``dependency-update.yml``
+     - Weekly and manual
+     - Audits project dependencies for known vulnerabilities, updates them with Poetry when needed, and creates a pull request if ``poetry.lock`` changes.
    * - ``gh-pages.yml``
      - Workflow call
      - Builds the documentation and deploys it to GitHub Pages.
@@ -98,6 +101,17 @@ Workflows
 
 CI Actions
 ----------
+
+Dependency Update
+^^^^^^^^^^^^^^^^^
+
+The ``dependency-update.yml`` workflow helps keep project dependencies up to date.
+
+It can be triggered manually and is also scheduled to run weekly.
+
+The workflow first audits dependencies for known vulnerabilities. If vulnerabilities
+are detected, it updates the dependencies using Poetry. When ``poetry.lock`` changes,
+it creates a pull request with the update.
 
 .. _ci_yml:
 
