@@ -7,15 +7,47 @@ on:
   workflow_call:
 
 jobs:
+  check-changes:
+    runs-on: "ubuntu-24.04"
+    outputs:
+      should_run: ${{ steps.diff.outputs.should_run }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - id: diff
+        run: |
+          # Always run if the current branch is main
+          if [ "${{ github.ref_name }}" == "main" ]; then
+            echo "Branch is main, forcing run."
+            echo "should_run=true" >> $GITHUB_OUTPUT
+
+          # Otherwise, check if any relevant files were changed in this PR
+          else
+            BASE_REF=${{ github.base_ref || 'main' }}
+            if git diff --quiet "origin/$BASE_REF...HEAD" -- .github/actions/python-environment; then
+              echo "No changes in .github/actions/python-environment, skipping."
+              echo "should_run=false" >> $GITHUB_OUTPUT
+            else
+              echo "Changes detected in directory, running."
+              echo "should_run=true" >> $GITHUB_OUTPUT
+            fi
+          fi
+
   build-matrix:
     name: Build Matrix
+    needs:
+      - check-changes
+    if: needs.check-changes.outputs.should_run == 'true'
     uses: ./.github/workflows/matrix-all.yml
     permissions:
       contents: read
 
   verify-poetry-setup:
     needs:
-     - build-matrix
+      - check-changes
+      - build-matrix
+    if: needs.check-changes.outputs.should_run == 'true'
     strategy:
       fail-fast: false
       matrix:

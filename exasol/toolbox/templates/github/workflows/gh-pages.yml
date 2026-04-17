@@ -32,13 +32,13 @@ jobs:
 
       - name: Upload Artifact
         id: upload-artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: html-documentation
 
   deploy-documentation:
     needs:
-     - build-documentation
+      - build-documentation
     permissions:
       contents: read
       pages: write

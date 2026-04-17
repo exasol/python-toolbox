@@ -1,5 +1,5 @@
+from collections import defaultdict
 from inspect import cleandoc
-from typing import Dict
 
 from pydantic import (
     BaseModel,

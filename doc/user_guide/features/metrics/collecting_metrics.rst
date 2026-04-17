@@ -8,7 +8,6 @@ regarding Coverage, Security, and Static Code Analysis.
    :maxdepth: 2
    :hidden:
 
-   project_report
    sonar
    ignore_findings
 
@@ -44,26 +43,16 @@ The GitHub workflows of your project can:
 Reporting Metrics
 +++++++++++++++++
 
-Currently, the PTB offers two methods to aggregate the :ref:`generated_metrics`
-into a report:
+The PTB uses only the metrics associated with the Python version specified by
+:meth:`exasol.toolbox.config.BaseConfig.minimum_python_version`.
 
-#. Nox session ``project:report``
-    This is an Exasol-specific summarization tool. For more information, see :ref:`project_report`.
+Nox session ``sonar:check`` uploads the :ref:`findings <generated_metrics>` to
+:ref:`SonarQube <sonarqube_analysis>` for aggregation and additional static
+code analysis, presenting the results in Sonar's `feature-rich UI
+<https://docs.sonarsource.com/sonarqube-server>`__.
 
-#. SonarQube analysis
-    This summarization tool feeds into a feature-rich UI provided by
-    `Sonar <https://docs.sonarsource.com/sonarqube-server>`__. For further
-    details, see :ref:`sonarqube_analysis`
-
-Both of these reporting options require that the generated files from the
-generated metrics are existing and in the expected formats. As there are
-metrics for different Python versions, the PTB uses only the metrics
-associated with the Python version named first in the attribute
-``python_versions`` of class ``Config`` to the reporting metrics tools.
-
-To perform this validation, there are two nox sessions. Due to the direct
-dependence on the nox session ``project:report`` and SonarQube Analysis on the
-aforementioned nox sessions, all of these are executed in succession in the CI's ``report.yml``.
+The CI workflow ``report.yml`` runs ``sonar:check`` after two additional Nox
+sessions collect the artifacts from various jobs:
 
 +--------------------------+----------------------------------------------------------+
 | Nox session              | Actions                                                  |
