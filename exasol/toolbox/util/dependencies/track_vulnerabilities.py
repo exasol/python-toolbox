@@ -37,7 +37,7 @@ class VulnerabilityMatcher:
         """
         refs = set(vuln.references)
         current = self._references.get(vuln.package.name, set())
-        return not refs.intersection(current)
+        return refs.isdisjoint(current)
 
 
 class DependenciesAudit(BaseModel):
