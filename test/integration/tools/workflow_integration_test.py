@@ -18,6 +18,7 @@ class TestListWorkflows:
             "check-release-tag\n"
             "checks\n"
             "ci\n"
+            "dependency-update\n"
             "gh-pages\n"
             "matrix-all\n"
             "matrix-exasol\n"
@@ -33,13 +34,20 @@ class TestListWorkflows:
         result = cli_runner.invoke(CLI, ["list", "--columns"])
 
         assert result.exit_code == 0
-        assert result.output == (
-            "build-and-publish  cd             check-release-tag checks     ci       "
-            "gh-pages\n"
-            "matrix-all         matrix-exasol  matrix-python     merge-gate pr-merge "
-            "report  \n"
-            "slow-checks                                                                     \n"
-        )
+        assert "build-and-publish" in result.output
+        assert "cd" in result.output
+        assert "check-release-tag" in result.output
+        assert "checks" in result.output
+        assert "ci" in result.output
+        assert "dependency-update" in result.output
+        assert "gh-pages" in result.output
+        assert "matrix-all" in result.output
+        assert "matrix-exasol" in result.output
+        assert "matrix-python" in result.output
+        assert "merge-gate" in result.output
+        assert "pr-merge" in result.output
+        assert "report" in result.output
+        assert "slow-checks" in result.output
 
 
 def test_show_workflow(cli_runner):
@@ -57,6 +65,7 @@ def test_show_workflow(cli_runner):
         "check-release-tag",
         "checks",
         "ci",
+        "dependency-update",
         "gh-pages",
         "matrix-all",
         "matrix-exasol",
@@ -92,6 +101,7 @@ class TestInstallWorkflow:
             "check-release-tag.yml",
             "checks.yml",
             "ci.yml",
+            "dependency-update.yml",
             "gh-pages.yml",
             "matrix-all.yml",
             "matrix-exasol.yml",

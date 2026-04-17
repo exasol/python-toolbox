@@ -35,7 +35,7 @@ class TestGenerateWorkflow:
     @staticmethod
     @pytest.mark.parametrize(
         "nox_session_runner_posargs, expected_count",
-        [(ALL, 13), *[(key, 1) for key in WORKFLOW_TEMPLATE_OPTIONS.keys()]],
+        [(ALL, 14), *[(key, 1) for key in WORKFLOW_TEMPLATE_OPTIONS.keys()]],
         indirect=["nox_session_runner_posargs"],
     )
     def test_works_as_expected(
