@@ -38,7 +38,7 @@ def is_title(line: str) -> bool:
 
 
 def is_list_item(line: str) -> bool:
-    return bool(re.match(r"^([*-]|[0-9]+\.)", line))
+    return bool(re.match(r"^([*-]|\d+\.)", line))
 
 
 def is_intro(line: str) -> bool:
