@@ -136,18 +136,21 @@ ILLEGAL_CHILD = _markdown("""
    """)
 
 
-@pytest.mark.parametrize("line, expected", [
-    ("- line", True),
-    ("-line", True),
-    ("* line", True),
-    ("*line", True),
-    ("1. line", True),
-    ("123. line", True),
-    ("123.line", True),
-    (". line", False),
-    ("line", False),
-    ("", False),
-])
+@pytest.mark.parametrize(
+    "line, expected",
+    [
+        ("- line", True),
+        ("-line", True),
+        ("* line", True),
+        ("*line", True),
+        ("1. line", True),
+        ("123. line", True),
+        ("123.line", True),
+        (". line", False),
+        ("line", False),
+        ("", False),
+    ],
+)
 def test_is_list_item(line, expected):
     assert is_list_item(line) == expected
 
@@ -332,4 +335,6 @@ def test_add_illegal_child(scenario: Scenario):
 
 def test_nested():
     testee = NESTED.create_testee()
-    assert testee.child("## Child A").child("### Grand Child").title == "### Grand Child"
+    assert (
+        testee.child("## Child A").child("### Grand Child").title == "### Grand Child"
+    )
