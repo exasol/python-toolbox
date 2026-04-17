@@ -39,7 +39,7 @@ class TestVulnerabilityMatcher:
         self, sample_vulnerability, flipped_id_vulnerability
     ):
         """
-        Simulate a vulnerability to be still present, but it's ID having
+        Simulate a vulnerability to be still present, but its ID having
         changed over time.
 
         The test verifies that the vulnerability (using the original ID) is
@@ -55,6 +55,34 @@ class TestVulnerabilityMatcher:
         vuln = sample_vulnerability.vulnerability
         matcher = VulnerabilityMatcher(current_vulnerabilities=[])
         assert matcher.is_resolved(vuln)
+
+    def test_no_resolution_same_package(self):
+        """
+        Scenario: 'cryptography' has two vulnerabilities.
+        One is resolved (removed from the current list), the other remains.
+        """
+        pkg_data = {"name": "cryptography", "version": "46.0.6"}
+
+        vuln_1 = Vulnerability(
+            package=pkg_data,
+            id="GHSA-m959-cc7f-wv43",
+            aliases=["CVE-2026-34073"],
+            fix_versions=["46.0.6"],
+            description="Dummy description",
+        )
+
+        vuln_2 = Vulnerability(
+            package=pkg_data,
+            id="GHSA-p423-j2cm-9vmq",
+            aliases=["CVE-2026-39892"],
+            fix_versions=["46.0.7"],
+            description="Dummy description",
+        )
+
+        matcher = VulnerabilityMatcher(current_vulnerabilities=[vuln_1, vuln_2])
+
+        assert matcher.is_resolved(vuln_1) is False
+        assert matcher.is_resolved(vuln_2) is False
 
 
 class TestDependenciesAudit:

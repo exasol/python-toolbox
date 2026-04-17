@@ -21,8 +21,6 @@ jobs:
     needs:
       - run-fast-checks
     uses: ./.github/workflows/report.yml
-    with:
-      upload-metrics: false
     secrets: inherit
     permissions:
       contents: read
