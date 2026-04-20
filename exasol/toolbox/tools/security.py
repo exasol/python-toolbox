@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import re
-import subprocess
+import subprocess  # nosec: B404 - risk of subprocess is accepted
 import sys
 from collections.abc import (
     Generator,
