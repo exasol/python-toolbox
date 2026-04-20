@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import datetime
 import re
 from collections import OrderedDict
+from collections.abc import Generator
 from datetime import datetime
 from inspect import cleandoc
 from pathlib import Path
+from typing import Dict
 
 from exasol.toolbox.util.dependencies.audit import (
     get_vulnerabilities,
