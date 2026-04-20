@@ -105,7 +105,3 @@ def update_workflow(
         category=FutureWarning,
         stacklevel=2,
     )
-
-
-if __name__ == "__main__":
-    CLI()
