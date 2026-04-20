@@ -9,5 +9,6 @@
 ## Refactoring
 
 * #731: Reduced costly `test-python-environment.yml` to run when triggered on `main` or when the files related to the action are altered
-* #785: Remove nox session `project:report` and metrics-schema, as superseded by Sonar usage
-* #763: Parse and Manipulate Changes Files
+* #785: Removed nox session `project:report` and metrics-schema, as superseded by Sonar usage
+* #763: Parsed and manipulated Changes Files
+* #788: Remove tbx workflow CLI commands, as superseded by nox session `workflow:generate`
