@@ -11,12 +11,11 @@ from exasol.toolbox.util.dependencies.audit import Vulnerability
 
 class VulnerabilityMatcher:
     def __init__(self, current_vulnerabilities: list[Vulnerability]):
-        # Dict of current vulnerabilities:
-        # * keys: package names
-        # * values: set containing the union of all references of all vulnerabilities.
+        # Dictionary mapping package names to a unified set of all active
+        # vulnerability references (IDs, CVEs, aliases) for that package.
         self._references = defaultdict(set)
         for v in current_vulnerabilities:
-            self._references[v.package.name] |= set(v.references)
+            self._references[v.package.name].update(v.references)
 
     def is_resolved(self, vuln: Vulnerability) -> bool:
         """
