@@ -34,8 +34,8 @@ class VulnerabilityMatcher:
         vulnerability.
         """
         refs = set(vuln.references)
-        current = self._references.get(vuln.package.name, set())
-        return refs.isdisjoint(current)
+        current_refs = self._references.get(vuln.package.name, set())
+        return refs.isdisjoint(current_refs)
 
 
 class DependenciesAudit(BaseModel):
