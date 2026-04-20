@@ -41,7 +41,8 @@ class Changelog:
         self.version = version
         self.unreleased: Path = changes_path / "unreleased.md"
         self.versioned_changes: Path = changes_path / f"changes_{version}.md"
-        self.changelog: Path = changes_path / "changelog.md"
+        # Accepting attribute changelog duplicating the class name
+        self.changelog: Path = changes_path / "changelog.md" # NOSONAR
         self.root_path: Path = root_path
 
     def _create_new_unreleased(self):
@@ -80,7 +81,7 @@ class Changelog:
 
     def _dependency_changes(self) -> Markdown | None:
         if sections := list(self._dependency_sections()):
-            return Markdown(f"## Dependency Updates", children=sections)
+            return Markdown("## Dependency Updates", children=sections)
         return None
 
     @staticmethod
