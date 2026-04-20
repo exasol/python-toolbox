@@ -98,13 +98,12 @@ def _install_template(
         input_file = stack.enter_context(open(src, "rb"))
         output_file = stack.enter_context(open(dest, "wb"))
         output_file.write(input_file.read())
-        return
 
 
 def _select_templates(template: str, pkg: str) -> Mapping[str, Any]:
     templates = _templates(pkg)
     if template != "all" and template not in templates:
-        raise Exception(f"<{template}> is unknown")
+        raise FileNotFoundError(f"<{template}> is unknown")
     templates = (
         templates
         if template == "all"
@@ -124,7 +123,7 @@ def install_template(template: str, dest: Path, pkg: str) -> None:
 
     try:
         templates = _select_templates(template, pkg)
-    except Exception as ex:
+    except FileNotFoundError as ex:
         stderr.print(f"[red]{ex}[/red]")
         raise typer.Exit(-1)
 
@@ -146,7 +145,7 @@ def update_template(
 
     try:
         templates = _select_templates(template, pkg)
-    except Exception as ex:
+    except FileNotFoundError as ex:
         stderr.print(f"[red]{ex}[/red]")
         raise typer.Exit(-1)
 
