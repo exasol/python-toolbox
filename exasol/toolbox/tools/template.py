@@ -13,9 +13,6 @@ from rich.columns import Columns
 from rich.console import Console
 from rich.syntax import Syntax
 
-from exasol.toolbox.util.workflows.workflow import Workflow
-from noxconfig import PROJECT_CONFIG
-
 stdout = Console()
 stderr = Console(stderr=True)
 
@@ -61,17 +58,6 @@ def show_templates(
     stdout.print(
         Syntax.from_path(path=template, encoding="utf-8", lexer=lexer)
     )  # type: ignore
-
-
-def _render_template(
-    src: str | Path,
-) -> str:
-    src_path = Path(src)
-    github_template_dict = PROJECT_CONFIG.github_template_dict
-    workflow = Workflow.load_from_template(
-        file_path=src_path, github_template_dict=github_template_dict
-    )
-    return workflow.content + "\n"
 
 
 def diff_template(template: str, dest: Path, pkg: str) -> None:
