@@ -1,13 +1,10 @@
 from __future__ import annotations
 
-import datetime
-import re
 from collections import OrderedDict
 from collections.abc import Generator
 from datetime import datetime
 from inspect import cleandoc
 from pathlib import Path
-from typing import Dict
 
 from exasol.toolbox.util.dependencies.audit import (
     get_vulnerabilities,
@@ -62,9 +59,7 @@ class Changelog:
         """
 
         try:
-            previous_groups = get_dependencies_from_latest_tag(
-                root_path=self.root_path
-            )
+            previous_groups = get_dependencies_from_latest_tag(root_path=self.root_path)
         except LatestTagNotFoundError:
             # In new projects, there is not a pre-existing tag, and all dependencies
             # are considered new.
@@ -128,7 +123,9 @@ class Changelog:
 
     def _resolved_vulnerabilities(self) -> Markdown | None:
         report = DependenciesAudit(
-            previous_vulnerabilities=get_vulnerabilities_from_latest_tag(self.root_path),
+            previous_vulnerabilities=get_vulnerabilities_from_latest_tag(
+                self.root_path
+            ),
             current_vulnerabilities=get_vulnerabilities(self.root_path),
         ).report_resolved_vulnerabilities()
         return Markdown("## Security Issues", report) if report else None

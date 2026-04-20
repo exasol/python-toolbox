@@ -105,7 +105,7 @@ def expected_changes(
     if Expect.VULNERABILITIES in include:
         changes.add_child(vulnerabilities)
     if Expect.VULNERABILITIES_INSERTED in include:
-        changes.child("## Security Issues").intro = (vulnerabilities.intro)
+        changes.child("## Security Issues").intro = vulnerabilities.intro
     if Expect.DEPENDENCIES in include:
         changes.replace_or_append_child(dependencies)
     return changes
@@ -301,7 +301,9 @@ class TestChangelog:
         assert changelog.changelog.read_text() == SampleContent.new_changelog
         assert changelog.unreleased.read_text() == UNRELEASED_INITIAL_CONTENT
         versioned = Markdown.read(changelog.versioned_changes)
-        expected = expected_changes(include=Expect.DEPENDENCIES | Expect.VULNERABILITIES)
+        expected = expected_changes(
+            include=Expect.DEPENDENCIES | Expect.VULNERABILITIES
+        )
         assert versioned == expected
 
     @staticmethod
@@ -318,7 +320,9 @@ class TestChangelog:
         mock_changelog(dependency_changes, vulnerability_changes)
         changelog.update_latest()
         versioned = Markdown.read(changelog.versioned_changes)
-        expected = expected_changes(include=Expect.DEPENDENCIES | Expect.VULNERABILITIES)
+        expected = expected_changes(
+            include=Expect.DEPENDENCIES | Expect.VULNERABILITIES
+        )
         assert versioned == expected
 
     @staticmethod
