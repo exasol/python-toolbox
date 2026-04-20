@@ -42,7 +42,7 @@ class Changelog:
         self.unreleased: Path = changes_path / "unreleased.md"
         self.versioned_changes: Path = changes_path / f"changes_{version}.md"
         # Accepting attribute changelog duplicating the class name
-        self.changelog: Path = changes_path / "changelog.md" # NOSONAR
+        self.changelog: Path = changes_path / "changelog.md"  # NOSONAR
         self.root_path: Path = root_path
 
     def _create_new_unreleased(self):
