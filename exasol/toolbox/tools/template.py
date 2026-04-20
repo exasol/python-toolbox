@@ -49,13 +49,12 @@ def list_templates(columns: bool, pkg: str) -> None:
 def show_templates(
     template: str,
     pkg: str,
-    template_type: str,
     lexer: str,
 ) -> None:
     """Shows a specific template."""
     templates = _templates(pkg)
     if template not in templates:
-        stdout.print(f"Unknown {template_type} <{template}>.", style="red")
+        stdout.print(f"Unknown <{template}>.", style="red")
         raise typer.Exit(code=1)
 
     template = templates[template]
@@ -75,11 +74,11 @@ def _render_template(
     return workflow.content + "\n"
 
 
-def diff_template(template: str, dest: Path, pkg: str, template_type: str) -> None:
+def diff_template(template: str, dest: Path, pkg: str) -> None:
     """Diff a specific template against the installed one."""
     templates = _templates(pkg)
     if template not in templates:
-        stdout.print(f"Unknown {template_type} <{template}>.", style="red")
+        stdout.print(f"Unknown <{template}>.", style="red")
         raise typer.Exit(code=1)
 
     # Use Any type to enable reuse of the variable/binding name
@@ -91,21 +90,15 @@ def diff_template(template: str, dest: Path, pkg: str, template_type: str) -> No
                 old = stack.enter_context(
                     open(old, encoding="utf-8") if old.exists() else io.StringIO("")
                 )
-                if template_type == "issue":
-                    new = stack.enter_context(open(new, encoding="utf-8"))
-                    old = old.read().split("\n")
-                    new = new.read().split("\n")
-                elif template_type == "workflow":
-                    new = _render_template(src=new)
-                    old = old.read().split("\n")
-                    new = new.split("\n")
+                new = stack.enter_context(open(new, encoding="utf-8"))
+                old = old.read().split("\n")
+                new = new.read().split("\n")
 
             diff = difflib.unified_diff(old, new, fromfile="old", tofile="new")
             stdout.print(Syntax("\n".join(diff), "diff"))
 
 
 def _install_template(
-    template_type: str,
     src: str | Path,
     dest: str | Path,
     exists_ok: bool = False,
@@ -113,24 +106,19 @@ def _install_template(
     src, dest = Path(src), Path(dest)
 
     if dest.exists() and not exists_ok:
-        raise FileExistsError(f"{template_type} already exists")
+        raise FileExistsError(f"{dest} already exists")
 
     with ExitStack() as stack:
-        if template_type == "issue":
-            input_file = stack.enter_context(open(src, "rb"))
-            output_file = stack.enter_context(open(dest, "wb"))
-            output_file.write(input_file.read())
-            return
-
+        input_file = stack.enter_context(open(src, "rb"))
         output_file = stack.enter_context(open(dest, "wb"))
-        rendered_string = _render_template(src=src)
-        output_file.write(rendered_string.encode("utf-8"))
+        output_file.write(input_file.read())
+        return
 
 
-def _select_templates(template: str, pkg: str, template_type: str) -> Mapping[str, Any]:
+def _select_templates(template: str, pkg: str) -> Mapping[str, Any]:
     templates = _templates(pkg)
     if template != "all" and template not in templates:
-        raise Exception(f"{template_type} <{template}> is unknown")
+        raise Exception(f"<{template}> is unknown")
     templates = (
         templates
         if template == "all"
@@ -139,7 +127,7 @@ def _select_templates(template: str, pkg: str, template_type: str) -> Mapping[st
     return templates
 
 
-def install_template(template: str, dest: Path, pkg: str, template_type: str) -> None:
+def install_template(template: str, dest: Path, pkg: str) -> None:
     """
     Installs the requested template into the target directory.
 
@@ -149,49 +137,50 @@ def install_template(template: str, dest: Path, pkg: str, template_type: str) ->
         dest.mkdir(parents=True)
 
     try:
-        templates = _select_templates(template, pkg, template_type)
+        templates = _select_templates(template, pkg)
     except Exception as ex:
         stderr.print(f"[red]{ex}[/red]")
         raise typer.Exit(-1)
 
     for name, path in templates.items():
         destination = dest / f"{name}{path.suffix}"
-        _install_template(template_type, path, destination, exists_ok=True)
+        _install_template(path, destination, exists_ok=True)
         stderr.print(f"Installed {name} in {destination}")
 
 
 def update_template(
-    template: str, dest: Path, confirm: bool, pkg: str, template_type: str
+    template: str,
+    dest: Path,
+    confirm: bool,
+    pkg: str,
 ) -> None:
     """Similar to install but checks for existing templates and shows diff"""
     if not dest.exists():
         dest.mkdir(parents=True)
 
     try:
-        templates = _select_templates(template, pkg, template_type)
+        templates = _select_templates(template, pkg)
     except Exception as ex:
         stderr.print(f"[red]{ex}[/red]")
         raise typer.Exit(-1)
 
     if confirm:
-        install_template(template, dest, pkg, template_type)
+        install_template(template, dest, pkg)
         raise typer.Exit(0)
 
     for name, path in templates.items():
         destination = dest / f"{name}{path.suffix}"
         try:
-            _install_template(template_type, path, destination, exists_ok=False)
+            _install_template(path, destination, exists_ok=False)
             stderr.print(f"Updated {name} in {destination}")
         except FileExistsError:
-            show_diff = typer.confirm(
-                f"{template_type} <{name}> already exists, show diff?"
-            )
+            show_diff = typer.confirm(f"<{name}> already exists, show diff?")
             if show_diff:
-                diff_template(name, dest, pkg, template_type)
+                diff_template(name, dest, pkg)
 
-            overwrite = typer.confirm(f"Overwrite existing {template_type}?")
+            overwrite = typer.confirm(f"Overwrite existing {template}?")
             if overwrite:
-                _install_template(template_type, path, destination, exists_ok=True)
+                _install_template(path, destination, exists_ok=True)
                 stderr.print(f"Updated {name} in {destination}")
 
 
