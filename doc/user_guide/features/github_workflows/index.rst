@@ -63,7 +63,7 @@ Workflows
        ``report.yml``. See :ref:`ci_yml` for a graph of workflow calls.
    * - ``dependency-update.yml``
      - Weekly and manual
-     - Audits project dependencies for known vulnerabilities, updates them with Poetry when needed, and creates a pull request if ``poetry.lock`` changes.
+     - Audits project dependencies for known vulnerabilities, updates them with Poetry when needed, and creates a pull request if the ``poetry.lock`` was changed.
    * - ``gh-pages.yml``
      - Workflow call
      - Builds the documentation and deploys it to GitHub Pages.
@@ -105,13 +105,13 @@ CI Actions
 Dependency Update
 ^^^^^^^^^^^^^^^^^
 
-The ``dependency-update.yml`` workflow helps keep project dependencies up to date.
+The ``dependency-update.yml`` workflow is used to resolve vulnerabilities by updating our project dependencies.
 
 It can be triggered manually and is also scheduled to run weekly.
 
 The workflow first audits dependencies for known vulnerabilities. If vulnerabilities
-are detected, it updates the dependencies using Poetry. When ``poetry.lock`` changes,
-it creates a pull request with the update.
+are detected, it updates the dependencies using Poetry. When the ``poetry.lock`` is changed,
+then it creates a pull request with the update.
 
 .. _ci_yml:
 
