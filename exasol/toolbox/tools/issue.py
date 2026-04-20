@@ -7,6 +7,7 @@ from exasol.toolbox.tools import template
 CLI = typer.Typer()
 PKG = "exasol.toolbox.templates.github.ISSUE_TEMPLATE"
 LEXER = "markdown"
+ISSUE_TEMPLATE_PATH = Path("./.github/ISSUE_TEMPLATE")
 
 
 @CLI.command(name="list")
@@ -31,7 +32,7 @@ def show_issue(
 def diff_issue(
     issue: str = typer.Argument(..., help="issue which shall be diffed."),
     dest: Path = typer.Argument(
-        Path("./.github/ISSUE_TEMPLATE"),
+        ISSUE_TEMPLATE_PATH,
         help="target directory to diff the issue against.",
     ),
 ) -> None:
@@ -47,7 +48,7 @@ def diff_issue(
 def install_issue(
     issue: str = typer.Argument("all", help="name of the issue to install."),
     dest: Path = typer.Argument(
-        Path("./.github/ISSUE_TEMPLATE"),
+        ISSUE_TEMPLATE_PATH,
         help="target directory to install the issue to.",
     ),
 ) -> None:
@@ -63,7 +64,7 @@ def install_issue(
 def update_issue(
     issue: str = typer.Argument("all", help="name of the issue to install."),
     dest: Path = typer.Argument(
-        Path("./.github/ISSUE_TEMPLATE"),
+        ISSUE_TEMPLATE_PATH,
         help="target directory to install the issue to.",
     ),
     confirm: bool = typer.Option(
