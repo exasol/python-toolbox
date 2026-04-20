@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
-import subprocess
+import subprocess  # nosec: B404 - risk of subprocess is accepted
 import sys
 import tempfile
 import webbrowser

@@ -2,7 +2,7 @@ import json
 import os
 import shutil
 import sqlite3
-import subprocess  # nosec
+import subprocess  # nosec: B404 - risk of subprocess is accepted
 import sys
 from collections.abc import Iterable
 from pathlib import Path
