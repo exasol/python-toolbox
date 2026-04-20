@@ -13,9 +13,16 @@ class VulnerabilityMatcher:
         # Dict of current vulnerabilities:
         # * keys: package names
         # * values: set of each vulnerability's references
-        self._references = {
-            v.package.name: set(v.references) for v in current_vulnerabilities
-        }
+        # self._references = {
+        #     v.package.name: set(v.references) for v in current_vulnerabilities
+        # }
+        self._references = {}
+        for v in current_vulnerabilities:
+            p = v.package.name
+            if not p in self._references:
+                self._references[p] = set(v.references)
+            entry = self._references[p]
+            self._references[p] = entry | set(v.references)
 
     def is_resolved(self, vuln: Vulnerability) -> bool:
         """
