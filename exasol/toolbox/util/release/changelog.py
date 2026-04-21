@@ -137,10 +137,12 @@ class Changelog:
         return [self.unreleased, self.versioned_changes, self.changelog]
 
     def _resolved_vulnerabilities(self) -> Markdown | None:
+        try:
+            previous = get_vulnerabilities_from_latest_tag(self.root_path)
+        except LatestTagNotFoundError:
+            previous = []
         report = DependenciesAudit(
-            previous_vulnerabilities=get_vulnerabilities_from_latest_tag(
-                self.root_path
-            ),
+            previous_vulnerabilities=previous,
             current_vulnerabilities=get_vulnerabilities(self.root_path),
         ).report_resolved_vulnerabilities()
         if report:
