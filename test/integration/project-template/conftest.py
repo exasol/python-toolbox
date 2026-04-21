@@ -39,7 +39,6 @@ def new_project(cwd):
         capture_output=True,
         check=True,
     )
-    subprocess.run(["poetry", "lock"], check=True)
     return cwd / repo_name
 
 

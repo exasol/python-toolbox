@@ -32,13 +32,22 @@ PipAuditEntry = dict[str, str | list[str] | tuple[str, ...]]
 
 @dataclass
 class PipAuditException(Exception):
+    command: list[str]
+    cwd: Path
+    env: dict[str, str]
     returncode: int
     stdout: str
     stderr: str
 
     @classmethod
-    def from_subprocess(cls, proc: subprocess.CompletedProcess) -> PipAuditException:
-        return cls(proc.returncode, proc.stdout, proc.stderr)
+    def from_subprocess(
+        cls,
+        proc: subprocess.CompletedProcess,
+        command: list[str],
+        cwd: Path,
+        env: dict[str, str] | None = None,
+    ) -> PipAuditException:
+        return cls(command, cwd, env or {}, proc.returncode, proc.stdout, proc.stderr)
 
 
 class VulnerabilitySource(str, Enum):
@@ -164,14 +173,15 @@ def audit_poetry_files(working_directory: Path) -> str:
     """
 
     requirements_txt = "requirements.txt"
+    command = ["poetry", "export", "--format=requirements.txt"]
     output = subprocess.run(
-        ["poetry", "export", "--format=requirements.txt"],
+        command,
         capture_output=True,
         text=True,
         cwd=working_directory,
     )  # nosec
     if output.returncode != 0:
-        raise PipAuditException.from_subprocess(output)
+        raise PipAuditException.from_subprocess(output, command, cwd=working_directory)
 
     with tempfile.TemporaryDirectory() as path:
         tmpdir = Path(path)
@@ -199,7 +209,7 @@ def audit_poetry_files(working_directory: Path) -> str:
         # they both map to returncode = 1, so we have our own logic to raise errors
         # for the case of 2) and not 1).
         if not search(PIP_AUDIT_VULNERABILITY_PATTERN, output.stderr.strip()):
-            raise PipAuditException.from_subprocess(output)
+            raise PipAuditException.from_subprocess(output, command, cwd=tmpdir)
     return output.stdout
 
 
