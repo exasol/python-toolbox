@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections import OrderedDict
 from collections.abc import Generator
 from datetime import datetime
+from enum import Enum
 from inspect import cleandoc
 from pathlib import Path
 
@@ -25,6 +26,19 @@ UNRELEASED_INITIAL_CONTENT = cleandoc("""
 
     ## Summary
     """) + "\n"
+
+
+class Section(Enum):
+    FEATURES = "Features"
+    SECURITY = "Security Issues"
+    BUGFIXES = "Bugfixes"
+    DOCCUMENTATION = "Documentation"
+    REFACTORINGS = "Refactorings"
+    DEPENDENCIES = "Dependency Updates"
+
+    @property
+    def title(self) -> str:
+        return f"## {self.value}"
 
 
 class Changelog:
@@ -81,7 +95,7 @@ class Changelog:
 
     def _dependency_changes(self) -> Markdown | None:
         if sections := list(self._dependency_sections()):
-            return Markdown("## Dependency Updates", children=sections)
+            return Markdown(Section.DEPENDENCIES.title, children=sections)
         return None
 
     @staticmethod
@@ -130,7 +144,7 @@ class Changelog:
             current_vulnerabilities=get_vulnerabilities(self.root_path),
         ).report_resolved_vulnerabilities()
         if report:
-            return Markdown("## Security Issues", report)
+            return Markdown(Section.SECURITY.title, report)
         else:
             return None
 
