@@ -1,9 +1,12 @@
+import logging
 import subprocess
 from pathlib import Path
 
 import pytest
 
 from noxconfig import PROJECT_CONFIG
+
+LOG = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -36,7 +39,7 @@ def new_project(cwd):
         capture_output=True,
         check=True,
     )
-
+    subprocess.run(["poetry", "lock"], check=True)
     return cwd / repo_name
 
 
@@ -70,15 +73,37 @@ def run_command(poetry_path, git_path, new_project):
     """
 
     def _run_command_fixture(command, **kwargs):
+        cwd = new_project
+        env = {"PATH": f"{Path(git_path).parent}:{Path(poetry_path).parent}"}
         defaults = {
             "capture_output": True,
-            "check": True,
-            "cwd": new_project,
-            "env": {"PATH": f"{Path(git_path).parent}:{Path(poetry_path).parent}"},
+            "check": False,
+            "cwd": cwd,
+            "env": env,
             "text": True,
         }
         config = {**defaults, **kwargs}
+        p = subprocess.run(command, **config)
+        if p.returncode != 0:
+            def text(stream) -> str:
+                return "" if stream is None else stream.strip()
 
-        return subprocess.run(command, **config)
+            message = (
+                f"subprocess.run() returned exit code: {p.returncode}"
+                f"\ncommand: {' '.join(command)}"
+                f"\nstdout: {text(p.stdout)}"
+                f"\nstderr: {text(p.stderr)}"
+                f"\ncwd: {cwd}"
+                f"\nenv: {env}"
+            )
+            LOG.warning(message)
+            if kwargs.get("check", True):
+                raise subprocess.CalledProcessError(
+                    p.returncode,
+                    command,
+                    output=p.stdout,
+                    stderr=p.stderr,
+                )
+        return p
 
     return _run_command_fixture

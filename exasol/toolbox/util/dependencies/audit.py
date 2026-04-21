@@ -178,10 +178,14 @@ def audit_poetry_files(working_directory: Path) -> str:
         (tmpdir / requirements_txt).write_text(output.stdout)
 
         # CLI option `--disable-pip` skips dependency resolution in pip.  The
-        # option can be used with hashed requirements files (which is the case
-        # here) to avoid `pip-audit` installing an isolated environment and
-        # speed up the audit significantly.
-        command = ["pip-audit", "--disable-pip", "-r", requirements_txt, "-f", "json"]
+        # option can be used with hashed requirements files to avoid
+        # `pip-audit` installing an isolated environment and speed up the
+        # audit significantly.
+        #
+        # In real use scenarios of the PTB we usually have hashed
+        # requirements. Unfortunately this is not the case for the example
+        # project created in the integration tests.
+        command = ["pip-audit", "-r", requirements_txt, "-f", "json"]
         output = subprocess.run(
             command,
             capture_output=True,
