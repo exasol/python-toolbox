@@ -129,7 +129,10 @@ class Changelog:
             ),
             current_vulnerabilities=get_vulnerabilities(self.root_path),
         ).report_resolved_vulnerabilities()
-        return Markdown("## Security Issues", report) if report else None
+        if report:
+            return Markdown("## Security Issues", report)
+        else:
+            return None
 
     def _create_versioned_changes(self, initial_content: str) -> None:
         """
