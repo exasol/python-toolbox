@@ -136,7 +136,7 @@ class Changelog:
         Create a versioned changes file.
 
         Args:
-            unreleased_content: the content of the (not yet versioned) changes
+            initial_content: the content of the (not yet versioned) changes
         """
 
         versioned = Markdown.from_text(initial_content)
