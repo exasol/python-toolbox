@@ -85,6 +85,7 @@ def run_command(poetry_path, git_path, new_project):
         config = {**defaults, **kwargs}
         p = subprocess.run(command, **config)
         if p.returncode != 0:
+
             def text(stream) -> str:
                 return "" if stream is None else stream.strip()
 
