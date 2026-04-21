@@ -13,3 +13,7 @@
 * #785: Removed nox session `project:report` and metrics-schema, as superseded by Sonar usage
 * #763: Parsed and manipulated Changes Files
 * #788: Removed tbx workflow CLI commands, as superseded by nox session `workflow:generate`
+
+## Bugfix
+
+* #798: Added test to ensure `tbx security cve` works
