@@ -77,12 +77,11 @@ def run_command(poetry_path, git_path, new_project):
         env = {"PATH": f"{Path(git_path).parent}:{Path(poetry_path).parent}"}
         defaults = {
             "capture_output": True,
-            "check": False,
             "cwd": cwd,
             "env": env,
             "text": True,
         }
-        config = {**defaults, **kwargs}
+        config = {**defaults, **kwargs, "check": False}
         p = subprocess.run(command, **config)
         if p.returncode != 0:
 
