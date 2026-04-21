@@ -7,16 +7,14 @@ from pathlib import Path
 from noxconfig import PROJECT_CONFIG
 
 
-def get_env(test_path: Path) -> dict[str, str]:
+def set_venv_env(monkeypatch, test_path: Path) -> None:
     venv_bin = test_path / "venv" / "bin"
-    env = os.environ.copy()
-    env["VIRTUAL_ENV"] = str(test_path / "venv")
-    env["PATH"] = f"{venv_bin}{os.pathsep}{env['PATH']}"
-    env["PYTHONPATH"] = os.pathsep.join(site.getsitepackages())
-    return env
+    monkeypatch.setenv("VIRTUAL_ENV", str(test_path / "venv"))
+    monkeypatch.setenv("PATH", f"{venv_bin}{os.pathsep}{os.environ['PATH']}")
+    monkeypatch.setenv("PYTHONPATH", os.pathsep.join(site.getsitepackages()))
 
 
-def test_security_issues_works(tmp_path):
+def test_security_issues_works(tmp_path, monkeypatch):
     """
     To ensure that the `tbx security cve` CLI commands work for Java and
     other non-Python projects, this test was created which:
@@ -34,20 +32,18 @@ def test_security_issues_works(tmp_path):
     venv_output = subprocess.run(["python", "-m", "venv", "venv"], cwd=tmp_path)
     assert venv_output.returncode == 0
 
-    env = get_env(tmp_path)
+    set_venv_env(monkeypatch, tmp_path)
     wheel = min(tmp_path.glob("exasol_toolbox-*.whl"))
     pip_output = subprocess.run(
-        ["pip", "install", "--no-deps", str(wheel)], cwd=tmp_path, env=env
+        ["pip", "install", "--no-deps", str(wheel)], cwd=tmp_path
     )
     assert pip_output.returncode == 0
 
-    tbx_output = subprocess.run(
-        ["tbx", "security", "cve", "--help"], cwd=tmp_path, env=env
-    )
+    tbx_output = subprocess.run(["tbx", "security", "cve", "--help"], cwd=tmp_path)
     assert tbx_output.returncode == 0
 
 
-def test_security_issues_fails_when_imports_noxconfig(tmp_path):
+def test_security_issues_fails_when_imports_noxconfig(tmp_path, monkeypatch):
     """
     Reproduces the failure mode where a toolbox runtime module imports
     `noxconfig`, which is not available in non-Python projects.
@@ -80,17 +76,16 @@ def test_security_issues_fails_when_imports_noxconfig(tmp_path):
     venv_output = subprocess.run(["python", "-m", "venv", "venv"], cwd=tmp_path)
     assert venv_output.returncode == 0
 
-    env = get_env(tmp_path)
+    set_venv_env(monkeypatch, tmp_path)
     wheel = min(tmp_path.glob("exasol_toolbox-*.whl"))
     pip_output = subprocess.run(
-        ["pip", "install", "--no-deps", str(wheel)], cwd=tmp_path, env=env
+        ["pip", "install", "--no-deps", str(wheel)], cwd=tmp_path
     )
     assert pip_output.returncode == 0
 
     tbx_output = subprocess.run(
         ["tbx", "security", "cve", "--help"],
         cwd=tmp_path,
-        env=env,
         capture_output=True,
         text=True,
     )
