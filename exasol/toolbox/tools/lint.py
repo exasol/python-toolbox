@@ -1,7 +1,6 @@
 import json
 from collections.abc import Iterable
 from dataclasses import dataclass
-from inspect import cleandoc
 
 import typer
 
@@ -39,26 +38,3 @@ def lint_issue_from_json(data: str) -> Iterable[Finding]:
             message=issue["message"],
             message_id=issue["message-id"],
         )
-
-
-def lint_issue_to_markdown(lint_issues: Iterable[Finding]) -> str:
-    def _header() -> str:
-        header = "# Static Code Analysis\n\n"
-        header += "|File|line/<br>column|id|message|\n"
-        header += "|---|:-:|:-:|---|\n"
-        return header
-
-    def _rows(findings: Iterable[Finding]) -> str:
-        rows = ""
-        for finding in findings:
-            rows += f"|{finding.path}"
-            rows += f"|line: {finding.line}/<br>column: {finding.column}"
-            rows += f"|{finding.message_id}"
-            rows += f"|{finding.message}|\n"
-        return rows
-
-    template = cleandoc("""
-        {header}{rows}
-        """)
-    lint_issues = sorted(lint_issues, key=lambda i: (i.path, i.message_id, i.line))
-    return template.format(header=_header(), rows=_rows(lint_issues))
