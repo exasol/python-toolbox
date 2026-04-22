@@ -26,12 +26,10 @@ from exasol.toolbox.nox._artifacts import (
     COVERAGE_XML,
     LINT_JSON,
     LINT_JSON_ATTRIBUTES,
-    LINT_TXT,
     SECURITY_JSON,
     SECURITY_JSON_ATTRIBUTES,
     _is_valid_coverage,
     _is_valid_lint_json,
-    _is_valid_lint_txt,
     _is_valid_security_json,
     _prepare_coverage_xml,
     check_artifacts,
@@ -83,7 +81,6 @@ class TestCheckArtifacts:
         for file in existing_files:
             Path(path, file).touch()
 
-    @mock.patch("exasol.toolbox.nox._artifacts._is_valid_lint_txt", return_value=True)
     @mock.patch("exasol.toolbox.nox._artifacts._is_valid_lint_json", return_value=True)
     @mock.patch(
         "exasol.toolbox.nox._artifacts._is_valid_security_json", return_value=True
@@ -94,7 +91,6 @@ class TestCheckArtifacts:
         mock_coverage,
         mock_security,
         mock_lint_json,
-        mock_lint_txt,
         test_project_config_factory,
         tmp_path,
     ):
@@ -134,30 +130,6 @@ class TestCheckArtifacts:
             with pytest.raises(SystemExit):
                 check_artifacts(session)
         assert "error in [" in capsys.readouterr().err
-
-
-class TestIsValidLintTxt:
-    @staticmethod
-    def _create_json_txt(path: Path, text: str) -> None:
-        path.touch()
-        path.write_text(text)
-
-    def test_passes_when_as_expected(self, tmp_path):
-        path = Path(tmp_path, LINT_TXT)
-        text = "Your code has been rated at 7.85/10 (previous run: 7.83/10, +0.02"
-        self._create_json_txt(path, text)
-
-        assert _is_valid_lint_txt(path)
-
-    def test_fails_when_rating_not_found(self, tmp_path, capsys):
-        path = Path(tmp_path, LINT_TXT)
-        text = "dummy_text"
-        self._create_json_txt(path, text)
-
-        result = _is_valid_lint_txt(path)
-
-        assert not result
-        assert "Could not find a rating" in capsys.readouterr().err
 
 
 class TestIsValidLintJson:
@@ -282,7 +254,6 @@ class TestCopyArtifacts:
         assert re.match(
             cleandoc("""
                 Could not find any file .*/coverage-python9.9\\*/.coverage
-                File not found .*/lint-python9.9/.lint.txt
                 File not found .*/lint-python9.9/.lint.json
                 File not found .*/security-python9.9/.security.json
                 """),
@@ -296,7 +267,6 @@ class TestCopyArtifacts:
             "9.9",
             "coverage-python9.9-fast/.coverage",
             "coverage-python9.9-slow/.coverage",
-            "lint-python9.9/.lint.txt",
             "lint-python9.9/.lint.json",
             "security-python9.9/.security.json",
         ) as session:
@@ -312,13 +282,12 @@ class TestCopyArtifacts:
         )
         assert re.match(
             cleandoc("""
-                Copying file .*/lint-python9.9/.lint.txt
                 Copying file .*/lint-python9.9/.lint.json
                 Copying file .*/security-python9.9/.security.json
                 """),
             captured.err,
         )
-        for f in [".lint.txt", ".lint.json", ".security.json"]:
+        for f in [".lint.json", ".security.json"]:
             assert (tmp_path / f).exists()
 
 

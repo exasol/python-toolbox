@@ -17,12 +17,11 @@ from noxconfig import PROJECT_CONFIG
 
 def _pylint(session: Session, files: Iterable[str]) -> None:
     json_file = PROJECT_CONFIG.root_path / ".lint.json"
-    txt_file = PROJECT_CONFIG.root_path / ".lint.txt"
 
     session.run(
         "pylint",
         "--output-format",
-        f"colorized,json:{json_file},text:{txt_file}",
+        f"colorized,json:{json_file}",
         *files,
     )
 

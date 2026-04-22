@@ -1,6 +1,5 @@
 import json
 import os
-import re
 import shutil
 import sqlite3
 import subprocess  # nosec
@@ -17,10 +16,9 @@ from noxconfig import PROJECT_CONFIG
 COVERAGE_DB = ".coverage"
 COVERAGE_XML = "ci-coverage.xml"
 LINT_JSON = ".lint.json"
-LINT_TXT = ".lint.txt"
 SECURITY_JSON = ".security.json"
 
-ALL_LINT_FILES = {COVERAGE_DB, LINT_JSON, LINT_TXT, SECURITY_JSON}
+ALL_LINT_FILES = {COVERAGE_DB, LINT_JSON, SECURITY_JSON}
 COVERAGE_TABLES = {"coverage_schema", "meta", "file", "line_bits"}
 LINT_JSON_ATTRIBUTES = {
     "type",
@@ -48,7 +46,6 @@ def check_artifacts(session: Session) -> None:
         sys.exit(1)
 
     all_is_valid_checks = [
-        _is_valid_lint_txt(Path(PROJECT_CONFIG.root_path, LINT_TXT)),
         _is_valid_lint_json(Path(PROJECT_CONFIG.root_path, LINT_JSON)),
         _is_valid_security_json(Path(PROJECT_CONFIG.root_path, SECURITY_JSON)),
         _is_valid_coverage(Path(PROJECT_CONFIG.root_path, COVERAGE_DB)),
@@ -60,16 +57,6 @@ def check_artifacts(session: Session) -> None:
 def _handle_validation_error(file: Path, message: str) -> bool:
     print(f"error in [{file.name}]: {message}", file=sys.stderr)
     return False
-
-
-def _is_valid_lint_txt(file: Path) -> bool:
-    content = file.read_text()
-    expr = re.compile(r"^Your code has been rated at (\d+.\d+)/.*", re.MULTILINE)
-    matches = expr.search(content)
-    if not matches:
-        _handle_validation_error(file, "Could not find a rating")
-        return False
-    return True
 
 
 def _is_valid_lint_json(file: Path) -> bool:
@@ -147,7 +134,6 @@ def copy_artifacts(session: Session) -> None:
         artifact_dir,
         artifact_dir.parent,
         [
-            f"lint{suffix}/{LINT_TXT}",
             f"lint{suffix}/{LINT_JSON}",
             f"security{suffix}/{SECURITY_JSON}",
         ],

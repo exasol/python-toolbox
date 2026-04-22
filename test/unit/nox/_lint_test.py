@@ -53,10 +53,8 @@ def test_lint(nox_session, config, file_with_multiple_problems):
             lint(session=nox_session)
 
     json_file = config.root_path / ".lint.json"
-    txt_file = config.root_path / ".lint.txt"
 
     assert json_file.exists()
-    assert txt_file.exists()
 
     contents = json_file.read_text()
     errors = {row["message-id"] for row in json.loads(contents)}
