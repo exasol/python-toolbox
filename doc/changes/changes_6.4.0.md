@@ -2,6 +2,11 @@
 
 ## Summary
 
+This release includes a few notable improvements:
+* The nox session `release:prepare` automatically reports resolved security issues.
+* The stability of the `tbx security cve` CLI commands is improved with new test coverage
+to help ensure it works for non-Python projects.
+
 ## Features
 
 * #777: Improved VulnerabilityMatcher to handle packages with multiple vulnerabilities
