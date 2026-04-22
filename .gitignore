@@ -1,5 +1,4 @@
 .lint.json
-.lint.txt
 .security.json
 
 odbcconfig/odbcinst.ini
