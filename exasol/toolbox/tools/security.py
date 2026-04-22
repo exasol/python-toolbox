@@ -388,19 +388,6 @@ class PPrintFormats(str, Enum):
     markdown = "markdown"
 
 
-@CLI.command(name="pretty-print")
-def json_issue_to_markdown(
-    json_file: typer.FileText = typer.Argument(
-        mode="r", help="json file with issues to convert"
-    ),
-    path: Path = typer.Argument(default=Path("."), help="path to project root"),
-) -> None:
-    content = json_file.read()
-    issues = from_json(content, path.absolute())
-    issues = sorted(issues, key=lambda i: (i.file_name, i.cwe, i.test_id))
-    print(issues_to_markdown(issues))
-
-
 def format_jsonl(issue_url: str, issue: Issue) -> str:
     issue_json = asdict(issue)
     issue_json["issue_url"] = issue_url.strip()
