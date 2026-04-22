@@ -2,7 +2,6 @@ import json
 from collections.abc import Iterable
 from dataclasses import dataclass
 from inspect import cleandoc
-from pathlib import Path
 
 import typer
 
@@ -63,16 +62,3 @@ def lint_issue_to_markdown(lint_issues: Iterable[Finding]) -> str:
         """)
     lint_issues = sorted(lint_issues, key=lambda i: (i.path, i.message_id, i.line))
     return template.format(header=_header(), rows=_rows(lint_issues))
-
-
-@CLI.command(name="pretty-print")
-def lint_json_to_markdown(
-    path: Path = typer.Argument(default=Path(".lint.json"), help="path to lint.json"),
-) -> None:
-    """converts the lint json to a Markdown table"""
-    issues = lint_issue_from_json(path.read_text())
-    print(lint_issue_to_markdown(issues))
-
-
-if __name__ == "__main__":
-    CLI()
