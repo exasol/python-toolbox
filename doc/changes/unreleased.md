@@ -13,7 +13,7 @@
 * #785: Removed nox session `project:report` and metrics-schema, as superseded by Sonar usage
 * #763: Parsed and manipulated Changes Files
 * #788: Removed tbx workflow CLI commands, as superseded by nox session `workflow:generate`
-* #800: Removed tbx security pretty-print and tbx lint pretty-printa, as superseded by Sonar usage
+* #800: Removed tbx security pretty-print, tbx lint pretty-print, and creation of .lint.txt, as superseded by Sonar and .lint.json usage
 
 ## Bugfix
 
