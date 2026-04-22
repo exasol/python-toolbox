@@ -15,7 +15,7 @@ from exasol.toolbox.nox._shared import (
 from exasol.toolbox.nox.plugin import NoxTasks
 from exasol.toolbox.util.dependencies.shared_models import PoetryFiles
 from exasol.toolbox.util.git import Git
-from exasol.toolbox.util.release.changelog import Changelogs
+from exasol.toolbox.util.release.changelog import Changelog
 from exasol.toolbox.util.version import (
     ReleaseTypes,
     Version,
@@ -64,8 +64,8 @@ def _update_project_version(session: Session, version: Version) -> Version:
     return version
 
 
-def _get_changelogs(version: Version) -> Changelogs:
-    return Changelogs(
+def _get_changelogs(version: Version) -> Changelog:
+    return Changelog(
         changes_path=PROJECT_CONFIG.documentation_path / "changes",
         root_path=PROJECT_CONFIG.root_path,
         version=version,

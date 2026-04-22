@@ -63,8 +63,6 @@ class DependenciesAudit(BaseModel):
         if not (resolved := self.resolved_vulnerabilities):
             return ""
         header = cleandoc("""
-            ## Fixed Vulnerabilities
-
             This release fixes vulnerabilities by updating dependencies:
 
             | Dependency | Vulnerability | Affected | Fixed in |

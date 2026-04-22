@@ -17,14 +17,16 @@ Preparing a Release
     * Updates the version in the ``pyproject.toml`` and ``version.py``
     * Moves the content of unreleased changes file ``unreleased.md`` to a
       versioned changes file ``changes_<version>.md``
-    * Adds a description of dependency changes to the versioned changes file:
+    * Describes additional changes in the versioned changes file by comparing
+      file ``poetry.lock`` to the latest Git tag:
 
-      * Only direct dependencies are described, no transitive dependencies
-      * Changes are detected by comparing the current content of file
-        ``poetry.lock`` to the latest Git tag.
-    * Updates the ``changelog.md`` list with the newly created versioned changes file
+      * Resolved vulnerabilities based on `Pip Audit`_.
+      * Updated direct dependencies, excluding transitive dependencies
+    * Updates file ``changelog.md`` to list the newly created versioned changes file
     * Commits the changes (can be skipped with ``--no-add``)
     * Pushes the changes and creates a PR (can be skipped with ``--no-pr``)
+
+.. _Pip Audit: https://pypi.org/project/pip-audit/
 
 #. Merge your **Pull Request** to the **default branch**
 
@@ -53,12 +55,12 @@ Preparing a Release
     Your ``PROJECT_CONFIG`` needs to have the flag
     ``create_major_version_tags=True``.
 
-Updating Dependencies After Having Prepared the Release
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Updating The Versioned Changes File
++++++++++++++++++++++++++++++++++++
 
-If you need to update some more dependencies after running the nox session
-``release:prepare`` you can update them in the changelog by running the nox
-session ``release:update``.
+If you need to update some dependencies after running the nox session
+``release:prepare`` you can update the versioned changes file by running the
+nox session ``release:update``.
 
 
 What to do if the Release Failed?

@@ -5,6 +5,7 @@
 ## Features
 
 * #777: Improved VulnerabilityMatcher to handle packages with multiple vulnerabilities
+* #517: Modified nox session `release:prepare` to report resolved security issues
 
 ## Refactoring
 
