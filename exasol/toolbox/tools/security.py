@@ -167,17 +167,6 @@ def from_pip_audit(report: str) -> Iterable[Issue]:
             )
 
 
-@dataclass(frozen=True)
-class SecurityIssue:
-    file_name: str
-    line: int
-    column: int
-    cwe: str
-    test_id: str
-    description: str
-    references: tuple
-
-
 def security_issue_title(issue: Issue) -> str:
     return f"{issue.cve}: {issue.coordinates}"
 
