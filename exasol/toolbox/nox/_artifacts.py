@@ -46,9 +46,9 @@ def check_artifacts(session: Session) -> None:
         sys.exit(1)
 
     all_is_valid_checks = [
+        _is_valid_coverage(Path(PROJECT_CONFIG.root_path, COVERAGE_DB)),
         _is_valid_lint_json(Path(PROJECT_CONFIG.root_path, LINT_JSON)),
         _is_valid_security_json(Path(PROJECT_CONFIG.root_path, SECURITY_JSON)),
-        _is_valid_coverage(Path(PROJECT_CONFIG.root_path, COVERAGE_DB)),
     ]
     if not all(all_is_valid_checks):
         sys.exit(1)
