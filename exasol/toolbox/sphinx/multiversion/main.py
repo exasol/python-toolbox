@@ -524,9 +524,8 @@ def _main(args, argv):
                             build_artefacts = candidate_files
                         if len(build_artefacts) == 0:
                             logger.warning(
-                                "Build artefact {project} not found.".format(
-                                    project=build_file_pattern.lower(),
-                                )
+                                "Build artifact %s not found.",
+                                build_file_pattern.lower(),
                             )
                         elif len(build_artefacts) > 1:
                             logger.warning(
