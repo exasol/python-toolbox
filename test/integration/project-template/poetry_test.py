@@ -14,3 +14,18 @@ def test_poetry_check_passes(new_project):
 
     assert output.stderr == ""
     assert output.stdout == "All set!\n"
+
+
+def test_package_version_is_set(run_command, package_name):
+    output = run_command(
+        [
+            "poetry",
+            "run",
+            "python",
+            "-c",
+            f"import exasol.{package_name}; print(exasol.{package_name}.__version__)",
+        ]
+    )
+
+    assert output.stderr == ""
+    assert output.stdout.strip() == "0.1.0"
