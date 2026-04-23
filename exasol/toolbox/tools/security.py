@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import re
-import subprocess
+import subprocess  # nosec: B404 - risk of subprocess is accepted
 import sys
 from collections.abc import (
     Generator,
@@ -159,7 +159,7 @@ def from_pip_audit(report: str) -> Iterable[Issue]:
         )
         if cves:
             yield Issue(
-                cve=sorted(cves)[0],
+                cve=min(cves),
                 cwe="None" if not cwes else ", ".join(cwes),
                 description=vulnerability["description"],
                 coordinates=vulnerability["coordinates"],

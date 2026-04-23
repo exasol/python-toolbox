@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import subprocess
+import subprocess  # nosec: B404 - risk of subprocess is accepted
 import tempfile
 from collections import OrderedDict
 from dataclasses import dataclass

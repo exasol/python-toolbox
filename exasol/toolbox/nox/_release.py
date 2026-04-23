@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 import re
-import subprocess
+import subprocess  # nosec: B404 - risk of subprocess is accepted
 from pathlib import Path
 
 import nox

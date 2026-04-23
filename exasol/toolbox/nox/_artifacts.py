@@ -2,7 +2,7 @@ import json
 import os
 import shutil
 import sqlite3
-import subprocess  # nosec
+import subprocess  # nosec: B404 - risk of subprocess is accepted
 import sys
 from collections.abc import Iterable
 from pathlib import Path
@@ -42,13 +42,13 @@ def check_artifacts(session: Session) -> None:
     """Validate that all project artifacts are available and consistent"""
     all_files = {f.name for f in PROJECT_CONFIG.root_path.iterdir() if f.is_file()}
     if missing_files := (ALL_LINT_FILES - all_files):
-        print(f"files not available: {missing_files}", file=sys.stderr)
+        print(f"files not available: {sorted(missing_files)}", file=sys.stderr)
         sys.exit(1)
 
     all_is_valid_checks = [
+        _is_valid_coverage(Path(PROJECT_CONFIG.root_path, COVERAGE_DB)),
         _is_valid_lint_json(Path(PROJECT_CONFIG.root_path, LINT_JSON)),
         _is_valid_security_json(Path(PROJECT_CONFIG.root_path, SECURITY_JSON)),
-        _is_valid_coverage(Path(PROJECT_CONFIG.root_path, COVERAGE_DB)),
     ]
     if not all(all_is_valid_checks):
         sys.exit(1)

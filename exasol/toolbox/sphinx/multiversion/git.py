@@ -3,7 +3,7 @@ import datetime
 import logging
 import os
 import re
-import subprocess
+import subprocess  # nosec: B404 - risk of subprocess is accepted
 import tarfile
 import tempfile
 
@@ -143,7 +143,7 @@ def file_exists(gitroot, refname, filename):
     return proc.returncode == 0
 
 
-def copy_tree(gitroot, src, dst, reference, sourcepath="."):
+def copy_tree(gitroot, dst, reference, sourcepath="."):
     with tempfile.SpooledTemporaryFile() as fp:
         cmd = (
             "git",
