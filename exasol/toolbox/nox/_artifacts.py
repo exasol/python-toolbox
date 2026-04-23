@@ -42,7 +42,7 @@ def check_artifacts(session: Session) -> None:
     """Validate that all project artifacts are available and consistent"""
     all_files = {f.name for f in PROJECT_CONFIG.root_path.iterdir() if f.is_file()}
     if missing_files := (ALL_LINT_FILES - all_files):
-        print(f"files not available: {missing_files}", file=sys.stderr)
+        print(f"files not available: {sorted(missing_files)}", file=sys.stderr)
         sys.exit(1)
 
     all_is_valid_checks = [

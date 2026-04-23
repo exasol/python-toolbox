@@ -118,7 +118,9 @@ class TestCheckArtifacts:
         ) as session:
             with pytest.raises(SystemExit):
                 check_artifacts(session)
-        assert f"files not available: {missing_files}" in capsys.readouterr().err
+        assert (
+            f"files not available: {sorted(missing_files)}" in capsys.readouterr().err
+        )
 
     def test_fails_when_check_fails(
         self, test_project_config_factory, tmp_path, capsys
