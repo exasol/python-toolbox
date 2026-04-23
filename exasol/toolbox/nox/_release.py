@@ -8,10 +8,6 @@ from pathlib import Path
 import nox
 from nox import Session
 
-from exasol.toolbox.nox._shared import (
-    Mode,
-    _version,
-)
 from exasol.toolbox.nox.plugin import NoxTasks
 from exasol.toolbox.util.dependencies.shared_models import PoetryFiles
 from exasol.toolbox.util.git import Git
@@ -56,12 +52,6 @@ def _create_parser() -> argparse.ArgumentParser:
         help="Do not create a pull request for the changes.",
     )
     return parser
-
-
-def _update_project_version(session: Session, version: Version) -> Version:
-    session.run("poetry", "version", f"{version}")
-    _version(session, Mode.Fix)
-    return version
 
 
 def _get_changelogs(version: Version) -> Changelog:
@@ -129,8 +119,6 @@ def prepare_release(session: Session) -> None:
 
     if not args.no_branch and not args.no_add:
         Git.create_and_switch_to_branch(f"release/prepare-{new_version}")
-
-    _ = _update_project_version(session, new_version)
 
     changed_files = (
         _get_changelogs(version=new_version).prepare_release().get_changed_files()
