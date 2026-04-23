@@ -52,7 +52,7 @@ In the Code
         projectKey = "<sonar-project-key>"
         host.url = "https://sonarcloud.io"
         organization = "exasol"
-        exclusions = "<source_code_directory>/version.py,<source_code_directory>/<directory-to-ignore>/*"
+        exclusions = "<source_code_directory>/<directory-to-ignore>/*"
 
 .. note::
     For more information, see the :ref:`General remarks <configuration_general_remarks>` section.

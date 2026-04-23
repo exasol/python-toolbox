@@ -59,7 +59,6 @@ class TestBaseConfig:
             "root_path": root_path,
             "sonar_code_path": Path("exasol/test"),
             "source_code_path": root_path / "exasol" / "test",
-            "version_filepath": root_path / "exasol" / "test" / "version.py",
         }
 
     @staticmethod

@@ -14,11 +14,15 @@ def cwd(tmp_path_factory):
     return tmp_path_factory.mktemp("project_template_test")
 
 
+@pytest.fixture(scope="session")
+def package_name():
+    return "package"
+
+
 @pytest.fixture(scope="session", autouse=True)
-def new_project(cwd):
+def new_project(cwd, package_name):
     project_name = "project"
     repo_name = "repo"
-    package_name = "package"
     project_path = cwd / repo_name
 
     subprocess.run(["mkdir", "-p", project_path])

@@ -152,4 +152,3 @@ markers = [
 projectKey = "com.exasol:python-toolbox"
 host.url = "https://sonarcloud.io"
 organization = "exasol"
-exclusions = "exasol/toolbox/version.py"

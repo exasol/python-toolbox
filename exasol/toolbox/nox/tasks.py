@@ -35,7 +35,6 @@ def check(session: Session) -> None:
     """Runs all available checks on the project"""
     context = _context(session, coverage=True)
     py_files = get_filtered_python_files(PROJECT_CONFIG.root_path)
-    _version(session, Mode.Check)
     _code_format(session, Mode.Check, py_files)
     _pylint(session, py_files)
     _type_check(session, py_files)
@@ -63,7 +62,6 @@ from exasol.toolbox.nox._release import prepare_release
 from exasol.toolbox.nox._shared import (
     Mode,
     _context,
-    _version,
     get_filtered_python_files,
 )
 
@@ -85,8 +83,6 @@ from exasol.toolbox.nox._dependencies import (
     dependency_licenses,
     audit
 )
-
-from exasol.toolbox.nox._package_version import version_check
 
 from exasol.toolbox.nox._package import package_check
 from exasol.toolbox.nox._workflow import generate_workflow

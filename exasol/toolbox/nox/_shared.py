@@ -39,12 +39,6 @@ def get_filtered_python_files(project_root: Path) -> list[str]:
     return [f"{path}" for path in files if not exclude(path)]
 
 
-def _version(session: Session, mode: Mode) -> None:
-    command = ["nox", "-s", "version:check", "--"]
-    command = command if mode == Mode.Check else command + ["--fix"]
-    session.run(*command)
-
-
 def _context_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
