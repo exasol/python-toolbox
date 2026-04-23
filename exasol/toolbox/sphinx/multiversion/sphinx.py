@@ -9,8 +9,8 @@ from sphinx import config as sphinx_config
 from sphinx.locale import _
 from sphinx.util import i18n as sphinx_i18n
 
+from exasol.toolbox import __version__ as plugin_version
 from exasol.toolbox.util.version import Version as ExasolVersion
-from exasol.toolbox.version import VERSION as PLUGIN_VERSION
 
 logger = logging.getLogger(__name__)
 
@@ -253,7 +253,7 @@ def setup(app):
     app.connect("config-inited", config_inited)
 
     return {
-        "version": PLUGIN_VERSION,
+        "version": plugin_version,
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }

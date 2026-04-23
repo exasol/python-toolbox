@@ -10,11 +10,11 @@ Preparing a Release
 
          nox -s release:prepare -- --type {major,minor,patch}
 
-    The ``release:prepare`` nox session affects the ``pyproject.toml``,
-    ``version.py``, and files in the ``doc/changes`` directory:
+    The ``release:prepare`` nox session affects the ``pyproject.toml`` and files in the
+    ``doc/changes`` directory:
 
     * Creates & switches to a release branch (can be skipped with ``--no-branch``)
-    * Updates the version in the ``pyproject.toml`` and ``version.py``
+    * Updates the version in the ``pyproject.toml``
     * Moves the content of unreleased changes file ``unreleased.md`` to a
       versioned changes file ``changes_<version>.md``
     * Describes additional changes in the versioned changes file by comparing

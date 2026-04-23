@@ -7,9 +7,7 @@ from functools import (
     total_ordering,
     wraps,
 )
-from pathlib import Path
 from shutil import which
-from typing import Any
 
 from exasol.toolbox.error import ToolboxError
 
@@ -106,18 +104,3 @@ class Version:
             text=True,
         )
         return Version.from_string(output.stdout.strip())
-
-    @staticmethod
-    def from_python_module(path: Path) -> Version:
-        """Retrieve version information from the `version` module"""
-        with open(path, encoding="utf-8") as file:
-            _locals: dict[str, Any] = {}
-            _globals: dict[str, Any] = {}
-            exec(file.read(), _locals, _globals)
-
-            try:
-                version = _globals["VERSION"]
-            except KeyError as ex:
-                raise ToolboxError("Couldn't find version within module") from ex
-
-            return Version.from_string(version)

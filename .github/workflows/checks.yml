@@ -4,27 +4,6 @@ on:
   workflow_call:
 
 jobs:
-  check-version:
-    name: Check Version
-    runs-on: "ubuntu-24.04"
-    permissions:
-      contents: read
-    steps:
-      - name: Check out Repository
-        id: check-out-repository
-        uses: actions/checkout@v6
-
-      - name: Set up Python & Poetry Environment
-        id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v6
-        with:
-          python-version: "3.10"
-          poetry-version: "2.3.0"
-
-      - name: Check Version
-        id: check-version
-        run: poetry run -- nox -s version:check
-
   build-documentation-and-check-links:
     name: Docs
     runs-on: "ubuntu-24.04"
@@ -80,7 +59,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-versions: [ "3.10", "3.11", "3.12", "3.13", "3.14" ]
     steps:
       - name: Check out Repository
         id: check-out-repository
@@ -114,7 +93,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-versions: [ "3.10", "3.11", "3.12", "3.13", "3.14" ]
 
     steps:
       - name: Check out Repository
@@ -140,7 +119,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-versions: [ "3.10", "3.11", "3.12", "3.13", "3.14" ]
 
     steps:
       - name: Check out Repository
@@ -238,7 +217,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-versions: [ "3.10", "3.11", "3.12", "3.13", "3.14" ]
 
     steps:
       - name: Check out Repository

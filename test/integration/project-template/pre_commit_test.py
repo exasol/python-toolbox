@@ -18,8 +18,6 @@ class TestPreCommitConfig:
             "run",
             "--hook-stage",
             stage,
-            "--files",
-            "exasol/package/version.py",
         ]
 
     def test_stage_pre_commit(self, pre_commit, poetry_path, run_command):
@@ -27,7 +25,7 @@ class TestPreCommitConfig:
         output = run_command(command, check=False)
 
         assert "Failed" not in output.stdout
-        assert "Passed" in output.stdout
+        assert any(word in output.stdout for word in ("Passed", "Skipped"))
         assert output.returncode == 0
 
     def test_stage_pre_push(self, pre_commit, poetry_path, run_command):
@@ -35,5 +33,5 @@ class TestPreCommitConfig:
         output = run_command(command, check=False)
 
         assert "Failed" not in output.stdout
-        assert "Passed" in output.stdout
+        assert any(word in output.stdout for word in ("Passed", "Skipped"))
         assert output.returncode == 0

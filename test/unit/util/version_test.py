@@ -86,24 +86,3 @@ def test_poetry_decorator_subprocess(mock):
 
     with pytest.raises(ToolboxError):
         test()
-
-
-def test_version_from_python_module(tmp_path):
-    tmp_file = tmp_path / "file"
-    file = """
-MAJOR = 1
-MINOR = 2
-PATCH = 3
-VERSION = f"{MAJOR}.{MINOR}.{PATCH}"
-__version__ = VERSION
-    """
-    tmp_file.write_text(file)
-    assert Version.from_python_module(tmp_file) == Version.from_string("1.2.3")
-
-
-def test_version_from_python_no_module_error(tmp_path):
-    file_path = tmp_path / "file"
-    file_path.write_text("")
-    with pytest.raises(ToolboxError) as ex:
-        Version.from_python_module(file_path)
-    assert str(ex.value) == "Couldn't find version within module"

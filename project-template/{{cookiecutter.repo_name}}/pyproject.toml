@@ -3,7 +3,7 @@ name = "{{cookiecutter.pypi_package_name}}"
 version = "0.1.0"
 description = "{{cookiecutter.description}}"
 authors = [
-    {name = "{{cookiecutter.author_full_name}}", email = "{{cookiecutter.author_email}}"},
+    { name = "{{cookiecutter.author_full_name}}", email = "{{cookiecutter.author_email}}" },
 ]
 requires-python = ">={{cookiecutter.python_version_min}},<4.0"
 readme = "README.rst"
@@ -12,7 +12,6 @@ license-files = ["LICENSE"]
 keywords = ['exasol', '{{cookiecutter.package_name}}']
 classifiers = [
     "Programming Language :: Python :: 3",
-
 ]
 dependencies = []
 
@@ -92,4 +91,3 @@ ignore_errors = true
 projectKey = "com.exasol:{{cookiecutter.repo_name}}"
 host.url = "https://sonarcloud.io"
 organization = "exasol"
-exclusions = "exasol/{{cookiecutter.package_name}}/version.py"

@@ -84,8 +84,6 @@ from exasol.toolbox.nox._dependencies import (
     audit
 )
 
-from exasol.toolbox.nox._package_version import version_check
-
 from exasol.toolbox.nox._package import package_check
 from exasol.toolbox.nox._workflow import generate_workflow
 
