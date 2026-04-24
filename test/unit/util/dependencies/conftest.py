@@ -104,6 +104,7 @@ def create_new_poetry_project(
     subprocess.run([poetry_path, "new", project_name], cwd=cwd, check=True)
 
     commands = [
+        [poetry_path, "self", "add", "poetry-plugin-export"],
         [poetry_path, "add", f"pylint=={sample_versions.pylint}"],
         [poetry_path, "add", "--group", "dev", f"isort=={sample_versions.isort}"],
         [poetry_path, "add", "--group", "analysis", f"black=={sample_versions.black}"],
