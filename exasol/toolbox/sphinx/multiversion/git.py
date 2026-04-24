@@ -23,24 +23,28 @@ logger = logging.getLogger(__name__)
 
 
 def get_toplevel_path(cwd=None):
-    cmd = (
-        "git",
-        "rev-parse",
-        "--show-toplevel",
-    )
-    output = subprocess.check_output(cmd, cwd=cwd).decode()
+    output = subprocess.check_output(
+        (
+            "git",
+            "rev-parse",
+            "--show-toplevel",
+        ),
+        cwd=cwd,
+    ).decode()  # nosec: B603 - allow fixed git command
     return output.rstrip("\n")
 
 
 def get_all_refs(gitroot):
-    cmd = (
-        "git",
-        "for-each-ref",
-        "--format",
-        "%(objectname)\t%(refname)\t%(creatordate:iso)",
-        "refs",
-    )
-    output = subprocess.check_output(cmd, cwd=gitroot).decode()
+    output = subprocess.check_output(
+        (
+            "git",
+            "for-each-ref",
+            "--format",
+            "%(objectname)\t%(refname)\t%(creatordate:iso)",
+            "refs",
+        ),
+        cwd=gitroot,
+    ).decode()  # nosec: B603 - allow fixed git command and fixed arguments
     for line in output.splitlines():
         is_remote = False
         fields = line.strip().split("\t")
@@ -127,34 +131,36 @@ def file_exists(gitroot, refname, filename):
         # Git requires / path sep, make sure we use that
         filename = filename.replace(os.sep, "/")
 
-    cmd = (
-        "git",
-        "cat-file",
-        "-e",
-        f"{refname}:{filename}",
-    )
     proc = subprocess.run(
-        cmd,
+        (
+            "git",
+            "cat-file",
+            "-e",
+            f"{refname}:{filename}",
+        ),
         cwd=gitroot,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
         check=False,
-    )
+    )  # nosec: B603 - allow fixed git command and internally defined arguments
     return proc.returncode == 0
 
 
 def copy_tree(gitroot, dst, reference, sourcepath="."):
     with tempfile.SpooledTemporaryFile() as fp:
-        cmd = (
-            "git",
-            "archive",
-            "--format",
-            "tar",
-            reference.commit,
-            "--",
-            sourcepath,
-        )
-        subprocess.check_call(cmd, cwd=gitroot, stdout=fp)
+        subprocess.check_call(
+            (
+                "git",
+                "archive",
+                "--format",
+                "tar",
+                reference.commit,
+                "--",
+                sourcepath,
+            ),
+            cwd=gitroot,
+            stdout=fp,
+        )  # nosec: B603 - allow fixed git command and internally defined arguments
         fp.seek(0)
         with tarfile.TarFile(fileobj=fp) as tarfp:
             tarfp.extractall(dst)

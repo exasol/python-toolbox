@@ -110,7 +110,7 @@ def _packages_from_json(json: str) -> dict[NormalizedPackageStr, PackageLicense]
 
 def get_licenses() -> dict[NormalizedPackageStr, PackageLicense]:
     with tempfile.NamedTemporaryFile() as file:
-        subprocess.run(
+        subprocess.run(  # nosec: B603, B607 - allow fixed pip-licenses command
             [
                 "pip-licenses",
                 "--format=json",
