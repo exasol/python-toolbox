@@ -107,6 +107,7 @@ def create_new_poetry_project(
         [poetry_path, "add", f"pylint=={sample_versions.pylint}"],
         [poetry_path, "add", "--group", "dev", f"isort=={sample_versions.isort}"],
         [poetry_path, "add", "--group", "analysis", f"black=={sample_versions.black}"],
+        [poetry_path, "add", f"ruff@{sample_versions.ruff}", "--optional", "ruff"],
     ]
     for cmd in commands:
         subprocess.run(cmd, cwd=project_path, env={}, check=True)

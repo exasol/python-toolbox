@@ -96,7 +96,6 @@ class TestVulnerability:
         ),
     )
     def test_vulnerability_id(self, sample_vulnerability, aliases: list[str], expected):
-
         result = Vulnerability(
             package=sample_vulnerability.vulnerability.package,
             id="DUMMY_IDENTIFIER",
@@ -126,6 +125,11 @@ class TestVulnerability:
         )
 
 
+@pytest.fixture(scope="module")
+def new_pyproject_toml(create_new_poetry_project, project_path):
+    return (project_path / "pyproject.toml").read_text()
+
+
 class TestExportDependenciesToFile:
     PACKAGES = [
         "astroid",
@@ -153,7 +157,12 @@ class TestExportDependenciesToFile:
         )
 
     @pytest.mark.parametrize(
-        "pyproject_content", ["poetry_2_1_pyproject_text", "poetry_2_3_pyproject_text"]
+        "pyproject_content",
+        [
+            "poetry_2_1_pyproject_text",
+            "poetry_2_3_pyproject_text",
+            "new_pyproject_toml",
+        ],
     )
     def test_poetry_export_versions(self, tmp_path, pyproject_content, request):
         content_str = request.getfixturevalue(pyproject_content)
