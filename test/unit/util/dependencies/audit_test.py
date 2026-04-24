@@ -1,4 +1,5 @@
 import json
+import re
 from inspect import cleandoc
 from pathlib import Path
 from subprocess import CompletedProcess
@@ -13,6 +14,7 @@ from exasol.toolbox.util.dependencies.audit import (
     Vulnerability,
     VulnerabilitySource,
     audit_poetry_files,
+    export_dependencies_to_file,
     get_vulnerabilities,
     get_vulnerabilities_from_latest_tag,
 )
@@ -122,6 +124,41 @@ class TestVulnerability:
             sample_vulnerability.vulnerability.subsection_for_changelog_summary
             == expected
         )
+
+
+class TestExportDependenciesToFile:
+    PACKAGES = [
+        "astroid",
+        "black",
+        "click",
+        "colorama",
+        "dill",
+        "isort",
+        "mccabe",
+        "mypy-extensions",
+        "packaging",
+        "pathspec",
+        "platformdirs",
+        "pylint",
+        "tomli",
+        "tomlkit",
+        "typing-extensions",
+    ]
+
+    def test_with_poetry_2_1_0(self, tmp_path, poetry_2_1_pyproject_text):
+        (tmp_path / "pyproject.toml").write_text(poetry_2_1_pyproject_text)
+        requirements_txt = tmp_path / "requirements.txt"
+
+        export_dependencies_to_file(
+            output_file=requirements_txt, working_directory=tmp_path
+        )
+        content = requirements_txt.read_text()
+
+        packages = re.findall(
+            r"^([a-zA-Z0-9\-_]+)(?===|>=|<=|>|<|@)", content, re.MULTILINE
+        )
+
+        assert packages == self.PACKAGES
 
 
 class TestAuditPoetryFiles:

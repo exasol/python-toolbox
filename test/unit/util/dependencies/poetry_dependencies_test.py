@@ -44,7 +44,7 @@ def project_path(cwd, project_name):
 
 
 @pytest.fixture(scope="module")
-def create_poetry_project(cwd, project_name, project_path):
+def create_new_poetry_project(cwd, project_name, project_path):
     subprocess.run(["poetry", "new", project_name], cwd=cwd)
     subprocess.run(
         ["poetry", "add", f"{PYLINT.name}=={PYLINT.version}"], cwd=project_path
@@ -60,61 +60,34 @@ def create_poetry_project(cwd, project_name, project_path):
 
 
 @pytest.fixture(scope="module")
-def created_pyproject_toml(project_path, create_poetry_project):
+def new_pyproject_toml(project_path, create_new_poetry_project):
     return PoetryToml.load_from_toml(working_directory=project_path)
 
 
 @pytest.fixture(scope="module")
-def poetry_2_1_pyproject_toml(cwd, create_poetry_project):
+def poetry_2_1_pyproject_toml(cwd, poetry_2_1_pyproject_text):
     older_project_path = cwd / "older_project"
-    pyproject_toml_text = """
-    [project]
-    name = "project"
-    version = "0.1.0"
-    description = ""
-    authors = []
-    readme = "README.md"
-    requires-python = ">=3.10"
-    dependencies = [
-        "pylint (==3.3.7)"
-    ]
-
-    [tool.poetry]
-    packages = [{include = "project", from = "src"}]
-
-
-    [tool.poetry.group.dev.dependencies]
-    isort = "6.0.1"
-
-
-    [tool.poetry.group.analysis.dependencies]
-    black = "25.1.0"
-
-    [build-system]
-    requires = ["poetry-core>=2.0.0,<3.0.0"]
-    build-backend = "poetry.core.masonry.api"
-    """
     older_project_path.mkdir(parents=True, exist_ok=True)
     pyproject_toml_path = older_project_path / "pyproject.toml"
-    pyproject_toml_path.write_text(cleandoc(pyproject_toml_text))
+    pyproject_toml_path.write_text(cleandoc(poetry_2_1_pyproject_text))
     return PoetryToml.load_from_toml(working_directory=older_project_path)
 
 
 @pytest.mark.slow
 class TestPoetryToml:
     @staticmethod
-    def test_get_section_dict_exists(created_pyproject_toml):
-        result = created_pyproject_toml.get_section_dict("project")
+    def test_get_section_dict_exists(new_pyproject_toml):
+        result = new_pyproject_toml.get_section_dict("project")
         assert result is not None
 
     @staticmethod
-    def test_get_section_dict_does_not_exist(created_pyproject_toml):
-        result = created_pyproject_toml.get_section_dict("test")
+    def test_get_section_dict_does_not_exist(new_pyproject_toml):
+        result = new_pyproject_toml.get_section_dict("test")
         assert result is None
 
     @staticmethod
-    def test_groups(created_pyproject_toml):
-        assert created_pyproject_toml.groups == (MAIN_GROUP, DEV_GROUP, ANALYSIS_GROUP)
+    def test_groups(new_pyproject_toml):
+        assert new_pyproject_toml.groups == (MAIN_GROUP, DEV_GROUP, ANALYSIS_GROUP)
 
     @staticmethod
     def test_groups_with_poetry_2_1_0(poetry_2_1_pyproject_toml):
@@ -160,7 +133,7 @@ class TestPoetryDependencies:
 
     @pytest.mark.slow
     @staticmethod
-    def test_direct_dependencies(create_poetry_project, project_path):
+    def test_direct_dependencies(create_new_poetry_project, project_path):
         poetry_dep = PoetryDependencies(
             groups=(MAIN_GROUP, DEV_GROUP, ANALYSIS_GROUP),
             working_directory=project_path,
@@ -169,7 +142,7 @@ class TestPoetryDependencies:
 
     @pytest.mark.slow
     @staticmethod
-    def test_all_dependencies(create_poetry_project, project_path):
+    def test_all_dependencies(create_new_poetry_project, project_path):
         poetry_dep = PoetryDependencies(
             groups=(MAIN_GROUP, DEV_GROUP, ANALYSIS_GROUP),
             working_directory=project_path,
