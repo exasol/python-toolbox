@@ -102,7 +102,10 @@ class TestPoetryDependencies:
             working_directory=project_path,
         )
         assert poetry_dep.direct_dependencies == {
-            "main": {"pylint": Package(name="pylint", version=sample_versions.pylint)},
+            "main": {
+                "pylint": Package(name="pylint", version=sample_versions.pylint),
+                "ruff": Package(name="ruff", version=sample_versions.ruff),
+            },
             "dev": {"isort": Package(name="isort", version=sample_versions.isort)},
             "analysis": {"black": Package(name="black", version=sample_versions.black)},
         }
@@ -119,7 +122,10 @@ class TestPoetryDependencies:
         transitive = result.pop("transitive")
         assert len(transitive) > 0
         assert result == {
-            "main": {"pylint": Package(name="pylint", version=sample_versions.pylint)},
+            "main": {
+                "pylint": Package(name="pylint", version=sample_versions.pylint),
+                "ruff": Package(name="ruff", version=sample_versions.ruff),
+            },
             "dev": {"isort": Package(name="isort", version=sample_versions.isort)},
             "analysis": {"black": Package(name="black", version=sample_versions.black)},
         }
