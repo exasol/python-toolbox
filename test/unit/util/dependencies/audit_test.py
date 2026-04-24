@@ -129,36 +129,43 @@ class TestVulnerability:
 class TestExportDependenciesToFile:
     PACKAGES = [
         "astroid",
-        "black",
+        "black",  # group - analysis
         "click",
         "colorama",
         "dill",
-        "isort",
+        "isort",  # group - dev
         "mccabe",
         "mypy-extensions",
         "packaging",
         "pathspec",
         "platformdirs",
-        "pylint",
+        "pylint",  # main
+        "ruff",  # optional-dependencies
         "tomli",
         "tomlkit",
         "typing-extensions",
     ]
 
-    def test_with_poetry_2_1_0(self, tmp_path, poetry_2_1_pyproject_text):
-        (tmp_path / "pyproject.toml").write_text(poetry_2_1_pyproject_text)
+    @staticmethod
+    def extract_package_names(content) -> list[str]:
+        return re.findall(
+            r"^([a-zA-Z0-9\-_]+)(?===|>=|<=|>|<|@)", content, re.MULTILINE
+        )
+
+    @pytest.mark.parametrize(
+        "pyproject_content", ["poetry_2_1_pyproject_text", "poetry_2_3_pyproject_text"]
+    )
+    def test_poetry_export_versions(self, tmp_path, pyproject_content, request):
+        content_str = request.getfixturevalue(pyproject_content)
+        (tmp_path / "pyproject.toml").write_text(content_str)
         requirements_txt = tmp_path / "requirements.txt"
 
         export_dependencies_to_file(
             output_file=requirements_txt, working_directory=tmp_path
         )
+
         content = requirements_txt.read_text()
-
-        packages = re.findall(
-            r"^([a-zA-Z0-9\-_]+)(?===|>=|<=|>|<|@)", content, re.MULTILINE
-        )
-
-        assert packages == self.PACKAGES
+        assert self.extract_package_names(content) == self.PACKAGES
 
 
 class TestAuditPoetryFiles:
