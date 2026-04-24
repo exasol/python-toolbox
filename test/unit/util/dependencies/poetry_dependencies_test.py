@@ -14,18 +14,11 @@ from exasol.toolbox.util.dependencies.shared_models import Package
 from noxconfig import PROJECT_CONFIG
 
 MAIN_GROUP = PoetryGroup(name="main", toml_section="project.dependencies")
-DEV_GROUP = PoetryGroup(name="dev", toml_section="dependency-groups.dev")
-ANALYSIS_GROUP = PoetryGroup(name="analysis", toml_section="dependency-groups.analysis")
-
-PYLINT = Package(name="pylint", version="3.3.7")
-ISORT = Package(name="isort", version="6.0.1")
-BLACK = Package(name="black", version="25.1.0")
-
-DIRECT_DEPENDENCIES = {
-    MAIN_GROUP.name: {PYLINT.name: PYLINT},
-    DEV_GROUP.name: {ISORT.name: ISORT},
-    ANALYSIS_GROUP.name: {BLACK.name: BLACK},
-}
+GROUPS = (
+    MAIN_GROUP,
+    PoetryGroup(name="dev", toml_section="dependency-groups.dev"),
+    PoetryGroup(name="analysis", toml_section="dependency-groups.analysis"),
+)
 
 
 @pytest.fixture(scope="module")
@@ -44,17 +37,17 @@ def project_path(cwd, project_name):
 
 
 @pytest.fixture(scope="module")
-def create_new_poetry_project(cwd, project_name, project_path):
+def create_new_poetry_project(cwd, project_name, project_path, sample_versions):
     subprocess.run(["poetry", "new", project_name], cwd=cwd)
     subprocess.run(
-        ["poetry", "add", f"{PYLINT.name}=={PYLINT.version}"], cwd=project_path
+        ["poetry", "add", f"pylint=={sample_versions.pylint}"], cwd=project_path
     )
     subprocess.run(
-        ["poetry", "add", "--group", "dev", f"{ISORT.name}=={ISORT.version}"],
+        ["poetry", "add", "--group", "dev", f"isort=={sample_versions.isort}"],
         cwd=project_path,
     )
     subprocess.run(
-        ["poetry", "add", "--group", "analysis", f"{BLACK.name}=={BLACK.version}"],
+        ["poetry", "add", "--group", "analysis", f"black=={sample_versions.black}"],
         cwd=project_path,
     )
 
@@ -87,7 +80,7 @@ class TestPoetryToml:
 
     @staticmethod
     def test_groups(new_pyproject_toml):
-        assert new_pyproject_toml.groups == (MAIN_GROUP, DEV_GROUP, ANALYSIS_GROUP)
+        assert new_pyproject_toml.groups == GROUPS
 
     @staticmethod
     def test_groups_with_poetry_2_1_0(poetry_2_1_pyproject_toml):
@@ -133,25 +126,35 @@ class TestPoetryDependencies:
 
     @pytest.mark.slow
     @staticmethod
-    def test_direct_dependencies(create_new_poetry_project, project_path):
+    def test_direct_dependencies(
+        create_new_poetry_project, project_path, sample_versions
+    ):
         poetry_dep = PoetryDependencies(
-            groups=(MAIN_GROUP, DEV_GROUP, ANALYSIS_GROUP),
+            groups=GROUPS,
             working_directory=project_path,
         )
-        assert poetry_dep.direct_dependencies == DIRECT_DEPENDENCIES
+        assert poetry_dep.direct_dependencies == {
+            "main": {"pylint": Package(name="pylint", version=sample_versions.pylint)},
+            "dev": {"isort": Package(name="isort", version=sample_versions.isort)},
+            "analysis": {"black": Package(name="black", version=sample_versions.black)},
+        }
 
     @pytest.mark.slow
     @staticmethod
-    def test_all_dependencies(create_new_poetry_project, project_path):
+    def test_all_dependencies(create_new_poetry_project, project_path, sample_versions):
         poetry_dep = PoetryDependencies(
-            groups=(MAIN_GROUP, DEV_GROUP, ANALYSIS_GROUP),
+            groups=GROUPS,
             working_directory=project_path,
         )
         result = poetry_dep.all_dependencies
 
         transitive = result.pop("transitive")
         assert len(transitive) > 0
-        assert result == DIRECT_DEPENDENCIES
+        assert result == {
+            "main": {"pylint": Package(name="pylint", version=sample_versions.pylint)},
+            "dev": {"isort": Package(name="isort", version=sample_versions.isort)},
+            "analysis": {"black": Package(name="black", version=sample_versions.black)},
+        }
 
 
 @pytest.mark.slow
