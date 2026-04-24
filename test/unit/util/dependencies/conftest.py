@@ -1,9 +1,23 @@
+from enum import Enum
+
 import pytest
 
 
+class SampleVersions(str, Enum):
+    black = "25.1.0"
+    isort = "6.0.1"
+    pylint = "3.3.7"
+    ruff = "0.14.14"
+
+
 @pytest.fixture(scope="module")
-def poetry_2_1_pyproject_text() -> str:
-    return """
+def sample_versions():
+    return SampleVersions
+
+
+@pytest.fixture(scope="module")
+def poetry_2_1_pyproject_text(sample_versions) -> str:
+    return f"""
     [project]
     name = "project"
     version = "0.1.0"
@@ -12,20 +26,20 @@ def poetry_2_1_pyproject_text() -> str:
     readme = "README.md"
     requires-python = ">=3.10"
     dependencies = [
-        "pylint (==3.3.7)"
+        "pylint (=={sample_versions.pylint})"
     ]
 
     [tool.poetry]
-    packages = [{include = "project", from = "src"}]
+    packages = [{{include = "project", from = "src"}}]
 
     [tool.poetry.group.dev.dependencies]
-    isort = "6.0.1"
+    isort = "{sample_versions.isort}"
 
     [tool.poetry.group.analysis.dependencies]
-    black = "25.1.0"
+    black = "{sample_versions.black}"
 
     [project.optional-dependencies]
-    ruff = [ "ruff (==0.14.14)" ]
+    ruff = [ "ruff (=={sample_versions.ruff})" ]
 
     [build-system]
     requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -34,8 +48,8 @@ def poetry_2_1_pyproject_text() -> str:
 
 
 @pytest.fixture(scope="module")
-def poetry_2_3_pyproject_text() -> str:
-    return """
+def poetry_2_3_pyproject_text(sample_versions) -> str:
+    return f"""
     [project]
     name = "project"
     version = "0.1.0"
@@ -44,22 +58,22 @@ def poetry_2_3_pyproject_text() -> str:
     readme = "README.md"
     requires-python = ">=3.10"
     dependencies = [
-        "pylint (==3.3.7)"
+        "pylint (=={sample_versions.pylint})"
     ]
 
     [tool.poetry]
-    packages = [{include = "project", from = "src"}]
+    packages = [{{include = "project", from = "src"}}]
 
     [dependency-groups]
     dev = [
-        "isort==6.0.1",
+        "isort=={sample_versions.isort}",
     ]
     analysis = [
-        "black==25.1.0"
+        "black=={sample_versions.black}"
     ]
 
     [project.optional-dependencies]
-    ruff = [ "ruff (==0.14.14)" ]
+    ruff = [ "ruff (=={sample_versions.ruff})" ]
 
     [build-system]
     requires = ["poetry-core>=2.0.0,<3.0.0"]
