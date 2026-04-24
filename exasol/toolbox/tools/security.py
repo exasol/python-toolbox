@@ -68,7 +68,9 @@ def gh_security_issues() -> Generator[tuple[str, str]]:
     ]
     # fmt: on
     try:
-        result = subprocess.run(command, check=True, capture_output=True)
+        result = subprocess.run(
+            command, check=True, capture_output=True
+        )  # nosec: B603 - fixed gh CLI command is constructed internally
     except FileNotFoundError as ex:
         msg = "Command 'gh' not found. Please make sure you have installed the github cli."
         raise FileNotFoundError(msg) from ex
@@ -205,7 +207,9 @@ def create_security_issue(issue: Issue, project: str | None = None) -> tuple[str
         command.extend(['--project', project])
     # fmt: on
     try:
-        result = subprocess.run(command, check=True, capture_output=True)
+        result = subprocess.run(
+            command, check=True, capture_output=True
+        )  # nosec: B603 - fixed gh CLI command is constructed internally
     except FileNotFoundError as ex:
         msg = "Command 'gh' not found. Please make sure you have installed the github cli."
         raise FileNotFoundError(msg) from ex

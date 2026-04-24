@@ -76,7 +76,7 @@ def _trigger_release(project_config) -> Version:
         try:
             return subprocess.run(
                 args, capture_output=True, text=True, check=True
-            ).stdout
+            ).stdout  # nosec: B603 - risk accepted for internally used wrapper function
         except subprocess.CalledProcessError as ex:
             raise ReleaseError(
                 f"failed to execute command {ex.cmd}\n\n{ex.stderr}"

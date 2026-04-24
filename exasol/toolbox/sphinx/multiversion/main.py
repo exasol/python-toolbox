@@ -411,7 +411,7 @@ def _main(args, argv):
                 )
                 subprocess.check_call(
                     config.smv_prebuild_command, cwd=current_cwd, shell=True
-                )
+                )  # nosec: B602 - explicit user-configured shell hook from Sphinx config
 
                 if config.smv_prebuild_export_pattern != "":
                     matches = find_matching_files_and_dirs(
@@ -478,7 +478,9 @@ def _main(args, argv):
                     }
                 )
                 # Run sphinx-build
-                subprocess.check_call(cmd, cwd=current_cwd, env=env)
+                subprocess.check_call(
+                    cmd, cwd=current_cwd, env=env
+                )  # nosec: B603 - sphinx-build command and env are constructed internally
 
                 # Create artefacts if this build target should be downloadable
                 if downloadable:
@@ -563,7 +565,7 @@ def _main(args, argv):
                 )
                 subprocess.check_call(
                     config.smv_postbuild_command, cwd=current_cwd, shell=True
-                )
+                )  # nosec: B602 - explicit user-configured shell hook from Sphinx config
                 if config.smv_postbuild_export_pattern != "":
                     matches = find_matching_files_and_dirs(
                         config.smv_postbuild_export_pattern, current_cwd

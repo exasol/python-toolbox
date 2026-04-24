@@ -88,7 +88,7 @@ class Version:
     @staticmethod
     @poetry_command
     def from_poetry():
-        output = subprocess.run(
+        output = subprocess.run(  # nosec: B603, B607 - allow fixed poetry command
             ["poetry", "version", "--no-ansi", "--short"],
             capture_output=True,
             text=True,
@@ -98,7 +98,7 @@ class Version:
     @staticmethod
     @poetry_command
     def upgrade_version_from_poetry(t: ReleaseTypes):
-        output = subprocess.run(
+        output = subprocess.run(  # nosec: B603, B607 - allow fixed poetry command
             ["poetry", "version", str(t), "--dry-run", "--no-ansi", "--short"],
             capture_output=True,
             text=True,

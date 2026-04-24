@@ -54,7 +54,7 @@ def _git_diff_changes_main() -> int:
             PROJECT_CONFIG.documentation_path / "changes",
         ],
         capture_output=True,
-    )
+    )  # nosec: B603, B607 - fixed git command; PATH lookup and args are trusted here
     return p.returncode
 
 
