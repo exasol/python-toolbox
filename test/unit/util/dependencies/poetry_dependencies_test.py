@@ -1,4 +1,3 @@
-import subprocess
 from inspect import cleandoc
 
 import pytest
@@ -19,37 +18,6 @@ GROUPS = (
     PoetryGroup(name="dev", toml_section="dependency-groups.dev"),
     PoetryGroup(name="analysis", toml_section="dependency-groups.analysis"),
 )
-
-
-@pytest.fixture(scope="module")
-def cwd(tmp_path_factory):
-    return tmp_path_factory.mktemp("test")
-
-
-@pytest.fixture(scope="module")
-def project_name():
-    return "project"
-
-
-@pytest.fixture(scope="module")
-def project_path(cwd, project_name):
-    return cwd / project_name
-
-
-@pytest.fixture(scope="module")
-def create_new_poetry_project(cwd, project_name, project_path, sample_versions):
-    subprocess.run(["poetry", "new", project_name], cwd=cwd)
-    subprocess.run(
-        ["poetry", "add", f"pylint=={sample_versions.pylint}"], cwd=project_path
-    )
-    subprocess.run(
-        ["poetry", "add", "--group", "dev", f"isort=={sample_versions.isort}"],
-        cwd=project_path,
-    )
-    subprocess.run(
-        ["poetry", "add", "--group", "analysis", f"black=={sample_versions.black}"],
-        cwd=project_path,
-    )
 
 
 @pytest.fixture(scope="module")

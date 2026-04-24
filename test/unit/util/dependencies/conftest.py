@@ -1,3 +1,4 @@
+import subprocess
 from enum import Enum
 
 import pytest
@@ -79,3 +80,33 @@ def poetry_2_3_pyproject_text(sample_versions) -> str:
     requires = ["poetry-core>=2.0.0,<3.0.0"]
     build-backend = "poetry.core.masonry.api"
     """
+
+
+@pytest.fixture(scope="module")
+def cwd(tmp_path_factory):
+    return tmp_path_factory.mktemp("test")
+
+
+@pytest.fixture(scope="module")
+def project_name():
+    return "project"
+
+
+@pytest.fixture(scope="module")
+def project_path(cwd, project_name):
+    return cwd / project_name
+
+
+@pytest.fixture(scope="module")
+def create_new_poetry_project(
+    poetry_path, cwd, project_name, project_path, sample_versions
+):
+    subprocess.run([poetry_path, "new", project_name], cwd=cwd, check=True)
+
+    commands = [
+        [poetry_path, "add", f"pylint=={sample_versions.pylint}"],
+        [poetry_path, "add", "--group", "dev", f"isort=={sample_versions.isort}"],
+        [poetry_path, "add", "--group", "analysis", f"black=={sample_versions.black}"],
+    ]
+    for cmd in commands:
+        subprocess.run(cmd, cwd=project_path, env={}, check=True)

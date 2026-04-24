@@ -1,4 +1,5 @@
 import json
+import subprocess
 from inspect import cleandoc
 
 import pytest
@@ -12,6 +13,13 @@ from exasol.toolbox.util.dependencies.audit import (
     PipAuditEntry,
     Vulnerability,
 )
+
+
+@pytest.fixture(scope="session")
+def poetry_path() -> str:
+    result = subprocess.run(["which", "poetry"], capture_output=True, text=True)
+    poetry_path = result.stdout.strip()
+    return poetry_path
 
 
 class SampleVulnerability:
