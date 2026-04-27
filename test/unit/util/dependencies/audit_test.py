@@ -164,10 +164,14 @@ class TestExportDependenciesToFile:
             "new_pyproject_toml",
         ],
     )
-    def test_poetry_export_versions(self, tmp_path, pyproject_content, request):
+    def test_poetry_export_versions(
+        self, install_poetry_export, tmp_path, pyproject_content, request
+    ):
         content_str = request.getfixturevalue(pyproject_content)
         (tmp_path / "pyproject.toml").write_text(content_str)
         requirements_txt = tmp_path / "requirements.txt"
+
+        install_poetry_export(cwd=tmp_path)
 
         export_dependencies_to_file(
             output_file=requirements_txt, working_directory=tmp_path
