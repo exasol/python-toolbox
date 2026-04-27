@@ -26,7 +26,6 @@ PIP_AUDIT_VULNERABILITY_PATTERN = (
     r"^Found \d+ known vulnerabilit\w{1,3} in \d+ package\w?$"
 )
 
-
 PipAuditEntry = dict[str, str | list[str] | tuple[str, ...]]
 
 
@@ -159,6 +158,34 @@ class Vulnerability(BaseModel):
             """)
 
 
+def export_dependencies_to_file(output_file: Path, working_directory: Path) -> None:
+    """
+    Export all dependencies to a requirements.txt format
+
+    The default for `poetry export` is to only include the main dependencies and their
+    transitive dependencies, by adding `--all-groups` and `all-extras` we get
+    all dependencies defined in groups, like dev dependencies, and all optional
+    dependencies.
+    """
+    command = [
+        "poetry",
+        "export",
+        "--format=requirements.txt",
+        "--all-groups",
+        "--all-extras",
+    ]
+    output = subprocess.run(
+        command,
+        capture_output=True,
+        text=True,
+        cwd=working_directory,
+    )  # nosec: B603 - allow fixed poetry usage
+    if output.returncode != 0:
+        raise PipAuditException.from_subprocess(output, command, cwd=working_directory)
+
+    output_file.write_text(output.stdout)
+
+
 def audit_poetry_files(working_directory: Path) -> str:
     """
     Audit the `pyproject.toml` and `poetry.lock` files
@@ -172,20 +199,10 @@ def audit_poetry_files(working_directory: Path) -> str:
     and then inspecting the dependencies.
     """
 
-    requirements_txt = "requirements.txt"
-    command = ["poetry", "export", "--format=requirements.txt"]
-    output = subprocess.run(
-        command,
-        capture_output=True,
-        text=True,
-        cwd=working_directory,
-    )  # nosec
-    if output.returncode != 0:
-        raise PipAuditException.from_subprocess(output, command, cwd=working_directory)
-
     with tempfile.TemporaryDirectory() as path:
         tmpdir = Path(path)
-        (tmpdir / requirements_txt).write_text(output.stdout)
+        requirements_path = tmpdir / "requirements.txt"
+        export_dependencies_to_file(requirements_path, working_directory)
 
         # CLI option `--disable-pip` skips dependency resolution in pip.  The
         # option can be used with hashed requirements files to avoid
@@ -195,13 +212,13 @@ def audit_poetry_files(working_directory: Path) -> str:
         # In real use scenarios of the PTB we usually have hashed
         # requirements. Unfortunately this is not the case for the example
         # project created in the integration tests.
-        command = ["pip-audit", "-r", requirements_txt, "-f", "json"]
+        command = ["pip-audit", "-r", requirements_path.name, "-f", "json"]
         output = subprocess.run(
             command,
             capture_output=True,
             text=True,
             cwd=tmpdir,
-        )  # nosec
+        )  # nosec: B603 - allow fixed pip-audit usage
 
     if output.returncode != 0:
         # pip-audit does not distinguish between 1) finding vulnerabilities

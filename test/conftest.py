@@ -1,4 +1,6 @@
 import json
+import os
+import subprocess
 from inspect import cleandoc
 
 import pytest
@@ -12,6 +14,27 @@ from exasol.toolbox.util.dependencies.audit import (
     PipAuditEntry,
     Vulnerability,
 )
+
+
+@pytest.fixture(scope="session")
+def poetry_path() -> str:
+    result = subprocess.run(["which", "poetry"], capture_output=True, text=True)
+    poetry_path = result.stdout.strip()
+    return poetry_path
+
+
+@pytest.fixture
+def install_poetry_export(poetry_path, monkeypatch):
+    monkeypatch.setenv("PATH", poetry_path, prepend=os.pathsep)
+
+    def _install(cwd):
+        subprocess.run(
+            ["poetry", "self", "add", "poetry-plugin-export"],
+            cwd=cwd,
+            check=True,
+        )
+
+    return _install
 
 
 class SampleVulnerability:
