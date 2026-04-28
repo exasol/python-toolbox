@@ -103,15 +103,11 @@ class TestPoetryDependencies:
         )
         assert poetry_dep.direct_dependencies == {
             "main": {
-                "pylint": Package(name="pylint", version=sample_versions.pylint.value),
-                "ruff": Package(name="ruff", version=sample_versions.ruff.value),
+                "pylint": Package(name="pylint", version=sample_versions.pylint),
+                "ruff": Package(name="ruff", version=sample_versions.ruff),
             },
-            "dev": {
-                "isort": Package(name="isort", version=sample_versions.isort.value)
-            },
-            "analysis": {
-                "black": Package(name="black", version=sample_versions.black.value)
-            },
+            "dev": {"isort": Package(name="isort", version=sample_versions.isort)},
+            "analysis": {"black": Package(name="black", version=sample_versions.black)},
         }
 
     @pytest.mark.slow
@@ -129,15 +125,11 @@ class TestPoetryDependencies:
         assert len(transitive) > 0
         assert result == {
             "main": {
-                "pylint": Package(name="pylint", version=sample_versions.pylint.value),
-                "ruff": Package(name="ruff", version=sample_versions.ruff.value),
+                "pylint": Package(name="pylint", version=sample_versions.pylint),
+                "ruff": Package(name="ruff", version=sample_versions.ruff),
             },
-            "dev": {
-                "isort": Package(name="isort", version=sample_versions.isort.value)
-            },
-            "analysis": {
-                "black": Package(name="black", version=sample_versions.black.value)
-            },
+            "dev": {"isort": Package(name="isort", version=sample_versions.isort)},
+            "analysis": {"black": Package(name="black", version=sample_versions.black)},
         }
 
 

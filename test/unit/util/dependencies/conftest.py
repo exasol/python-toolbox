@@ -11,6 +11,9 @@ class SampleVersions(str, Enum):
     pylint = "3.3.7"
     ruff = "0.14.14"
 
+    def __str__(self) -> str:
+        return self.value
+
 
 def _path_without_active_virtualenv() -> str:
     path = os.environ.get("PATH", "")
@@ -41,20 +44,20 @@ def poetry_2_1_pyproject_text(sample_versions) -> str:
     readme = "README.md"
     requires-python = ">=3.10"
     dependencies = [
-        "pylint (=={sample_versions.pylint.value})"
+        "pylint (=={sample_versions.pylint})"
     ]
 
     [tool.poetry]
     packages = [{{include = "project", from = "src"}}]
 
     [tool.poetry.group.dev.dependencies]
-    isort = "{sample_versions.isort.value}"
+    isort = "{sample_versions.isort}"
 
     [tool.poetry.group.analysis.dependencies]
-    black = "{sample_versions.black.value}"
+    black = "{sample_versions.black}"
 
     [project.optional-dependencies]
-    ruff = [ "ruff (=={sample_versions.ruff.value})" ]
+    ruff = [ "ruff (=={sample_versions.ruff})" ]
 
     [build-system]
     requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -73,7 +76,7 @@ def poetry_2_3_pyproject_text(sample_versions) -> str:
     readme = "README.md"
     requires-python = ">=3.10"
     dependencies = [
-        "pylint (=={sample_versions.pylint.value})"
+        "pylint (=={sample_versions.pylint})"
     ]
 
     [tool.poetry]
@@ -81,14 +84,14 @@ def poetry_2_3_pyproject_text(sample_versions) -> str:
 
     [dependency-groups]
     dev = [
-        "isort=={sample_versions.isort.value}",
+        "isort=={sample_versions.isort}",
     ]
     analysis = [
-        "black=={sample_versions.black.value}"
+        "black=={sample_versions.black}"
     ]
 
     [project.optional-dependencies]
-    ruff = [ "ruff (=={sample_versions.ruff.value})" ]
+    ruff = [ "ruff (=={sample_versions.ruff})" ]
 
     [build-system]
     requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -143,19 +146,19 @@ def create_new_poetry_project(
     )
 
     commands = [
-        [poetry_path, "add", f"pylint=={sample_versions.pylint.value}"],
-        [poetry_path, "add", "--group", "dev", f"isort=={sample_versions.isort.value}"],
+        [poetry_path, "add", f"pylint=={sample_versions.pylint}"],
+        [poetry_path, "add", "--group", "dev", f"isort=={sample_versions.isort}"],
         [
             poetry_path,
             "add",
             "--group",
             "analysis",
-            f"black=={sample_versions.black.value}",
+            f"black=={sample_versions.black}",
         ],
         [
             poetry_path,
             "add",
-            f"ruff@{sample_versions.ruff.value}",
+            f"ruff@{sample_versions.ruff}",
             "--optional",
             "ruff",
         ],
