@@ -173,6 +173,7 @@ def export_dependencies_to_file(output_file: Path, working_directory: Path) -> N
         "--format=requirements.txt",
         "--all-groups",
         "--all-extras",
+        "--without-hashes",
     ]
     output = subprocess.run(
         command,
