@@ -116,22 +116,12 @@ def project_path(cwd, project_name):
 
 @pytest.fixture(scope="module")
 def poetry_env(cwd):
-    return {
-        "HOME": str(cwd),
-        "PATH": _path_without_active_virtualenv(),
-        "POETRY_CACHE_DIR": str(cwd / ".cache" / "pypoetry"),
-        "POETRY_CONFIG_DIR": str(cwd / ".config" / "pypoetry"),
-        "POETRY_DATA_DIR": str(cwd / ".local" / "share" / "pypoetry"),
-        "POETRY_VIRTUALENVS_IN_PROJECT": "true",
-    }
-
-
-@pytest.fixture
-def isolated_poetry_env(monkeypatch, poetry_env):
-    monkeypatch.delenv("VIRTUAL_ENV", raising=False)
-    monkeypatch.delenv("POETRY_ACTIVE", raising=False)
-    for name, value in poetry_env.items():
-        monkeypatch.setenv(name, value)
+    env_patch = pytest.MonkeyPatch()
+    env_patch.delenv("VIRTUAL_ENV", raising=False)
+    env_patch.setenv("HOME", str(cwd))
+    env_patch.setenv("PATH", _path_without_active_virtualenv())
+    yield
+    env_patch.undo()
 
 
 @pytest.fixture(scope="module")
@@ -141,7 +131,6 @@ def create_new_poetry_project(
     subprocess.run(
         [poetry_path, "new", "--python=>=3.10", project_name],
         cwd=cwd,
-        env=poetry_env,
         check=True,
     )
 
@@ -164,4 +153,4 @@ def create_new_poetry_project(
         ],
     ]
     for cmd in commands:
-        subprocess.run(cmd, cwd=project_path, env=poetry_env, check=True)
+        subprocess.run(cmd, cwd=project_path, check=True)

@@ -95,7 +95,7 @@ class TestPoetryDependencies:
     @pytest.mark.slow
     @staticmethod
     def test_direct_dependencies(
-        create_new_poetry_project, project_path, sample_versions, isolated_poetry_env
+        create_new_poetry_project, project_path, sample_versions, poetry_env
     ):
         poetry_dep = PoetryDependencies(
             groups=GROUPS,
@@ -113,7 +113,7 @@ class TestPoetryDependencies:
     @pytest.mark.slow
     @staticmethod
     def test_all_dependencies(
-        create_new_poetry_project, project_path, sample_versions, isolated_poetry_env
+        create_new_poetry_project, project_path, sample_versions, poetry_env
     ):
         poetry_dep = PoetryDependencies(
             groups=GROUPS,
