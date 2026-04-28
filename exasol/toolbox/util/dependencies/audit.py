@@ -23,7 +23,7 @@ from exasol.toolbox.util.dependencies.shared_models import (
 )
 
 PIP_AUDIT_VULNERABILITY_PATTERN = (
-    r"^Found \d+ known vulnerabilit\w{1,3} in \d+ package\w?$"
+    r"(?m)^Found \d+ known vulnerabilit(?:y|ies) in \d+ package(?:s)?$"
 )
 
 PipAuditEntry = dict[str, str | list[str] | tuple[str, ...]]
