@@ -95,7 +95,7 @@ class TestPoetryDependencies:
     @pytest.mark.slow
     @staticmethod
     def test_direct_dependencies(
-        create_new_poetry_project, project_path, sample_versions
+        create_new_poetry_project, project_path, sample_versions, isolated_poetry_env
     ):
         poetry_dep = PoetryDependencies(
             groups=GROUPS,
@@ -103,16 +103,22 @@ class TestPoetryDependencies:
         )
         assert poetry_dep.direct_dependencies == {
             "main": {
-                "pylint": Package(name="pylint", version=sample_versions.pylint),
-                "ruff": Package(name="ruff", version=sample_versions.ruff),
+                "pylint": Package(name="pylint", version=sample_versions.pylint.value),
+                "ruff": Package(name="ruff", version=sample_versions.ruff.value),
             },
-            "dev": {"isort": Package(name="isort", version=sample_versions.isort)},
-            "analysis": {"black": Package(name="black", version=sample_versions.black)},
+            "dev": {
+                "isort": Package(name="isort", version=sample_versions.isort.value)
+            },
+            "analysis": {
+                "black": Package(name="black", version=sample_versions.black.value)
+            },
         }
 
     @pytest.mark.slow
     @staticmethod
-    def test_all_dependencies(create_new_poetry_project, project_path, sample_versions):
+    def test_all_dependencies(
+        create_new_poetry_project, project_path, sample_versions, isolated_poetry_env
+    ):
         poetry_dep = PoetryDependencies(
             groups=GROUPS,
             working_directory=project_path,
@@ -123,11 +129,15 @@ class TestPoetryDependencies:
         assert len(transitive) > 0
         assert result == {
             "main": {
-                "pylint": Package(name="pylint", version=sample_versions.pylint),
-                "ruff": Package(name="ruff", version=sample_versions.ruff),
+                "pylint": Package(name="pylint", version=sample_versions.pylint.value),
+                "ruff": Package(name="ruff", version=sample_versions.ruff.value),
             },
-            "dev": {"isort": Package(name="isort", version=sample_versions.isort)},
-            "analysis": {"black": Package(name="black", version=sample_versions.black)},
+            "dev": {
+                "isort": Package(name="isort", version=sample_versions.isort.value)
+            },
+            "analysis": {
+                "black": Package(name="black", version=sample_versions.black.value)
+            },
         }
 
 

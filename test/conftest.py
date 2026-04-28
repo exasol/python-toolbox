@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 from inspect import cleandoc
+from pathlib import Path
 
 import pytest
 
@@ -18,18 +19,19 @@ from exasol.toolbox.util.dependencies.audit import (
 
 @pytest.fixture(scope="session")
 def poetry_path() -> str:
-    result = subprocess.run(["which", "poetry"], capture_output=True, text=True)
-    poetry_path = result.stdout.strip()
-    return poetry_path
+    result = subprocess.run(
+        ["which", "poetry"], capture_output=True, text=True, check=True
+    )
+    return result.stdout.strip()
 
 
 @pytest.fixture
 def install_poetry_export(poetry_path, monkeypatch):
-    monkeypatch.setenv("PATH", poetry_path, prepend=os.pathsep)
+    monkeypatch.setenv("PATH", str(Path(poetry_path).parent), prepend=os.pathsep)
 
     def _install(cwd):
         subprocess.run(
-            ["poetry", "self", "add", "poetry-plugin-export"],
+            [poetry_path, "self", "add", "poetry-plugin-export"],
             cwd=cwd,
             check=True,
         )
