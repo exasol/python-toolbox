@@ -14,6 +14,10 @@ This is required for the nox session `docs:multiversion` to successfully complet
 and it is a Python standard for users to check in the terminal which version they are
 using.
 
+## Feature
+
+* #803: Included other dependencies for local `pip-audit` check
+
 ## Refactoring
 
 * #800: Removed tbx security pretty-print, tbx lint pretty-print, and creation of .lint.txt, as superseded by Sonar and .lint.json usage
