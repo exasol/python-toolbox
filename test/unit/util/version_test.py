@@ -5,6 +5,7 @@ import pytest
 
 from exasol.toolbox.error import ToolboxError
 from exasol.toolbox.util.version import (
+    ReleaseTypes,
     Version,
     poetry_command,
 )
@@ -67,6 +68,18 @@ def test_version_from_poetry(poetry_version, version, expected):
     assert expected == actual
 
 
+def test_upgrade_version_from_poetry_applies_version_change(tmp_path, monkeypatch):
+    (tmp_path / "pyproject.toml").write_text(
+        '[project]\nname = "sample-project"\nversion = "0.1.0"\n'
+    )
+    monkeypatch.chdir(tmp_path)
+    assert Version.from_poetry() == Version(0, 1, 0)
+
+    actual = Version.upgrade_version_from_poetry(ReleaseTypes.Minor)
+
+    assert actual == Version(0, 2, 0)
+
+
 @patch("exasol.toolbox.util.version.which", return_value=None)
 def test_poetry_decorator_no_poetry_executable(mock):
     @poetry_command
@@ -86,24 +99,3 @@ def test_poetry_decorator_subprocess(mock):
 
     with pytest.raises(ToolboxError):
         test()
-
-
-def test_version_from_python_module(tmp_path):
-    tmp_file = tmp_path / "file"
-    file = """
-MAJOR = 1
-MINOR = 2
-PATCH = 3
-VERSION = f"{MAJOR}.{MINOR}.{PATCH}"
-__version__ = VERSION
-    """
-    tmp_file.write_text(file)
-    assert Version.from_python_module(tmp_file) == Version.from_string("1.2.3")
-
-
-def test_version_from_python_no_module_error(tmp_path):
-    file_path = tmp_path / "file"
-    file_path.write_text("")
-    with pytest.raises(ToolboxError) as ex:
-        Version.from_python_module(file_path)
-    assert str(ex.value) == "Couldn't find version within module"

@@ -1,5 +1,6 @@
 import logging
 import os
+from importlib.metadata import version
 
 import structlog
 from structlog.dev import ConsoleRenderer
@@ -8,6 +9,8 @@ from structlog.processors import (
     add_log_level,
     format_exc_info,
 )
+
+__version__ = version("exasol-toolbox")
 
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
 

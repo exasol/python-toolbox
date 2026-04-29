@@ -10,7 +10,7 @@ import pathlib
 import re
 import shutil
 import string
-import subprocess
+import subprocess  # nosec: B404 - risk of subprocess is accepted
 import sys
 import tempfile
 from importlib import resources
@@ -310,7 +310,7 @@ def _main(args, argv):
             # Clone Git repo
             repopath = os.path.join(tmp, gitref.commit)
             try:
-                git.copy_tree(str(gitroot), gitroot.as_uri(), repopath, gitref)
+                git.copy_tree(str(gitroot), repopath, gitref)
             except (OSError, subprocess.CalledProcessError):
                 logger.error(
                     "Failed to copy git tree for %s to %s",
@@ -411,7 +411,7 @@ def _main(args, argv):
                 )
                 subprocess.check_call(
                     config.smv_prebuild_command, cwd=current_cwd, shell=True
-                )
+                )  # nosec: B602 - explicit user-configured shell hook from Sphinx config
 
                 if config.smv_prebuild_export_pattern != "":
                     matches = find_matching_files_and_dirs(
@@ -478,7 +478,9 @@ def _main(args, argv):
                     }
                 )
                 # Run sphinx-build
-                subprocess.check_call(cmd, cwd=current_cwd, env=env)
+                subprocess.check_call(
+                    cmd, cwd=current_cwd, env=env
+                )  # nosec: B603 - sphinx-build command and env are constructed internally
 
                 # Create artefacts if this build target should be downloadable
                 if downloadable:
@@ -524,9 +526,8 @@ def _main(args, argv):
                             build_artefacts = candidate_files
                         if len(build_artefacts) == 0:
                             logger.warning(
-                                ("Build artefact {project}" "not found.").format(
-                                    project=build_file_pattern.lower(),
-                                )
+                                "Build artifact %s not found.",
+                                build_file_pattern.lower(),
                             )
                         elif len(build_artefacts) > 1:
                             logger.warning(
@@ -564,7 +565,7 @@ def _main(args, argv):
                 )
                 subprocess.check_call(
                     config.smv_postbuild_command, cwd=current_cwd, shell=True
-                )
+                )  # nosec: B602 - explicit user-configured shell hook from Sphinx config
                 if config.smv_postbuild_export_pattern != "":
                     matches = find_matching_files_and_dirs(
                         config.smv_postbuild_export_pattern, current_cwd

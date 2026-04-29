@@ -28,8 +28,6 @@ workflows from the templates.
    In most cases, we recommend using _all_ workflows without change to ensure
    consistent interdependencies. For more details, see :ref:`ci_actions`.
 
-   The deprecated alternate is to use the CLI provided by
-   ``poetry run -- tbx workflow --help``. This will be removed by April 22nd, 2026.
 
 Workflows
 ---------

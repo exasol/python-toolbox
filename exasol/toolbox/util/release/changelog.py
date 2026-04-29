@@ -1,17 +1,24 @@
 from __future__ import annotations
 
-import re
 from collections import OrderedDict
+from collections.abc import Generator
 from datetime import datetime
+from enum import Enum
 from inspect import cleandoc
 from pathlib import Path
 
+from exasol.toolbox.util.dependencies.audit import (
+    get_vulnerabilities,
+    get_vulnerabilities_from_latest_tag,
+)
 from exasol.toolbox.util.dependencies.poetry_dependencies import (
     get_dependencies,
     get_dependencies_from_latest_tag,
 )
 from exasol.toolbox.util.dependencies.shared_models import LatestTagNotFoundError
 from exasol.toolbox.util.dependencies.track_changes import DependencyChanges
+from exasol.toolbox.util.dependencies.track_vulnerabilities import DependenciesAudit
+from exasol.toolbox.util.release.markdown import Markdown
 from exasol.toolbox.util.version import Version
 
 UNRELEASED_INITIAL_CONTENT = cleandoc("""
@@ -20,10 +27,21 @@ UNRELEASED_INITIAL_CONTENT = cleandoc("""
     ## Summary
     """) + "\n"
 
-DEPENDENCY_UPDATES = "## Dependency Updates\n"
+
+class Section(Enum):
+    FEATURES = "Features"
+    SECURITY = "Security Issues"
+    BUGFIXES = "Bugfixes"
+    DOCCUMENTATION = "Documentation"
+    REFACTORINGS = "Refactorings"
+    DEPENDENCIES = "Dependency Updates"
+
+    @property
+    def title(self) -> str:
+        return f"## {self.value}"
 
 
-class Changelogs:
+class Changelog:
     def __init__(self, changes_path: Path, root_path: Path, version: Version) -> None:
         """
         Args:
@@ -35,9 +53,10 @@ class Changelogs:
         """
 
         self.version = version
-        self.unreleased_md: Path = changes_path / "unreleased.md"
-        self.versioned_changelog_md: Path = changes_path / f"changes_{version}.md"
-        self.changelog_md: Path = changes_path / "changelog.md"
+        self.unreleased: Path = changes_path / "unreleased.md"
+        self.versioned_changes: Path = changes_path / f"changes_{version}.md"
+        # Accepting attribute changelog duplicating the class name
+        self.changelog: Path = changes_path / "changelog.md"  # NOSONAR
         self.root_path: Path = root_path
 
     def _create_new_unreleased(self):
@@ -45,33 +64,9 @@ class Changelogs:
         Write a new unreleased changelog file.
         """
 
-        self.unreleased_md.write_text(UNRELEASED_INITIAL_CONTENT)
+        self.unreleased.write_text(UNRELEASED_INITIAL_CONTENT)
 
-    def _create_versioned_changelog(self, unreleased_content: str) -> None:
-        """
-        Create a versioned changes file.
-
-        Args:
-            unreleased_content: the content of the (not yet versioned) changes
-        """
-
-        header = f"# {self.version} - {datetime.today().strftime('%Y-%m-%d')}"
-        dependency_changes = self._report_dependency_changes()
-        template = cleandoc(f"{header}\n\n{unreleased_content}\n{dependency_changes}")
-        self.versioned_changelog_md.write_text(template + "\n")
-
-    def _extract_unreleased_notes(self) -> str:
-        """
-        Extract (not yet versioned) changes from `unreleased.md`.
-        """
-
-        with self.unreleased_md.open(mode="r", encoding="utf-8") as f:
-            # skip header when reading in file, as contains # Unreleased
-            lines = f.readlines()[1:]
-        unreleased_content = cleandoc("".join(lines))
-        return unreleased_content + "\n"
-
-    def _dependency_changes(self) -> str:
+    def _dependency_sections(self) -> Generator[Markdown]:
         """
         Return the dependency changes between the latest tag and the
         current version for use in the versioned changes file in markdown
@@ -79,35 +74,29 @@ class Changelogs:
         """
 
         try:
-            previous_dependencies_in_groups = get_dependencies_from_latest_tag(
-                root_path=self.root_path
-            )
+            previous_groups = get_dependencies_from_latest_tag(root_path=self.root_path)
         except LatestTagNotFoundError:
             # In new projects, there is not a pre-existing tag, and all dependencies
             # are considered new.
-            previous_dependencies_in_groups = OrderedDict()
+            previous_groups = OrderedDict()
 
-        current_dependencies_in_groups = get_dependencies(
-            working_directory=self.root_path
-        )
+        current_groups = get_dependencies(working_directory=self.root_path)
+        all_groups = previous_groups.keys() | current_groups.keys()
 
-        changes_by_group: list[str] = []
-        # dict.keys() returns a set
-        all_groups = (
-            previous_dependencies_in_groups.keys()
-            | current_dependencies_in_groups.keys()
-        )
         for group in self._sort_groups(all_groups):
-            previous_dependencies = previous_dependencies_in_groups.get(group, {})
-            current_dependencies = current_dependencies_in_groups.get(group, {})
-            changes = DependencyChanges(
-                previous_dependencies=previous_dependencies,
-                current_dependencies=current_dependencies,
-            ).changes
-            if changes:
-                changes_str = "\n".join(str(change) for change in changes)
-                changes_by_group.append(f"\n### `{group}`\n\n{changes_str}\n")
-        return "".join(changes_by_group)
+            previous = previous_groups.get(group, {})
+            current = current_groups.get(group, {})
+            if changes := DependencyChanges(
+                previous_dependencies=previous,
+                current_dependencies=current,
+            ).changes:
+                items = "\n".join(str(change) for change in changes)
+                yield Markdown(f"### `{group}`", items=items)
+
+    def _dependency_changes(self) -> Markdown | None:
+        if sections := list(self._dependency_sections()):
+            return Markdown(Section.DEPENDENCIES.title, children=sections)
+        return None
 
     @staticmethod
     def _sort_groups(groups: set[str]) -> list[str]:
@@ -131,7 +120,7 @@ class Changelogs:
         to the relevant sections, and write the updated changelog.md again.
         """
         updated_content = []
-        with self.changelog_md.open(mode="r", encoding="utf-8") as f:
+        with self.changelog.open(mode="r", encoding="utf-8") as f:
             for line in f:
                 updated_content.append(line)
                 if line.startswith("* [unreleased]"):
@@ -142,29 +131,45 @@ class Changelogs:
                     updated_content.append(f"changes_{self.version}\n")
         updated_content_str = "".join(updated_content)
 
-        self.changelog_md.write_text(updated_content_str)
+        self.changelog.write_text(updated_content_str)
 
     def get_changed_files(self) -> list[Path]:
-        return [self.unreleased_md, self.versioned_changelog_md, self.changelog_md]
+        return [self.unreleased, self.versioned_changes, self.changelog]
 
-    def _report_dependency_changes(self) -> str:
-        if changes := self._dependency_changes():
-            return f"{DEPENDENCY_UPDATES}{changes}"
-        return ""
+    def _resolved_vulnerabilities(self) -> Markdown | None:
+        try:
+            previous = get_vulnerabilities_from_latest_tag(self.root_path)
+        except LatestTagNotFoundError:
+            previous = []
+        report = DependenciesAudit(
+            previous_vulnerabilities=previous,
+            current_vulnerabilities=get_vulnerabilities(self.root_path),
+        ).report_resolved_vulnerabilities()
+        if report:
+            return Markdown(Section.SECURITY.title, report)
+        else:
+            return None
 
-    def update_latest(self) -> Changelogs:
+    def _create_versioned_changes(self, initial_content: str) -> None:
         """
-        Update the updated dependencies in the latest versioned changelog.
+        Create a versioned changes file.
+
+        Args:
+            initial_content: the content of the (not yet versioned) changes
         """
 
-        content = self.versioned_changelog_md.read_text()
-        flags = re.DOTALL | re.MULTILINE
-        stripped = re.sub(r"^{DEPENDENCY_UPDATES}.*", "", content, flags=flags)
-        dependency_changes = self._report_dependency_changes()
-        self.versioned_changelog_md.write_text(f"{stripped}\n{dependency_changes}")
-        return self
+        versioned = Markdown.from_text(initial_content)
+        versioned.title = f"# {self.version} - {datetime.today().strftime('%Y-%m-%d')}"
+        if dependency_changes := self._dependency_changes():
+            versioned.replace_or_append_child(dependency_changes)
+        if resolved_vulnerabilities := self._resolved_vulnerabilities():
+            if section := versioned.child(resolved_vulnerabilities.title):
+                section.intro = resolved_vulnerabilities.intro
+            else:
+                versioned.add_child(resolved_vulnerabilities)
+        self.versioned_changes.write_text(versioned.rendered)
 
-    def prepare_release(self) -> Changelogs:
+    def prepare_release(self) -> Changelog:
         """
         Rotates the changelogs as is needed for a release.
 
@@ -173,11 +178,19 @@ class Changelogs:
           3. Updates the table of contents in the `changelog.md` with the new `changes_<version>.md`
         """
 
-        # create versioned changelog
-        unreleased_content = self._extract_unreleased_notes()
-        self._create_versioned_changelog(unreleased_content)
+        content = self.unreleased.read_text()
+        self._create_versioned_changes(content)
 
         # update other changelogs now that versioned changelog exists
         self._create_new_unreleased()
         self._update_table_of_contents()
+        return self
+
+    def update_latest(self) -> Changelog:
+        """
+        Update the updated dependencies in the latest versioned changelog.
+        """
+
+        content = self.versioned_changes.read_text()
+        self._create_versioned_changes(content)
         return self
