@@ -56,7 +56,9 @@ class DependenciesAudit(BaseModel):
         """
         matcher = VulnerabilityMatcher(self.current_vulnerabilities)
         return [
-            vuln for vuln in self.previous_vulnerabilities if matcher.is_resolved(vuln)
+            vuln
+            for vuln in self.previous_vulnerabilities
+            if vuln.fix_versions and matcher.is_resolved(vuln)
         ]
 
     def report_resolved_vulnerabilities(self) -> str:
