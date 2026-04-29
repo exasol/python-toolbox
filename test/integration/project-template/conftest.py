@@ -54,7 +54,14 @@ def poetry_install(run_command, poetry_path):
     # released PTB version with the current checked-out branch in
     # PROJECT_CONFIG.root_path:
     run_command(
-        [poetry_path, "add", "--group", "dev", "--editable", PROJECT_CONFIG.root_path]
+        [
+            poetry_path,
+            "add",
+            "--group",
+            "dev",
+            "--editable",
+            str(PROJECT_CONFIG.root_path),
+        ]
     )
     # This is needed due to pysonar hard-pinning requests. Without this addition,
     # the selected requests has an active vulnerability.

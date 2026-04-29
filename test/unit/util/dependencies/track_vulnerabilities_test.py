@@ -117,3 +117,17 @@ class TestDependenciesAudit:
             current_vulnerabilities=[],
         )
         assert audit.resolved_vulnerabilities == [sample_vulnerability.vulnerability]
+
+    def test_vulnerability_without_fix_version_is_not_reported_as_resolved(
+        self, sample_vulnerability
+    ):
+        vuln = sample_vulnerability.vulnerability.model_copy(
+            update={"fix_versions": []}
+        )
+        audit = DependenciesAudit(
+            previous_vulnerabilities=[vuln],
+            current_vulnerabilities=[],
+        )
+
+        assert audit.resolved_vulnerabilities == []
+        assert audit.report_resolved_vulnerabilities() == ""

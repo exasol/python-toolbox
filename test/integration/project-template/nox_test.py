@@ -1,3 +1,6 @@
+from exasol.toolbox.util.version import Version
+
+
 class TestSpecificNoxTasks:
     """
     Within the PTB, we have nox tasks that are inherently dependent upon other ones
@@ -58,7 +61,10 @@ class TestSpecificNoxTasks:
 
         assert output.returncode == 0
 
-    def test_release_prepare(self, poetry_path, run_command):
+    def test_release_prepare(self, poetry_path, run_command, new_project, monkeypatch):
+        monkeypatch.chdir(new_project)
+        assert Version.from_poetry() == Version(0, 1, 0)
+
         release_prepare = self._command(
             poetry_path,
             task="release:prepare",
@@ -67,6 +73,7 @@ class TestSpecificNoxTasks:
         output = run_command(release_prepare)
 
         assert output.returncode == 0
+        assert Version.from_poetry() == Version(0, 2, 0)
 
     def test_install_github_workflows(self, poetry_path, run_command):
         install_workflows = self._command(
