@@ -10,6 +10,7 @@ import pytest
 
 from exasol.toolbox.util.dependencies.audit import (
     PipAuditException,
+    PoetryException,
     Vulnerabilities,
     Vulnerability,
     VulnerabilitySource,
@@ -191,7 +192,7 @@ class TestAuditPoetryFiles:
         result.stderr = "pyproject.toml changed significantly since poetry.lock was last generated. Run `poetry lock` to fix the lock file.\n"
         mock_run.return_value = result
 
-        with pytest.raises(PipAuditException) as e:
+        with pytest.raises(PoetryException) as e:
             audit_poetry_files(working_directory=Path())
         assert e.value.stderr == result.stderr
 

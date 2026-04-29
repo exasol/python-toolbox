@@ -30,7 +30,7 @@ PipAuditEntry = dict[str, str | list[str] | tuple[str, ...]]
 
 
 @dataclass
-class PipAuditException(Exception):
+class SubprocessException(Exception):
     command: list[str]
     cwd: Path
     env: dict[str, str]
@@ -45,8 +45,16 @@ class PipAuditException(Exception):
         command: list[str],
         cwd: Path,
         env: dict[str, str] | None = None,
-    ) -> PipAuditException:
+    ) -> SubprocessException:
         return cls(command, cwd, env or {}, proc.returncode, proc.stdout, proc.stderr)
+
+
+class PipAuditException(SubprocessException):
+    pass
+
+
+class PoetryException(SubprocessException):
+    pass
 
 
 class VulnerabilitySource(str, Enum):
@@ -184,7 +192,7 @@ def export_dependencies_to_file(output_file: Path, working_directory: Path) -> N
         cwd=working_directory,
     )  # nosec: B603 - allow fixed poetry usage
     if output.returncode != 0:
-        raise PipAuditException.from_subprocess(output, command, cwd=working_directory)
+        raise PoetryException.from_subprocess(output, command, cwd=working_directory)
 
 
 def audit_poetry_files(working_directory: Path) -> str:
