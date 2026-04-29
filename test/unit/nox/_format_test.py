@@ -162,10 +162,7 @@ def file_with_multiple_problems(tmp_path):
 @pytest.mark.slow
 def test_fix_format(nox_session, config, file_with_multiple_problems):
     with patch("exasol.toolbox.nox._format.PROJECT_CONFIG", new=config):
-        with patch("exasol.toolbox.nox._format._version") as version:
-            # Simulate version is up-to-date, as version check is out of the scope of the test case
-            version.return_value = True
-            fix_format(nox_session)
+        fix_format(nox_session)
 
     assert file_with_multiple_problems.read_text() == cleandoc("""
             import numpy as np

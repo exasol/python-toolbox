@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import re
-import subprocess
+import subprocess  # nosec: B404 - risk of subprocess is accepted
 import sys
 from collections.abc import (
     Generator,
@@ -17,7 +17,6 @@ from dataclasses import (
 from enum import Enum
 from functools import partial
 from inspect import cleandoc
-from pathlib import Path
 
 import typer
 
@@ -69,7 +68,9 @@ def gh_security_issues() -> Generator[tuple[str, str]]:
     ]
     # fmt: on
     try:
-        result = subprocess.run(command, check=True, capture_output=True)
+        result = subprocess.run(
+            command, check=True, capture_output=True
+        )  # nosec: B603 - fixed gh CLI command is constructed internally
     except FileNotFoundError as ex:
         msg = "Command 'gh' not found. Please make sure you have installed the github cli."
         raise FileNotFoundError(msg) from ex
@@ -160,67 +161,12 @@ def from_pip_audit(report: str) -> Iterable[Issue]:
         )
         if cves:
             yield Issue(
-                cve=sorted(cves)[0],
+                cve=min(cves),
                 cwe="None" if not cwes else ", ".join(cwes),
                 description=vulnerability["description"],
                 coordinates=vulnerability["coordinates"],
                 references=tuple(vulnerability["references"]),
             )
-
-
-@dataclass(frozen=True)
-class SecurityIssue:
-    file_name: str
-    line: int
-    column: int
-    cwe: str
-    test_id: str
-    description: str
-    references: tuple
-
-
-def from_json(report_str: str, prefix: Path) -> Iterable[SecurityIssue]:
-    report = json.loads(report_str)
-    issues = report.get("results", {})
-    for issue in issues:
-        references = []
-        if issue["more_info"]:
-            references.append(issue["more_info"])
-        if issue.get("issue_cwe", {}).get("link", None):
-            references.append(issue["issue_cwe"]["link"])
-        yield SecurityIssue(
-            file_name=issue["filename"].replace(str(prefix) + "/", ""),
-            line=issue["line_number"],
-            column=issue["col_offset"],
-            cwe=str(issue["issue_cwe"].get("id", "")),
-            test_id=issue["test_id"],
-            description=issue["issue_text"],
-            references=tuple(references),
-        )
-
-
-def issues_to_markdown(issues: Iterable[SecurityIssue]) -> str:
-    template = cleandoc("""
-        {header}{rows}
-    """)
-
-    def _header():
-        header = "# Security\n\n"
-        header += "|File|line/<br>column|Cwe|Test ID|Details|\n"
-        header += "|---|:-:|:-:|:-:|---|\n"
-        return header
-
-    def _row(issue):
-        row = "|" + issue.file_name + "|"
-        row += f"line: {issue.line}<br>column: {issue.column}|"
-        row += issue.cwe + "|"
-        row += issue.test_id + "|"
-        for element in issue.references:
-            row += element + " ,<br>"
-        row = row[:-5] + "|"
-        return row
-
-    return template.format(header=_header(), rows="\n".join(_row(i) for i in issues))
 
 
 def security_issue_title(issue: Issue) -> str:
@@ -261,7 +207,9 @@ def create_security_issue(issue: Issue, project: str | None = None) -> tuple[str
         command.extend(['--project', project])
     # fmt: on
     try:
-        result = subprocess.run(command, check=True, capture_output=True)
+        result = subprocess.run(
+            command, check=True, capture_output=True
+        )  # nosec: B603 - fixed gh CLI command is constructed internally
     except FileNotFoundError as ex:
         msg = "Command 'gh' not found. Please make sure you have installed the github cli."
         raise FileNotFoundError(msg) from ex
@@ -382,23 +330,6 @@ def create(
         std_err, issue_url = create_security_issue(issue, project)
         stderr(std_err)
         stdout(format_jsonl(issue_url, issue))
-
-
-class PPrintFormats(str, Enum):
-    markdown = "markdown"
-
-
-@CLI.command(name="pretty-print")
-def json_issue_to_markdown(
-    json_file: typer.FileText = typer.Argument(
-        mode="r", help="json file with issues to convert"
-    ),
-    path: Path = typer.Argument(default=Path("."), help="path to project root"),
-) -> None:
-    content = json_file.read()
-    issues = from_json(content, path.absolute())
-    issues = sorted(issues, key=lambda i: (i.file_name, i.cwe, i.test_id))
-    print(issues_to_markdown(issues))
 
 
 def format_jsonl(issue_url: str, issue: Issue) -> str:

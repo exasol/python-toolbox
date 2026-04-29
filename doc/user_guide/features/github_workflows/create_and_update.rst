@@ -90,21 +90,3 @@ Add all Workflows to Your Project
 .. warning::
     Some workflows depend on other workflows. Please ensure you have all
     the required workflows if you do not install all of them.
-
-.. note::
-
-   The commands:
-
-   * ``tbx workflow install all`` - used to install workflows
-   * ``tbx workflow update all`` - used to update workflows
-
-   are considered historic variants of this command.
-
-   **Deprecation Notice:**
-   These ``tbx`` endpoints are marked as **deprecated** and are scheduled for removal
-   by **April 22nd, 2026**.
-
-   Please note that these legacy commands do not allow users to use their specified
-   ``.workflow-patcher.yml`` file to further customise or patch workflows. Users
-   should transition to the ``nox``-based command to leverage full customisation
-   features.

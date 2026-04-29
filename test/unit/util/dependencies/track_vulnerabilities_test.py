@@ -29,17 +29,36 @@ def flipped_id_vulnerability(sample_vulnerability) -> Vulnerability:
     )
 
 
+PKG_DATA = {"name": "cryptography", "version": "46.0.6"}
+
+VULN_1 = Vulnerability(
+    package=PKG_DATA,
+    id="GHSA-m959-cc7f-wv43",
+    aliases=["CVE-2026-34073"],
+    fix_versions=["46.0.6"],
+    description="Dummy description",
+)
+
+VULN_2 = Vulnerability(
+    package=PKG_DATA,
+    id="GHSA-p423-j2cm-9vmq",
+    aliases=["CVE-2026-39892"],
+    fix_versions=["46.0.7"],
+    description="Dummy description",
+)
+
+
 class TestVulnerabilityMatcher:
-    def test_not_resolved(self, sample_vulnerability):
+    @staticmethod
+    def test_not_resolved(sample_vulnerability):
         vuln = sample_vulnerability.vulnerability
         matcher = VulnerabilityMatcher(current_vulnerabilities=[vuln])
         assert not matcher.is_resolved(vuln)
 
-    def test_changed_id_not_resolved(
-        self, sample_vulnerability, flipped_id_vulnerability
-    ):
+    @staticmethod
+    def test_changed_id_not_resolved(sample_vulnerability, flipped_id_vulnerability):
         """
-        Simulate a vulnerability to be still present, but it's ID having
+        Simulate a vulnerability to be still present, but its ID having
         changed over time.
 
         The test verifies that the vulnerability (using the original ID) is
@@ -51,10 +70,30 @@ class TestVulnerabilityMatcher:
         )
         assert not matcher.is_resolved(sample_vulnerability.vulnerability)
 
-    def test_resolved(self, sample_vulnerability):
+    @staticmethod
+    def test_resolved(sample_vulnerability):
         vuln = sample_vulnerability.vulnerability
         matcher = VulnerabilityMatcher(current_vulnerabilities=[])
         assert matcher.is_resolved(vuln)
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "current_vulnerabilities",
+        [
+            [VULN_1, VULN_2],
+            [VULN_2],
+        ],
+    )
+    def test_no_resolution_same_package(current_vulnerabilities):
+        """
+        Two vulnerabilities in the same package 'cryptography', none of
+        them resolved.
+        """
+
+        matcher = VulnerabilityMatcher(current_vulnerabilities=current_vulnerabilities)
+        for v in (VULN_1, VULN_2):
+            expected = not v in current_vulnerabilities
+            assert matcher.is_resolved(v) is expected
 
 
 class TestDependenciesAudit:
@@ -72,7 +111,7 @@ class TestDependenciesAudit:
         # only care about "resolved" vulnerabilities, not new ones
         assert audit.resolved_vulnerabilities == []
 
-    def test_resolved_vulnerabilities(self, sample_vulnerability):
+    def test_resolved_vulnerability(self, sample_vulnerability):
         audit = DependenciesAudit(
             previous_vulnerabilities=[sample_vulnerability.vulnerability],
             current_vulnerabilities=[],

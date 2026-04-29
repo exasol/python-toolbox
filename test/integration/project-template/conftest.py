@@ -1,3 +1,4 @@
+import logging
 import subprocess
 from pathlib import Path
 
@@ -5,17 +6,23 @@ import pytest
 
 from noxconfig import PROJECT_CONFIG
 
+LOG = logging.getLogger(__name__)
+
 
 @pytest.fixture(scope="session", autouse=True)
 def cwd(tmp_path_factory):
     return tmp_path_factory.mktemp("project_template_test")
 
 
+@pytest.fixture(scope="session")
+def package_name():
+    return "package"
+
+
 @pytest.fixture(scope="session", autouse=True)
-def new_project(cwd):
+def new_project(cwd, package_name):
     project_name = "project"
     repo_name = "repo"
-    package_name = "package"
     project_path = cwd / repo_name
 
     subprocess.run(["mkdir", "-p", project_path])
@@ -36,7 +43,6 @@ def new_project(cwd):
         capture_output=True,
         check=True,
     )
-
     return cwd / repo_name
 
 
@@ -47,7 +53,12 @@ def poetry_install(run_command, poetry_path):
     # dependency to the PTB itself in the pyproject.toml file by replacing the latest
     # released PTB version with the current checked-out branch in
     # PROJECT_CONFIG.root_path:
-    run_command([poetry_path, "add", "--group", "dev", PROJECT_CONFIG.root_path])
+    run_command(
+        [poetry_path, "add", "--group", "dev", "--editable", PROJECT_CONFIG.root_path]
+    )
+    # This is needed due to pysonar hard-pinning requests. Without this addition,
+    # the selected requests has an active vulnerability.
+    run_command([poetry_path, "add", "--group", "dev", "requests>=2.33.0"])
     run_command([poetry_path, "install"])
 
 
@@ -70,15 +81,37 @@ def run_command(poetry_path, git_path, new_project):
     """
 
     def _run_command_fixture(command, **kwargs):
+        cwd = new_project
+        env = {"PATH": f"{Path(git_path).parent}:{Path(poetry_path).parent}"}
         defaults = {
             "capture_output": True,
-            "check": True,
-            "cwd": new_project,
-            "env": {"PATH": f"{Path(git_path).parent}:{Path(poetry_path).parent}"},
+            "cwd": cwd,
+            "env": env,
             "text": True,
         }
-        config = {**defaults, **kwargs}
+        config = {**defaults, **kwargs, "check": False}
+        p = subprocess.run(command, **config)
+        if p.returncode != 0:
 
-        return subprocess.run(command, **config)
+            def text(stream) -> str:
+                return "" if stream is None else stream.strip()
+
+            message = (
+                f"subprocess.run() returned exit code: {p.returncode}"
+                f"\ncommand: {' '.join(command)}"
+                f"\nstdout: {text(p.stdout)}"
+                f"\nstderr: {text(p.stderr)}"
+                f"\ncwd: {cwd}"
+                f"\nenv: {env}"
+            )
+            LOG.warning(message)
+            if kwargs.get("check", True):
+                raise subprocess.CalledProcessError(
+                    p.returncode,
+                    command,
+                    output=p.stdout,
+                    stderr=p.stderr,
+                )
+        return p
 
     return _run_command_fixture

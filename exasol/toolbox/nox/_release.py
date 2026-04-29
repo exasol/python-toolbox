@@ -2,20 +2,16 @@ from __future__ import annotations
 
 import argparse
 import re
-import subprocess
+import subprocess  # nosec: B404 - risk of subprocess is accepted
 from pathlib import Path
 
 import nox
 from nox import Session
 
-from exasol.toolbox.nox._shared import (
-    Mode,
-    _version,
-)
 from exasol.toolbox.nox.plugin import NoxTasks
 from exasol.toolbox.util.dependencies.shared_models import PoetryFiles
 from exasol.toolbox.util.git import Git
-from exasol.toolbox.util.release.changelog import Changelogs
+from exasol.toolbox.util.release.changelog import Changelog
 from exasol.toolbox.util.version import (
     ReleaseTypes,
     Version,
@@ -58,14 +54,8 @@ def _create_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _update_project_version(session: Session, version: Version) -> Version:
-    session.run("poetry", "version", f"{version}")
-    _version(session, Mode.Fix)
-    return version
-
-
-def _get_changelogs(version: Version) -> Changelogs:
-    return Changelogs(
+def _get_changelogs(version: Version) -> Changelog:
+    return Changelog(
         changes_path=PROJECT_CONFIG.documentation_path / "changes",
         root_path=PROJECT_CONFIG.root_path,
         version=version,
@@ -86,7 +76,7 @@ def _trigger_release(project_config) -> Version:
         try:
             return subprocess.run(
                 args, capture_output=True, text=True, check=True
-            ).stdout
+            ).stdout  # nosec: B603 - risk accepted for internally used wrapper function
         except subprocess.CalledProcessError as ex:
             raise ReleaseError(
                 f"failed to execute command {ex.cmd}\n\n{ex.stderr}"
@@ -130,8 +120,6 @@ def prepare_release(session: Session) -> None:
     if not args.no_branch and not args.no_add:
         Git.create_and_switch_to_branch(f"release/prepare-{new_version}")
 
-    _ = _update_project_version(session, new_version)
-
     changed_files = (
         _get_changelogs(version=new_version).prepare_release().get_changed_files()
     )
@@ -146,7 +134,6 @@ def prepare_release(session: Session) -> None:
 
     changed_files += [
         PROJECT_CONFIG.root_path / PoetryFiles.pyproject_toml,
-        PROJECT_CONFIG.version_filepath,
     ]
     results = pm.hook.prepare_release_add_files(session=session, config=PROJECT_CONFIG)
     changed_files += [f for plugin_response in results for f in plugin_response]

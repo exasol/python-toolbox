@@ -12,7 +12,7 @@ jobs:
     name: Merge Gate
     uses: ./.github/workflows/merge-gate.yml
     with:
-      root-event:  ${{ github.event_name }}
+      root-event: ${{ github.event_name }}
     secrets: inherit
     permissions:
       contents: read
@@ -22,7 +22,7 @@ jobs:
     # current workflow ci.yml is triggered by schedule, there is no manual
     # interaction, manual approval will never be given, slow checks will not
     # be executed, merge-gate will never terminate, and the report will never
-    # be called. If this were later changed, then we would want `report.yml` to create a `metrics.json`.
+    # be called.
     name: Report
     needs:
       - merge-gate

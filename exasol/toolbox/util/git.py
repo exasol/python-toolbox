@@ -1,4 +1,4 @@
-import subprocess  # nosec
+import subprocess  # nosec: B404 - risk of subprocess is accepted
 from functools import wraps
 from pathlib import Path
 

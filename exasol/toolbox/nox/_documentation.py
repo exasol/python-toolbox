@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
-import subprocess
+import subprocess  # nosec: B404 - risk of subprocess is accepted
 import sys
 import tempfile
 import webbrowser
@@ -54,7 +54,7 @@ def _git_diff_changes_main() -> int:
             PROJECT_CONFIG.documentation_path / "changes",
         ],
         capture_output=True,
-    )
+    )  # nosec: B603, B607 - fixed git command; PATH lookup and args are trusted here
     return p.returncode
 
 

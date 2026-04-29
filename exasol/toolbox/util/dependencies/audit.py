@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-import subprocess  # nosec
+import subprocess  # nosec: B404 - risk of subprocess is accepted
 import tempfile
 from dataclasses import dataclass
 from enum import Enum
@@ -23,22 +23,38 @@ from exasol.toolbox.util.dependencies.shared_models import (
 )
 
 PIP_AUDIT_VULNERABILITY_PATTERN = (
-    r"^Found \d+ known vulnerabilit\w{1,3} in \d+ package\w?$"
+    r"(?m)^Found \d+ known vulnerabilit(?:y|ies) in \d+ package(?:s)?$"
 )
-
 
 PipAuditEntry = dict[str, str | list[str] | tuple[str, ...]]
 
 
 @dataclass
-class PipAuditException(Exception):
+class SubprocessException(Exception):
+    command: list[str]
+    cwd: Path
+    env: dict[str, str]
     returncode: int
     stdout: str
     stderr: str
 
     @classmethod
-    def from_subprocess(cls, proc: subprocess.CompletedProcess) -> PipAuditException:
-        return cls(proc.returncode, proc.stdout, proc.stderr)
+    def from_subprocess(
+        cls,
+        proc: subprocess.CompletedProcess,
+        command: list[str],
+        cwd: Path,
+        env: dict[str, str] | None = None,
+    ) -> SubprocessException:
+        return cls(command, cwd, env or {}, proc.returncode, proc.stdout, proc.stderr)
+
+
+class PipAuditException(SubprocessException):
+    pass
+
+
+class PoetryException(SubprocessException):
+    pass
 
 
 class VulnerabilitySource(str, Enum):
@@ -150,6 +166,35 @@ class Vulnerability(BaseModel):
             """)
 
 
+def export_dependencies_to_file(output_file: Path, working_directory: Path) -> None:
+    """
+    Export all dependencies to a requirements.txt format
+
+    The default for `poetry export` is to only include the main dependencies and their
+    transitive dependencies, by adding `--all-groups` and `all-extras` we get
+    all dependencies defined in groups, like dev dependencies, and all optional
+    dependencies.
+    """
+    command = [
+        "poetry",
+        "export",
+        "--format=requirements.txt",
+        "--all-groups",
+        "--all-extras",
+        "--without-hashes",
+        "-o",
+        str(output_file),
+    ]
+    output = subprocess.run(
+        command,
+        capture_output=True,
+        text=True,
+        cwd=working_directory,
+    )  # nosec: B603 - allow fixed poetry usage
+    if output.returncode != 0:
+        raise PoetryException.from_subprocess(output, command, cwd=working_directory)
+
+
 def audit_poetry_files(working_directory: Path) -> str:
     """
     Audit the `pyproject.toml` and `poetry.lock` files
@@ -163,31 +208,26 @@ def audit_poetry_files(working_directory: Path) -> str:
     and then inspecting the dependencies.
     """
 
-    requirements_txt = "requirements.txt"
-    output = subprocess.run(
-        ["poetry", "export", "--format=requirements.txt"],
-        capture_output=True,
-        text=True,
-        cwd=working_directory,
-    )  # nosec
-    if output.returncode != 0:
-        raise PipAuditException.from_subprocess(output)
-
     with tempfile.TemporaryDirectory() as path:
         tmpdir = Path(path)
-        (tmpdir / requirements_txt).write_text(output.stdout)
+        requirements_path = tmpdir / "requirements.txt"
+        export_dependencies_to_file(requirements_path, working_directory)
 
         # CLI option `--disable-pip` skips dependency resolution in pip.  The
-        # option can be used with hashed requirements files (which is the case
-        # here) to avoid `pip-audit` installing an isolated environment and
-        # speed up the audit significantly.
-        command = ["pip-audit", "--disable-pip", "-r", requirements_txt, "-f", "json"]
+        # option can be used with hashed requirements files to avoid
+        # `pip-audit` installing an isolated environment and speed up the
+        # audit significantly.
+        #
+        # In real use scenarios of the PTB we usually have hashed
+        # requirements. Unfortunately this is not the case for the example
+        # project created in the integration tests.
+        command = ["pip-audit", "-r", requirements_path.name, "-f", "json"]
         output = subprocess.run(
             command,
             capture_output=True,
             text=True,
             cwd=tmpdir,
-        )  # nosec
+        )  # nosec: B603 - allow fixed pip-audit usage
 
     if output.returncode != 0:
         # pip-audit does not distinguish between 1) finding vulnerabilities
@@ -195,7 +235,7 @@ def audit_poetry_files(working_directory: Path) -> str:
         # they both map to returncode = 1, so we have our own logic to raise errors
         # for the case of 2) and not 1).
         if not search(PIP_AUDIT_VULNERABILITY_PATTERN, output.stderr.strip()):
-            raise PipAuditException.from_subprocess(output)
+            raise PipAuditException.from_subprocess(output, command, cwd=tmpdir)
     return output.stdout
 
 

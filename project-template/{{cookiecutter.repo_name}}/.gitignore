@@ -148,6 +148,5 @@ itde/
 
 # PTB
 /.lint.json
-/.lint.txt
 /.security.json
 /.sonar

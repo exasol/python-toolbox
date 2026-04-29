@@ -8,7 +8,6 @@ from nox import Session
 from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._shared import (
     Mode,
-    _version,
     get_filtered_python_files,
 )
 from noxconfig import (
@@ -44,7 +43,6 @@ def _ruff(session: Session, mode: Mode, files: Iterable[str]):
 def fix_format(session: Session) -> None:
     """Runs all automated format fixes on the code base"""
     py_files = get_filtered_python_files(PROJECT_CONFIG.root_path)
-    _version(session, Mode.Fix)
     _pyupgrade(session, config=PROJECT_CONFIG, files=py_files)
     _ruff(session, mode=Mode.Fix, files=py_files)
     _code_format(session, Mode.Fix, py_files)

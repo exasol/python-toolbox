@@ -1,4 +1,5 @@
 import json
+import re
 from inspect import cleandoc
 from pathlib import Path
 from subprocess import CompletedProcess
@@ -9,10 +10,12 @@ import pytest
 
 from exasol.toolbox.util.dependencies.audit import (
     PipAuditException,
+    PoetryException,
     Vulnerabilities,
     Vulnerability,
     VulnerabilitySource,
     audit_poetry_files,
+    export_dependencies_to_file,
     get_vulnerabilities,
     get_vulnerabilities_from_latest_tag,
 )
@@ -94,7 +97,6 @@ class TestVulnerability:
         ),
     )
     def test_vulnerability_id(self, sample_vulnerability, aliases: list[str], expected):
-
         result = Vulnerability(
             package=sample_vulnerability.vulnerability.package,
             id="DUMMY_IDENTIFIER",
@@ -124,6 +126,62 @@ class TestVulnerability:
         )
 
 
+@pytest.fixture(scope="module")
+def new_pyproject_toml(create_new_poetry_project, project_path):
+    return (project_path / "pyproject.toml").read_text()
+
+
+class TestExportDependenciesToFile:
+    PACKAGES = [
+        "astroid",
+        "black",  # group - analysis
+        "click",
+        "colorama",
+        "dill",
+        "isort",  # group - dev
+        "mccabe",
+        "mypy-extensions",
+        "packaging",
+        "pathspec",
+        "platformdirs",
+        "pylint",  # main
+        "ruff",  # optional-dependencies
+        "tomli",
+        "tomlkit",
+        "typing-extensions",
+    ]
+
+    @staticmethod
+    def extract_package_names(content) -> list[str]:
+        return re.findall(
+            r"^([a-zA-Z0-9\-_]+)(?===|>=|<=|>|<|@)", content, re.MULTILINE
+        )
+
+    @pytest.mark.parametrize(
+        "pyproject_content",
+        [
+            "poetry_2_1_pyproject_text",
+            "poetry_2_3_pyproject_text",
+            "new_pyproject_toml",
+        ],
+    )
+    def test_poetry_export_versions(
+        self, install_poetry_export, tmp_path, pyproject_content, request
+    ):
+        content_str = request.getfixturevalue(pyproject_content)
+        (tmp_path / "pyproject.toml").write_text(content_str)
+        requirements_txt = tmp_path / "requirements.txt"
+
+        install_poetry_export(cwd=tmp_path)
+
+        export_dependencies_to_file(
+            output_file=requirements_txt, working_directory=tmp_path
+        )
+
+        content = requirements_txt.read_text()
+        assert self.extract_package_names(content) == self.PACKAGES
+
+
 class TestAuditPoetryFiles:
     @staticmethod
     @mock.patch("subprocess.run")
@@ -134,7 +192,7 @@ class TestAuditPoetryFiles:
         result.stderr = "pyproject.toml changed significantly since poetry.lock was last generated. Run `poetry lock` to fix the lock file.\n"
         mock_run.return_value = result
 
-        with pytest.raises(PipAuditException) as e:
+        with pytest.raises(PoetryException) as e:
             audit_poetry_files(working_directory=Path())
         assert e.value.stderr == result.stderr
 

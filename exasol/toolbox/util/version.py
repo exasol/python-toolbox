@@ -1,15 +1,13 @@
 from __future__ import annotations
 
-import subprocess
+import subprocess  # nosec: B404 - risk of subprocess is accepted
 from dataclasses import dataclass
 from enum import Enum
 from functools import (
     total_ordering,
     wraps,
 )
-from pathlib import Path
 from shutil import which
-from typing import Any
 
 from exasol.toolbox.error import ToolboxError
 
@@ -90,7 +88,7 @@ class Version:
     @staticmethod
     @poetry_command
     def from_poetry():
-        output = subprocess.run(
+        output = subprocess.run(  # nosec: B603, B607 - allow fixed poetry command
             ["poetry", "version", "--no-ansi", "--short"],
             capture_output=True,
             text=True,
@@ -100,24 +98,9 @@ class Version:
     @staticmethod
     @poetry_command
     def upgrade_version_from_poetry(t: ReleaseTypes):
-        output = subprocess.run(
+        output = subprocess.run(  # nosec: B603, B607 - allow fixed poetry command
             ["poetry", "version", str(t), "--dry-run", "--no-ansi", "--short"],
             capture_output=True,
             text=True,
         )
         return Version.from_string(output.stdout.strip())
-
-    @staticmethod
-    def from_python_module(path: Path) -> Version:
-        """Retrieve version information from the `version` module"""
-        with open(path, encoding="utf-8") as file:
-            _locals: dict[str, Any] = {}
-            _globals: dict[str, Any] = {}
-            exec(file.read(), _locals, _globals)
-
-            try:
-                version = _globals["VERSION"]
-            except KeyError as ex:
-                raise ToolboxError("Couldn't find version within module") from ex
-
-            return Version.from_string(version)
