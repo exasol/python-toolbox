@@ -8,6 +8,14 @@ on:
     - cron: "0 0 1/7 * *"
 
 jobs:
+  dependency-update:
+    name: Dependency Update
+    uses: ./.github/workflows/dependency-update.yml
+    secrets: inherit
+    permissions:
+      contents: write
+      pull-requests: write
+
   merge-gate:
     name: Merge Gate
     uses: ./.github/workflows/merge-gate.yml
