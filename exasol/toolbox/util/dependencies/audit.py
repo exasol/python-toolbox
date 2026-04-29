@@ -260,7 +260,7 @@ class Vulnerabilities(BaseModel):
 
         vulnerabilities = []
         for entry in audit_dict["dependencies"]:
-            for vuln_entry in entry["vulns"]:
+            for vuln_entry in entry.get("vulns", []):
                 vulnerabilities.append(
                     Vulnerability.from_audit_entry(
                         package_name=entry["name"],

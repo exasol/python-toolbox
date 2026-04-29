@@ -240,7 +240,13 @@ class TestVulnerabilities:
     @staticmethod
     def test_with_no_vulnerabilities():
         pip_audit_dict = {
-            "dependencies": [{"name": "alabaster", "version": "0.7.16", "vulns": []}]
+            "dependencies": [
+                {
+                    "name": "exasol-toolbox",
+                    "skip_reason": "Dependency not found on PyPI and could not be audited: exasol-toolbox (7.0.0)",
+                },
+                {"name": "alabaster", "version": "0.7.16", "vulns": []},
+            ]
         }
         pip_audit_json = json.dumps(pip_audit_dict)
 
