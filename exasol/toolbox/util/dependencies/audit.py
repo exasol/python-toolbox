@@ -174,6 +174,8 @@ def export_dependencies_to_file(output_file: Path, working_directory: Path) -> N
         "--all-groups",
         "--all-extras",
         "--without-hashes",
+        "-o",
+        str(output_file),
     ]
     output = subprocess.run(
         command,
@@ -183,8 +185,6 @@ def export_dependencies_to_file(output_file: Path, working_directory: Path) -> N
     )  # nosec: B603 - allow fixed poetry usage
     if output.returncode != 0:
         raise PipAuditException.from_subprocess(output, command, cwd=working_directory)
-
-    output_file.write_text(output.stdout)
 
 
 def audit_poetry_files(working_directory: Path) -> str:
