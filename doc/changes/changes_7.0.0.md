@@ -15,6 +15,13 @@ This is required for the nox session `docs:multiversion` to successfully complet
 and it is a Python standard for users to check in the terminal which version they are
 using.
 
+The underlying code for the nox sessions `vulnerabilities:resolved` and
+`release:prepare` have been modified so that all dependencies (`main`, in `groups`,
+and in `optional groups`) are considered for the vulnerability report. Additionally,
+we only consider a vulnerability resolved if `pip-audit` includes `fix_versions`
+for the dependency. Previously, these nox sessions only reported the dependencies
+of `main` and the transitive dependencies of `main`.
+
 ## Feature
 
 * #803: Included other dependencies for local `pip-audit` check
