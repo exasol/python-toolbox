@@ -99,7 +99,7 @@ class Version:
     @poetry_command
     def upgrade_version_from_poetry(t: ReleaseTypes):
         output = subprocess.run(  # nosec: B603, B607 - allow fixed poetry command
-            ["poetry", "version", str(t), "--dry-run", "--no-ansi", "--short"],
+            ["poetry", "version", str(t), "--no-ansi", "--short"],
             capture_output=True,
             text=True,
         )
