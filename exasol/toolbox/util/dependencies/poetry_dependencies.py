@@ -59,14 +59,17 @@ class PoetryToml(BaseModel):
     def groups(self) -> tuple[PoetryGroup, ...]:
         groups = []
 
+        # Main Dependencies
         main_key = "project.dependencies"
         if self.get_section_dict(main_key):
             groups.append(PoetryGroup(name="main", toml_section=main_key))
 
+        # Legacy Poetry Main Dependencies
         main_dynamic_key = "tool.poetry.dependencies"
         if self.get_section_dict(main_dynamic_key):
             groups.append(PoetryGroup(name="main", toml_section=main_dynamic_key))
 
+        # Legacy Poetry Group Dependencies
         group_key = "tool.poetry.group"
         if group_dict := self.get_section_dict(group_key):
             for group, content in group_dict.items():
@@ -78,6 +81,7 @@ class PoetryToml(BaseModel):
                         )
                     )
 
+        # Poetry Group Dependencies
         new_group_key = "dependency-groups"
         if group_dict := self.get_section_dict(new_group_key):
             for group, content in group_dict.items():

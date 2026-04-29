@@ -53,7 +53,12 @@ def poetry_install(run_command, poetry_path):
     # dependency to the PTB itself in the pyproject.toml file by replacing the latest
     # released PTB version with the current checked-out branch in
     # PROJECT_CONFIG.root_path:
-    run_command([poetry_path, "add", "--group", "dev", PROJECT_CONFIG.root_path])
+    run_command(
+        [poetry_path, "add", "--group", "dev", "--editable", PROJECT_CONFIG.root_path]
+    )
+    # This is needed due to pysonar hard-pinning requests. Without this addition,
+    # the selected requests has an active vulnerability.
+    run_command([poetry_path, "add", "--group", "dev", "requests>=2.33.0"])
     run_command([poetry_path, "install"])
 
 
