@@ -5,6 +5,7 @@ import pytest
 
 from exasol.toolbox.error import ToolboxError
 from exasol.toolbox.util.version import (
+    ReleaseTypes,
     Version,
     poetry_command,
 )
@@ -65,6 +66,18 @@ def test_version_from_poetry(poetry_version, version, expected):
         actual = Version.from_poetry()
 
     assert expected == actual
+
+
+def test_upgrade_version_from_poetry_applies_version_change(tmp_path, monkeypatch):
+    (tmp_path / "pyproject.toml").write_text(
+        '[project]\nname = "sample-project"\nversion = "0.1.0"\n'
+    )
+    monkeypatch.chdir(tmp_path)
+    assert Version.from_poetry() == Version(0, 1, 0)
+
+    actual = Version.upgrade_version_from_poetry(ReleaseTypes.Minor)
+
+    assert actual == Version(0, 2, 0)
 
 
 @patch("exasol.toolbox.util.version.which", return_value=None)
