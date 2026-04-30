@@ -13,13 +13,13 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: "actions/checkout@(( action_shas.checkout ))"
+        uses: "actions/checkout@(( github_action_pins.checkout ))"
         with:
           fetch-depth: 0
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( github_action_pins.ptb_python ))"
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
@@ -32,7 +32,7 @@ jobs:
 
       - name: Upload Artifact
         id: upload-artifact
-        uses: "actions/upload-pages-artifact@(( action_shas.upload_pages_artifact ))"
+        uses: "actions/upload-pages-artifact@(( github_action_pins.upload_pages_artifact ))"
         with:
           path: html-documentation
 
@@ -50,4 +50,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deploy-to-github-pages
-        uses: "actions/deploy-pages@(( action_shas.deploy_pages ))"
+        uses: "actions/deploy-pages@(( github_action_pins.deploy_pages ))"

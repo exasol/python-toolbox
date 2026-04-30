@@ -12,11 +12,11 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: "actions/checkout@(( action_shas.checkout ))"
+        uses: "actions/checkout@(( github_action_pins.checkout ))"
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( github_action_pins.ptb_python ))"
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
@@ -38,11 +38,11 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: "actions/checkout@(( action_shas.checkout ))"
+        uses: "actions/checkout@(( github_action_pins.checkout ))"
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( github_action_pins.ptb_python ))"
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
@@ -63,11 +63,11 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: "actions/checkout@(( action_shas.checkout ))"
+        uses: "actions/checkout@(( github_action_pins.checkout ))"
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( github_action_pins.ptb_python ))"
         with:
           python-version: ${{ matrix.python-versions }}
           poetry-version: "(( dependency_manager_version ))"
@@ -78,7 +78,7 @@ jobs:
 
       - name: Upload Artifacts
         id: upload-artifacts
-        uses: "actions/upload-artifact@(( action_shas.upload_artifact ))"
+        uses: "actions/upload-artifact@(( github_action_pins.upload_artifact ))"
         with:
           name: lint-python${{ matrix.python-versions }}
           path: |
@@ -98,11 +98,11 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: "actions/checkout@(( action_shas.checkout ))"
+        uses: "actions/checkout@(( github_action_pins.checkout ))"
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( github_action_pins.ptb_python ))"
         with:
           python-version: ${{ matrix.python-versions }}
           poetry-version: "(( dependency_manager_version ))"
@@ -124,11 +124,11 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: "actions/checkout@(( action_shas.checkout ))"
+        uses: "actions/checkout@(( github_action_pins.checkout ))"
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( github_action_pins.ptb_python ))"
         with:
           python-version: ${{ matrix.python-versions }}
           poetry-version: "(( dependency_manager_version ))"
@@ -139,7 +139,7 @@ jobs:
 
       - name: Upload Artifacts
         id: upload-artifacts
-        uses: "actions/upload-artifact@(( action_shas.upload_artifact ))"
+        uses: "actions/upload-artifact@(( github_action_pins.upload_artifact ))"
         with:
           name: security-python${{ matrix.python-versions }}
           path: .security.json
@@ -153,11 +153,11 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: "actions/checkout@(( action_shas.checkout ))"
+        uses: "actions/checkout@(( github_action_pins.checkout ))"
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( github_action_pins.ptb_python ))"
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
@@ -175,11 +175,11 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: "actions/checkout@(( action_shas.checkout ))"
+        uses: "actions/checkout@(( github_action_pins.checkout ))"
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( github_action_pins.ptb_python ))"
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
@@ -201,11 +201,11 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: "actions/checkout@(( action_shas.checkout ))"
+        uses: "actions/checkout@(( github_action_pins.checkout ))"
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( github_action_pins.ptb_python ))"
         with:
           python-version: ${{ matrix.python-versions }}
           poetry-version: "(( dependency_manager_version ))"
@@ -216,7 +216,7 @@ jobs:
 
       - name: Upload Artifacts
         id: upload-artifacts
-        uses: "actions/upload-artifact@(( action_shas.upload_artifact ))"
+        uses: "actions/upload-artifact@(( github_action_pins.upload_artifact ))"
         with:
           name: coverage-python${{ matrix.python-versions }}-fast
           path: .coverage

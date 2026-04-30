@@ -14,20 +14,20 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: "actions/checkout@(( action_shas.checkout ))"
+        uses: "actions/checkout@(( github_action_pins.checkout ))"
         with:
           fetch-depth: 0
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( github_action_pins.ptb_python ))"
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
 
       - name: Download Artifacts
         id: download-artifacts
-        uses: "actions/download-artifact@(( action_shas.download_artifact ))"
+        uses: "actions/download-artifact@(( github_action_pins.download_artifact ))"
         with:
           path: ./artifacts
 
