@@ -16,7 +16,7 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
@@ -42,7 +42,7 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
@@ -67,7 +67,7 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
         with:
           python-version: ${{ matrix.python-versions }}
           poetry-version: "(( dependency_manager_version ))"
@@ -102,7 +102,7 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
         with:
           python-version: ${{ matrix.python-versions }}
           poetry-version: "(( dependency_manager_version ))"
@@ -128,7 +128,7 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
         with:
           python-version: ${{ matrix.python-versions }}
           poetry-version: "(( dependency_manager_version ))"
@@ -157,7 +157,7 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
@@ -179,7 +179,7 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
@@ -205,7 +205,7 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: "exasol/python-toolbox/.github/actions/python-environment@(( action_shas.ptb_python ))"
         with:
           python-version: ${{ matrix.python-versions }}
           poetry-version: "(( dependency_manager_version ))"
