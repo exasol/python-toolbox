@@ -9,6 +9,7 @@ from exasol.toolbox.config import (
     DEFAULT_EXCLUDED_PATHS,
     BaseConfig,
     DependencyManager,
+    GitHubActionPins,
     valid_version_string,
     warnings,
 )
@@ -31,6 +32,7 @@ class TestBaseConfig:
         root_path = config.root_path
         assert config.model_dump() == {
             "add_to_excluded_python_paths": (),
+            "github_action_pins": GitHubActionPins().model_dump(),
             "create_major_version_tags": False,
             "dependency_manager": {"name": "poetry", "version": "2.3.0"},
             "documentation_path": root_path / "doc",
@@ -39,6 +41,7 @@ class TestBaseConfig:
             "github_workflow_directory": tmp_path / ".github" / "workflows",
             "github_workflow_patcher_yaml": None,
             "github_template_dict": {
+                "github_action_pins": GitHubActionPins().model_dump(),
                 "dependency_manager_version": "2.3.0",
                 "minimum_python_version": "3.10",
                 "os_version": "ubuntu-24.04",
@@ -95,6 +98,29 @@ class TestValidVersionString:
     def test_raises_exception_when_not_valid():
         with pytest.raises(ValueError):
             valid_version_string("$.2.3")
+
+
+class TestGitHubActionSHAs:
+    @staticmethod
+    def test_works_as_expected():
+        sha_1 = "cd2ce8fcbc39b97be8ca5fce6e763baed58fa128"
+        result = GitHubActionPins(checkout=sha_1)
+
+        assert result.checkout == sha_1
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "sha",
+        [
+            pytest.param("123", id="too-short"),
+            pytest.param("g" * 40, id="non-hex"),
+        ],
+    )
+    def test_raises_exception_when_sha_is_invalid(sha):
+        with pytest.raises(ValidationError) as ex:
+            GitHubActionPins(checkout=sha)
+
+        assert "String should match pattern" in str(ex.value)
 
 
 class BaseConfigExpansion(BaseConfig):

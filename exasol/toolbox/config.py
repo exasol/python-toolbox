@@ -86,6 +86,7 @@ def valid_version_string(version_string: str) -> str:
 
 ValidPluginHook = Annotated[type[Any], AfterValidator(validate_plugin_hook)]
 ValidVersionStr = Annotated[str, AfterValidator(valid_version_string)]
+SHA_1 = Annotated[str, Field(pattern=r"^[0-9a-fA-F]{40}$")]
 
 DEFAULT_EXCLUDED_PATHS = {
     ".eggs",
@@ -119,6 +120,37 @@ class DependencyManager(BaseModel):
             elif version.parse(v) > (current_version := version.parse("2.3.0")):
                 warnings.warn(prefix + f"exceeds last tested version {current_version}")
         return v
+
+
+class GitHubActionPins(BaseModel):
+    """
+    GitHub action pins for use in the workflow templates.
+    """
+
+    checkout: SHA_1 = Field(
+        default="de0fac2e4500dabe0009e67214ff5f5447ce83dd",  # v6.0.2
+        description="Commit SHA for actions/checkout",
+    )
+    deploy_pages: SHA_1 = Field(
+        default="cd2ce8fcbc39b97be8ca5fce6e763baed58fa128",  # v5.0.0
+        description="Commit SHA for actions/deploy-pages",
+    )
+    download_artifact: SHA_1 = Field(
+        default="3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c",  # v8.0.1
+        description="Commit SHA for actions/download-artifact",
+    )
+    ptb_python: SHA_1 = Field(
+        default="de9c841d1e0c1d59b267900baf25da913330a25a",  # v7
+        description="Commit SHA for exasol/python-toolbox/.github/actions/python-environment",
+    )
+    upload_artifact: SHA_1 = Field(
+        default="043fb46d1a93c77aae656e7c1c64a875d1fc6a0a",  # v7.0.1
+        description="Commit SHA for actions/upload-artifact",
+    )
+    upload_pages_artifact: SHA_1 = Field(
+        default="fc324d3547104276b827a68afc52ff2a11cc49c9",  # v5.0.0
+        description="Commit SHA for actions/upload-pages-artifact",
+    )
 
 
 class BaseConfig(BaseModel):
@@ -190,6 +222,10 @@ class BaseConfig(BaseModel):
         provided as templates from the PTB. Currently, only ubuntu-based runners
         are supported.
         """,
+    )
+    github_action_pins: GitHubActionPins = Field(
+        default_factory=GitHubActionPins,
+        description="This is used to specify the GitHub action pins used in the workflow templates.",
     )
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
@@ -280,6 +316,7 @@ class BaseConfig(BaseModel):
         configurations.
         """
         return {
+            "github_action_pins": self.github_action_pins.model_dump(),
             "dependency_manager_version": self.dependency_manager.version,
             "minimum_python_version": self.minimum_python_version,
             "os_version": self.os_version,
