@@ -83,14 +83,18 @@ jobs:
         run: |
           BASE_BRANCH=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name)
 
-          pr_url=$(gh pr create \
-            --base "$BASE_BRANCH" \
-            --title "Update dependencies to fix vulnerabilities ($(date '+%Y-%m-%d'))" \
-            --body "Automated dependency update for \`poetry.lock\`.)
-          echo "pr_url=$pr_url" >> "$GITHUB_OUTPUT"
+          PR_BODY="Automated dependency update for \`poetry.lock\`.
           This PR was created by the dependency update workflow after running:
           - \`poetry run -- nox -s dependency:audit\`
           - \`poetry update\`"
+
+          PR_URL=$(gh pr create \
+                      --base "$BASE_BRANCH" \
+                      --title "Update dependencies to fix vulnerabilities ($(date '+%Y-%m-%d'))" \
+                      --body "$PR_BODY")
+
+          echo "pr_url=PR_URL" >> "$GITHUB_OUTPUT"
+
       - name: Report new Pull Request to Slack channel
         id: report-pr-slack
         if: ${{ steps.create-pr.outputs.pr_url }}
