@@ -103,9 +103,9 @@ jobs:
         if: ${{ steps.create-pr.outputs.pr_url }}
         uses: ravsamhq/notify-slack-action@v2
         with:
-          status: '${{ job.status }}',
-          token: '${{ secrets.GITHUB_TOKEN }}',
-          notification_title: 'Dependency update for {repo} created a Pull Request',
+          status: '${{ job.status }}'
+          token: '${{ secrets.GITHUB_TOKEN }}'
+          notification_title: 'Dependency update for {repo} created a Pull Request'
           message_format: '{workflow} created Pull Request ${{ steps.create-pr.outputs.pr_url }}'
         env:
           SLACK_WEBHOOK_URL: '${{ secrets.INTEGRATION_TEAM_SECURITY_UPDATES_WEBHOOK }}'

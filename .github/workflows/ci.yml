@@ -20,6 +20,7 @@ jobs:
   dependency-update:
     name: Dependency Update
     uses: ./.github/workflows/dependency-update.yml
+    secrets: inherit
     permissions:
       contents: write
       pull-requests: write
