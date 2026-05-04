@@ -17,6 +17,14 @@ jobs:
     permissions:
       contents: read
 
+  dependency-update:
+    name: Dependency Update
+    uses: ./.github/workflows/dependency-update.yml
+    secrets: inherit
+    permissions:
+      contents: write
+      pull-requests: write
+
   report:
     # Job merge-gate requires manual approval for running the slow checks.  If
     # current workflow ci.yml is triggered by schedule, there is no manual
