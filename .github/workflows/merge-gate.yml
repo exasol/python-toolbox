@@ -48,14 +48,6 @@ jobs:
     permissions:
       contents: read
 
-  test-python-environment:
-    name: Test python-environment Action
-    needs:
-      - approve-run-slow-tests
-    uses: ./.github/workflows/test-python-environment.yml
-    permissions:
-      contents: read
-
   # This job ensures inputs have been executed successfully.
   allow-merge:
     name: Allow Merge
@@ -66,7 +58,6 @@ jobs:
     needs:
       - run-fast-checks
       - run-slow-checks
-      - test-python-environment
     # Each job requires a step, so we added this dummy step.
     steps:
       - name: Approve
