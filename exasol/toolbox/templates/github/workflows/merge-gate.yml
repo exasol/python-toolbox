@@ -51,6 +51,7 @@ jobs:
   # This job ensures inputs have been executed successfully.
   allow-merge:
     name: Allow Merge
+    if: ${{ !cancelled() }}
     runs-on: "(( os_version ))"
     permissions:
       contents: read
@@ -63,4 +64,8 @@ jobs:
     steps:
       - name: Branch Protection - failure if any ancestor failed
         if: ${{ contains(needs.*.result, 'failure') }}
-        run: exit 1
+        run: |
+          echo '${{ toJSON(needs) }}'
+          exit 1
+      - name: Branch Protection
+        run: true
