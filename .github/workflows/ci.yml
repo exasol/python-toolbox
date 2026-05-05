@@ -26,6 +26,11 @@ jobs:
     name: Report
     needs:
       - merge-gate
+    # This condition ensures the job runs if merge-gate finished (success or failure)
+    if: |
+      always() &&
+      needs.merge-gate.result != 'skipped' &&
+      needs.merge-gate.result != 'cancelled'
     uses: ./.github/workflows/report.yml
     secrets: inherit
     permissions:
