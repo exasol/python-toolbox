@@ -1,5 +1,5 @@
 workflows:
-  - name: checks
+  - name: fast-tests
     step_customizations:
       - action: REPLACE
         job: run-unit-tests

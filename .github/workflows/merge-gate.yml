@@ -16,10 +16,17 @@ jobs:
     permissions:
       contents: read
 
+  run-fast-tests:
+    name: Fast Tests
+    uses: ./.github/workflows/fast-tests.yml
+    permissions:
+      contents: read
+
   fast-report:
     name: Fast Report
     needs:
       - run-fast-checks
+      - run-fast-tests
     uses: ./.github/workflows/report.yml
     secrets: inherit
     permissions:
