@@ -6,7 +6,10 @@ from pathlib import Path
 
 from pydantic import computed_field
 
-from exasol.toolbox.config import BaseConfig
+from exasol.toolbox.config import (
+    BaseConfig,
+    WorkflowExtension,
+)
 from exasol.toolbox.nox.plugin import hookimpl
 from exasol.toolbox.tools.replace_version import update_github_yml
 from exasol.toolbox.util.release.cookiecutter import (
@@ -69,6 +72,8 @@ class Config(BaseConfig):
         return self.root_path / ".import_linter_config"
 
 
+workflow_extension = WorkflowExtension(fast_tests=True)
+
 PROJECT_CONFIG = Config(
     root_path=ROOT_PATH,
     project_name="toolbox",
@@ -86,4 +91,5 @@ PROJECT_CONFIG = Config(
     # so for running in the CI, we take the first element.
     exasol_versions=("7.1.30",),
     plugins_for_nox_sessions=(UpdateTemplates,),
+    workflow_extension=workflow_extension,
 )

@@ -38,3 +38,9 @@ jobs:
           name: coverage-python${{ matrix.python-versions }}-fast
           path: .coverage
           include-hidden-files: true
+
+
+  fast-tests-extension:
+    uses: ./.github/workflows/fast-tests-extension.yml
+    permissions:
+      contents: read
