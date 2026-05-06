@@ -131,6 +131,10 @@ class WorkflowExtension(BaseModel):
         default=False,
         description="If true, a job is added in the fast-test.yml to execute fast-test-extension.yml",
     )
+    slow_checks: bool = Field(
+        default=False,
+        description="If true, a job is added in the slow-checks.yml to execute slow-checks-extension.yml",
+    )
 
 
 class BaseConfig(BaseModel):
