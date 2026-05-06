@@ -41,6 +41,7 @@ def test_security_issues_works(tmp_path, monkeypatch):
 
     tbx_output = subprocess.run(["tbx", "security", "cve", "--help"], cwd=tmp_path)
     assert tbx_output.returncode == 0
+    assert False
 
 
 def test_security_issues_fails_when_imports_noxconfig(tmp_path, monkeypatch):
