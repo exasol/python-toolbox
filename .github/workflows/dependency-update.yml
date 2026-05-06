@@ -73,7 +73,7 @@ jobs:
           echo "Creating branch $branch_name"
           git switch -C "$branch_name"
 
-      - name: Commit changes & push
+      - name: Commit Changes & Push
         id: publish-branch
         if: steps.check-for-poetry-lock-changes.outputs.changed == 'true'
         run: |
