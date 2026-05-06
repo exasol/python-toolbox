@@ -72,7 +72,7 @@ class Config(BaseConfig):
         return self.root_path / ".import_linter_config"
 
 
-workflow_extension = WorkflowExtension(fast_tests=True)
+workflow_extension = WorkflowExtension(fast_tests=True, slow_checks=True)
 
 PROJECT_CONFIG = Config(
     root_path=ROOT_PATH,
