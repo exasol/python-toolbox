@@ -82,7 +82,7 @@ jobs:
           git commit --message "Updated poetry.lock"
           git push --set-upstream origin "$branch_name"
 
-      - name: Create pull request
+      - name: Create Pull Request
         id: create-pr
         if: steps.check-for-poetry-lock-changes.outputs.changed == 'true'
         env:
