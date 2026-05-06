@@ -121,6 +121,18 @@ class DependencyManager(BaseModel):
         return v
 
 
+class WorkflowExtension(BaseModel):
+    """
+    Used to define which workflow extensions are active.
+    The corresponding `*-extension.yml` must be defined in the project.
+    """
+
+    fast_tests: bool = Field(
+        default=False,
+        description="If true, a job is added in the fast-test.yml to execute fast-test-extension.yml",
+    )
+
+
 class BaseConfig(BaseModel):
     """
     Basic configuration for projects using the PTB
@@ -189,6 +201,14 @@ class BaseConfig(BaseModel):
         This is used to set the OS-runner in the GitHub workflows that are
         provided as templates from the PTB. Currently, only ubuntu-based runners
         are supported.
+        """,
+    )
+    workflow_extension: WorkflowExtension = Field(
+        default=WorkflowExtension(),
+        description="""
+        This is used to activate specific workflow extensions. In the *-extension.yml
+        files, projects can specify custom GitHub workflow jobs that extend what
+        the default PTB offers.
         """,
     )
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
@@ -284,6 +304,7 @@ class BaseConfig(BaseModel):
             "minimum_python_version": self.minimum_python_version,
             "os_version": self.os_version,
             "python_versions": self.python_versions,
+            "workflow_extension": self.workflow_extension.model_dump(),
         }
 
     @computed_field  # type: ignore[misc]

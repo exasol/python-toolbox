@@ -30,6 +30,8 @@ jinja_env = Environment(
     # dictionary. If not, then a `jinja2.exceptions.UndefinedError` exception
     # will be raised.
     undefined=StrictUndefined,
+    block_start_string="(%",
+    block_end_string="%)",
 )
 
 
