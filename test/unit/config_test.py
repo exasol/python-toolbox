@@ -49,6 +49,7 @@ class TestBaseConfig:
                     "3.13",
                     "3.14",
                 ),
+                "workflow_extension": {"fast_tests": False},
             },
             "minimum_python_version": "3.10",
             "os_version": "ubuntu-24.04",
@@ -59,6 +60,7 @@ class TestBaseConfig:
             "root_path": root_path,
             "sonar_code_path": Path("exasol/test"),
             "source_code_path": root_path / "exasol" / "test",
+            "workflow_extension": {"fast_tests": False},
         }
 
     @staticmethod
