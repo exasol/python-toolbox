@@ -79,7 +79,7 @@ jobs:
         run: |
           branch_name=$(git rev-parse --abbrev-ref HEAD)
           git add poetry.lock
-          git commit --message "Update poetry.lock"
+          git commit --message "Updated poetry.lock"
           git push --set-upstream origin "$branch_name"
 
       - name: Create pull request
