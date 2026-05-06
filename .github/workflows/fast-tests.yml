@@ -39,7 +39,6 @@ jobs:
           path: .coverage
           include-hidden-files: true
 
-
   fast-tests-extension:
     uses: ./.github/workflows/fast-tests-extension.yml
     permissions:

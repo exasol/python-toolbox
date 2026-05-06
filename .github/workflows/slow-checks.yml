@@ -45,9 +45,8 @@ jobs:
           path: .coverage
           include-hidden-files: true
 
-
-    slow-checks-extension:
-      uses: ./.github/workflows/slow_checks-extension.yml
-      secrets: inherit
-      permissions:
-        contents: read
+  slow-checks-extension:
+    uses: ./.github/workflows/slow-checks-extension.yml
+    secrets: inherit
+    permissions:
+      contents: read
