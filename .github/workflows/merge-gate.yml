@@ -48,14 +48,6 @@ jobs:
     permissions:
       contents: read
 
-  test-python-environment:
-    name: Test python-environment Action
-    needs:
-      - approve-run-slow-tests
-    uses: ./.github/workflows/test-python-environment.yml
-    permissions:
-      contents: read
-
   # This job ensures inputs have been executed successfully.
   allow-merge:
     name: Allow Merge
@@ -70,6 +62,7 @@ jobs:
       - test-python-environment
     # To prevent accidentally merges, this step is required. For more details
     # see: https://github.com/exasol/python-toolbox/issues/563
+    # Each job requires a step, so we added this dummy step.
     steps:
       - name: Branch Protection - failure if any ancestor failed or was cancelled
         if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
