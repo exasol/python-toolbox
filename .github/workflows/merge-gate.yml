@@ -59,6 +59,7 @@ jobs:
   # This job ensures inputs have been executed successfully.
   allow-merge:
     name: Allow Merge
+    if: ${{ !cancelled() }}
     runs-on: "ubuntu-24.04"
     permissions:
       contents: read
@@ -67,7 +68,13 @@ jobs:
       - run-fast-checks
       - run-slow-checks
       - test-python-environment
-    # Each job requires a step, so we added this dummy step.
+    # To prevent accidentally merges, this step is required. For more details
+    # see: https://github.com/exasol/python-toolbox/issues/563
     steps:
-      - name: Approve
-        run: echo "Merge Approved"
+      - name: Branch Protection - failure if any ancestor failed or was cancelled
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: |
+          echo '${{ toJSON(needs) }}'
+          exit 1
+      - name: branch protection
+        run: echo "All required checks passed. Merge allowed."
