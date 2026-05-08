@@ -91,8 +91,7 @@ Maintained by the PTB
        default branch of the repository. e.g. ``main``.
    * - ``pr-merge.yml``
      - Push to main
-     - Runs ``checks.yml``, ``gh-pages.yml``, and ``report.yml``. See
-       :ref:`pr_merge_yml` for a graph of called workflows.
+     - Runs ``gh-pages.yml``. See :ref:`pr_merge_yml` for a graph of called workflows.
    * - ``report.yml``
      - Workflow call
      - Downloads results from code coverage analysis and linting,
@@ -206,11 +205,7 @@ When a pull request is merged to main, then the ``pr-merge.yml`` workflow is act
 
     graph TD
         %% Workflow Triggers (Solid Lines)
-        pr-merge[pr-merge.yml] --> checks[checks.yml]
-        pr-merge --> publish-docs[publish-docs.yml]
-
-        %% Dependencies / Waiting (Dotted Lines)
-        checks -.->|needs| report[report.yml]
+        pr-merge[pr-merge.yml] --> publish-docs[publish-docs.yml]
 
 .. _cd_yml:
 
