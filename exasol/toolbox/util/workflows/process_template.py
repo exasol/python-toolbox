@@ -115,11 +115,11 @@ class WorkflowModifier:
             logger.debug(
                 f"Remove job '{job_name}' from needs of job '{other_job_name}'"
             )
-            needs = [need for need in needs if need != job_name]
-            if len(needs) == 0:
+            needs_without_removed_job = [need for need in needs if need != job_name]
+            if len(needs_without_removed_job) == 0:
                 other_job.pop("needs")
                 return
-            other_job["needs"] = needs
+            other_job["needs"] = needs_without_removed_job
 
     def _verify_job_exists(self, job_name: str) -> None:
         if job_name not in self.jobs_dict:
