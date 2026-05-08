@@ -60,12 +60,15 @@ Maintained by the PTB
    * - ``checks.yml``
      - Workflow call
      - Executes many small & fast checks: builds documentation and validates
-       cross-references (AKA. "links") to be valid,runs various linters
-       (security, type checks, etc.), and unit tests.
+       cross-references (AKA. "links") to be valid, and runs various linters
+       (security, type checks, etc.).
    * - ``ci.yml``
      - Pull request and monthly
      - Executes the continuous integration suite by calling ``merge-gate.yml`` and
        ``report.yml``. See :ref:`ci_yml` for a graph of workflow calls.
+   * - ``fast-tests.yml``
+     - Workflow call
+     - Executes unit tests.
    * - ``gh-pages.yml``
      - Workflow call
      - Builds the documentation and deploys it to GitHub Pages.
@@ -161,23 +164,29 @@ then the subsequent jobs will not be started.
 
     graph TD
         %% Define Nodes
-        ci_job[ci.yml]
-        gate[merge-gate.yml]
         checks[checks.yml]
+        ci_job[ci.yml]
+        fast-report[1st call to report.yml]
+        fast-tests[fast-tests.yml]
+        gate[merge-gate.yml]
         slow_run[run-slow-tests]
         slow_checks[slow-checks.yml]
-        report[report.yml]
+        report[2nd call to report.yml]
+
         approver[approve-merge]
 
         %% Workflow Triggers
         ci_job --> gate
         gate --> checks
+        gate --> fast-tests
         gate --> slow_run
         slow_run -.->|needs| slow_checks
 
         %% Dependencies
-        checks -.->|needs| report
         checks -.->|needs| approver
+        checks -.->|needs| fast-report
+        fast-tests -.->|needs| fast-report
+        fast-tests -.->|needs| approver
         slow_checks -.->|needs| approver
         approver -.->|needs| report
 
