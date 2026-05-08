@@ -103,6 +103,22 @@ class TestWorkflowModifier:
         assert result["jobs"]["fast-report"]["needs"] == ["run-unit-tests"]
 
     @staticmethod
+    def test__remove_jobs_works_removes_one_job(
+        workflow_name, workflow_dict, workflow_patcher, remove_job_yaml
+    ):
+        workflow_modifier = WorkflowModifier(
+            workflow_dict=workflow_dict,
+            patch_yaml=workflow_patcher.extract_by_workflow(workflow_name),
+        )
+
+        workflow_modifier._remove_jobs(["run-unit-tests"])
+
+        result = workflow_modifier.workflow_dict
+        assert result["jobs"]["fast-report"]["needs"] == [
+            "build-documentation-and-check-links"
+        ]
+
+    @staticmethod
     def test__remove_jobs_works_removes_empty_needs(
         workflow_name, workflow_dict, workflow_patcher, remove_job_yaml
     ):
