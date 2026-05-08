@@ -62,10 +62,10 @@ The PTB allows you to customise workflows by targeting specific jobs or steps:
 
 .. note::
 
-   These operations do not currently cascade. For example, removing a job
-   without accounting for its downstream dependencies may result in errors.
-   You must manually adjust any subsequent steps that rely on the removed
-   job's or step's output.
+   These operations do not currently fully cascade. For example, removing a job will
+   remove it from the workflow and the needs of any subsequent job, but it does not
+   alter a matrix or steps relying on it. Thus, you must manually adjust any subsequent
+   steps relying on the removed job's or step's output.
 
 To utilize this feature, create a ``.workflow-patcher.yml`` file in your project's
 root directory, as specified further in :ref:`workflow_patcher`. This file will be
