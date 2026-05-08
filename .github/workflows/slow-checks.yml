@@ -44,9 +44,3 @@ jobs:
           name: coverage-python${{ matrix.python-version }}-exasol${{ matrix.exasol-version }}-slow
           path: .coverage
           include-hidden-files: true
-
-  slow-checks-extension:
-    uses: ./.github/workflows/slow-checks-extension.yml
-    secrets: inherit
-    permissions:
-      contents: read

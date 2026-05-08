@@ -32,6 +32,8 @@ jinja_env = Environment(
     undefined=StrictUndefined,
     block_start_string="(%",
     block_end_string="%)",
+    trim_blocks=True,  # Removes the newline after a block
+    lstrip_blocks=True,  # Removes tabs/spaces before a block
 )
 
 

@@ -121,22 +121,6 @@ class DependencyManager(BaseModel):
         return v
 
 
-class WorkflowExtension(BaseModel):
-    """
-    Used to define which workflow extensions are active.
-    The corresponding `*-extension.yml` must be defined in the project.
-    """
-
-    fast_tests: bool = Field(
-        default=False,
-        description="If true, a job is added in the fast-test.yml to execute fast-test-extension.yml",
-    )
-    slow_checks: bool = Field(
-        default=False,
-        description="If true, a job is added in the slow-checks.yml to execute slow-checks-extension.yml",
-    )
-
-
 class BaseConfig(BaseModel):
     """
     Basic configuration for projects using the PTB
@@ -205,14 +189,6 @@ class BaseConfig(BaseModel):
         This is used to set the OS-runner in the GitHub workflows that are
         provided as templates from the PTB. Currently, only ubuntu-based runners
         are supported.
-        """,
-    )
-    workflow_extension: WorkflowExtension = Field(
-        default=WorkflowExtension(),
-        description="""
-        This is used to activate specific workflow extensions. In the *-extension.yml
-        files, projects can specify custom GitHub workflow jobs that extend what
-        the default PTB offers.
         """,
     )
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
@@ -303,12 +279,22 @@ class BaseConfig(BaseModel):
         Dictionary of variables to dynamically render Jinja2 templates into valid YAML
         configurations.
         """
+        fast_tests_extension = (
+            self.github_workflow_directory / "fast-tests-extension.yml"
+        )
+        merge_gate_extension = (
+            self.github_workflow_directory / "merge-gate-extension.yml"
+        )
+
         return {
             "dependency_manager_version": self.dependency_manager.version,
             "minimum_python_version": self.minimum_python_version,
             "os_version": self.os_version,
             "python_versions": self.python_versions,
-            "workflow_extension": self.workflow_extension.model_dump(),
+            "workflow_extension": {
+                "fast_tests": fast_tests_extension.is_file(),
+                "merge_gate": merge_gate_extension.is_file(),
+            },
         }
 
     @computed_field  # type: ignore[misc]
@@ -321,6 +307,6 @@ class BaseConfig(BaseModel):
         Modification includes replacing and inserting steps.
         """
         workflow_patcher_yaml = self.root_path / ".workflow-patcher.yml"
-        if workflow_patcher_yaml.exists():
+        if workflow_patcher_yaml.is_file():
             return workflow_patcher_yaml
         return None

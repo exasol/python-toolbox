@@ -48,6 +48,14 @@ jobs:
     permissions:
       contents: read
 
+  (% if workflow_extension.merge_gate %)
+  merge-gate-extension:
+    uses: ./.github/workflows/merge-gate-extension.yml
+    secrets: inherit
+    permissions:
+      contents: read
+  (% endif %)
+
   # This job ensures inputs have been executed successfully.
   allow-merge:
     name: Allow Merge
@@ -59,6 +67,9 @@ jobs:
     needs:
       - run-fast-checks
       - run-slow-checks
+     (% if workflow_extension.merge_gate %)
+      - merge-gate-extension
+     (% endif %)
     # To prevent accidentally merges, this step is required. For more details
     # see: https://github.com/exasol/python-toolbox/issues/563
     steps:
