@@ -41,6 +41,16 @@ jobs:
         id: check-out-repository
         uses: actions/checkout@v6
 
+  fast-report:
+    name: Fast Report
+    needs:
+      - build-documentation-and-check-links
+      - run-unit-tests
+    uses: ./.github/workflows/report.yml
+    secrets: inherit
+    permissions:
+      contents: read
+
 """
 
 
@@ -79,6 +89,7 @@ class TestWorkflowModifier:
         assert list(workflow_dict["jobs"].keys()) == [
             "build-documentation-and-check-links",
             "run-unit-tests",
+            "fast-report",
         ]
         # The original and resulting workflows should have the same values here.
         assert result["name"] == workflow_dict["name"]
@@ -87,7 +98,41 @@ class TestWorkflowModifier:
             result["jobs"]["run-unit-tests"] == workflow_dict["jobs"]["run-unit-tests"]
         )
         # The resulting workflow has job "build-documentation-and-check-links" removed.
-        assert list(result["jobs"].keys()) == ["run-unit-tests"]
+        assert list(result["jobs"].keys()) == ["run-unit-tests", "fast-report"]
+        # fast-report still needs "run-unit-tests"
+        assert result["jobs"]["fast-report"]["needs"] == ["run-unit-tests"]
+
+    @staticmethod
+    def test__remove_jobs_works_removes_one_job(
+        workflow_name, workflow_dict, workflow_patcher, remove_job_yaml
+    ):
+        workflow_modifier = WorkflowModifier(
+            workflow_dict=workflow_dict,
+            patch_yaml=workflow_patcher.extract_by_workflow(workflow_name),
+        )
+
+        workflow_modifier._remove_jobs(["run-unit-tests"])
+
+        result = workflow_modifier.workflow_dict
+        assert result["jobs"]["fast-report"]["needs"] == [
+            "build-documentation-and-check-links"
+        ]
+
+    @staticmethod
+    def test__remove_jobs_works_removes_empty_needs(
+        workflow_name, workflow_dict, workflow_patcher, remove_job_yaml
+    ):
+        workflow_modifier = WorkflowModifier(
+            workflow_dict=workflow_dict,
+            patch_yaml=workflow_patcher.extract_by_workflow(workflow_name),
+        )
+
+        workflow_modifier._remove_jobs(
+            ["build-documentation-and-check-links", "run-unit-tests"]
+        )
+
+        result = workflow_modifier.workflow_dict
+        assert "needs" not in result["jobs"]["fast-report"]
 
     @staticmethod
     @pytest.mark.parametrize(
