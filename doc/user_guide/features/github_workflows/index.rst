@@ -111,6 +111,9 @@ Workflow Extensions
 To use a workflow extension, a user must simply add the file to their project's
 ``.github/workflows`` directory. The PTB checks that this file exists, and if it does,
 then it automatically activates calling that workflow in the relevant parent workflow.
+These files are not otherwise checked or maintained by the PTB. The purpose behind the
+extensions is to allow project customization in a way that delineates what comes from
+and is maintained by the PTB and what is project-specific.
 
 .. list-table::
    :widths: 25 25 50
