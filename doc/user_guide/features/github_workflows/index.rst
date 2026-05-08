@@ -135,6 +135,54 @@ then it automatically activates calling that workflow in the relevant parent wor
 CI Actions
 ----------
 
+.. _pr_merge_yml:
+
+Merge
+^^^^^
+
+When a pull request is merged to main, then the ``pr-merge.yml`` workflow is activated.
+
+.. mermaid::
+   :name: merge-diagram
+
+    graph TD
+        %% Workflow Triggers (Solid Lines)
+        pr-merge[pr-merge.yml] --> publish-docs[publish-docs.yml]
+
+.. _periodic_validation_yml:
+
+Periodic Validation
+^^^^^^^^^^^^^^^^^^^
+
+Once a week, this `periodic-validation.yml` is triggered on the default branch. Its main
+purpose is to ensure that our critical checks and tests continue to run, but it also
+sends the results of the linting tools and test coverage to Sonar for an overall report.
+
+.. literalinclude:: ../../../../exasol/toolbox/templates/github/workflows/periodic-validation.yml
+   :language: yaml
+   :start-at:   schedule:
+   :end-at:     - cron: "0 0 * * 6"
+
+.. mermaid::
+
+    graph TD
+        %% Define Nodes
+        checks[checks.yml]
+        periodic_validation[periodic-validation.yml]
+        fast-tests[fast-tests.yml]
+        slow_checks[slow-checks.yml]
+        report[report.yml]
+
+        %% Workflow Triggers
+        periodic_validation --> checks
+        periodic_validation --> fast-tests
+        periodic_validation --> slow_checks
+
+        %% Dependencies
+        checks -.->|needs| report
+        fast-tests -.->|needs| report
+        slow_checks -.->|needs| report
+
 .. _ci_yml:
 
 Pull Request
@@ -196,54 +244,6 @@ then the subsequent jobs will not be started.
         %% Styling
         style approver fill:#fff,stroke:#333,stroke-dasharray: 5 5
         style slow_run fill:#fff,stroke:#333,stroke-dasharray: 5 5
-
-.. _pr_merge_yml:
-
-Merge
-^^^^^
-
-When a pull request is merged to main, then the ``pr-merge.yml`` workflow is activated.
-
-.. mermaid::
-   :name: merge-diagram
-
-    graph TD
-        %% Workflow Triggers (Solid Lines)
-        pr-merge[pr-merge.yml] --> publish-docs[publish-docs.yml]
-
-.. _periodic_validation_yml:
-
-Periodic Validation
-^^^^^^^^^^^^^^^^^^^
-
-Once a week, this `periodic-validation.yml` is triggered on the default branch. Its main
-purpose is to ensure that our critical checks and tests continue to run, but it also
-sends the results of the linting tools and test coverage to Sonar for an overall report.
-
-.. literalinclude:: ../../../../exasol/toolbox/templates/github/workflows/periodic-validation.yml
-   :language: yaml
-   :start-at:   schedule:
-   :end-at:     - cron: "0 0 * * 6"
-
-.. mermaid::
-
-    graph TD
-        %% Define Nodes
-        checks[checks.yml]
-        periodic_validation[periodic-validation.yml]
-        fast-tests[fast-tests.yml]
-        slow_checks[slow-checks.yml]
-        report[report.yml]
-
-        %% Workflow Triggers
-        periodic_validation --> checks
-        periodic_validation --> fast-tests
-        periodic_validation --> slow_checks
-
-        %% Dependencies
-        checks -.->|needs| report
-        fast-tests -.->|needs| report
-        slow_checks -.->|needs| report
 
 .. _cd_yml:
 
