@@ -211,31 +211,14 @@ When a pull request is merged to main, then the ``pr-merge.yml`` workflow is act
         %% Workflow Triggers (Solid Lines)
         pr-merge[pr-merge.yml] --> publish-docs[publish-docs.yml]
 
-.. _cd_yml:
-
-Release
-^^^^^^^
-
-When the nox session ``release:trigger`` is used, a new tag is created & pushed
-to main. This starts the release process by activating the ``cd.yml`` workflow.
-
-.. mermaid::
-    :name: release-diagram
-
-    graph TD
-        %% Workflow Triggers (Solid Lines)
-        cd[cd.yml] --> check-release-tag[check-release-tag.yml]
-
-        %% Dependencies / Waiting (Dotted Lines)
-        check-release-tag -.->|needs| build-and-publish[build-and-publish.yml]
-        build-and-publish -.->|needs| gh-pages[gh-pages.yml]
-
 .. _periodic_validation_yml:
 
 Periodic Validation
 ^^^^^^^^^^^^^^^^^^^
 
-Once a week, this workflow is triggered on the default branch.
+Once a week, this `periodic-validation.yml` is triggered on the default branch. Its main
+purpose is to ensure that our critical checks and tests continue to run, but it also
+sends the results of the linting tools and test coverage to Sonar for an overall report.
 
 .. literalinclude:: ../../../../exasol/toolbox/templates/github/workflows/periodic-validation.yml
    :language: yaml
@@ -261,3 +244,22 @@ Once a week, this workflow is triggered on the default branch.
         checks -.->|needs| report
         fast-tests -.->|needs| report
         slow_checks -.->|needs| report
+
+.. _cd_yml:
+
+Release
+^^^^^^^
+
+When the nox session ``release:trigger`` is used, a new tag is created & pushed
+to main. This starts the release process by activating the ``cd.yml`` workflow.
+
+.. mermaid::
+    :name: release-diagram
+
+    graph TD
+        %% Workflow Triggers (Solid Lines)
+        cd[cd.yml] --> check-release-tag[check-release-tag.yml]
+
+        %% Dependencies / Waiting (Dotted Lines)
+        check-release-tag -.->|needs| build-and-publish[build-and-publish.yml]
+        build-and-publish -.->|needs| gh-pages[gh-pages.yml]
