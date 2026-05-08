@@ -32,6 +32,13 @@ workflows from the templates.
 Workflows
 ---------
 
+The PTB has two categories of workflows:
+  #. those maintained by the PTB, which can be modified using the :ref:`workflow_patcher`.
+  #. those which extend the PTB-provided workflows and are maintained by the project (not the PTB).
+
+Maintained by the PTB
+^^^^^^^^^^^^^^^^^^^^^
+
 .. list-table::
    :widths: 25 25 50
    :header-rows: 1
@@ -91,6 +98,31 @@ Workflows
    * - ``slow-checks.yml``
      - Workflow call
      - Runs long-running checks, which typically involve an Exasol database instance.
+
+Workflow Extensions
+^^^^^^^^^^^^^^^^^^^
+
+To use a workflow extension, a user must simply add the file to their project's
+``.github/workflows`` directory. The PTB checks that this file exists, and if it does,
+then it automatically activates calling that workflow in the relevant parent workflow.
+
+.. list-table::
+   :widths: 25 25 50
+   :header-rows: 1
+
+   * - Filename
+     - Run on
+     - Description
+   * - ``fast-tests-extension.yml``
+     - Workflow call
+     - This extends the ``fast-tests.yml`` and should include additional fast tests.
+   * - ``merge-gate-extension.yml``
+     - Workflow call
+     - This extends the ``merge-gate.yml`` and the ``needs`` criteria of the job
+       ``allow-merge``. This extension is used to define additional requirements
+       to the ``merge-gate``, and it is most likely to include costly slows checks or
+       tests. It's encouraged to add to this workflow extension additional approval
+       requests, similar to ``approve-run-slow-tests``.
 
 .. _ci_actions:
 
