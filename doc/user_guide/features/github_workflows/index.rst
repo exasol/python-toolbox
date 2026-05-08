@@ -63,7 +63,7 @@ Maintained by the PTB
        cross-references (AKA. "links") to be valid, and runs various linters
        (security, type checks, etc.).
    * - ``ci.yml``
-     - Pull request and monthly
+     - Pull request
      - Executes the continuous integration suite by calling ``merge-gate.yml`` and
        ``report.yml``. See :ref:`ci_yml` for a graph of workflow calls.
    * - ``fast-tests.yml``
@@ -89,6 +89,10 @@ Maintained by the PTB
      - Acts as a final status check (gatekeeper) to ensure all required CI steps have
        passed before allowing to merge the branch of your pull request to the
        default branch of the repository. e.g. ``main``.
+   * - ``periodic-validation.yml``
+     - weekly
+     - Acts as a periodic validator that critical checks and tests are working as
+       expected. See :ref:`periodic_validation_yml` for a graph of workflow calls.
    * - ``pr-merge.yml``
      - Push to main
      - Runs ``gh-pages.yml``. See :ref:`pr_merge_yml` for a graph of called workflows.
@@ -225,3 +229,35 @@ to main. This starts the release process by activating the ``cd.yml`` workflow.
         %% Dependencies / Waiting (Dotted Lines)
         check-release-tag -.->|needs| build-and-publish[build-and-publish.yml]
         build-and-publish -.->|needs| gh-pages[gh-pages.yml]
+
+.. _periodic_validation_yml:
+
+Periodic Validation
+^^^^^^^^^^^^^^^^^^^
+
+Once a week, this workflow is triggered on the default branch.
+
+.. literalinclude:: ../../../../exasol/toolbox/templates/github/workflows/periodic-validation.yml
+   :language: yaml
+   :start-at:   schedule:
+   :end-at:     - cron: "0 0 * * 6"
+
+.. mermaid::
+
+    graph TD
+        %% Define Nodes
+        checks[checks.yml]
+        periodic_validation[periodic-validation.yml]
+        fast-tests[fast-tests.yml]
+        slow_checks[slow-checks.yml]
+        report[report.yml]
+
+        %% Workflow Triggers
+        periodic_validation --> checks
+        periodic_validation --> fast-tests
+        periodic_validation --> slow_checks
+
+        %% Dependencies
+        checks -.->|needs| report
+        fast-tests -.->|needs| report
+        slow_checks -.->|needs| report
