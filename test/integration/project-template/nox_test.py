@@ -83,4 +83,4 @@ class TestSpecificNoxTasks:
         assert output.returncode == 0
 
         file_list = run_command(["ls", ".github/workflows"]).stdout.splitlines()
-        assert len(file_list) == 14
+        assert len(file_list) == 16

@@ -99,6 +99,27 @@ class WorkflowModifier:
             self._verify_job_exists(job_name)
             logger.debug(f"Remove job '{job_name}'")
             self.jobs_dict.pop(job_name)
+            self._remove_job_from_needs(job_name=job_name)
+
+    def _remove_job_from_needs(self, job_name: str) -> None:
+        """
+        Remove the job from the needs of subsequent jobs.
+        This does NOT handle cases where the needed job is used for subsequent
+        operations in another job (e.g. when it is used to define the matrix).
+        """
+        for other_job_name, other_job in self.jobs_dict.items():
+            needs = other_job.get("needs")
+            if needs is None:
+                continue
+
+            logger.debug(
+                f"Remove job '{job_name}' from needs of job '{other_job_name}'"
+            )
+            needs_without_removed_job = [need for need in needs if need != job_name]
+            if len(needs_without_removed_job) == 0:
+                other_job.pop("needs")
+                return
+            other_job["needs"] = needs_without_removed_job
 
     def _verify_job_exists(self, job_name: str) -> None:
         if job_name not in self.jobs_dict:

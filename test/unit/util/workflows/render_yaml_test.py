@@ -252,6 +252,123 @@ class TestYamlRendererJinja:
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
+    def test_does_not_add_jinja_block(test_yml, yaml_renderer, project_config):
+        input_yaml = """
+        jobs:
+          run-unit-tests:
+            name: Unit Tests (Python-${{ matrix.python-versions }})
+            runs-on: "(( os_version ))"
+            permissions:
+              contents: read
+            strategy:
+              fail-fast: false
+              matrix:
+                python-versions: (( python_versions | tojson ))
+
+            steps:
+              - name: Check out Repository
+                id: check-out-repository
+                uses: actions/checkout@v6
+
+        (% if workflow_extension.fast_tests %)
+          fast-tests-extension:
+            uses: ./.github/workflows/fast-tests-extension.yml
+            permissions:
+              contents: read
+          (% endif %)
+
+        """
+        expected_yaml = """
+        jobs:
+        run-unit-tests:
+          name: Unit Tests (Python-${{ matrix.python-versions }})
+          runs-on: "ubuntu-24.04"
+          permissions:
+            contents: read
+          strategy:
+            fail-fast: false
+            matrix:
+              python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+
+          steps:
+            - name: Check out Repository
+              id: check-out-repository
+              uses: actions/checkout@v6
+
+        """
+
+        content = cleandoc(input_yaml)
+        test_yml.write_text(content)
+
+        yaml_dict = yaml_renderer.get_yaml_dict()
+        assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
+
+    @staticmethod
+    def test_adds_jinja_block(test_yml, project_config):
+        input_yaml = """
+        jobs:
+          run-unit-tests:
+            name: Unit Tests (Python-${{ matrix.python-versions }})
+            runs-on: "(( os_version ))"
+            permissions:
+              contents: read
+            strategy:
+              fail-fast: false
+              matrix:
+                python-versions: (( python_versions | tojson ))
+
+            steps:
+              - name: Check out Repository
+                id: check-out-repository
+                uses: actions/checkout@v6
+
+        (% if workflow_extension.fast_tests %)
+          fast-tests-extension:
+            uses: ./.github/workflows/fast-tests-extension.yml
+            permissions:
+              contents: read
+          (% endif %)
+
+        """
+        expected_yaml = """
+        jobs:
+        run-unit-tests:
+          name: Unit Tests (Python-${{ matrix.python-versions }})
+          runs-on: "ubuntu-24.04"
+          permissions:
+            contents: read
+          strategy:
+            fail-fast: false
+            matrix:
+              python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+
+          steps:
+            - name: Check out Repository
+              id: check-out-repository
+              uses: actions/checkout@v6
+
+        fast-tests-extension:
+          uses: ./.github/workflows/fast-tests-extension.yml
+          permissions:
+            contents: read
+
+        """
+        workflow_directory = project_config.github_workflow_directory
+        workflow_directory.mkdir(parents=True)
+        (workflow_directory / "fast-tests-extension.yml").touch()
+
+        content = cleandoc(input_yaml)
+        test_yml.write_text(content)
+        yaml_renderer = YamlRenderer(
+            github_template_dict=project_config.github_template_dict,
+            file_path=test_yml,
+        )
+
+        yaml_dict = yaml_renderer.get_yaml_dict()
+
+        assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
+
+    @staticmethod
     def test_jinja_variable_unknown(test_yml, yaml_renderer):
         input_yaml = """
         - name: Setup Python & Poetry Environment
