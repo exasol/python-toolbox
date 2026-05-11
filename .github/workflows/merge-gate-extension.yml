@@ -1,4 +1,4 @@
-name: Slow-Checks-Extension
+name: Merge-Gate-Extension
 
 on:
   workflow_call:
