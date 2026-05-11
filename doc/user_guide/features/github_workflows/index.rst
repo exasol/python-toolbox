@@ -146,13 +146,26 @@ CI Actions
 Dependency Update
 ^^^^^^^^^^^^^^^^^
 
-The ``dependency-update.yml`` workflow is used to resolve vulnerabilities by updating our project dependencies.
+Once a week, the ``dependency-update.yml`` workflow runs on the default branch. Its
+purpose is to keep project dependencies current and reduce risk from known
+vulnerabilities by checking for insecure packages and automatically opening an update
+pull request when the lock file changes.
 
-It can be triggered manually and is also scheduled to run weekly.
 
-The workflow first audits dependencies for known vulnerabilities. If vulnerabilities
-are detected, it updates the dependencies using Poetry. When the ``poetry.lock`` is changed,
-then it creates a pull request with the update.
+
+.. literalinclude:: ../../../../exasol/toolbox/templates/github/workflows/dependency-update.yml
+   :language: yaml
+   :start-at: on:
+   :end-at:  workflow_dispatch:
+
+The workflow first audits dependencies for known vulnerabilities:
+
+* If no vulnerabilities are detected, then no update is needed.
+* If vulnerabilities are detected, it updates the dependencies using Poetry.
+
+   * If the ``poetry.lock`` is unchanged, then no further action is taken.
+   * If the ``poetry.lock`` is changed, then it creates a branch, stages the commit, creates a pull request, and sends a Slack notification.
+
 
 .. _pr_merge_yml:
 
@@ -173,7 +186,7 @@ When a pull request is merged to main, then the ``pr-merge.yml`` workflow is act
 Periodic Validation
 ^^^^^^^^^^^^^^^^^^^
 
-Once a week, this `periodic-validation.yml` is triggered on the default branch. Its main
+Once a week, this ``periodic-validation.yml`` is triggered on the default branch. Its main
 purpose is to ensure that our critical checks and tests continue to run, but it also
 sends the results of the linting tools and test coverage to Sonar for an overall report.
 
