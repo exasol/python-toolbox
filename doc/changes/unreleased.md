@@ -13,7 +13,7 @@ it only executes `gh-pages.yml`.
 * The unit tests job has been moved from `checks.yml` to its own `fast-tests.yml` file.
 * Workflow extensions were added to `fast-tests` and `merge-gate`. This allows users to
 add custom `fast-tests-extension.yml` and `merge-gate-extension.yml` files. For more
-details, check out LINK TO BE ADDED (DOES NOT EXIST YET).
+details, check out the [Workflow Extensions](https://exasol.github.io/python-toolbox/main/user_guide/features/github_workflows/index.html#workflow-extensions) section.
 
 ## Bugfix
 
