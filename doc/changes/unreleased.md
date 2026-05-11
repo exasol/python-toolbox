@@ -8,6 +8,8 @@ In this major release, several modifications were made to the PTB's workflow tem
 own `periodic-validation.yml` and will run weekly. This also has been modified to
 run the `slow-checks.yml` so that more complete linting and coverage information is
 sent to Sonar.
+* With the addition of `periodic-validation.yml`, the `pr-merge.yml` was reduced so that
+it only executes `gh-pages.yml`.
 * The unit tests job has been moved from `checks.yml` to its own `fast-tests.yml` file.
 * Workflow extensions were added to `fast-tests` and `merge-gate`. This allows users to
 add custom `fast-tests-extension.yml` and `merge-gate-extension.yml` files. For more
