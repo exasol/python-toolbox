@@ -95,7 +95,7 @@ Maintained by the PTB
        expected. See :ref:`periodic_validation_yml` for a graph of workflow calls.
    * - ``pr-merge.yml``
      - Push to main
-     - Runs ``gh-pages.yml``. See :ref:`pr_merge_yml` for a graph of called workflows.
+     - Runs ``gh-pages.yml``. See :ref:`pr_merge_yml` for a graph of the called workflow.
    * - ``report.yml``
      - Workflow call
      - Downloads results from code coverage analysis and linting,
