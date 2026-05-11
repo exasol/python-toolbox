@@ -279,11 +279,22 @@ class BaseConfig(BaseModel):
         Dictionary of variables to dynamically render Jinja2 templates into valid YAML
         configurations.
         """
+        fast_tests_extension = (
+            self.github_workflow_directory / "fast-tests-extension.yml"
+        )
+        merge_gate_extension = (
+            self.github_workflow_directory / "merge-gate-extension.yml"
+        )
+
         return {
             "dependency_manager_version": self.dependency_manager.version,
             "minimum_python_version": self.minimum_python_version,
             "os_version": self.os_version,
             "python_versions": self.python_versions,
+            "workflow_extension": {
+                "fast_tests": fast_tests_extension.is_file(),
+                "merge_gate": merge_gate_extension.is_file(),
+            },
         }
 
     @computed_field  # type: ignore[misc]
@@ -296,6 +307,6 @@ class BaseConfig(BaseModel):
         Modification includes replacing and inserting steps.
         """
         workflow_patcher_yaml = self.root_path / ".workflow-patcher.yml"
-        if workflow_patcher_yaml.exists():
+        if workflow_patcher_yaml.is_file():
             return workflow_patcher_yaml
         return None

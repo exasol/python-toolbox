@@ -2,12 +2,6 @@ name: Merge-Gate
 
 on:
   workflow_call:
-    inputs:
-      root-event:
-        description: GitHub event triggering the root workflow ci.yml
-        required: false
-        type: string
-        default: unknown
 
 jobs:
   run-fast-checks:
@@ -16,10 +10,17 @@ jobs:
     permissions:
       contents: read
 
+  run-fast-tests:
+    name: Fast Tests
+    uses: ./.github/workflows/fast-tests.yml
+    permissions:
+      contents: read
+
   fast-report:
     name: Fast Report
     needs:
       - run-fast-checks
+      - run-fast-tests
     uses: ./.github/workflows/report.yml
     secrets: inherit
     permissions:
@@ -27,7 +28,6 @@ jobs:
 
   approve-run-slow-tests:
     name: Approve Running Slow Tests?
-    if: ${{ inputs.root-event != 'schedule' }}
     runs-on: "(( os_version ))"
     permissions:
       contents: read
@@ -48,6 +48,14 @@ jobs:
     permissions:
       contents: read
 
+  (% if workflow_extension.merge_gate %)
+  merge-gate-extension:
+    uses: ./.github/workflows/merge-gate-extension.yml
+    secrets: inherit
+    permissions:
+      contents: read
+  (% endif %)
+
   # This job ensures inputs have been executed successfully.
   allow-merge:
     name: Allow Merge
@@ -59,6 +67,9 @@ jobs:
     needs:
       - run-fast-checks
       - run-slow-checks
+     (% if workflow_extension.merge_gate %)
+      - merge-gate-extension
+     (% endif %)
     # To prevent accidentally merges, this step is required. For more details
     # see: https://github.com/exasol/python-toolbox/issues/563
     steps:

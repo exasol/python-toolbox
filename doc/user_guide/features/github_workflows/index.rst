@@ -32,6 +32,13 @@ workflows from the templates.
 Workflows
 ---------
 
+The PTB has two categories of workflows:
+  #. those maintained by the PTB, which can be modified using the :ref:`workflow_patcher`.
+  #. those which extend the PTB-provided workflows and are maintained by the project (not the PTB).
+
+Maintained by the PTB
+^^^^^^^^^^^^^^^^^^^^^
+
 .. list-table::
    :widths: 25 25 50
    :header-rows: 1
@@ -52,13 +59,16 @@ Workflows
      - Verifies that the release tag matches the project's internal versioning.
    * - ``checks.yml``
      - Workflow call
-     - Executes many small & fast checks: builds documentation and validates
-       cross-references (AKA. "links") to be valid,runs various linters
-       (security, type checks, etc.), and unit tests.
+     - Executes many small & fast checks: builds documentation, validates
+       cross-references and links in the documentation to be valid, and runs various
+       linters (security, type checks, etc.).
    * - ``ci.yml``
-     - Pull request and monthly
+     - Pull request
      - Executes the continuous integration suite by calling ``merge-gate.yml`` and
        ``report.yml``. See :ref:`ci_yml` for a graph of workflow calls.
+   * - ``fast-tests.yml``
+     - Workflow call
+     - Executes unit tests.
    * - ``gh-pages.yml``
      - Workflow call
      - Builds the documentation and deploys it to GitHub Pages.
@@ -79,10 +89,13 @@ Workflows
      - Acts as a final status check (gatekeeper) to ensure all required CI steps have
        passed before allowing to merge the branch of your pull request to the
        default branch of the repository. e.g. ``main``.
+   * - ``periodic-validation.yml``
+     - weekly
+     - Acts as a periodic validator that critical checks and tests are working as
+       expected. See :ref:`periodic_validation_yml` for a graph of workflow calls.
    * - ``pr-merge.yml``
      - Push to main
-     - Runs ``checks.yml``, ``gh-pages.yml``, and ``report.yml``. See
-       :ref:`pr_merge_yml` for a graph of called workflows.
+     - Runs ``gh-pages.yml``. See :ref:`pr_merge_yml` for a graph of the called workflow.
    * - ``report.yml``
      - Workflow call
      - Downloads results from code coverage analysis and linting,
@@ -92,10 +105,86 @@ Workflows
      - Workflow call
      - Runs long-running checks, which typically involve an Exasol database instance.
 
+Workflow Extensions
+^^^^^^^^^^^^^^^^^^^
+
+To use a workflow extension, a user must simply add the file to their project's
+``.github/workflows`` directory. The PTB checks that this file exists, and if it does,
+then it automatically activates calling that workflow in the relevant parent workflow.
+These files are not otherwise checked or maintained by the PTB. The purpose behind the
+extensions is to allow project customization in a way that delineates what comes from
+and is maintained by the PTB and what is project-specific.
+
+.. list-table::
+   :widths: 25 25 50
+   :header-rows: 1
+
+   * - Filename
+     - Run on
+     - Description
+   * - ``fast-tests-extension.yml``
+     - Workflow call
+     - This extends the ``fast-tests.yml`` and should include additional fast tests.
+   * - ``merge-gate-extension.yml``
+     - Workflow call
+     - This extends the ``merge-gate.yml`` and the ``needs`` criteria of the job
+       ``allow-merge``. This extension is used to define additional requirements
+       to the ``merge-gate``, and it is most likely to include costly slows checks or
+       tests. It's encouraged to add to this workflow extension additional approval
+       requests, similar to ``approve-run-slow-tests``.
+
 .. _ci_actions:
 
 CI Actions
 ----------
+
+.. _pr_merge_yml:
+
+Merge
+^^^^^
+
+When a pull request is merged to main, then the ``pr-merge.yml`` workflow is activated.
+
+.. mermaid::
+   :name: merge-diagram
+
+    graph TD
+        %% Workflow Triggers (Solid Lines)
+        pr-merge[pr-merge.yml] --> publish-docs[gh-pages.yml]
+
+.. _periodic_validation_yml:
+
+Periodic Validation
+^^^^^^^^^^^^^^^^^^^
+
+Once a week, this `periodic-validation.yml` is triggered on the default branch. Its main
+purpose is to ensure that our critical checks and tests continue to run, but it also
+sends the results of the linting tools and test coverage to Sonar for an overall report.
+
+.. literalinclude:: ../../../../exasol/toolbox/templates/github/workflows/periodic-validation.yml
+   :language: yaml
+   :start-at:   schedule:
+   :end-at:     - cron: "0 0 * * 6"
+
+.. mermaid::
+
+    graph TD
+        %% Define Nodes
+        checks[checks.yml]
+        periodic_validation[periodic-validation.yml]
+        fast-tests[fast-tests.yml]
+        slow_checks[slow-checks.yml]
+        report[report.yml]
+
+        %% Workflow Triggers
+        periodic_validation --> checks
+        periodic_validation --> fast-tests
+        periodic_validation --> slow_checks
+
+        %% Dependencies
+        checks -.->|needs| report
+        fast-tests -.->|needs| report
+        slow_checks -.->|needs| report
 
 .. _ci_yml:
 
@@ -129,47 +218,35 @@ then the subsequent jobs will not be started.
 
     graph TD
         %% Define Nodes
-        ci_job[ci.yml]
-        gate[merge-gate.yml]
         checks[checks.yml]
+        ci_job[ci.yml]
+        fast-report[1st call to report.yml]
+        fast-tests[fast-tests.yml]
+        gate[merge-gate.yml]
         slow_run[run-slow-tests]
         slow_checks[slow-checks.yml]
-        report[report.yml]
+        report[2nd call to report.yml]
+
         approver[approve-merge]
 
         %% Workflow Triggers
         ci_job --> gate
         gate --> checks
+        gate --> fast-tests
         gate --> slow_run
         slow_run -.->|needs| slow_checks
 
         %% Dependencies
-        checks -.->|needs| report
         checks -.->|needs| approver
+        checks -.->|needs| fast-report
+        fast-tests -.->|needs| fast-report
+        fast-tests -.->|needs| approver
         slow_checks -.->|needs| approver
         approver -.->|needs| report
 
         %% Styling
         style approver fill:#fff,stroke:#333,stroke-dasharray: 5 5
         style slow_run fill:#fff,stroke:#333,stroke-dasharray: 5 5
-
-.. _pr_merge_yml:
-
-Merge
-^^^^^
-
-When a pull request is merged to main, then the ``pr-merge.yml`` workflow is activated.
-
-.. mermaid::
-   :name: merge-diagram
-
-    graph TD
-        %% Workflow Triggers (Solid Lines)
-        pr-merge[pr-merge.yml] --> checks[checks.yml]
-        pr-merge --> publish-docs[publish-docs.yml]
-
-        %% Dependencies / Waiting (Dotted Lines)
-        checks -.->|needs| report[report.yml]
 
 .. _cd_yml:
 

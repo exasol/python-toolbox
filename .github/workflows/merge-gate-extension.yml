@@ -1,0 +1,11 @@
+name: Merge-Gate-Extension
+
+on:
+  workflow_call:
+
+jobs:
+  test-python-environment:
+    name: Test python-environment Action
+    uses: ./.github/workflows/test-python-environment.yml
+    permissions:
+      contents: read
