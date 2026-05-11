@@ -59,9 +59,9 @@ Maintained by the PTB
      - Verifies that the release tag matches the project's internal versioning.
    * - ``checks.yml``
      - Workflow call
-     - Executes many small & fast checks: builds documentation and validates
-       cross-references (AKA. "links") to be valid, and runs various linters
-       (security, type checks, etc.).
+     - Executes many small & fast checks: builds documentation, validates
+       cross-references and links in the documentation to be valid, and runs various
+       linters (security, type checks, etc.).
    * - ``ci.yml``
      - Pull request
      - Executes the continuous integration suite by calling ``merge-gate.yml`` and
