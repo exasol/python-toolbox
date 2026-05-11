@@ -12,6 +12,7 @@ def test_get_workflow_templates(project_config):
         "checks",
         "ci",
         "fast-tests",
+        "dependency-update",
         "gh-pages",
         "matrix-all",
         "matrix-exasol",
