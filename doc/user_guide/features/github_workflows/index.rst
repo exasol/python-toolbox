@@ -150,7 +150,7 @@ When a pull request is merged to main, then the ``pr-merge.yml`` workflow is act
 
     graph TD
         %% Workflow Triggers (Solid Lines)
-        pr-merge[pr-merge.yml] --> publish-docs[publish-docs.yml]
+        pr-merge[pr-merge.yml] --> publish-docs[gh-pages.yml]
 
 .. _periodic_validation_yml:
 
