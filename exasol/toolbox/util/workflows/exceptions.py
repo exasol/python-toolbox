@@ -69,6 +69,29 @@ class InvalidWorkflowPatcherEntryError(YamlError):
     )
 
 
+class InvalidWorkflowNameError(ValueError):
+    """
+    Raised when a workflow name is not one of the available PTB templates.
+    """
+
+    def __init__(self, workflow_name: str, valid_workflows):
+        super().__init__(
+            f"Invalid workflow: {workflow_name}. Must be one of {valid_workflows}"
+        )
+
+
+class NotMaintainedWorkflowError(ValueError):
+    """
+    Raised when a PTB-seeded workflow is requested in an existing project.
+    """
+
+    def __init__(self, workflow_name: str):
+        super().__init__(
+            f"Workflow '{workflow_name}' is a PTB-seeded workflow that is "
+            "originally provided by the PTB and can only be seeded for a new project."
+        )
+
+
 class YamlKeyError(Exception):
     """
     Base exception for when a specified value cannot be found in a YAML.
