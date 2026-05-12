@@ -99,6 +99,9 @@ class TestStepCustomization:
         ) as ex:
             workflow_patcher.content
 
+        message = ex.value.args[0]
+        validation_details = message.split("Validation issue information:\n", 1)[1]
+        assert "Input should be 'INSERT_AFTER' or 'REPLACE'" in validation_details
         underlying_error = ex.value.__cause__
         assert isinstance(underlying_error, ValidationError)
         assert "Input should be 'INSERT_AFTER' or 'REPLACE'" in str(underlying_error)

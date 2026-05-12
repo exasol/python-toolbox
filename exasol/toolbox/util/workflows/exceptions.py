@@ -1,5 +1,6 @@
 from collections.abc import Mapping
 from pathlib import Path
+from textwrap import indent
 
 
 class YamlError(Exception):
@@ -54,7 +55,13 @@ class InvalidWorkflowPatcherYamlError(YamlError):
     :class:`WorkflowPatcherConfig`.
     """
 
-    message_template = "File '{file_path}' is malformed; it failed Pydantic validation."
+    message_template = "File '{file_path}' is malformed; it failed Pydantic validation.{validation_details}"
+
+    def __init__(self, file_path: Path, validation_details: str):
+        validation_details = "\nValidation issue information:\n" + indent(
+            f"\033[31m{validation_details}\033[0m", "  "
+        )
+        super().__init__(file_path=file_path, validation_details=validation_details)
 
 
 class InvalidWorkflowPatcherEntryError(YamlError):
