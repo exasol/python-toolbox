@@ -278,6 +278,8 @@ The workflow first audits dependencies for known vulnerabilities:
    * If the ``poetry.lock`` is changed, then it creates a branch, stages the commit,
      creates a pull request, and sends a Slack notification.
 
+Afterwards, users need to perform some manual steps which are described in the PR description.
+
 .. _periodic_validation_yml:
 
 Validate Periodically
