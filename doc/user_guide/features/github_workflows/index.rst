@@ -152,7 +152,7 @@ project maintenance.
 Create a PR
 ^^^^^^^^^^^
 
-When any pull request is modified, then the ``ci.yml`` will be triggered.
+Modifying any pull request triggers the workflow ``ci.yml``.
 
 .. literalinclude:: ../../../../exasol/toolbox/templates/github/workflows/ci.yml
    :language: yaml
@@ -218,8 +218,7 @@ then the subsequent jobs will not be started.
 Merge a PR
 ^^^^^^^^^^
 
-When you merge a pull request to the default branch, then the ``pr-merge.yml`` workflow is
-activated.
+Merging a pull request to the default branch, activates the ``pr-merge.yml`` workflow.
 
 .. mermaid::
    :name: merge-diagram
@@ -259,10 +258,8 @@ The following workflows are triggered automatically by schedules.
 Update Dependencies
 ^^^^^^^^^^^^^^^^^^^
 
-The ``dependency-update.yml`` workflow runs on the default branch. Its
-purpose is to keep project dependencies up-to-date and reduce risk from known
-vulnerabilities by checking for insecure packages and automatically opening an update
-pull request.
+The ``dependency-update.yml`` workflow runs on the default branch. It
+checks for known vulnerabilities and tries to fix them by updating dependencies.
 
 .. literalinclude:: ../../../../exasol/toolbox/templates/github/workflows/dependency-update.yml
    :language: yaml
@@ -285,10 +282,9 @@ Afterwards, users need to perform some manual steps which are described in the P
 Validate Periodically
 ^^^^^^^^^^^^^^^^^^^^^
 
-Once a week, this ``periodic-validation.yml`` is triggered on the default branch. Its
-main purpose is to ensure that our critical checks and tests continue to run, but it
-also sends the results of the linting tools and test coverage to Sonar for an overall
-report.
+The ``periodic-validation.yml`` runs on the default branch. It ensures that critical
+checks and tests continue to run and sends the results of the linting tools and test
+coverage to Sonar for an overall report.
 
 .. literalinclude:: ../../../../exasol/toolbox/templates/github/workflows/periodic-validation.yml
    :language: yaml

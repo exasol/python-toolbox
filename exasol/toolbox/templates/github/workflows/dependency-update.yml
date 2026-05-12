@@ -91,12 +91,12 @@ jobs:
           BASE_BRANCH=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name)
 
           PR_BODY="Automated dependency update for \`poetry.lock\`.
-          This PR was created by the dependency update workflow after running the \`dependency-update.yml\`
+          This PR was created by the workflow \`dependency-update.yml\`
 
           Please perform the following actions on a locally checked out branch:
           - [ ] Execute \`poetry run -- nox -s workflow:generate -- --all\`
           - [ ] Use \`poetry run -- nox -s dependency:audit\` to check for vulnerabilities requiring manual action
-          - [ ] Add a change entry to the \`unreleased.md\`
+          - [ ] Update file \`doc/changes/unreleased.md\`
           "
 
           PR_URL=$(gh pr create \
