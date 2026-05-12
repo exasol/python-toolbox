@@ -37,6 +37,7 @@ jobs:
           name: coverage-python${{ matrix.python-versions }}-fast
           path: .coverage
           include-hidden-files: true
+          overwrite: false
 
 (% if workflow_extension.fast_tests %)
   fast-tests-extension:

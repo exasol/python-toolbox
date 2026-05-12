@@ -47,3 +47,4 @@ jobs:
           name: coverage-python${{ matrix.python-version }}-exasol${{ matrix.exasol-version }}-slow
           path: .coverage
           include-hidden-files: true
+          overwrite: false
