@@ -94,7 +94,7 @@ jobs:
           This PR was created by the workflow \`dependency-update.yml\`
 
           Please perform the following actions on a locally checked out branch:
-          - [ ] Execute \`poetry run -- nox -s workflow:generate -- --all\`
+          - [ ] Execute \`poetry run -- nox -s workflow:generate -- all\`
           - [ ] Use \`poetry run -- nox -s dependency:audit\` to check for vulnerabilities requiring manual action
           - [ ] Update file \`doc/changes/unreleased.md\`
           "
