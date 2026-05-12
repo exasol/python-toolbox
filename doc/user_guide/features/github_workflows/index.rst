@@ -25,8 +25,9 @@ workflows from the templates.
 
 .. attention::
 
-   In most cases, we recommend using _all_ workflows without change to ensure
-   consistent interdependencies. For more details, see :ref:`ci_actions`.
+   In most cases, we recommend using **all** workflows without change to ensure
+   consistent interdependencies. For more details, see :ref:`manual_activities`
+   and :ref:`automated_activities`.
 
 
 Workflows
@@ -136,79 +137,27 @@ and is maintained by the PTB and what is project-specific.
        tests. It's encouraged to add to this workflow extension additional approval
        requests, similar to ``approve-run-slow-tests``.
 
-.. _ci_actions:
 
-CI Actions
-----------
 
-.. _dependency_update:
+.. _manual_activities:
 
-Dependency Update
-^^^^^^^^^^^^^^^^^
+Manual Activities
+-----------------
 
-The ``dependency-update.yml`` workflow is used to resolve vulnerabilities by updating our project dependencies.
-
-It can be triggered manually and is also scheduled to run weekly.
-
-The workflow first audits dependencies for known vulnerabilities. If vulnerabilities
-are detected, it updates the dependencies using Poetry. When the ``poetry.lock`` is changed,
-then it creates a pull request with the update.
-
-.. _pr_merge_yml:
-
-Merge
-^^^^^
-
-When a pull request is merged to main, then the ``pr-merge.yml`` workflow is activated.
-
-.. mermaid::
-   :name: merge-diagram
-
-    graph TD
-        %% Workflow Triggers (Solid Lines)
-        pr-merge[pr-merge.yml] --> publish-docs[gh-pages.yml]
-
-.. _periodic_validation_yml:
-
-Periodic Validation
-^^^^^^^^^^^^^^^^^^^
-
-Once a week, this `periodic-validation.yml` is triggered on the default branch. Its main
-purpose is to ensure that our critical checks and tests continue to run, but it also
-sends the results of the linting tools and test coverage to Sonar for an overall report.
-
-.. literalinclude:: ../../../../exasol/toolbox/templates/github/workflows/periodic-validation.yml
-   :language: yaml
-   :start-at:   schedule:
-   :end-at:     - cron: "0 0 * * 6"
-
-.. mermaid::
-
-    graph TD
-        %% Define Nodes
-        checks[checks.yml]
-        periodic_validation[periodic-validation.yml]
-        fast-tests[fast-tests.yml]
-        slow_checks[slow-checks.yml]
-        report[report.yml]
-
-        %% Workflow Triggers
-        periodic_validation --> checks
-        periodic_validation --> fast-tests
-        periodic_validation --> slow_checks
-
-        %% Dependencies
-        checks -.->|needs| report
-        fast-tests -.->|needs| report
-        slow_checks -.->|needs| report
+The following workflows are typically triggered directly by a developer during normal
+project maintenance.
 
 .. _ci_yml:
 
-Pull Request
-^^^^^^^^^^^^
+Create a PR
+^^^^^^^^^^^
 
-When any pull request is opened, synchronized, or reopened, then the ``ci.yml`` will be
-triggered.
+Modifying any pull request triggers the workflow ``ci.yml``.
+
+.. literalinclude:: ../../../../exasol/toolbox/templates/github/workflows/ci.yml
+   :language: yaml
+   :start-at: on:
+   :end-at:    types: [opened, synchronize, reopened]
 
 When configured as described on :ref:`github_project_configuration`, the
 ``run-slow-tests`` job requires a developer to manually approve executing the slower
@@ -264,10 +213,24 @@ then the subsequent jobs will not be started.
         style approver fill:#fff,stroke:#333,stroke-dasharray: 5 5
         style slow_run fill:#fff,stroke:#333,stroke-dasharray: 5 5
 
+.. _pr_merge_yml:
+
+Merge a PR
+^^^^^^^^^^
+
+Merging a pull request to the default branch, activates the ``pr-merge.yml`` workflow.
+
+.. mermaid::
+   :name: merge-diagram
+
+    graph TD
+        %% Workflow Triggers (Solid Lines)
+        pr-merge[pr-merge.yml] --> publish-docs[gh-pages.yml]
+
 .. _cd_yml:
 
-Release
-^^^^^^^
+Create a Release
+^^^^^^^^^^^^^^^^
 
 When the nox session ``release:trigger`` is used, a new tag is created & pushed
 to main. This starts the release process by activating the ``cd.yml`` workflow.
@@ -282,3 +245,68 @@ to main. This starts the release process by activating the ``cd.yml`` workflow.
         %% Dependencies / Waiting (Dotted Lines)
         check-release-tag -.->|needs| build-and-publish[build-and-publish.yml]
         build-and-publish -.->|needs| gh-pages[gh-pages.yml]
+
+.. _automated_activities:
+
+Automated Activities
+--------------------
+
+The following workflows are triggered automatically by schedules.
+
+.. _dependency_update:
+
+Update Dependencies
+^^^^^^^^^^^^^^^^^^^
+
+The ``dependency-update.yml`` workflow runs on the default branch. It
+checks for known vulnerabilities and tries to fix them by updating dependencies.
+
+.. literalinclude:: ../../../../exasol/toolbox/templates/github/workflows/dependency-update.yml
+   :language: yaml
+   :start-at: on:
+   :end-at:  workflow_dispatch:
+
+The workflow first audits dependencies for known vulnerabilities:
+
+* If no vulnerabilities are detected, then no update is needed.
+* If vulnerabilities are detected, it updates the dependencies using ``poetry update``.
+
+   * If the ``poetry.lock`` is unchanged, then no further action is taken.
+   * If the ``poetry.lock`` is changed, then it creates a branch, stages the commit,
+     creates a pull request, and sends a Slack notification.
+
+Afterwards, users need to perform some manual steps which are described in the PR description.
+
+.. _periodic_validation_yml:
+
+Validate Periodically
+^^^^^^^^^^^^^^^^^^^^^
+
+The ``periodic-validation.yml`` runs on the default branch. It ensures that critical
+checks and tests continue to run and sends the results of the linting tools and test
+coverage to Sonar for an overall report.
+
+.. literalinclude:: ../../../../exasol/toolbox/templates/github/workflows/periodic-validation.yml
+   :language: yaml
+   :start-at:   schedule:
+   :end-at:     - cron: "0 0 * * 6"
+
+.. mermaid::
+
+    graph TD
+        %% Define Nodes
+        checks[checks.yml]
+        periodic_validation[periodic-validation.yml]
+        fast-tests[fast-tests.yml]
+        slow_checks[slow-checks.yml]
+        report[report.yml]
+
+        %% Workflow Triggers
+        periodic_validation --> checks
+        periodic_validation --> fast-tests
+        periodic_validation --> slow_checks
+
+        %% Dependencies
+        checks -.->|needs| report
+        fast-tests -.->|needs| report
+        slow_checks -.->|needs| report
