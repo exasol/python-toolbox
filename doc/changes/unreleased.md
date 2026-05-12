@@ -19,16 +19,14 @@ details, check out the [Workflow Extensions](https://exasol.github.io/python-too
 
 ## Features
 
-* #756: Added `dependency-update.yml` to automate resolving vulnerabilities with a generated pull request
-
-## Bugfix
-
-* #563: Fixed merge-gate to prevent auto-merges from happening when integration tests failed
-
-## Feature
 
 * #829: Extended removing a job from a workflow to also remove it from the `needs` of another job
 * #825: Created two workflows by splitting up previous ones:
    * Moved the periodic jobs in `ci.yml` to its own `periodic-validation.yml`
    * Moved the unit tests job in `checks.yml` to its own `fast-tests.yml`
 * #730: Added workflow extensions to `fast-tests` and `merge-gate`
+* #756: Added `dependency-update.yml` to automate resolving vulnerabilities with a generated pull request
+
+## Bugfix
+
+* #563: Fixed merge-gate to prevent auto-merges from happening when integration tests failed
