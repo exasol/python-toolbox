@@ -11,13 +11,3 @@ workflows:
             uses: actions/checkout@v6
             with:
               fetch-depth: 0
-  - name: slow-checks
-    step_customizations:
-      - action: REPLACE
-        job: run-integration-tests
-        step_id: run-integration-tests
-        content:
-          # The PTB integration tests do not need an Exasol Database
-          - name: Run Integration Tests
-            id: run-integration-tests
-            run: poetry run -- nox -s test:integration -- --coverage
