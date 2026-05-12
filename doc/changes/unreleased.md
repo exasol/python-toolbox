@@ -26,6 +26,7 @@ details, check out the [Workflow Extensions](https://exasol.github.io/python-too
    * Moved the unit tests job in `checks.yml` to its own `fast-tests.yml`
 * #730: Added workflow extensions to `fast-tests` and `merge-gate`
 * #756: Added `dependency-update.yml` to automate resolving vulnerabilities with a generated pull request
+* #792: Improved `dependency-update.yml` documentation
 
 ## Bugfix
 
