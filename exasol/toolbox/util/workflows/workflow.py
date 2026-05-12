@@ -26,7 +26,10 @@ from exasol.toolbox.util.workflows.patch_workflow import (
     WorkflowPatcher,
 )
 from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
-from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
+from exasol.toolbox.util.workflows.templates import (
+    WORKFLOW_TEMPLATE_OPTIONS,
+    validate_workflow_name,
+)
 
 ALL: Final[str] = "all"
 WORKFLOW_CHOICES: Final[list[str]] = [ALL, *WORKFLOW_TEMPLATE_OPTIONS.keys()]
@@ -87,6 +90,10 @@ def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None
     """
     workflow_dict = _select_workflow_template(workflow_choice)
     logger.info(f"Selected workflow(s) to update: {list(workflow_dict.keys())}")
+
+    is_new_project = not any(config.github_workflow_directory.glob("*.yml"))
+    for workflow_name in workflow_dict:
+        validate_workflow_name(workflow_name, allow_not_maintained=is_new_project)
 
     workflow_patcher = None
     if config.github_workflow_patcher_yaml:
