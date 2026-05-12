@@ -69,7 +69,7 @@ jobs:
         id: create-branch
         if: steps.check-for-poetry-lock-changes.outputs.changed == 'true'
         run: |
-          branch_name="dependency-update/$(date "+%Y-%m-%d_%H:%M:%S")"
+          branch_name="dependency-update/$(date "+%Y-%m-%d")"
           echo "Creating branch $branch_name"
           git switch -C "$branch_name"
 
@@ -91,9 +91,13 @@ jobs:
           BASE_BRANCH=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name)
 
           PR_BODY="Automated dependency update for \`poetry.lock\`.
-          This PR was created by the dependency update workflow after running:
-          - \`poetry run -- nox -s dependency:audit\`
-          - \`poetry update\`"
+          This PR was created by the workflow \`dependency-update.yml\`
+
+          Please perform the following actions on a locally checked out branch:
+          - [ ] Execute \`poetry run -- nox -s workflow:generate -- --all\`
+          - [ ] Use \`poetry run -- nox -s dependency:audit\` to check for vulnerabilities requiring manual action
+          - [ ] Update file \`doc/changes/unreleased.md\`
+          "
 
           PR_URL=$(gh pr create \
                       --base "$BASE_BRANCH" \
