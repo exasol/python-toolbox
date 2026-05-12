@@ -33,8 +33,9 @@ workflows from the templates.
 Workflows
 ---------
 
-The PTB has two categories of workflows:
+The PTB has three categories of workflows:
   #. those maintained by the PTB, which can be modified using the :ref:`workflow_patcher`.
+  #. those which are seeded by the PTB but owned and maintained by the project after initial creation.
   #. those which extend the PTB-provided workflows and are maintained by the project (not the PTB).
 
 Maintained by the PTB
@@ -105,6 +106,21 @@ Maintained by the PTB
      - Downloads results from code coverage analysis and linting,
        creates a summary displayed by GitHub as result of running
        the action, and uploads the results to Sonar.
+
+
+Not Maintained by the PTB
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The PTB seeds these workflows for new projects, but after that the project owns
+them and PTB regeneration does not overwrite them.
+
+.. list-table::
+   :widths: 25 25 50
+   :header-rows: 1
+
+   * - Filename
+     - Run on
+     - Description
    * - ``slow-checks.yml``
      - Workflow call
      - Runs long-running checks, which typically involve an Exasol database instance.
