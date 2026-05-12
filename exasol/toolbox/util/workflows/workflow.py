@@ -18,6 +18,7 @@ from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.util.workflows import logger
 from exasol.toolbox.util.workflows.exceptions import (
     InvalidWorkflowPatcherEntryError,
+    NotMaintainedWorkflowError,
     YamlError,
     YamlKeyError,
 )
@@ -92,8 +93,6 @@ def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None
     logger.info(f"Selected workflow(s) to update: {list(workflow_dict.keys())}")
 
     is_new_project = not any(config.github_workflow_directory.glob("*.yml"))
-    for workflow_name in workflow_dict:
-        validate_workflow_name(workflow_name, allow_not_maintained=is_new_project)
 
     workflow_patcher = None
     if config.github_workflow_patcher_yaml:
@@ -110,6 +109,8 @@ def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None
             )
 
         try:
+            validate_workflow_name(workflow_name, allow_not_maintained=is_new_project)
+
             workflow = Workflow.load_from_template(
                 file_path=workflow_dict[workflow_name],
                 github_template_dict=config.github_template_dict,
@@ -121,3 +122,9 @@ def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None
             raise InvalidWorkflowPatcherEntryError(
                 file_path=config.github_workflow_patcher_yaml, entry=ex.entry  # type: ignore
             ) from ex
+
+        except NotMaintainedWorkflowError:
+            logger.debug(
+                "Skipping not-maintained workflow in older project: %s",
+                workflow_name,
+            )
