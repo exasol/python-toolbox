@@ -1,15 +1,20 @@
 from inspect import cleandoc
 from pathlib import Path
+from pprint import pformat
 
 import pytest
 from pydantic import ValidationError
 from ruamel.yaml import CommentedMap
 
-from exasol.toolbox.util.workflows.exceptions import InvalidWorkflowPatcherYamlError
+from exasol.toolbox.util.workflows.exceptions import (
+    InvalidWorkflowPatcherYamlError,
+    NotMaintainedWorkflowError,
+)
 from exasol.toolbox.util.workflows.patch_workflow import (
     ActionType,
     WorkflowPatcher,
 )
+from exasol.toolbox.util.workflows.templates import NOT_MAINTAINED_WORKFLOW_NAMES
 
 
 @pytest.fixture
@@ -98,8 +103,15 @@ class TestStepCustomization:
         ) as ex:
             workflow_patcher.content
 
+        message = ex.value.args[0]
+        validation_details = message.split("Validation issue information:\n", 1)[1]
         underlying_error = ex.value.__cause__
         assert isinstance(underlying_error, ValidationError)
+        assert "Input should be 'INSERT_AFTER' or 'REPLACE'" in validation_details
+        expected_validation_details = (
+            f"\033[31m{pformat(underlying_error.errors(), sort_dicts=False)}\033[0m"
+        )
+        assert validation_details == expected_validation_details
         assert "Input should be 'INSERT_AFTER' or 'REPLACE'" in str(underlying_error)
 
 
@@ -126,4 +138,31 @@ class TestWorkflow:
         assert isinstance(underlying_error, ValidationError)
         assert "Invalid workflow: unknown-workflow. Must be one of dict_keys([" in str(
             underlying_error
+        )
+
+    @staticmethod
+    def test_rejects_not_maintained_workflow_name(
+        workflow_patcher_yaml, workflow_patcher
+    ):
+        content = f"""
+        workflows:
+        - name: "{NOT_MAINTAINED_WORKFLOW_NAMES[0]}"
+          remove_jobs:
+            - build-documentation-and-check-links
+        """
+        workflow_patcher_yaml.write_text(cleandoc(content))
+
+        with pytest.raises(
+            InvalidWorkflowPatcherYamlError,
+            match="is malformed; it failed Pydantic validation",
+        ) as ex:
+            workflow_patcher.content
+
+        underlying_error = ex.value.__cause__
+        assert isinstance(underlying_error, ValidationError)
+        assert "workflows.0.name" in str(underlying_error)
+        assert "PTB-seeded workflow" in str(underlying_error)
+        assert isinstance(
+            ex.value.validation_error.errors()[0]["ctx"]["error"],
+            NotMaintainedWorkflowError,
         )

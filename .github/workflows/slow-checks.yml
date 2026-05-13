@@ -6,7 +6,7 @@ on:
 jobs:
   build-matrix:
     name: Build Matrix
-    uses: ./.github/workflows/matrix-all.yml
+    uses: ./.github/workflows/matrix-python.yml
     permissions:
       contents: read
 
@@ -37,10 +37,12 @@ jobs:
       - name: Run Integration Tests
         id: run-integration-tests
         run: poetry run -- nox -s test:integration -- --coverage
+
       - name: Upload Artifacts
         id: upload-artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: coverage-python${{ matrix.python-version }}-exasol${{ matrix.exasol-version }}-slow
+          name: coverage-python${{ matrix.python-version }}-slow
           path: .coverage
           include-hidden-files: true
+          overwrite: false

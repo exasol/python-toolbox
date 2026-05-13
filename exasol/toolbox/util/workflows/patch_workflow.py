@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from enum import Enum
 from functools import cached_property
 from typing import (
@@ -19,7 +20,7 @@ from structlog.contextvars import bound_contextvars
 from exasol.toolbox.util.workflows import logger
 from exasol.toolbox.util.workflows.exceptions import InvalidWorkflowPatcherYamlError
 from exasol.toolbox.util.workflows.render_yaml import YamlRenderer
-from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
+from exasol.toolbox.util.workflows.templates import validate_workflow_name
 
 
 class ActionType(str, Enum):
@@ -69,18 +70,6 @@ class StepCustomization(BaseModel):
     content: list[StepContent]
 
 
-def validate_workflow_name(workflow_name: str) -> str:
-    """
-    Validates that the given ``workflow_name`` is a valid workflow name provided by
-    the PTB.
-    """
-    if workflow_name not in WORKFLOW_TEMPLATE_OPTIONS.keys():
-        raise ValueError(
-            f"Invalid workflow: {workflow_name}. Must be one of {WORKFLOW_TEMPLATE_OPTIONS.keys()}"
-        )
-    return workflow_name
-
-
 WorkflowName = Annotated[str, AfterValidator(validate_workflow_name)]
 
 
@@ -115,6 +104,7 @@ WorkflowCommentedMap: TypeAlias = Annotated[
 ]
 
 
+@dataclass(frozen=True)
 class WorkflowPatcher(YamlRenderer):
     """
     The :class:`WorkflowPatcher` enables users to define a YAML file
@@ -137,7 +127,9 @@ class WorkflowPatcher(YamlRenderer):
                 WorkflowPatcherConfig.model_validate(loaded_yaml)
                 return loaded_yaml
             except ValidationError as ex:
-                raise InvalidWorkflowPatcherYamlError(file_path=self.file_path) from ex
+                raise InvalidWorkflowPatcherYamlError(
+                    file_path=self.file_path, validation_error=ex
+                ) from ex
 
     def extract_by_workflow(self, workflow_name: str) -> WorkflowCommentedMap | None:
         """

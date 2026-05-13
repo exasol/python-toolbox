@@ -84,6 +84,7 @@ jobs:
           path: |
             .lint.json
           include-hidden-files: true
+          overwrite: false
 
   lint-typing:
     name: Lint Typing (Python-${{ matrix.python-versions }})
@@ -144,6 +145,7 @@ jobs:
           name: security-python${{ matrix.python-versions }}
           path: .security.json
           include-hidden-files: true
+          overwrite: false
 
   check-format:
     name: Check Format

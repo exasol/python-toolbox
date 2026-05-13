@@ -1,3 +1,5 @@
+# This workflow is seeded by the PTB for new projects, but after creation it is
+# owned and maintained by the project.
 name: Slow-Checks
 
 on:
@@ -45,3 +47,4 @@ jobs:
           name: coverage-python${{ matrix.python-version }}-exasol${{ matrix.exasol-version }}-slow
           path: .coverage
           include-hidden-files: true
+          overwrite: false

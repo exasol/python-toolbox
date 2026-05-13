@@ -11,7 +11,10 @@ from exasol.toolbox.util.workflows.exceptions import (
     YamlParsingError,
 )
 from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
-from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
+from exasol.toolbox.util.workflows.templates import (
+    NOT_MAINTAINED_WORKFLOW_NAMES,
+    WORKFLOW_TEMPLATE_OPTIONS,
+)
 from exasol.toolbox.util.workflows.workflow import (
     ALL,
     Workflow,
@@ -182,6 +185,69 @@ class TestUpdateWorkflow:
         # Currently, we check only a subselection as we must preserve formatting for tbx
         # endpoints, and there are 2 minor whitespace differences.
         assert result[:10] == input_text[:10]
+
+    @staticmethod
+    def test_not_maintained_workflows_added_to_new_project(
+        project_config_without_patcher,
+    ):
+        directory = project_config_without_patcher.github_workflow_directory
+        directory.mkdir(parents=True)
+
+        update_workflow(workflow_choice="all", config=project_config_without_patcher)
+
+        assert all(
+            (directory / f"{name}.yml").exists()
+            for name in NOT_MAINTAINED_WORKFLOW_NAMES
+        )
+
+    @staticmethod
+    @pytest.mark.parametrize("workflow_name", NOT_MAINTAINED_WORKFLOW_NAMES)
+    def test_not_maintained_workflows_not_modified_in_old_project(
+        project_config_without_patcher, workflow_name
+    ):
+        directory = project_config_without_patcher.github_workflow_directory
+        directory.mkdir(parents=True, exist_ok=True)
+        workflow = "slow-checks.yml"
+        (directory / workflow).touch()
+
+        update_workflow(
+            workflow_choice=workflow_name, config=project_config_without_patcher
+        )
+
+        assert {file_path.name for file_path in directory.iterdir()} == {workflow}
+        assert (directory / workflow).read_text() == ""
+
+    @staticmethod
+    @pytest.mark.parametrize("workflow_name", NOT_MAINTAINED_WORKFLOW_NAMES)
+    def test_not_maintained_workflows_not_added_to_old_project(
+        project_config_without_patcher, workflow_name
+    ):
+        directory = project_config_without_patcher.github_workflow_directory
+        directory.mkdir(parents=True, exist_ok=True)
+        (directory / "dummy.yml").touch()
+
+        update_workflow(
+            workflow_choice=workflow_name, config=project_config_without_patcher
+        )
+
+        assert {file_path.name for file_path in directory.iterdir()} == {"dummy.yml"}
+
+    @staticmethod
+    @pytest.mark.parametrize("workflow_name", NOT_MAINTAINED_WORKFLOW_NAMES)
+    def test_not_maintained_workflows_not_modified_in_old_project(
+        project_config_without_patcher, workflow_name
+    ):
+        directory = project_config_without_patcher.github_workflow_directory
+        directory.mkdir(parents=True, exist_ok=True)
+        workflow = "slow-checks.yml"
+        (directory / workflow).touch()
+
+        update_workflow(
+            workflow_choice=workflow_name, config=project_config_without_patcher
+        )
+
+        assert {file_path.name for file_path in directory.iterdir()} == {workflow}
+        assert (directory / workflow).read_text() == ""
 
     @staticmethod
     def test_raises_invalidworkflowpatcherentryerror(project_config):

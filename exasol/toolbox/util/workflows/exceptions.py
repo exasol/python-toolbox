@@ -1,5 +1,8 @@
 from collections.abc import Mapping
 from pathlib import Path
+from pprint import pformat
+
+from pydantic import ValidationError
 
 
 class YamlError(Exception):
@@ -54,7 +57,23 @@ class InvalidWorkflowPatcherYamlError(YamlError):
     :class:`WorkflowPatcherConfig`.
     """
 
-    message_template = "File '{file_path}' is malformed; it failed Pydantic validation."
+    message_template = (
+        "File '{file_path}' is malformed; "
+        "it failed Pydantic validation with {error_count} errors.\n"
+        "Validation issue information:\n"
+        "{validation_details}"
+    )
+
+    def __init__(self, file_path: Path, validation_error: ValidationError):
+        validation_details = (
+            f"\033[31m{pformat(validation_error.errors(), sort_dicts=False)}\033[0m"
+        )
+        self.validation_error = validation_error
+        super().__init__(
+            file_path=file_path,
+            error_count=validation_error.error_count(),
+            validation_details=validation_details,
+        )
 
 
 class InvalidWorkflowPatcherEntryError(YamlError):
@@ -67,6 +86,29 @@ class InvalidWorkflowPatcherEntryError(YamlError):
         "In file '{file_path}', an entry '{entry}' does not exist in "
         "the workflow template. Please fix the entry."
     )
+
+
+class InvalidWorkflowNameError(ValueError):
+    """
+    Raised when a workflow name is not one of the available PTB templates.
+    """
+
+    def __init__(self, workflow_name: str, valid_workflows):
+        super().__init__(
+            f"Invalid workflow: {workflow_name}. Must be one of {valid_workflows}"
+        )
+
+
+class NotMaintainedWorkflowError(ValueError):
+    """
+    Raised when a PTB-seeded workflow is requested in an existing project.
+    """
+
+    def __init__(self, workflow_name: str):
+        super().__init__(
+            f"Workflow '{workflow_name}' is a PTB-seeded workflow that is "
+            "originally provided by the PTB and can only be seeded for a new project."
+        )
 
 
 class YamlKeyError(Exception):

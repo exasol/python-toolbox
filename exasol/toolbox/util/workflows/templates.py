@@ -3,7 +3,13 @@ from pathlib import Path
 
 import importlib_resources as resources
 
+from exasol.toolbox.util.workflows.exceptions import (
+    InvalidWorkflowNameError,
+    NotMaintainedWorkflowError,
+)
+
 WORKFLOW_TEMPLATES_DIRECTORY = "exasol.toolbox.templates.github.workflows"
+NOT_MAINTAINED_WORKFLOW_NAMES: list[str] = ["slow-checks"]
 
 
 def get_workflow_templates() -> Mapping[str, Path]:
@@ -17,6 +23,17 @@ def get_workflow_templates() -> Mapping[str, Path]:
         for workflow_path in package_resources.iterdir()
         if workflow_path.is_file() and workflow_path.name.endswith(".yml")
     }
+
+
+def validate_workflow_name(workflow_name: str) -> str:
+    """
+    Validate that the given workflow exists and is allowed in the current context.
+    """
+    if workflow_name not in WORKFLOW_TEMPLATE_OPTIONS:
+        raise InvalidWorkflowNameError(workflow_name, WORKFLOW_TEMPLATE_OPTIONS.keys())
+    if workflow_name in NOT_MAINTAINED_WORKFLOW_NAMES:
+        raise NotMaintainedWorkflowError(workflow_name)
+    return workflow_name
 
 
 WORKFLOW_TEMPLATE_OPTIONS = get_workflow_templates()

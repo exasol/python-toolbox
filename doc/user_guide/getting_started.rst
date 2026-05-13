@@ -16,7 +16,7 @@ Creating a New Project with Exasol-Toolbox Support
 .. important::
 
     To establish a new project with toolbox support, you need to have
-    `Cookiecutter <https://www.cookiecutter.io>`_ installed:
+    `Cookiecutter <https://cookiecutter.readthedocs.io/en/stable/>`_ installed:
 
     :code:`pip install cookiecutter`
 
