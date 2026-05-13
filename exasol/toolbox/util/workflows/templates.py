@@ -25,15 +25,13 @@ def get_workflow_templates() -> Mapping[str, Path]:
     }
 
 
-def validate_workflow_name(
-    workflow_name: str, *, allow_not_maintained: bool = False
-) -> str:
+def validate_workflow_name(workflow_name: str) -> str:
     """
     Validate that the given workflow exists and is allowed in the current context.
     """
     if workflow_name not in WORKFLOW_TEMPLATE_OPTIONS:
         raise InvalidWorkflowNameError(workflow_name, WORKFLOW_TEMPLATE_OPTIONS.keys())
-    if workflow_name in NOT_MAINTAINED_WORKFLOW_NAMES and not allow_not_maintained:
+    if workflow_name in NOT_MAINTAINED_WORKFLOW_NAMES:
         raise NotMaintainedWorkflowError(workflow_name)
     return workflow_name
 

@@ -92,8 +92,6 @@ def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None
     workflow_dict = _select_workflow_template(workflow_choice)
     logger.info(f"Selected workflow(s) to update: {list(workflow_dict.keys())}")
 
-    is_new_project = not any(config.github_workflow_directory.glob("*.yml"))
-
     workflow_patcher = None
     if config.github_workflow_patcher_yaml:
         workflow_patcher = WorkflowPatcher(
@@ -101,6 +99,7 @@ def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None
             file_path=config.github_workflow_patcher_yaml,
         )
 
+    is_new_project = not any(config.github_workflow_directory.glob("*.yml"))
     for workflow_name in workflow_dict:
         patch_yaml = None
         if workflow_patcher:
@@ -109,8 +108,16 @@ def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None
             )
 
         try:
-            validate_workflow_name(workflow_name, allow_not_maintained=is_new_project)
+            validate_workflow_name(workflow_name)
+        except NotMaintainedWorkflowError:
+            if not is_new_project:
+                logger.debug(
+                    "Skipping not-maintained workflow in older project: %s",
+                    workflow_name,
+                )
+                continue
 
+        try:
             workflow = Workflow.load_from_template(
                 file_path=workflow_dict[workflow_name],
                 github_template_dict=config.github_template_dict,
@@ -122,9 +129,3 @@ def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None
             raise InvalidWorkflowPatcherEntryError(
                 file_path=config.github_workflow_patcher_yaml, entry=ex.entry  # type: ignore
             ) from ex
-
-        except NotMaintainedWorkflowError:
-            logger.debug(
-                "Skipping not-maintained workflow in older project: %s",
-                workflow_name,
-            )

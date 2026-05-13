@@ -56,15 +56,6 @@ class TestValidateWorkflowName:
         assert name == workflow_name
 
     @staticmethod
-    @pytest.mark.parametrize(
-        "workflow_name",
-        NOT_MAINTAINED_WORKFLOW_NAMES,
-    )
-    def test_returns_valid_not_maintained_names(workflow_name):
-        name = validate_workflow_name(workflow_name, allow_not_maintained=True)
-        assert name == workflow_name
-
-    @staticmethod
     def test_rejects_unknown_workflow():
         with pytest.raises(InvalidWorkflowNameError, match="Invalid workflow: unknown"):
             validate_workflow_name("unknown")
@@ -72,6 +63,4 @@ class TestValidateWorkflowName:
     @staticmethod
     def test_rejects_not_maintained_workflow():
         with pytest.raises(NotMaintainedWorkflowError, match="PTB-seeded workflow"):
-            validate_workflow_name(
-                NOT_MAINTAINED_WORKFLOW_NAMES[0], allow_not_maintained=False
-            )
+            validate_workflow_name(NOT_MAINTAINED_WORKFLOW_NAMES[0])
