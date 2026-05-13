@@ -202,6 +202,23 @@ class TestUpdateWorkflow:
 
     @staticmethod
     @pytest.mark.parametrize("workflow_name", NOT_MAINTAINED_WORKFLOW_NAMES)
+    def test_not_maintained_workflows_not_modified_in_old_project(
+        project_config_without_patcher, workflow_name
+    ):
+        directory = project_config_without_patcher.github_workflow_directory
+        directory.mkdir(parents=True, exist_ok=True)
+        workflow = "slow-checks.yml"
+        (directory / workflow).touch()
+
+        update_workflow(
+            workflow_choice=workflow_name, config=project_config_without_patcher
+        )
+
+        assert {file_path.name for file_path in directory.iterdir()} == {workflow}
+        assert (directory / workflow).read_text() == ""
+
+    @staticmethod
+    @pytest.mark.parametrize("workflow_name", NOT_MAINTAINED_WORKFLOW_NAMES)
     def test_not_maintained_workflows_not_added_to_old_project(
         project_config_without_patcher, workflow_name
     ):
@@ -214,6 +231,23 @@ class TestUpdateWorkflow:
         )
 
         assert {file_path.name for file_path in directory.iterdir()} == {"dummy.yml"}
+
+    @staticmethod
+    @pytest.mark.parametrize("workflow_name", NOT_MAINTAINED_WORKFLOW_NAMES)
+    def test_not_maintained_workflows_not_modified_in_old_project(
+        project_config_without_patcher, workflow_name
+    ):
+        directory = project_config_without_patcher.github_workflow_directory
+        directory.mkdir(parents=True, exist_ok=True)
+        workflow = "slow-checks.yml"
+        (directory / workflow).touch()
+
+        update_workflow(
+            workflow_choice=workflow_name, config=project_config_without_patcher
+        )
+
+        assert {file_path.name for file_path in directory.iterdir()} == {workflow}
+        assert (directory / workflow).read_text() == ""
 
     @staticmethod
     def test_raises_invalidworkflowpatcherentryerror(project_config):
