@@ -33,3 +33,7 @@ details, check out the [Workflow Extensions](https://exasol.github.io/python-too
 ## Bugfix
 
 * #563: Fixed merge-gate to prevent auto-merges from happening when integration tests failed
+
+## Security Issues
+
+* #836: Relocked `poetry.lock`

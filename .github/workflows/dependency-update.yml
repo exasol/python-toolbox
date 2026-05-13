@@ -69,7 +69,7 @@ jobs:
         id: create-branch
         if: steps.check-for-poetry-lock-changes.outputs.changed == 'true'
         run: |
-          branch_name="dependency-update/$(date "+%Y-%m-%d_%H:%M:%S")"
+          branch_name="dependency-update/$(date "+%Y-%m-%d")"
           echo "Creating branch $branch_name"
           git switch -C "$branch_name"
 
@@ -94,7 +94,7 @@ jobs:
           This PR was created by the workflow \`dependency-update.yml\`
 
           Please perform the following actions on a locally checked out branch:
-          - [ ] Execute \`poetry run -- nox -s workflow:generate -- --all\`
+          - [ ] Execute \`poetry run -- nox -s workflow:generate -- all\`
           - [ ] Use \`poetry run -- nox -s dependency:audit\` to check for vulnerabilities requiring manual action
           - [ ] Update file \`doc/changes/unreleased.md\`
           "
