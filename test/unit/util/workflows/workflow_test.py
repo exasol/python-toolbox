@@ -187,7 +187,7 @@ class TestUpdateWorkflow:
         assert result[:10] == input_text[:10]
 
     @staticmethod
-    def test_not_maintaed_workflows_added_to_new_project(
+    def test_not_maintained_workflows_added_to_new_project(
         project_config_without_patcher,
     ):
         directory = project_config_without_patcher.github_workflow_directory
