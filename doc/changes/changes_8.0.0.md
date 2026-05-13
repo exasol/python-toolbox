@@ -5,7 +5,7 @@
 In this major release, several modifications were made to the PTB's workflow templates:
 
 * For automatically resolving vulnerabilities, the `dependency-update.yml` workflow was
-added. For more details, see the [Dependency Update](https://exasol.github.io/python-toolbox/main/user_guide/features/github_workflows/index.html#dependency-update) section.
+added. For more details, see the [Update Dependencies](https://exasol.github.io/python-toolbox/main/user_guide/features/github_workflows/index.html#update-dependencies) section.
 * The periodic run which was previously executed in the `ci.yml` has been moved to its
 own `periodic-validation.yml` and will run weekly. This also has been modified to
 run the `slow-checks.yml` so that more complete linting and coverage information is
