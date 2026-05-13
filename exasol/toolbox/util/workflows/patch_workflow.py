@@ -128,7 +128,7 @@ class WorkflowPatcher(YamlRenderer):
                 return loaded_yaml
             except ValidationError as ex:
                 raise InvalidWorkflowPatcherYamlError(
-                    file_path=self.file_path, validation_details=str(ex)
+                    file_path=self.file_path, validation_error=ex
                 ) from ex
 
     def extract_by_workflow(self, workflow_name: str) -> WorkflowCommentedMap | None:
