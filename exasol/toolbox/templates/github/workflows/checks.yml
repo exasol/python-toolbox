@@ -16,7 +16,7 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: exasol/python-toolbox/.github/actions/python-environment@v8
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
@@ -42,7 +42,7 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: exasol/python-toolbox/.github/actions/python-environment@v8
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
@@ -67,7 +67,7 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: exasol/python-toolbox/.github/actions/python-environment@v8
         with:
           python-version: ${{ matrix.python-versions }}
           poetry-version: "(( dependency_manager_version ))"
@@ -84,6 +84,7 @@ jobs:
           path: |
             .lint.json
           include-hidden-files: true
+          overwrite: false
 
   lint-typing:
     name: Lint Typing (Python-${{ matrix.python-versions }})
@@ -102,7 +103,7 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: exasol/python-toolbox/.github/actions/python-environment@v8
         with:
           python-version: ${{ matrix.python-versions }}
           poetry-version: "(( dependency_manager_version ))"
@@ -128,7 +129,7 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: exasol/python-toolbox/.github/actions/python-environment@v8
         with:
           python-version: ${{ matrix.python-versions }}
           poetry-version: "(( dependency_manager_version ))"
@@ -144,6 +145,7 @@ jobs:
           name: security-python${{ matrix.python-versions }}
           path: .security.json
           include-hidden-files: true
+          overwrite: false
 
   check-format:
     name: Check Format
@@ -157,7 +159,7 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: exasol/python-toolbox/.github/actions/python-environment@v8
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
@@ -179,7 +181,7 @@ jobs:
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v7
+        uses: exasol/python-toolbox/.github/actions/python-environment@v8
         with:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
