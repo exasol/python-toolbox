@@ -39,7 +39,9 @@ jobs:
       - name: Audit Dependencies
         id: audit-dependencies
         run: |
-          poetry run -- nox -s dependency:audit | tee vulnerabilities.json
+          set -o pipefail
+          poetry self add poetry-plugin-export
+          poetry run -- nox -s dependency:audit 2>&1 | tee vulnerabilities.json
           LENGTH=$(jq 'length' vulnerabilities.json)
           echo "count=$LENGTH" >> "$GITHUB_OUTPUT"
 
