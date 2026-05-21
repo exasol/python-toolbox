@@ -12,7 +12,6 @@ from structlog.contextvars import (
     bound_contextvars,
 )
 
-from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.util.workflows import logger
 from exasol.toolbox.util.workflows.exceptions import (
     YamlError,
@@ -22,10 +21,6 @@ from exasol.toolbox.util.workflows.patch_workflow import (
     WorkflowCommentedMap,
 )
 from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
-from exasol.toolbox.util.workflows.workflow_orchestrator import (
-    WorkflowChoice,
-    WorkflowOrchestrator,
-)
 
 
 class Workflow(BaseModel):
@@ -88,31 +83,3 @@ class Workflow(BaseModel):
             return
         logger.info("Write workflow file %s", self.output_path.name)
         self.output_path.write_text(self.content + "\n")
-
-
-def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None:
-    """
-    Updates a selected workflow or all workflows.
-    """
-
-    orchestrator = WorkflowOrchestrator(
-        workflow_choice=workflow_choice,
-        config=config,
-    )
-    workflow_dict = orchestrator.templates
-    logger.info(f"Selected workflow(s) to update: {list(workflow_dict.keys())}")
-
-    is_new_project = orchestrator.is_new_project
-    for workflow_name in workflow_dict:
-        patch_yaml = orchestrator._extract_workflow_patch(workflow_name=workflow_name)
-
-        if orchestrator._skip_workflow(
-            workflow_name=workflow_name, is_new_project=is_new_project
-        ):
-            continue
-
-        workflow = orchestrator._load_generated_workflow(
-            template_path=workflow_dict[workflow_name],
-            patch_yaml=patch_yaml,
-        )
-        workflow.write_to_file()

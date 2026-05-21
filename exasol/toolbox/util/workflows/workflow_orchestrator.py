@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import (
+    Iterator,
+    Mapping,
+)
 from functools import cached_property
 from pathlib import Path
 from typing import (
@@ -25,6 +28,7 @@ from exasol.toolbox.util.workflows.templates import (
     WORKFLOW_TEMPLATE_OPTIONS,
     validate_workflow_name,
 )
+from exasol.toolbox.util.workflows.workflow import Workflow
 
 ALL: Final[str] = "all"
 WorkflowChoice = Annotated[
@@ -75,7 +79,20 @@ class WorkflowOrchestrator(BaseModel):
             return None
         return self.workflow_patcher.extract_by_workflow(workflow_name=workflow_name)
 
-    def _load_generated_workflow(
+    def _iter_workflows(self) -> Iterator[Workflow]:
+        is_new_project = self.is_new_project
+
+        for workflow_name, template_path in self.templates.items():
+            patch_yaml = self._extract_workflow_patch(workflow_name=workflow_name)
+
+            if self._skip_workflow(workflow_name, is_new_project):
+                continue
+
+            yield self._load_workflow(
+                template_path=template_path, patch_yaml=patch_yaml
+            )
+
+    def _load_workflow(
         self, template_path: Path, patch_yaml: WorkflowCommentedMap | None
     ):
         from exasol.toolbox.util.workflows.workflow import Workflow
@@ -107,3 +124,10 @@ class WorkflowOrchestrator(BaseModel):
                 )
                 return True
         return False
+
+    def write_workflows(self) -> None:
+        """
+        Render the selected workflows and write them to disk.
+        """
+        for workflow in self._iter_workflows():
+            workflow.write_to_file()
