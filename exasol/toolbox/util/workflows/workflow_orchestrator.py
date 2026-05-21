@@ -28,6 +28,13 @@ class WorkflowOrchestrator(BaseModel):
     config: BaseConfig
 
     @cached_property
+    def is_new_project(self) -> bool:
+        """
+        A project is considered new if no YML files are present in the GitHub directory.
+        """
+        return not any(self.config.github_workflow_directory.glob("*.yml"))
+
+    @cached_property
     def templates(self) -> Mapping[str, Path]:
         """
         A mapping of workflow templates names to paths. This can be a single
