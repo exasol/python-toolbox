@@ -6,7 +6,7 @@ from pydantic import computed_field
 from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._workflow import generate_workflow
 from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
-from exasol.toolbox.util.workflows.workflow import ALL
+from exasol.toolbox.util.workflows.workflow_orchestrator import ALL
 
 
 @pytest.fixture

@@ -5,23 +5,41 @@ from unittest.mock import patch
 import pytest
 
 from exasol.toolbox.util.workflows.exceptions import (
-    InvalidWorkflowPatcherEntryError,
     TemplateRenderingError,
-    YamlJobValueError,
     YamlOutputError,
     YamlParsingError,
 )
 from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
 from exasol.toolbox.util.workflows.templates import (
-    NOT_MAINTAINED_WORKFLOW_NAMES,
     WORKFLOW_TEMPLATE_OPTIONS,
 )
-from exasol.toolbox.util.workflows.workflow import (
-    ALL,
-    Workflow,
-    _select_workflow_template,
-    update_workflow,
-)
+from exasol.toolbox.util.workflows.workflow import Workflow
+
+
+@pytest.fixture
+def workflow_template_path(tmp_path):
+    template_directory = tmp_path / "templates"
+    template_directory.mkdir()
+    template_path = template_directory / "workflow.yml"
+
+    content = """
+    jobs:
+    check-release-tag:
+      name: Check Release Tag
+      uses: ./.github/workflows/check-release-tag.yml
+      permissions:
+        contents: read
+    """
+
+    template_path.write_text(cleandoc(content))
+    return template_path
+
+
+@pytest.fixture
+def workflow_output_directory(tmp_path):
+    output_directory = tmp_path / "output"
+    output_directory.mkdir()
+    return output_directory
 
 
 class TestWorkflow:
@@ -60,59 +78,93 @@ class TestWorkflow:
         assert output_file_path.read_text() == cleandoc(expected_yaml) + "\n"
 
     @staticmethod
-    def test_compare_to_file_accepts_matching_content(tmp_path):
-        content = "line 1\nline 2"
-        file_path = tmp_path / "workflow.yml"
-        file_path.write_text(f"\n{content}\n")
+    def test_compare_to_file_has_identical_content(
+        project_config, workflow_template_path, workflow_output_directory
+    ):
+        content = workflow_template_path.read_text()
+        output_path = workflow_output_directory / workflow_template_path.name
+        output_path.write_text(content)
 
-        workflow = Workflow(
-            template_path=file_path,
-            output_path=file_path,
-            content=f"\n{content}\n",
+        workflow = Workflow.load_from_template(
+            template_path=workflow_template_path,
+            output_directory=workflow_output_directory,
+            github_template_dict=project_config.github_template_dict,
         )
 
         assert workflow.compare_to_file() == ""
 
     @staticmethod
-    def test_compare_to_file_reports_diff(tmp_path):
-        file_path = tmp_path / "workflow.yml"
-        file_path.write_text("line 1\nline 3\n")
-        workflow = Workflow(
-            template_path=file_path,
-            output_path=file_path,
-            content="line 1\nline 2",
+    def test_compare_to_file_lacks_existing_content(
+        project_config, workflow_template_path, workflow_output_directory
+    ):
+        workflow = Workflow.load_from_template(
+            template_path=workflow_template_path,
+            output_directory=workflow_output_directory,
+            github_template_dict=project_config.github_template_dict,
         )
 
-        diff = workflow.compare_to_file()
-
-        assert diff == (
-            f"--- existing: {file_path.name}\n"
+        assert workflow.compare_to_file() == (
+            f"--- existing: {workflow.output_path.name}\n"
             "+++ generated\n"
-            "@@ -1,2 +1,2 @@\n"
-            " line 1\n"
-            "-line 3\n"
-            "+line 2"
+            "@@ -0,0 +1,6 @@\n"
+            "+jobs:\n"
+            "+check-release-tag:\n"
+            "+  name: Check Release Tag\n"
+            "+  uses: ./.github/workflows/check-release-tag.yml\n"
+            "+  permissions:\n"
+            "+    contents: read"
         )
 
     @staticmethod
-    def test_write_to_file_skips_up_to_date_file(tmp_path):
-        file_path = tmp_path / "workflow.yml"
-        file_path.write_text("line 1\nline 2\n")
-        workflow = Workflow(
-            template_path=file_path,
-            output_path=file_path,
-            content="line 1\nline 2",
+    def test_compare_to_file_reports_diff(
+        project_config, workflow_template_path, workflow_output_directory
+    ):
+        output_path = workflow_output_directory / workflow_template_path.name
+        output_path.write_text("line 3\n")
+
+        workflow = Workflow.load_from_template(
+            template_path=workflow_template_path,
+            output_directory=workflow_output_directory,
+            github_template_dict=project_config.github_template_dict,
+        )
+
+        assert workflow.compare_to_file() == (
+            f"--- existing: {workflow.output_path.name}\n"
+            "+++ generated\n"
+            "@@ -1 +1,6 @@\n"
+            "-line 3\n"
+            "+jobs:\n"
+            "+check-release-tag:\n"
+            "+  name: Check Release Tag\n"
+            "+  uses: ./.github/workflows/check-release-tag.yml\n"
+            "+  permissions:\n"
+            "+    contents: read"
+        )
+
+    @staticmethod
+    def test_write_to_file_skips_up_to_date_file(
+        project_config, workflow_template_path, workflow_output_directory
+    ):
+        content = workflow_template_path.read_text()
+        output_path = workflow_output_directory / workflow_template_path.name
+        output_path.write_text(content)
+
+        workflow = Workflow.load_from_template(
+            template_path=workflow_template_path,
+            output_directory=workflow_output_directory,
+            github_template_dict=project_config.github_template_dict,
         )
 
         with patch.object(Path, "write_text") as write_text:
             workflow.write_to_file()
 
         write_text.assert_not_called()
-        assert file_path.read_text() == "line 1\nline 2\n"
 
     @staticmethod
     @pytest.mark.parametrize("template_path", WORKFLOW_TEMPLATE_OPTIONS.values())
-    def test_works_for_all_templates(tmp_path, project_config, template_path):
+    def test_write_to_file_works_for_all_templates(
+        tmp_path, project_config, template_path
+    ):
         workflow = Workflow.load_from_template(
             template_path=template_path,
             output_directory=tmp_path,
@@ -124,7 +176,9 @@ class TestWorkflow:
         assert file_path.read_text() != ""
 
     @staticmethod
-    def test_fails_when_yaml_does_not_exist(tmp_path, project_config):
+    def test_load_from_template_fails_when_yaml_does_not_exist(
+        tmp_path, project_config
+    ):
         file_path = tmp_path / "test.yaml"
         with pytest.raises(FileNotFoundError, match="test.yaml"):
             Workflow.load_from_template(
@@ -137,7 +191,9 @@ class TestWorkflow:
     @pytest.mark.parametrize(
         "raised_exc", [TemplateRenderingError, YamlParsingError, YamlOutputError]
     )
-    def test_raises_custom_exceptions(tmp_path, project_config, raised_exc):
+    def test_load_from_template_raises_custom_exceptions(
+        tmp_path, project_config, raised_exc
+    ):
         file_path = tmp_path / "test.yaml"
         file_path.write_text("dummy content")
 
@@ -152,7 +208,9 @@ class TestWorkflow:
                 )
 
     @staticmethod
-    def test_other_exceptions_raised_as_valuerror(tmp_path, project_config):
+    def test_load_from_template_reraises_other_exceptions_raised_as_valuerror(
+        tmp_path, project_config
+    ):
         file_path = tmp_path / "test.yaml"
         file_path.write_text("dummy content")
 
@@ -165,164 +223,3 @@ class TestWorkflow:
                     output_directory=tmp_path,
                     github_template_dict=project_config.github_template_dict,
                 )
-
-
-class TestSelectWorkflowTemplate:
-    @staticmethod
-    def test_for_all_works_as_expected():
-        result = _select_workflow_template(ALL)
-        assert result == WORKFLOW_TEMPLATE_OPTIONS
-
-    @staticmethod
-    @pytest.mark.parametrize("workflow_name", WORKFLOW_TEMPLATE_OPTIONS)
-    def test_for_individual_workflows_works_as_expected(workflow_name):
-        result = _select_workflow_template(workflow_name)
-        assert result == {workflow_name: WORKFLOW_TEMPLATE_OPTIONS[workflow_name]}
-
-
-class TestUpdateWorkflow:
-    @staticmethod
-    def test_works_as_expected_without_patcher(project_config_without_patcher):
-        workflow_name = "merge-gate"
-        # setup
-        project_config_without_patcher.github_workflow_directory.mkdir(parents=True)
-        input_text = WORKFLOW_TEMPLATE_OPTIONS[workflow_name].read_text()
-        expected_file_path = (
-            project_config_without_patcher.github_workflow_directory
-            / f"{workflow_name}.yml"
-        )
-
-        update_workflow(
-            workflow_choice=workflow_name, config=project_config_without_patcher
-        )
-        result = expected_file_path.read_text()
-
-        # Currently, we check only a subselection as we must preserve formatting for tbx
-        # endpoints, and there are 2 minor whitespace differences.
-        assert result[:10] == input_text[:10]
-
-    @staticmethod
-    def test_works_as_expected_with_relevant_patcher(project_config, remove_job_yaml):
-        # remove_job_yaml modifies "checks" and that's also the workflow being updated
-        workflow_name = "checks"
-        # setup
-        project_config.github_workflow_directory.mkdir(parents=True)
-        input_text = WORKFLOW_TEMPLATE_OPTIONS[workflow_name].read_text()
-        expected_file_path = (
-            project_config.github_workflow_directory / f"{workflow_name}.yml"
-        )
-        # setup checks
-        removed_job_name = "build-documentation-and-check-links"
-        assert removed_job_name in remove_job_yaml
-        assert removed_job_name in input_text
-
-        update_workflow(workflow_choice="checks", config=project_config)
-        result = expected_file_path.read_text()
-
-        # We compare only a subselection to verify that the files are roughly the
-        # same, and we expect them to differ as the 'result' does not contain
-        # the 'removed_job_name'
-        assert result[:10] == input_text[:10]
-        assert removed_job_name not in result
-
-    @staticmethod
-    def test_works_as_expected_with_not_relevant_patcher(
-        project_config, remove_job_yaml
-    ):
-        # remove_job_yaml modifies "checks" and that's NOT the workflow being updated
-        workflow_name = "merge-gate"
-        # setup
-        project_config.github_workflow_directory.mkdir(parents=True)
-        input_text = WORKFLOW_TEMPLATE_OPTIONS[workflow_name].read_text()
-        expected_file_path = (
-            project_config.github_workflow_directory / f"{workflow_name}.yml"
-        )
-
-        update_workflow(workflow_choice=workflow_name, config=project_config)
-        result = expected_file_path.read_text()
-
-        # Currently, we check only a subselection as we must preserve formatting for tbx
-        # endpoints, and there are 2 minor whitespace differences.
-        assert result[:10] == input_text[:10]
-
-    @staticmethod
-    def test_not_maintained_workflows_added_to_new_project(
-        project_config_without_patcher,
-    ):
-        directory = project_config_without_patcher.github_workflow_directory
-        directory.mkdir(parents=True)
-
-        update_workflow(workflow_choice="all", config=project_config_without_patcher)
-
-        assert all(
-            (directory / f"{name}.yml").exists()
-            for name in NOT_MAINTAINED_WORKFLOW_NAMES
-        )
-
-    @staticmethod
-    @pytest.mark.parametrize("workflow_name", NOT_MAINTAINED_WORKFLOW_NAMES)
-    def test_not_maintained_workflows_not_modified_in_old_project(
-        project_config_without_patcher, workflow_name
-    ):
-        directory = project_config_without_patcher.github_workflow_directory
-        directory.mkdir(parents=True, exist_ok=True)
-        workflow = "slow-checks.yml"
-        (directory / workflow).touch()
-
-        update_workflow(
-            workflow_choice=workflow_name, config=project_config_without_patcher
-        )
-
-        assert {file_path.name for file_path in directory.iterdir()} == {workflow}
-        assert (directory / workflow).read_text() == ""
-
-    @staticmethod
-    @pytest.mark.parametrize("workflow_name", NOT_MAINTAINED_WORKFLOW_NAMES)
-    def test_not_maintained_workflows_not_added_to_old_project(
-        project_config_without_patcher, workflow_name
-    ):
-        directory = project_config_without_patcher.github_workflow_directory
-        directory.mkdir(parents=True, exist_ok=True)
-        (directory / "dummy.yml").touch()
-
-        update_workflow(
-            workflow_choice=workflow_name, config=project_config_without_patcher
-        )
-
-        assert {file_path.name for file_path in directory.iterdir()} == {"dummy.yml"}
-
-    @staticmethod
-    @pytest.mark.parametrize("workflow_name", NOT_MAINTAINED_WORKFLOW_NAMES)
-    def test_not_maintained_workflows_not_modified_in_old_project(
-        project_config_without_patcher, workflow_name
-    ):
-        directory = project_config_without_patcher.github_workflow_directory
-        directory.mkdir(parents=True, exist_ok=True)
-        workflow = "slow-checks.yml"
-        (directory / workflow).touch()
-
-        update_workflow(
-            workflow_choice=workflow_name, config=project_config_without_patcher
-        )
-
-        assert {file_path.name for file_path in directory.iterdir()} == {workflow}
-        assert (directory / workflow).read_text() == ""
-
-    @staticmethod
-    def test_raises_invalidworkflowpatcherentryerror(project_config):
-        patcher_yml = """
-        workflows:
-        - name: "checks"
-          remove_jobs:
-            - unknown-job
-        """
-        project_config.github_workflow_patcher_yaml.write_text(patcher_yml)
-
-        with pytest.raises(InvalidWorkflowPatcherEntryError) as ex:
-            update_workflow(workflow_choice="checks", config=project_config)
-
-        assert (
-            f"In file '{project_config.github_workflow_patcher_yaml}', "
-            "an entry '{'job_name': 'unknown-job'}' does not exist in"
-        ) in str(ex.value)
-        assert isinstance(ex.value.__cause__, YamlJobValueError)

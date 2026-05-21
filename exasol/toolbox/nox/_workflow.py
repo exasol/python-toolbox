@@ -5,9 +5,9 @@ import argparse
 import nox
 from nox import Session
 
-from exasol.toolbox.util.workflows.workflow import (
+from exasol.toolbox.util.workflows.workflow_orchestrator import (
     WORKFLOW_CHOICES,
-    update_workflow,
+    WorkflowOrchestrator,
 )
 from noxconfig import PROJECT_CONFIG
 
@@ -37,4 +37,7 @@ def generate_workflow(session: Session) -> None:
 
     PROJECT_CONFIG.github_workflow_directory.mkdir(parents=True, exist_ok=True)
 
-    update_workflow(workflow_choice=args.workflow_choice, config=PROJECT_CONFIG)
+    WorkflowOrchestrator(
+        workflow_choice=args.workflow_choice,
+        config=PROJECT_CONFIG,
+    ).generate_workflows()
