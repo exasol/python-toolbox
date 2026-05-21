@@ -49,10 +49,13 @@ class TestWorkflow:
 
         workflow = Workflow.load_from_template(
             template_path=input_file_path,
+            output_directory=tmp_path,
             github_template_dict=project_config.github_template_dict,
         )
         output_file_path = tmp_path / f"{input_file_path.name}"
-        workflow.write_to_file(file_path=output_file_path)
+        assert workflow.template_path == input_file_path
+        assert workflow.output_path == output_file_path
+        workflow.write_to_file()
 
         assert output_file_path.read_text() == cleandoc(expected_yaml) + "\n"
 
@@ -62,17 +65,25 @@ class TestWorkflow:
         file_path = tmp_path / "workflow.yml"
         file_path.write_text(f"\n{content}\n")
 
-        workflow = Workflow(content=f"\n{content}\n")
+        workflow = Workflow(
+            template_path=file_path,
+            output_path=file_path,
+            content=f"\n{content}\n",
+        )
 
-        assert workflow.compare_to_file(file_path=file_path) == ""
+        assert workflow.compare_to_file() == ""
 
     @staticmethod
     def test_compare_to_file_reports_diff(tmp_path):
-        workflow = Workflow(content="line 1\nline 2")
         file_path = tmp_path / "workflow.yml"
         file_path.write_text("line 1\nline 3\n")
+        workflow = Workflow(
+            template_path=file_path,
+            output_path=file_path,
+            content="line 1\nline 2",
+        )
 
-        diff = workflow.compare_to_file(file_path=file_path)
+        diff = workflow.compare_to_file()
 
         assert diff == (
             f"--- existing: {file_path.name}\n"
@@ -87,10 +98,14 @@ class TestWorkflow:
     def test_write_to_file_skips_up_to_date_file(tmp_path):
         file_path = tmp_path / "workflow.yml"
         file_path.write_text("line 1\nline 2\n")
-        workflow = Workflow(content="line 1\nline 2")
+        workflow = Workflow(
+            template_path=file_path,
+            output_path=file_path,
+            content="line 1\nline 2",
+        )
 
         with patch.object(Path, "write_text") as write_text:
-            workflow.write_to_file(file_path=file_path)
+            workflow.write_to_file()
 
         write_text.assert_not_called()
         assert file_path.read_text() == "line 1\nline 2\n"
@@ -100,10 +115,11 @@ class TestWorkflow:
     def test_works_for_all_templates(tmp_path, project_config, template_path):
         workflow = Workflow.load_from_template(
             template_path=template_path,
+            output_directory=tmp_path,
             github_template_dict=project_config.github_template_dict,
         )
         file_path = tmp_path / f"{template_path.name}"
-        workflow.write_to_file(file_path=file_path)
+        workflow.write_to_file()
 
         assert file_path.read_text() != ""
 
@@ -113,6 +129,7 @@ class TestWorkflow:
         with pytest.raises(FileNotFoundError, match="test.yaml"):
             Workflow.load_from_template(
                 template_path=file_path,
+                output_directory=tmp_path,
                 github_template_dict=project_config.github_template_dict,
             )
 
@@ -130,6 +147,7 @@ class TestWorkflow:
             with pytest.raises(raised_exc):
                 Workflow.load_from_template(
                     template_path=file_path,
+                    output_directory=tmp_path,
                     github_template_dict=project_config.github_template_dict,
                 )
 
@@ -144,6 +162,7 @@ class TestWorkflow:
             with pytest.raises(ValueError):
                 Workflow.load_from_template(
                     template_path=file_path,
+                    output_directory=tmp_path,
                     github_template_dict=project_config.github_template_dict,
                 )
 
