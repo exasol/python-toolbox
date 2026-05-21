@@ -9,14 +9,18 @@ from exasol.toolbox.util.workflows.workflow_orchestrator import WorkflowOrchestr
 
 class TestTemplates:
     @staticmethod
-    def test_all_works_as_expected():
-        result = WorkflowOrchestrator(workflow_choice="all").templates
+    def test_all_works_as_expected(project_config):
+        result = WorkflowOrchestrator(
+            workflow_choice="all", config=project_config
+        ).templates
         assert result == WORKFLOW_TEMPLATE_OPTIONS
 
     @staticmethod
     @pytest.mark.parametrize("workflow_name", WORKFLOW_TEMPLATE_OPTIONS)
-    def test_individual_workflows_works_as_expected(workflow_name):
-        result = WorkflowOrchestrator(workflow_choice=workflow_name).templates
+    def test_individual_workflows_works_as_expected(workflow_name, project_config):
+        result = WorkflowOrchestrator(
+            workflow_choice=workflow_name, config=project_config
+        ).templates
         assert result == {workflow_name: WORKFLOW_TEMPLATE_OPTIONS[workflow_name]}
 
 
