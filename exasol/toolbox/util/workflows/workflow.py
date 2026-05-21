@@ -1,3 +1,4 @@
+import difflib
 from collections.abc import Mapping
 from pathlib import Path
 from typing import (
@@ -41,38 +42,62 @@ WorkflowChoice = Annotated[str, f"Should be a value from {WORKFLOW_CHOICES}"]
 class Workflow(BaseModel):
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
+    template_path: Path
+    output_path: Path
     content: str
 
     @classmethod
     def load_from_template(
         cls,
-        file_path: Path,
+        template_path: Path,
+        output_directory: Path,
         github_template_dict: dict[str, Any],
         patch_yaml: WorkflowCommentedMap | None = None,
     ):
-        with bound_contextvars(template_file_name=file_path.name):
-            logger.debug("Load workflow template: %s", file_path.name)
+        with bound_contextvars(template_file_name=template_path.name):
+            logger.debug("Load workflow template: %s", template_path.name)
 
-            if not file_path.exists():
-                raise FileNotFoundError(file_path)
+            if not template_path.exists():
+                raise FileNotFoundError(template_path)
 
             try:
                 workflow_renderer = WorkflowRenderer(
                     github_template_dict=github_template_dict,
-                    file_path=file_path,
+                    file_path=template_path,
                     patch_yaml=patch_yaml,
                 )
-                workflow = workflow_renderer.render()
-                return cls(content=workflow)
+                return cls(
+                    template_path=template_path,
+                    output_path=output_directory / template_path.name,
+                    content=workflow_renderer.render(),
+                )
             except (YamlError, YamlKeyError) as ex:
                 raise ex
             except Exception as ex:
                 # Wrap all other "non-special" exceptions
-                raise ValueError(f"Error rendering file: {file_path}") from ex
+                raise ValueError(f"Error rendering file: {template_path}") from ex
 
-    def write_to_file(self, file_path: Path) -> None:
-        logger.info("Write workflow file %s", file_path.name)
-        file_path.write_text(self.content + "\n")
+    def compare_to_file(self) -> str:
+        existing_content = (
+            self.output_path.read_text().strip() if self.output_path.exists() else ""
+        )
+        generated_content = self.content.strip()
+
+        diff = difflib.unified_diff(
+            existing_content.splitlines(),
+            generated_content.splitlines(),
+            fromfile=f"existing: {self.output_path.name}",
+            tofile="generated",
+            lineterm="",
+        )
+        return "\n".join(diff)
+
+    def write_to_file(self) -> None:
+        if self.compare_to_file() == "":
+            logger.debug("Skip up-to-date workflow file %s", self.output_path.name)
+            return
+        logger.info("Write workflow file %s", self.output_path.name)
+        self.output_path.write_text(self.content + "\n")
 
 
 def _select_workflow_template(workflow_name: WorkflowChoice) -> Mapping[str, Path]:
@@ -119,12 +144,12 @@ def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None
 
         try:
             workflow = Workflow.load_from_template(
-                file_path=workflow_dict[workflow_name],
+                template_path=workflow_dict[workflow_name],
+                output_directory=config.github_workflow_directory,
                 github_template_dict=config.github_template_dict,
                 patch_yaml=patch_yaml,
             )
-            file_path = config.github_workflow_directory / f"{workflow_name}.yml"
-            workflow.write_to_file(file_path=file_path)
+            workflow.write_to_file()
         except YamlKeyError as ex:
             raise InvalidWorkflowPatcherEntryError(
                 file_path=config.github_workflow_patcher_yaml, entry=ex.entry  # type: ignore
