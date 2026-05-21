@@ -56,6 +56,33 @@ class TestWorkflow:
         assert output_file_path.read_text() == cleandoc(expected_yaml) + "\n"
 
     @staticmethod
+    def test_compare_to_file_accepts_matching_content(tmp_path):
+        content = "line 1\nline 2"
+        file_path = tmp_path / "workflow.yml"
+        file_path.write_text(f"\n{content}\n")
+
+        workflow = Workflow(content=f"\n{content}\n")
+
+        assert workflow.compare_to_file(file_path=file_path) == ""
+
+    @staticmethod
+    def test_compare_to_file_reports_diff(tmp_path):
+        workflow = Workflow(content="line 1\nline 2")
+        file_path = tmp_path / "workflow.yml"
+        file_path.write_text("line 1\nline 3\n")
+
+        diff = workflow.compare_to_file(file_path=file_path)
+
+        assert diff == (
+            f"--- existing: {file_path.name}\n"
+            "+++ generated\n"
+            "@@ -1,2 +1,2 @@\n"
+            " line 1\n"
+            "-line 3\n"
+            "+line 2"
+        )
+
+    @staticmethod
     @pytest.mark.parametrize("template_path", WORKFLOW_TEMPLATE_OPTIONS.values())
     def test_works_for_all_templates(tmp_path, project_config, template_path):
         workflow = Workflow.load_from_template(

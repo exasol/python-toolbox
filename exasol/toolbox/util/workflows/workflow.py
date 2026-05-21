@@ -1,3 +1,4 @@
+import difflib
 from collections.abc import Mapping
 from pathlib import Path
 from typing import (
@@ -69,6 +70,19 @@ class Workflow(BaseModel):
             except Exception as ex:
                 # Wrap all other "non-special" exceptions
                 raise ValueError(f"Error rendering file: {file_path}") from ex
+
+    def compare_to_file(self, file_path: Path) -> str:
+        existing_content = file_path.read_text().strip()
+        generated_content = self.content.strip()
+
+        diff = difflib.unified_diff(
+            existing_content.splitlines(),
+            generated_content.splitlines(),
+            fromfile=f"existing: {file_path.name}",
+            tofile="generated",
+            lineterm="",
+        )
+        return "\n".join(diff)
 
     def write_to_file(self, file_path: Path) -> None:
         logger.info("Write workflow file %s", file_path.name)
