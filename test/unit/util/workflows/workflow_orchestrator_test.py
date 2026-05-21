@@ -83,7 +83,7 @@ class TestSkipWorkflow:
         assert result is False
 
 
-class TestWriteWorkflows:
+class TestGenerateWorkflows:
     @staticmethod
     def test_works_as_expected_without_patcher(project_config_without_patcher):
         workflow_name = "merge-gate"
@@ -97,7 +97,7 @@ class TestWriteWorkflows:
         WorkflowOrchestrator(
             workflow_choice=workflow_name,
             config=project_config_without_patcher,
-        ).write_workflows()
+        ).generate_workflows()
         result = expected_file_path.read_text()
 
         assert result[:10] == input_text[:10]
@@ -117,7 +117,7 @@ class TestWriteWorkflows:
         WorkflowOrchestrator(
             workflow_choice=workflow_name,
             config=project_config,
-        ).write_workflows()
+        ).generate_workflows()
         result = expected_file_path.read_text()
 
         assert result[:10] == input_text[:10]
@@ -137,7 +137,7 @@ class TestWriteWorkflows:
         WorkflowOrchestrator(
             workflow_choice=workflow_name,
             config=project_config,
-        ).write_workflows()
+        ).generate_workflows()
         result = expected_file_path.read_text()
 
         assert result[:10] == input_text[:10]
@@ -152,7 +152,7 @@ class TestWriteWorkflows:
         WorkflowOrchestrator(
             workflow_choice="all",
             config=project_config_without_patcher,
-        ).write_workflows()
+        ).generate_workflows()
 
         assert all(
             (directory / f"{name}.yml").exists()
@@ -172,7 +172,7 @@ class TestWriteWorkflows:
         WorkflowOrchestrator(
             workflow_choice=workflow_name,
             config=project_config_without_patcher,
-        ).write_workflows()
+        ).generate_workflows()
 
         assert {file_path.name for file_path in directory.iterdir()} == {workflow}
         assert (directory / workflow).read_text() == ""
@@ -189,7 +189,7 @@ class TestWriteWorkflows:
         WorkflowOrchestrator(
             workflow_choice=workflow_name,
             config=project_config_without_patcher,
-        ).write_workflows()
+        ).generate_workflows()
 
         assert {file_path.name for file_path in directory.iterdir()} == {"dummy.yml"}
 
@@ -206,7 +206,7 @@ class TestWriteWorkflows:
         WorkflowOrchestrator(
             workflow_choice=workflow_name,
             config=project_config_without_patcher,
-        ).write_workflows()
+        ).generate_workflows()
 
         assert {file_path.name for file_path in directory.iterdir()} == {workflow}
         assert (directory / workflow).read_text() == ""
@@ -225,7 +225,7 @@ class TestWriteWorkflows:
             WorkflowOrchestrator(
                 workflow_choice="checks",
                 config=project_config,
-            ).write_workflows()
+            ).generate_workflows()
 
         assert (
             f"In file '{project_config.github_workflow_patcher_yaml}', "

@@ -94,8 +94,6 @@ class WorkflowOrchestrator(BaseModel):
     def _load_workflow(
         self, template_path: Path, patch_yaml: WorkflowCommentedMap | None
     ):
-        from exasol.toolbox.util.workflows.workflow import Workflow
-
         try:
             return Workflow.load_from_template(
                 template_path=template_path,
@@ -124,7 +122,7 @@ class WorkflowOrchestrator(BaseModel):
                 return True
         return False
 
-    def write_workflows(self) -> None:
+    def generate_workflows(self) -> None:
         """
         Render the selected workflows and write them to disk.
         """

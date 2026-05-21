@@ -40,4 +40,4 @@ def generate_workflow(session: Session) -> None:
     WorkflowOrchestrator(
         workflow_choice=args.workflow_choice,
         config=PROJECT_CONFIG,
-    ).write_workflows()
+    ).generate_workflows()
