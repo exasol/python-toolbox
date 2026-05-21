@@ -79,8 +79,8 @@ class WorkflowOrchestrator(BaseModel):
         return not any(self.config.github_workflow_directory.glob("*.yml"))
 
     def _iter_workflows(self) -> Iterator[Workflow]:
+        logger.info(f"Selected workflow(s) to update: {list(self.templates.keys())}")
         is_new_project = self._is_new_project()
-
         for workflow_name, template_path in self.templates.items():
             patch_yaml = self._extract_workflow_patch(workflow_name=workflow_name)
 
