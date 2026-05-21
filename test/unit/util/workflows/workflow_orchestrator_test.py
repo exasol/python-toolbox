@@ -32,7 +32,7 @@ class TestIsNewProject:
         result = WorkflowOrchestrator(
             workflow_choice="all",
             config=project_config,
-        ).is_new_project
+        )._is_new_project()
 
         assert result is True
 
@@ -45,7 +45,7 @@ class TestIsNewProject:
         result = WorkflowOrchestrator(
             workflow_choice="all",
             config=project_config,
-        ).is_new_project
+        )._is_new_project()
 
         assert result is False
 
