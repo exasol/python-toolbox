@@ -103,7 +103,8 @@ class WorkflowOrchestrator(BaseModel):
             )
         except YamlKeyError as ex:
             raise InvalidWorkflowPatcherEntryError(
-                file_path=self.config.github_workflow_patcher_yaml, entry=ex.entry
+                file_path=self.config.github_workflow_patcher_yaml,  # type: ignore
+                entry=ex.entry,
             ) from ex
 
     def _skip_workflow(self, workflow_name: str, is_new_project: bool) -> bool:

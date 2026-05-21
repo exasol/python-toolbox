@@ -9,3 +9,7 @@
 ## Feature
 
 * #722: Added check in `workflow:generate` to compare the generated and existing content before writing out
+
+## Refactoring
+
+* #722: Modified `workflow:generate` backend function to class `WorkflowOrchestrator`
