@@ -170,7 +170,9 @@ class TestWorkflow:
 
     @staticmethod
     @pytest.mark.parametrize("template_path", WORKFLOW_TEMPLATE_OPTIONS.values())
-    def test_works_for_all_templates(tmp_path, project_config, template_path):
+    def test_write_to_file_works_for_all_templates(
+        tmp_path, project_config, template_path
+    ):
         workflow = Workflow.load_from_template(
             template_path=template_path,
             output_directory=tmp_path,
@@ -182,7 +184,9 @@ class TestWorkflow:
         assert file_path.read_text() != ""
 
     @staticmethod
-    def test_fails_when_yaml_does_not_exist(tmp_path, project_config):
+    def test_load_from_template_fails_when_yaml_does_not_exist(
+        tmp_path, project_config
+    ):
         file_path = tmp_path / "test.yaml"
         with pytest.raises(FileNotFoundError, match="test.yaml"):
             Workflow.load_from_template(
@@ -195,7 +199,9 @@ class TestWorkflow:
     @pytest.mark.parametrize(
         "raised_exc", [TemplateRenderingError, YamlParsingError, YamlOutputError]
     )
-    def test_raises_custom_exceptions(tmp_path, project_config, raised_exc):
+    def test_load_from_template_raises_custom_exceptions(
+        tmp_path, project_config, raised_exc
+    ):
         file_path = tmp_path / "test.yaml"
         file_path.write_text("dummy content")
 
@@ -210,7 +216,9 @@ class TestWorkflow:
                 )
 
     @staticmethod
-    def test_other_exceptions_raised_as_valuerror(tmp_path, project_config):
+    def test_load_from_template_reraises_other_exceptions_raised_as_valuerror(
+        tmp_path, project_config
+    ):
         file_path = tmp_path / "test.yaml"
         file_path.write_text("dummy content")
 
