@@ -24,6 +24,32 @@ from exasol.toolbox.util.workflows.workflow import (
 )
 
 
+@pytest.fixture
+def workflow_template_path(tmp_path):
+    template_directory = tmp_path / "templates"
+    template_directory.mkdir()
+    template_path = template_directory / "workflow.yml"
+
+    content = """
+    jobs:
+    check-release-tag:
+      name: Check Release Tag
+      uses: ./.github/workflows/check-release-tag.yml
+      permissions:
+        contents: read
+    """
+
+    template_path.write_text(cleandoc(content))
+    return template_path
+
+
+@pytest.fixture
+def workflow_output_directory(tmp_path):
+    output_directory = tmp_path / "output"
+    output_directory.mkdir()
+    return output_directory
+
+
 class TestWorkflow:
     @staticmethod
     def test_works_as_expected(tmp_path, project_config):
@@ -60,77 +86,87 @@ class TestWorkflow:
         assert output_file_path.read_text() == cleandoc(expected_yaml) + "\n"
 
     @staticmethod
-    def test_compare_to_file_has_identical_content(tmp_path):
-        template_path = WORKFLOW_TEMPLATE_OPTIONS["checks"]
-        content = template_path.read_text()
-        output_path = tmp_path / "workflow.yml"
-        output_path.write_text(f"\n{content}\n")
+    def test_compare_to_file_has_identical_content(
+        project_config, workflow_template_path, workflow_output_directory
+    ):
+        content = workflow_template_path.read_text()
+        output_path = workflow_output_directory / workflow_template_path.name
+        output_path.write_text(content)
 
-        workflow = Workflow(
-            template_path=template_path,
-            output_path=output_path,
-            content=f"\n{content}\n",
+        workflow = Workflow.load_from_template(
+            template_path=workflow_template_path,
+            output_directory=workflow_output_directory,
+            github_template_dict=project_config.github_template_dict,
         )
 
         assert workflow.compare_to_file() == ""
 
     @staticmethod
-    def test_compare_to_file_lacks_existing_content(tmp_path):
-        template_path = WORKFLOW_TEMPLATE_OPTIONS["checks"]
-        assert template_path.read_text() != ""
-        output_path = tmp_path / "does_not_exist_workflow.yml"
-
-        workflow = Workflow(
-            template_path=template_path,
-            output_path=output_path,
-            content="line 1",
+    def test_compare_to_file_lacks_existing_content(
+        project_config, workflow_template_path, workflow_output_directory
+    ):
+        workflow = Workflow.load_from_template(
+            template_path=workflow_template_path,
+            output_directory=workflow_output_directory,
+            github_template_dict=project_config.github_template_dict,
         )
 
         assert workflow.compare_to_file() == (
-            f"--- existing: {output_path.name}\n"
+            f"--- existing: {workflow.output_path.name}\n"
             "+++ generated\n"
-            "@@ -0,0 +1 @@\n"
-            "+line 1"
+            "@@ -0,0 +1,6 @@\n"
+            "+jobs:\n"
+            "+check-release-tag:\n"
+            "+  name: Check Release Tag\n"
+            "+  uses: ./.github/workflows/check-release-tag.yml\n"
+            "+  permissions:\n"
+            "+    contents: read"
         )
 
     @staticmethod
-    def test_compare_to_file_reports_diff(tmp_path):
-        template_path = WORKFLOW_TEMPLATE_OPTIONS["checks"]
-        output_path = tmp_path / "workflow.yml"
-        output_path.write_text("line 1\nline 3\n")
-        workflow = Workflow(
-            template_path=template_path,
-            output_path=output_path,
-            content="line 1\nline 2",
+    def test_compare_to_file_reports_diff(
+        project_config, workflow_template_path, workflow_output_directory
+    ):
+        output_path = workflow_output_directory / workflow_template_path.name
+        output_path.write_text("line 3\n")
+
+        workflow = Workflow.load_from_template(
+            template_path=workflow_template_path,
+            output_directory=workflow_output_directory,
+            github_template_dict=project_config.github_template_dict,
         )
 
-        diff = workflow.compare_to_file()
-
-        assert diff == (
-            f"--- existing: {output_path.name}\n"
+        assert workflow.compare_to_file() == (
+            f"--- existing: {workflow.output_path.name}\n"
             "+++ generated\n"
-            "@@ -1,2 +1,2 @@\n"
-            " line 1\n"
+            "@@ -1 +1,6 @@\n"
             "-line 3\n"
-            "+line 2"
+            "+jobs:\n"
+            "+check-release-tag:\n"
+            "+  name: Check Release Tag\n"
+            "+  uses: ./.github/workflows/check-release-tag.yml\n"
+            "+  permissions:\n"
+            "+    contents: read"
         )
 
     @staticmethod
-    def test_write_to_file_skips_up_to_date_file(tmp_path):
-        template_path = WORKFLOW_TEMPLATE_OPTIONS["checks"]
-        output_path = tmp_path / "workflow.yml"
-        output_path.write_text("line 1\nline 2\n")
-        workflow = Workflow(
-            template_path=template_path,
-            output_path=output_path,
-            content="line 1\nline 2",
+    def test_write_to_file_skips_up_to_date_file(
+        project_config, workflow_template_path, workflow_output_directory
+    ):
+        content = workflow_template_path.read_text()
+        output_path = workflow_output_directory / workflow_template_path.name
+        output_path.write_text(content)
+
+        workflow = Workflow.load_from_template(
+            template_path=workflow_template_path,
+            output_directory=workflow_output_directory,
+            github_template_dict=project_config.github_template_dict,
         )
 
         with patch.object(Path, "write_text") as write_text:
             workflow.write_to_file()
 
         write_text.assert_not_called()
-        assert output_path.read_text() == "line 1\nline 2\n"
 
     @staticmethod
     @pytest.mark.parametrize("template_path", WORKFLOW_TEMPLATE_OPTIONS.values())

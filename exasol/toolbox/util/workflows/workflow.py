@@ -78,9 +78,10 @@ class Workflow(BaseModel):
                 raise ValueError(f"Error rendering file: {template_path}") from ex
 
     def compare_to_file(self) -> str:
-        existing_content = (
-            self.output_path.read_text().strip() if self.output_path.exists() else ""
-        )
+        existing_content = ""
+        if self.output_path.is_file():
+            existing_content = self.output_path.read_text().strip()
+
         generated_content = self.content.strip()
 
         diff = difflib.unified_diff(
