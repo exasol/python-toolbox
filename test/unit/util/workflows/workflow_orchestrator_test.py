@@ -1,3 +1,6 @@
+from pathlib import Path
+from unittest.mock import patch
+
 import pytest
 
 from exasol.toolbox.util.workflows.exceptions import (
@@ -210,3 +213,55 @@ class TestIterWorkflows:
             "an entry '{'job_name': 'unknown-job'}' does not exist in"
         ) in str(ex.value)
         assert isinstance(ex.value.__cause__, YamlJobValueError)
+
+
+class TestGenerateWorkflows:
+    @staticmethod
+    def test_writes_all_workflows_on_fresh_project(project_config_without_patcher):
+        directory = project_config_without_patcher.github_workflow_directory
+        directory.mkdir(parents=True)
+
+        WorkflowOrchestrator(
+            workflow_choice="all",
+            config=project_config_without_patcher,
+        ).generate_workflows()
+
+        assert all(
+            (directory / f"{name}.yml").exists() for name in WORKFLOW_TEMPLATE_OPTIONS
+        )
+
+    @staticmethod
+    def test_does_not_write_when_all_workflows_are_up_to_date(
+        project_config_without_patcher,
+    ):
+        directory = project_config_without_patcher.github_workflow_directory
+        directory.mkdir(parents=True)
+
+        WorkflowOrchestrator(
+            workflow_choice="all",
+            config=project_config_without_patcher,
+        ).generate_workflows()
+
+        with patch.object(Path, "write_text") as write_text:
+            WorkflowOrchestrator(
+                workflow_choice="all",
+                config=project_config_without_patcher,
+            ).generate_workflows()
+
+        write_text.assert_not_called()
+
+    @staticmethod
+    def test_overwrites_existing_workflow_file(project_config_without_patcher):
+        directory = project_config_without_patcher.github_workflow_directory
+        directory.mkdir(parents=True)
+
+        workflow_name = "merge-gate"
+        workflow_path = directory / f"{workflow_name}.yml"
+        original_content = "line 3\n"
+        workflow_path.write_text(original_content)
+
+        WorkflowOrchestrator(
+            workflow_choice=workflow_name,
+            config=project_config_without_patcher,
+        ).generate_workflows()
+        assert workflow_path.read_text() != original_content
