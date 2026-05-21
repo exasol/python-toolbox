@@ -10,6 +10,8 @@ from typing import (
 
 from pydantic import BaseModel
 
+from exasol.toolbox.config import BaseConfig
+from exasol.toolbox.util.workflows.patch_workflow import WorkflowPatcher
 from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
 
 ALL: Final[str] = "all"
@@ -23,6 +25,7 @@ class WorkflowOrchestrator(BaseModel):
     """Orchestrate workflow rendering, comparison, and writing."""
 
     workflow_choice: WorkflowChoice
+    config: BaseConfig
 
     @cached_property
     def templates(self) -> Mapping[str, Path]:
@@ -33,3 +36,12 @@ class WorkflowOrchestrator(BaseModel):
         if self.workflow_choice == ALL:
             return WORKFLOW_TEMPLATE_OPTIONS
         return {self.workflow_choice: WORKFLOW_TEMPLATE_OPTIONS[self.workflow_choice]}
+
+    @cached_property
+    def workflow_patcher(self) -> WorkflowPatcher | None:
+        if not self.config.github_workflow_patcher_yaml:
+            return None
+        return WorkflowPatcher(
+            github_template_dict=self.config.github_template_dict,
+            file_path=self.config.github_workflow_patcher_yaml,
+        )

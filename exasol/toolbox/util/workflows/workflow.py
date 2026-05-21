@@ -22,7 +22,6 @@ from exasol.toolbox.util.workflows.exceptions import (
 )
 from exasol.toolbox.util.workflows.patch_workflow import (
     WorkflowCommentedMap,
-    WorkflowPatcher,
 )
 from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
 from exasol.toolbox.util.workflows.templates import validate_workflow_name
@@ -99,17 +98,14 @@ def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None
     Updates a selected workflow or all workflows.
     """
 
-    orchestrator = WorkflowOrchestrator(workflow_choice=workflow_choice)
+    orchestrator = WorkflowOrchestrator(
+        workflow_choice=workflow_choice,
+        config=config,
+    )
     workflow_dict = orchestrator.templates
     logger.info(f"Selected workflow(s) to update: {list(workflow_dict.keys())}")
 
-    workflow_patcher = None
-    if config.github_workflow_patcher_yaml:
-        workflow_patcher = WorkflowPatcher(
-            github_template_dict=config.github_template_dict,
-            file_path=config.github_workflow_patcher_yaml,
-        )
-
+    workflow_patcher = orchestrator.workflow_patcher
     is_new_project = not any(config.github_workflow_directory.glob("*.yml"))
     for workflow_name in workflow_dict:
         patch_yaml = None
