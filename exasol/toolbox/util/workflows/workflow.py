@@ -105,14 +105,9 @@ def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None
     workflow_dict = orchestrator.templates
     logger.info(f"Selected workflow(s) to update: {list(workflow_dict.keys())}")
 
-    workflow_patcher = orchestrator.workflow_patcher
     is_new_project = orchestrator.is_new_project
     for workflow_name in workflow_dict:
-        patch_yaml = None
-        if workflow_patcher:
-            patch_yaml = workflow_patcher.extract_by_workflow(
-                workflow_name=workflow_name
-            )
+        patch_yaml = orchestrator.patch_yaml_for_workflow(workflow_name=workflow_name)
 
         try:
             validate_workflow_name(workflow_name)

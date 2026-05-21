@@ -11,7 +11,10 @@ from typing import (
 from pydantic import BaseModel
 
 from exasol.toolbox.config import BaseConfig
-from exasol.toolbox.util.workflows.patch_workflow import WorkflowPatcher
+from exasol.toolbox.util.workflows.patch_workflow import (
+    WorkflowCommentedMap,
+    WorkflowPatcher,
+)
 from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
 
 ALL: Final[str] = "all"
@@ -52,3 +55,10 @@ class WorkflowOrchestrator(BaseModel):
             github_template_dict=self.config.github_template_dict,
             file_path=self.config.github_workflow_patcher_yaml,
         )
+
+    def _extract_workflow_patch(
+        self, workflow_name: str
+    ) -> WorkflowCommentedMap | None:
+        if self.workflow_patcher is None:
+            return None
+        return self.workflow_patcher.extract_by_workflow(workflow_name=workflow_name)
