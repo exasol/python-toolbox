@@ -72,7 +72,7 @@ class Workflow(BaseModel):
                 raise ValueError(f"Error rendering file: {file_path}") from ex
 
     def compare_to_file(self, file_path: Path) -> str:
-        existing_content = file_path.read_text().strip()
+        existing_content = file_path.read_text().strip() if file_path.exists() else ""
         generated_content = self.content.strip()
 
         diff = difflib.unified_diff(
@@ -85,6 +85,9 @@ class Workflow(BaseModel):
         return "\n".join(diff)
 
     def write_to_file(self, file_path: Path) -> None:
+        if self.compare_to_file(file_path=file_path) == "":
+            logger.debug("Skip up-to-date workflow file %s", file_path.name)
+            return
         logger.info("Write workflow file %s", file_path.name)
         file_path.write_text(self.content + "\n")
 

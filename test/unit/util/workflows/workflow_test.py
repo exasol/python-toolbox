@@ -1,4 +1,5 @@
 from inspect import cleandoc
+from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -81,6 +82,18 @@ class TestWorkflow:
             "-line 3\n"
             "+line 2"
         )
+
+    @staticmethod
+    def test_write_to_file_skips_up_to_date_file(tmp_path):
+        file_path = tmp_path / "workflow.yml"
+        file_path.write_text("line 1\nline 2\n")
+        workflow = Workflow(content="line 1\nline 2")
+
+        with patch.object(Path, "write_text") as write_text:
+            workflow.write_to_file(file_path=file_path)
+
+        write_text.assert_not_called()
+        assert file_path.read_text() == "line 1\nline 2\n"
 
     @staticmethod
     @pytest.mark.parametrize("template_path", WORKFLOW_TEMPLATE_OPTIONS.values())
