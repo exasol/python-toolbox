@@ -12,7 +12,11 @@ from pydantic import BaseModel
 
 from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.util.workflows import logger
-from exasol.toolbox.util.workflows.exceptions import NotMaintainedWorkflowError
+from exasol.toolbox.util.workflows.exceptions import (
+    InvalidWorkflowPatcherEntryError,
+    NotMaintainedWorkflowError,
+    YamlKeyError,
+)
 from exasol.toolbox.util.workflows.patch_workflow import (
     WorkflowCommentedMap,
     WorkflowPatcher,
@@ -64,9 +68,29 @@ class WorkflowOrchestrator(BaseModel):
     def _extract_workflow_patch(
         self, workflow_name: str
     ) -> WorkflowCommentedMap | None:
+        """
+        Return the patch data for a workflow, or ``None`` if no patcher is configured.
+        """
         if self.workflow_patcher is None:
             return None
         return self.workflow_patcher.extract_by_workflow(workflow_name=workflow_name)
+
+    def _load_generated_workflow(
+        self, template_path: Path, patch_yaml: WorkflowCommentedMap | None
+    ):
+        from exasol.toolbox.util.workflows.workflow import Workflow
+
+        try:
+            return Workflow.load_from_template(
+                template_path=template_path,
+                output_directory=self.config.github_workflow_directory,
+                github_template_dict=self.config.github_template_dict,
+                patch_yaml=patch_yaml,
+            )
+        except YamlKeyError as ex:
+            raise InvalidWorkflowPatcherEntryError(
+                file_path=self.config.github_workflow_patcher_yaml, entry=ex.entry
+            ) from ex
 
     def _skip_workflow(self, workflow_name: str, is_new_project: bool) -> bool:
         """

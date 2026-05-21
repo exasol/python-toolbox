@@ -15,7 +15,6 @@ from structlog.contextvars import (
 from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.util.workflows import logger
 from exasol.toolbox.util.workflows.exceptions import (
-    InvalidWorkflowPatcherEntryError,
     YamlError,
     YamlKeyError,
 )
@@ -112,15 +111,8 @@ def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None
         ):
             continue
 
-        try:
-            workflow = Workflow.load_from_template(
-                template_path=workflow_dict[workflow_name],
-                output_directory=config.github_workflow_directory,
-                github_template_dict=config.github_template_dict,
-                patch_yaml=patch_yaml,
-            )
-            workflow.write_to_file()
-        except YamlKeyError as ex:
-            raise InvalidWorkflowPatcherEntryError(
-                file_path=config.github_workflow_patcher_yaml, entry=ex.entry  # type: ignore
-            ) from ex
+        workflow = orchestrator._load_generated_workflow(
+            template_path=workflow_dict[workflow_name],
+            patch_yaml=patch_yaml,
+        )
+        workflow.write_to_file()
