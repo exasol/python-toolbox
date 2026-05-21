@@ -48,7 +48,7 @@ class TestWorkflow:
         input_file_path.write_text(content)
 
         workflow = Workflow.load_from_template(
-            file_path=input_file_path,
+            template_path=input_file_path,
             github_template_dict=project_config.github_template_dict,
         )
         output_file_path = tmp_path / f"{input_file_path.name}"
@@ -99,7 +99,7 @@ class TestWorkflow:
     @pytest.mark.parametrize("template_path", WORKFLOW_TEMPLATE_OPTIONS.values())
     def test_works_for_all_templates(tmp_path, project_config, template_path):
         workflow = Workflow.load_from_template(
-            file_path=template_path,
+            template_path=template_path,
             github_template_dict=project_config.github_template_dict,
         )
         file_path = tmp_path / f"{template_path.name}"
@@ -112,7 +112,7 @@ class TestWorkflow:
         file_path = tmp_path / "test.yaml"
         with pytest.raises(FileNotFoundError, match="test.yaml"):
             Workflow.load_from_template(
-                file_path=file_path,
+                template_path=file_path,
                 github_template_dict=project_config.github_template_dict,
             )
 
@@ -129,7 +129,7 @@ class TestWorkflow:
         ):
             with pytest.raises(raised_exc):
                 Workflow.load_from_template(
-                    file_path=file_path,
+                    template_path=file_path,
                     github_template_dict=project_config.github_template_dict,
                 )
 
@@ -143,7 +143,7 @@ class TestWorkflow:
         ):
             with pytest.raises(ValueError):
                 Workflow.load_from_template(
-                    file_path=file_path,
+                    template_path=file_path,
                     github_template_dict=project_config.github_template_dict,
                 )
 

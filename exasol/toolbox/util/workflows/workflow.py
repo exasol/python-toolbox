@@ -47,20 +47,20 @@ class Workflow(BaseModel):
     @classmethod
     def load_from_template(
         cls,
-        file_path: Path,
+        template_path: Path,
         github_template_dict: dict[str, Any],
         patch_yaml: WorkflowCommentedMap | None = None,
     ):
-        with bound_contextvars(template_file_name=file_path.name):
-            logger.debug("Load workflow template: %s", file_path.name)
+        with bound_contextvars(template_file_name=template_path.name):
+            logger.debug("Load workflow template: %s", template_path.name)
 
-            if not file_path.exists():
-                raise FileNotFoundError(file_path)
+            if not template_path.exists():
+                raise FileNotFoundError(template_path)
 
             try:
                 workflow_renderer = WorkflowRenderer(
                     github_template_dict=github_template_dict,
-                    file_path=file_path,
+                    file_path=template_path,
                     patch_yaml=patch_yaml,
                 )
                 workflow = workflow_renderer.render()
@@ -69,7 +69,7 @@ class Workflow(BaseModel):
                 raise ex
             except Exception as ex:
                 # Wrap all other "non-special" exceptions
-                raise ValueError(f"Error rendering file: {file_path}") from ex
+                raise ValueError(f"Error rendering file: {template_path}") from ex
 
     def compare_to_file(self, file_path: Path) -> str:
         existing_content = file_path.read_text().strip() if file_path.exists() else ""
@@ -136,7 +136,7 @@ def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None
 
         try:
             workflow = Workflow.load_from_template(
-                file_path=workflow_dict[workflow_name],
+                template_path=workflow_dict[workflow_name],
                 github_template_dict=config.github_template_dict,
                 patch_yaml=patch_yaml,
             )
