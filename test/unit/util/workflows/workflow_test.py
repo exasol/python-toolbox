@@ -60,33 +60,54 @@ class TestWorkflow:
         assert output_file_path.read_text() == cleandoc(expected_yaml) + "\n"
 
     @staticmethod
-    def test_compare_to_file_accepts_matching_content(tmp_path):
-        content = "line 1\nline 2"
-        file_path = tmp_path / "workflow.yml"
-        file_path.write_text(f"\n{content}\n")
+    def test_compare_to_file_has_identical_content(tmp_path):
+        template_path = WORKFLOW_TEMPLATE_OPTIONS["checks"]
+        content = template_path.read_text()
+        output_path = tmp_path / "workflow.yml"
+        output_path.write_text(f"\n{content}\n")
 
         workflow = Workflow(
-            template_path=file_path,
-            output_path=file_path,
+            template_path=template_path,
+            output_path=output_path,
             content=f"\n{content}\n",
         )
 
         assert workflow.compare_to_file() == ""
 
     @staticmethod
-    def test_compare_to_file_reports_diff(tmp_path):
-        file_path = tmp_path / "workflow.yml"
-        file_path.write_text("line 1\nline 3\n")
+    def test_compare_to_file_lacks_existing_content(tmp_path):
+        template_path = WORKFLOW_TEMPLATE_OPTIONS["checks"]
+        assert template_path.read_text() != ""
+        output_path = tmp_path / "does_not_exist_workflow.yml"
+
         workflow = Workflow(
-            template_path=file_path,
-            output_path=file_path,
+            template_path=template_path,
+            output_path=output_path,
+            content="line 1",
+        )
+
+        assert workflow.compare_to_file() == (
+            f"--- existing: {output_path.name}\n"
+            "+++ generated\n"
+            "@@ -0,0 +1 @@\n"
+            "+line 1"
+        )
+
+    @staticmethod
+    def test_compare_to_file_reports_diff(tmp_path):
+        template_path = WORKFLOW_TEMPLATE_OPTIONS["checks"]
+        output_path = tmp_path / "workflow.yml"
+        output_path.write_text("line 1\nline 3\n")
+        workflow = Workflow(
+            template_path=template_path,
+            output_path=output_path,
             content="line 1\nline 2",
         )
 
         diff = workflow.compare_to_file()
 
         assert diff == (
-            f"--- existing: {file_path.name}\n"
+            f"--- existing: {output_path.name}\n"
             "+++ generated\n"
             "@@ -1,2 +1,2 @@\n"
             " line 1\n"
@@ -96,11 +117,12 @@ class TestWorkflow:
 
     @staticmethod
     def test_write_to_file_skips_up_to_date_file(tmp_path):
-        file_path = tmp_path / "workflow.yml"
-        file_path.write_text("line 1\nline 2\n")
+        template_path = WORKFLOW_TEMPLATE_OPTIONS["checks"]
+        output_path = tmp_path / "workflow.yml"
+        output_path.write_text("line 1\nline 2\n")
         workflow = Workflow(
-            template_path=file_path,
-            output_path=file_path,
+            template_path=template_path,
+            output_path=output_path,
             content="line 1\nline 2",
         )
 
@@ -108,7 +130,7 @@ class TestWorkflow:
             workflow.write_to_file()
 
         write_text.assert_not_called()
-        assert file_path.read_text() == "line 1\nline 2\n"
+        assert output_path.read_text() == "line 1\nline 2\n"
 
     @staticmethod
     @pytest.mark.parametrize("template_path", WORKFLOW_TEMPLATE_OPTIONS.values())
