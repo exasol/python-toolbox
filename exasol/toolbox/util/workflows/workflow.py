@@ -1,10 +1,7 @@
 import difflib
-from collections.abc import Mapping
 from pathlib import Path
 from typing import (
-    Annotated,
     Any,
-    Final,
 )
 
 from pydantic import (
@@ -28,15 +25,11 @@ from exasol.toolbox.util.workflows.patch_workflow import (
     WorkflowPatcher,
 )
 from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
-from exasol.toolbox.util.workflows.templates import (
-    WORKFLOW_TEMPLATE_OPTIONS,
-    validate_workflow_name,
+from exasol.toolbox.util.workflows.templates import validate_workflow_name
+from exasol.toolbox.util.workflows.workflow_orchestrator import (
+    WorkflowChoice,
+    WorkflowOrchestrator,
 )
-
-ALL: Final[str] = "all"
-WORKFLOW_CHOICES: Final[list[str]] = [ALL, *WORKFLOW_TEMPLATE_OPTIONS.keys()]
-
-WorkflowChoice = Annotated[str, f"Should be a value from {WORKFLOW_CHOICES}"]
 
 
 class Workflow(BaseModel):
@@ -101,21 +94,13 @@ class Workflow(BaseModel):
         self.output_path.write_text(self.content + "\n")
 
 
-def _select_workflow_template(workflow_name: WorkflowChoice) -> Mapping[str, Path]:
-    """
-    Returns a mapping of workflow names to paths. Can be a single item or all workflow
-    templates.
-    """
-    if workflow_name == ALL:
-        return WORKFLOW_TEMPLATE_OPTIONS
-    return {workflow_name: WORKFLOW_TEMPLATE_OPTIONS[workflow_name]}
-
-
 def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None:
     """
     Updates a selected workflow or all workflows.
     """
-    workflow_dict = _select_workflow_template(workflow_choice)
+
+    orchestrator = WorkflowOrchestrator(workflow_choice=workflow_choice)
+    workflow_dict = orchestrator.templates
     logger.info(f"Selected workflow(s) to update: {list(workflow_dict.keys())}")
 
     workflow_patcher = None

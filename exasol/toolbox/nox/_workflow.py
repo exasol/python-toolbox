@@ -5,10 +5,8 @@ import argparse
 import nox
 from nox import Session
 
-from exasol.toolbox.util.workflows.workflow import (
-    WORKFLOW_CHOICES,
-    update_workflow,
-)
+from exasol.toolbox.util.workflows.workflow import update_workflow
+from exasol.toolbox.util.workflows.workflow_orchestrator import WORKFLOW_CHOICES
 from noxconfig import PROJECT_CONFIG
 
 
