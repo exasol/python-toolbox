@@ -11,11 +11,16 @@ from typing import (
 from pydantic import BaseModel
 
 from exasol.toolbox.config import BaseConfig
+from exasol.toolbox.util.workflows import logger
+from exasol.toolbox.util.workflows.exceptions import NotMaintainedWorkflowError
 from exasol.toolbox.util.workflows.patch_workflow import (
     WorkflowCommentedMap,
     WorkflowPatcher,
 )
-from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
+from exasol.toolbox.util.workflows.templates import (
+    WORKFLOW_TEMPLATE_OPTIONS,
+    validate_workflow_name,
+)
 
 ALL: Final[str] = "all"
 WorkflowChoice = Annotated[
@@ -62,3 +67,19 @@ class WorkflowOrchestrator(BaseModel):
         if self.workflow_patcher is None:
             return None
         return self.workflow_patcher.extract_by_workflow(workflow_name=workflow_name)
+
+    def _skip_workflow(self, workflow_name: str, is_new_project: bool) -> bool:
+        """
+        Return ``True`` if the workflow should be skipped because it is not maintained
+        by the PTB, otherwise return ``False``.
+        """
+        try:
+            validate_workflow_name(workflow_name)
+        except NotMaintainedWorkflowError:
+            if not is_new_project:
+                logger.debug(
+                    "Skipping not-maintained workflow in older project: %s",
+                    workflow_name,
+                )
+                return True
+        return False

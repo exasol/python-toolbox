@@ -16,7 +16,6 @@ from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.util.workflows import logger
 from exasol.toolbox.util.workflows.exceptions import (
     InvalidWorkflowPatcherEntryError,
-    NotMaintainedWorkflowError,
     YamlError,
     YamlKeyError,
 )
@@ -24,7 +23,6 @@ from exasol.toolbox.util.workflows.patch_workflow import (
     WorkflowCommentedMap,
 )
 from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
-from exasol.toolbox.util.workflows.templates import validate_workflow_name
 from exasol.toolbox.util.workflows.workflow_orchestrator import (
     WorkflowChoice,
     WorkflowOrchestrator,
@@ -107,17 +105,12 @@ def update_workflow(workflow_choice: WorkflowChoice, config: BaseConfig) -> None
 
     is_new_project = orchestrator.is_new_project
     for workflow_name in workflow_dict:
-        patch_yaml = orchestrator.patch_yaml_for_workflow(workflow_name=workflow_name)
+        patch_yaml = orchestrator._extract_workflow_patch(workflow_name=workflow_name)
 
-        try:
-            validate_workflow_name(workflow_name)
-        except NotMaintainedWorkflowError:
-            if not is_new_project:
-                logger.debug(
-                    "Skipping not-maintained workflow in older project: %s",
-                    workflow_name,
-                )
-                continue
+        if orchestrator._skip_workflow(
+            workflow_name=workflow_name, is_new_project=is_new_project
+        ):
+            continue
 
         try:
             workflow = Workflow.load_from_template(
