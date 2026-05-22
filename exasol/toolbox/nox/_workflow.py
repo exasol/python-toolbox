@@ -47,7 +47,7 @@ def check_workflow(session: Session) -> None:
         count = len(outdated_workflows)
         count_label = "workflow is" if count == 1 else "workflows are"
         workflow_list = "\n".join(f"- {workflow}" for workflow in outdated_workflows)
-        session.error(f"\n{count} {count_label} out of date:\n" f"{workflow_list}")
+        session.error(f"\n{count} {count_label} out of date:\n{workflow_list}")
 
 
 @nox.session(name="workflow:generate", python=False)
