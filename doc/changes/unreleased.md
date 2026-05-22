@@ -8,7 +8,7 @@
 
 ## Feature
 
-* #722: Added check in `workflow:generate` to compare the generated and existing content before writing out
+* #722: Added check in `workflow:generate` to compare the generated and existing content before writing out and nox session `workflow:check`
 
 ## Refactoring
 
