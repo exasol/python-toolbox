@@ -1,10 +1,14 @@
 from unittest.mock import patch
 
 import pytest
+from nox.sessions import _SessionQuit
 from pydantic import computed_field
 
 from exasol.toolbox.config import BaseConfig
-from exasol.toolbox.nox._workflow import generate_workflow
+from exasol.toolbox.nox._workflow import (
+    check_workflow,
+    generate_workflow,
+)
 from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
 from exasol.toolbox.util.workflows.workflow_orchestrator import ALL
 
@@ -76,3 +80,69 @@ class TestGenerateWorkflow:
                 generate_workflow(nox_session)
 
             assert "invalid choice: 'not-a-valid-name'" in capsys.readouterr().err
+
+
+class TestCheckWorkflow:
+    @staticmethod
+    @pytest.mark.parametrize(
+        "nox_session_runner_posargs",
+        [ALL],
+        indirect=["nox_session_runner_posargs"],
+    )
+    def test_passes_when_workflows_are_up_to_date_after_generation(
+        nox_session,
+        project_config_without_patcher,
+        capsys,
+        nox_session_runner_posargs,
+    ):
+        with patch(
+            "exasol.toolbox.nox._workflow.PROJECT_CONFIG",
+            new=project_config_without_patcher,
+        ):
+            generate_workflow(nox_session)
+            capsys.readouterr()
+
+            check_workflow(nox_session)
+
+        assert "--- existing:" not in capsys.readouterr().out
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "nox_session_runner_posargs",
+        [ALL],
+        indirect=["nox_session_runner_posargs"],
+    )
+    def test_raises_session_quit_when_workflows_are_out_of_date(
+        nox_session,
+        project_config_without_patcher,
+        nox_session_runner_posargs,
+    ):
+        with (
+            patch("exasol.toolbox.util.workflows.workflow_orchestrator.logger.info"),
+            patch(
+                "exasol.toolbox.nox._workflow.PROJECT_CONFIG",
+                new=project_config_without_patcher,
+            ),
+        ):
+            with pytest.raises(_SessionQuit) as exc:
+                check_workflow(nox_session)
+
+        assert str(exc.value) == (
+            "\n16 workflows are out of date:\n"
+            "- build-and-publish\n"
+            "- cd\n"
+            "- check-release-tag\n"
+            "- checks\n"
+            "- ci\n"
+            "- dependency-update\n"
+            "- fast-tests\n"
+            "- gh-pages\n"
+            "- matrix-all\n"
+            "- matrix-exasol\n"
+            "- matrix-python\n"
+            "- merge-gate\n"
+            "- periodic-validation\n"
+            "- pr-merge\n"
+            "- report\n"
+            "- slow-checks"
+        )

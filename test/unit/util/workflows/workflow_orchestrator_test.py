@@ -265,3 +265,46 @@ class TestGenerateWorkflows:
             config=project_config_without_patcher,
         ).generate_workflows()
         assert workflow_path.read_text() != original_content
+
+
+class TestFindDifferingWorkflows:
+    @staticmethod
+    def test_returns_empty_list_when_workflow_is_up_to_date(
+        project_config_without_patcher, capsys
+    ):
+        directory = project_config_without_patcher.github_workflow_directory
+        directory.mkdir(parents=True)
+
+        workflow_name = "merge-gate"
+        WorkflowOrchestrator(
+            workflow_choice=workflow_name,
+            config=project_config_without_patcher,
+        ).generate_workflows()
+        capsys.readouterr()
+
+        outdated_workflows = WorkflowOrchestrator(
+            workflow_choice=workflow_name,
+            config=project_config_without_patcher,
+        ).find_differing_workflows()
+
+        assert outdated_workflows == []
+        assert "--- existing:" not in capsys.readouterr().out
+
+    @staticmethod
+    def test_returns_workflow_name_and_prints_diff_when_workflow_differs(
+        project_config_without_patcher, capsys
+    ):
+        directory = project_config_without_patcher.github_workflow_directory
+        directory.mkdir(parents=True)
+
+        workflow_name = "merge-gate"
+        workflow_path = directory / f"{workflow_name}.yml"
+        workflow_path.write_text("line 3\n")
+
+        outdated_workflows = WorkflowOrchestrator(
+            workflow_choice=workflow_name,
+            config=project_config_without_patcher,
+        ).find_differing_workflows()
+
+        assert outdated_workflows == ["merge-gate"]
+        assert "--- existing: merge-gate.yml" in capsys.readouterr().out
