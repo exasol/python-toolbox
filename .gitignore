@@ -57,3 +57,8 @@ nosetests.xml
 
 # Emacs
 TAGS
+
+# AI
+.codex
+.serena
+specs/
