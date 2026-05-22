@@ -65,8 +65,8 @@ Maintained by the PTB
    * - ``checks.yml``
      - Workflow call
      - Executes many small & fast checks: builds documentation, validates
-       cross-references and links in the documentation to be valid, and runs various
-       linters (security, type checks, etc.).
+       cross-references and links in the documentation to be valid, runs various
+       linters (security, type checks, etc.), and validates PTB generated workflows.
    * - ``ci.yml``
      - Pull request
      - Executes the continuous integration suite by calling ``merge-gate.yml`` and
