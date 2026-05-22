@@ -16,12 +16,15 @@ The PTB ships with configurable GitHub workflow templates covering the most comm
 CI/CD setup variants for Python projects. The templates are defined in:
 `exasol/toolbox/templates/github/workflows <https://github.com/exasol/python-toolbox/tree/main/exasol/toolbox/templates/github/workflows>`__.
 
-The PTB provides a command line interface (CLI) for generating and updating actual
-workflows from the templates.
+The PTB provides a command line interface (CLI) for managing workflows from the templates.
 
 .. code-block:: bash
 
     poetry run -- nox -s workflow:generate --help
+    poetry run -- nox -s workflow:check --help
+
+Use ``workflow:generate`` to create or update workflows and ``workflow:check`` to
+compare the generated workflows against the files in ``.github/workflows``.
 
 .. attention::
 
