@@ -13,6 +13,7 @@ If this job is active in your CI, please double-check if additional files should
 
 * #722: Added check in `workflow:generate` to compare the generated and existing content before writing out and nox session `workflow:check`
 * #642: Added nox session `workflow:check` into the `checks.yml`
+* #698: Added a comment in the top of all workflows maintained by the PTB
 
 ## Refactoring
 
