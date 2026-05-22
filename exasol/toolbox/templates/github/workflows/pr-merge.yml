@@ -1,3 +1,4 @@
+(( workflow_header ))
 name: PR-Merge
 
 on:
