@@ -11,7 +11,15 @@ from exasol.toolbox.util.workflows.templates import (
     NOT_MAINTAINED_WORKFLOW_NAMES,
     WORKFLOW_TEMPLATE_OPTIONS,
 )
+from exasol.toolbox.util.workflows.workflow import Workflow
 from exasol.toolbox.util.workflows.workflow_orchestrator import WorkflowOrchestrator
+
+
+def _remove_header(template_text: str) -> str:
+    """
+    Remove the Jinja header placeholder line from a workflow template.
+    """
+    return template_text.split("\n", 1)[1].strip()
 
 
 class TestTemplates:
@@ -102,7 +110,10 @@ class TestIterWorkflows:
         assert len(result) == 1
         assert result[0].template_path == WORKFLOW_TEMPLATE_OPTIONS[workflow_name]
         assert result[0].output_path.name == f"{workflow_name}.yml"
-        assert result[0].content[:10] == input_text[:10]
+        assert (
+            Workflow._normalize_content(result[0].content)[:10]
+            == _remove_header(input_text)[:10]
+        )
 
     @staticmethod
     def test_works_as_expected_with_relevant_patcher(project_config, remove_job_yaml):
@@ -121,7 +132,10 @@ class TestIterWorkflows:
         result = list(result)
         assert len(result) == 1
         assert result[0].output_path.name == f"{workflow_name}.yml"
-        assert result[0].content[:10] == input_text[:10]
+        assert (
+            Workflow._normalize_content(result[0].content)[:10]
+            == _remove_header(input_text)[:10]
+        )
         assert removed_job_name not in result[0].content
 
     @staticmethod
@@ -140,7 +154,10 @@ class TestIterWorkflows:
         result = list(result)
         assert len(result) == 1
         assert result[0].output_path.name == f"{workflow_name}.yml"
-        assert result[0].content[:10] == input_text[:10]
+        assert (
+            Workflow._normalize_content(result[0].content)[:10]
+            == _remove_header(input_text)[:10]
+        )
 
     @staticmethod
     def test_not_maintained_workflows_added_to_new_project(
