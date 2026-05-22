@@ -24,7 +24,7 @@ The PTB provides a command line interface (CLI) for managing workflows from the 
     poetry run -- nox -s workflow:check --help
 
 Use ``workflow:generate`` to create or update workflows and ``workflow:check`` to
-compare the generated workflows against the files in ``.github/workflows``.
+compare the rendered workflow templates against the files in ``.github/workflows``.
 
 .. attention::
 
