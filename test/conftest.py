@@ -1,7 +1,6 @@
 import json
 import subprocess
 from inspect import cleandoc
-from pathlib import Path
 
 import pytest
 
