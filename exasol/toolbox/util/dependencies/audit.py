@@ -171,9 +171,9 @@ def export_dependencies_to_file(output_file: Path, working_directory: Path) -> N
     Export all dependencies to a requirements.txt format
 
     The default for `poetry export` is to only include the main dependencies and their
-    transitive dependencies, by adding `--all-groups` and `all-extras` we get
+    transitive dependencies. By adding `--all-groups` and `--all-extras` we get
     all dependencies defined in groups, like dev dependencies, and all optional
-    dependencies.
+    dependencies. We keep hashes so `pip-audit` can skip pip-based resolution.
     """
     command = [
         "poetry",
@@ -181,7 +181,6 @@ def export_dependencies_to_file(output_file: Path, working_directory: Path) -> N
         "--format=requirements.txt",
         "--all-groups",
         "--all-extras",
-        "--without-hashes",
         "-o",
         str(output_file),
     ]
@@ -213,15 +212,22 @@ def audit_poetry_files(working_directory: Path) -> str:
         requirements_path = tmpdir / "requirements.txt"
         export_dependencies_to_file(requirements_path, working_directory)
 
-        # CLI option `--disable-pip` skips dependency resolution in pip.  The
+        # CLI option `--disable-pip` skips dependency resolution in pip. The
         # option can be used with hashed requirements files to avoid
-        # `pip-audit` installing an isolated environment and speed up the
-        # audit significantly.
+        # `pip-audit` installing an isolated environment and to sidestep the
+        # broken copied-interpreter path in this environment.
         #
         # In real use scenarios of the PTB we usually have hashed
         # requirements. Unfortunately this is not the case for the example
         # project created in the integration tests.
-        command = ["pip-audit", "-r", requirements_path.name, "-f", "json"]
+        command = [
+            "pip-audit",
+            "--disable-pip",
+            "-r",
+            requirements_path.name,
+            "-f",
+            "json",
+        ]
         output = subprocess.run(
             command,
             capture_output=True,

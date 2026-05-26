@@ -1,5 +1,4 @@
 import json
-import re
 from inspect import cleandoc
 from pathlib import Path
 from subprocess import CompletedProcess
@@ -126,60 +125,43 @@ class TestVulnerability:
         )
 
 
-@pytest.fixture(scope="module")
-def new_pyproject_toml(create_new_poetry_project, project_path):
-    return (project_path / "pyproject.toml").read_text()
-
-
 class TestExportDependenciesToFile:
-    PACKAGES = [
-        "astroid",
-        "black",  # group - analysis
-        "click",
-        "colorama",
-        "dill",
-        "isort",  # group - dev
-        "mccabe",
-        "mypy-extensions",
-        "packaging",
-        "pathspec",
-        "platformdirs",
-        "pylint",  # main
-        "ruff",  # optional-dependencies
-        "tomli",
-        "tomlkit",
-        "typing-extensions",
-    ]
-
     @staticmethod
-    def extract_package_names(content) -> list[str]:
-        return re.findall(
-            r"^([a-zA-Z0-9\-_]+)(?===|>=|<=|>|<|@)", content, re.MULTILINE
-        )
-
-    @pytest.mark.parametrize(
-        "pyproject_content",
-        [
-            "poetry_2_1_pyproject_text",
-            "poetry_2_3_pyproject_text",
-            "new_pyproject_toml",
-        ],
-    )
-    def test_poetry_export_versions(
-        self, install_poetry_export, tmp_path, pyproject_content, request
-    ):
-        content_str = request.getfixturevalue(pyproject_content)
-        (tmp_path / "pyproject.toml").write_text(content_str)
+    @mock.patch("subprocess.run")
+    def test_poetry_export_includes_hashes(mock_run, tmp_path):
         requirements_txt = tmp_path / "requirements.txt"
+        result = MagicMock(CompletedProcess)
+        result.returncode = 0
+        result.stdout = ""
+        result.stderr = ""
 
-        install_poetry_export(cwd=tmp_path)
+        def write_hashes(command, **kwargs):
+            output_file = Path(command[command.index("-o") + 1])
+            output_file.write_text(
+                "alabaster==0.7.16 --hash=sha256:deadbeef\n"
+                "click==8.4.0 --hash=sha256:cafebabe\n"
+            )
+            return result
+
+        mock_run.side_effect = write_hashes
 
         export_dependencies_to_file(
             output_file=requirements_txt, working_directory=tmp_path
         )
 
-        content = requirements_txt.read_text()
-        assert self.extract_package_names(content) == self.PACKAGES
+        assert requirements_txt.read_text().splitlines() == [
+            "alabaster==0.7.16 --hash=sha256:deadbeef",
+            "click==8.4.0 --hash=sha256:cafebabe",
+        ]
+        assert mock_run.call_args.args[0] == [
+            "poetry",
+            "export",
+            "--format=requirements.txt",
+            "--all-groups",
+            "--all-extras",
+            "-o",
+            str(requirements_txt),
+        ]
 
 
 class TestAuditPoetryFiles:
@@ -213,6 +195,14 @@ class TestAuditPoetryFiles:
 
         result = audit_poetry_files(working_directory=Path())
         assert result == mock_pip_audit.stdout
+        assert mock_run.call_args_list[1].args[0] == [
+            "pip-audit",
+            "--disable-pip",
+            "-r",
+            "requirements.txt",
+            "-f",
+            "json",
+        ]
 
     @staticmethod
     @mock.patch("subprocess.run")
