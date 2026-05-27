@@ -68,19 +68,11 @@ def poetry_install(run_command, poetry_path, ptb_wheel):
     # template before releasing the PTB. We install a built wheel from the checked-out
     # PTB instead of using an editable dependency so the fixture mirrors release-like
     # installation behavior.
+    # Poetry must see the unreleased wheel before it resolves the template project's
+    # dependency on exasol-toolbox, otherwise it tries PyPI and fails when the version
+    # is not published yet. This happens on the preparation of a new release.
+    run_command([poetry_path, "add", "--group", "dev", str(ptb_wheel)])
     run_command([poetry_path, "install"])
-    run_command(
-        [
-            poetry_path,
-            "run",
-            "--",
-            "pip",
-            "install",
-            "--no-deps",
-            "--force-reinstall",
-            str(ptb_wheel),
-        ]
-    )
 
 
 @pytest.fixture(scope="session")
