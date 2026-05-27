@@ -73,6 +73,19 @@ def poetry_install(run_command, poetry_path, ptb_wheel):
     # is not published yet. This happens on the preparation of a new release.
     run_command([poetry_path, "add", "--group", "dev", str(ptb_wheel)])
     run_command([poetry_path, "install"])
+    # safety to ensure the prepared wheel is used
+    run_command(
+        [
+            poetry_path,
+            "run",
+            "--",
+            "pip",
+            "install",
+            "--no-deps",
+            "--force-reinstall",
+            str(ptb_wheel),
+        ]
+    )
 
 
 @pytest.fixture(scope="session")
