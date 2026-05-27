@@ -1,4 +1,5 @@
 import inspect
+import re
 import warnings
 from collections.abc import Callable
 from pathlib import Path
@@ -19,11 +20,19 @@ from pydantic import (
 )
 from pydantic_core.core_schema import ValidationInfo
 
+from exasol.toolbox import __version__
 from exasol.toolbox.nox.plugin import (
     METHODS_SPECIFIED_FOR_HOOKS,
     PLUGIN_ATTR_NAME,
 )
 from exasol.toolbox.util.version import Version
+
+WORKFLOW_HEADER_PREFIX = (
+    "# Generated and maintained by the exasol-toolbox.\n"
+    "# Last generated with exasol-toolbox version "
+)
+
+WORKFLOW_HEADER_PATTERN = rf"\A{re.escape(WORKFLOW_HEADER_PREFIX)}[^\n]+\.\n"
 
 
 def get_methods_with_hook_implementation(
@@ -291,6 +300,7 @@ class BaseConfig(BaseModel):
             "minimum_python_version": self.minimum_python_version,
             "os_version": self.os_version,
             "python_versions": self.python_versions,
+            "workflow_header": f"{WORKFLOW_HEADER_PREFIX}{__version__}.",
             "workflow_extension": {
                 "fast_tests": fast_tests_extension.is_file(),
                 "merge_gate": merge_gate_extension.is_file(),

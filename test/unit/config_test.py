@@ -1,3 +1,4 @@
+import re
 from collections.abc import Iterable
 from pathlib import Path
 from unittest.mock import Mock
@@ -28,8 +29,15 @@ class TestBaseConfig:
     @staticmethod
     def test_works_as_defined(tmp_path, test_project_config_factory):
         config = test_project_config_factory()
+
         root_path = config.root_path
-        assert config.model_dump() == {
+        config_dump = config.model_dump()
+        workflow_header = config_dump["github_template_dict"].pop("workflow_header")
+        assert re.sub(r"version [^\n]+\.", "version X.Y.Z.", workflow_header) == (
+            "# Generated and maintained by the exasol-toolbox.\n"
+            "# Last generated with exasol-toolbox version X.Y.Z."
+        )
+        assert config_dump == {
             "add_to_excluded_python_paths": (),
             "create_major_version_tags": False,
             "dependency_manager": {"name": "poetry", "version": "2.3.0"},
