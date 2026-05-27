@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
+from exasol.toolbox.config import WORKFLOW_HEADER_PREFIX
 from exasol.toolbox.util.workflows.exceptions import (
     TemplateRenderingError,
     YamlOutputError,
@@ -206,6 +207,46 @@ class TestWorkflow:
                     output_directory=tmp_path,
                     github_template_dict=project_config.github_template_dict,
                 )
+
+
+class TestNormalizeContent:
+    @staticmethod
+    def test_strips_workflow_header_when_requested():
+        content = (
+            f"{WORKFLOW_HEADER_PREFIX}8.0.0.\n\n"
+            "jobs:\n"
+            "  build:\n"
+            "    runs-on: ubuntu-24.04\n"
+        )
+
+        assert Workflow._normalize_content(content, strip_header=True) == (
+            "jobs:\n" "  build:\n" "    runs-on: ubuntu-24.04"
+        )
+
+    @staticmethod
+    def test_keeps_workflow_header_when_not_requested():
+        content = (
+            f"{WORKFLOW_HEADER_PREFIX}8.0.0.\n\n"
+            "jobs:\n"
+            "  build:\n"
+            "    runs-on: ubuntu-24.04\n"
+        )
+
+        assert Workflow._normalize_content(content, strip_header=False) == (
+            f"{WORKFLOW_HEADER_PREFIX}8.0.0.\n\n"
+            "jobs:\n"
+            "  build:\n"
+            "    runs-on: ubuntu-24.04"
+        )
+
+    @staticmethod
+    @pytest.mark.parametrize("strip_header", [True, False])
+    def test_always_strips_outer_whitespace(strip_header):
+        content = "  jobs:\n    build:\n      runs-on: ubuntu-24.04\n\n"
+
+        assert Workflow._normalize_content(content, strip_header=strip_header) == (
+            "jobs:\n" "    build:\n" "      runs-on: ubuntu-24.04"
+        )
 
     @staticmethod
     def test_load_from_template_reraises_other_exceptions_raised_as_valuerror(

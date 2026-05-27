@@ -11,7 +11,15 @@ from exasol.toolbox.util.workflows.templates import (
     NOT_MAINTAINED_WORKFLOW_NAMES,
     WORKFLOW_TEMPLATE_OPTIONS,
 )
+from exasol.toolbox.util.workflows.workflow import Workflow
 from exasol.toolbox.util.workflows.workflow_orchestrator import WorkflowOrchestrator
+
+
+def _remove_header(template_text: str) -> str:
+    """
+    Remove the Jinja header placeholder line from a workflow template.
+    """
+    return template_text.split("\n", 1)[1].strip()
 
 
 class TestTemplates:
@@ -102,7 +110,10 @@ class TestIterWorkflows:
         assert len(result) == 1
         assert result[0].template_path == WORKFLOW_TEMPLATE_OPTIONS[workflow_name]
         assert result[0].output_path.name == f"{workflow_name}.yml"
-        assert result[0].content[:10] == input_text[:10]
+        assert (
+            Workflow._normalize_content(result[0].content)[:10]
+            == _remove_header(input_text)[:10]
+        )
 
     @staticmethod
     def test_works_as_expected_with_relevant_patcher(project_config, remove_job_yaml):
@@ -121,7 +132,10 @@ class TestIterWorkflows:
         result = list(result)
         assert len(result) == 1
         assert result[0].output_path.name == f"{workflow_name}.yml"
-        assert result[0].content[:10] == input_text[:10]
+        assert (
+            Workflow._normalize_content(result[0].content)[:10]
+            == _remove_header(input_text)[:10]
+        )
         assert removed_job_name not in result[0].content
 
     @staticmethod
@@ -140,7 +154,10 @@ class TestIterWorkflows:
         result = list(result)
         assert len(result) == 1
         assert result[0].output_path.name == f"{workflow_name}.yml"
-        assert result[0].content[:10] == input_text[:10]
+        assert (
+            Workflow._normalize_content(result[0].content)[:10]
+            == _remove_header(input_text)[:10]
+        )
 
     @staticmethod
     def test_not_maintained_workflows_added_to_new_project(
@@ -265,3 +282,46 @@ class TestGenerateWorkflows:
             config=project_config_without_patcher,
         ).generate_workflows()
         assert workflow_path.read_text() != original_content
+
+
+class TestFindDifferingWorkflows:
+    @staticmethod
+    def test_returns_empty_list_when_workflow_is_up_to_date(
+        project_config_without_patcher, capsys
+    ):
+        directory = project_config_without_patcher.github_workflow_directory
+        directory.mkdir(parents=True)
+
+        workflow_name = "merge-gate"
+        WorkflowOrchestrator(
+            workflow_choice=workflow_name,
+            config=project_config_without_patcher,
+        ).generate_workflows()
+        capsys.readouterr()
+
+        outdated_workflows = WorkflowOrchestrator(
+            workflow_choice=workflow_name,
+            config=project_config_without_patcher,
+        ).find_differing_workflows()
+
+        assert outdated_workflows == []
+        assert "--- existing:" not in capsys.readouterr().out
+
+    @staticmethod
+    def test_returns_workflow_name_and_prints_diff_when_workflow_differs(
+        project_config_without_patcher, capsys
+    ):
+        directory = project_config_without_patcher.github_workflow_directory
+        directory.mkdir(parents=True)
+
+        workflow_name = "merge-gate"
+        workflow_path = directory / f"{workflow_name}.yml"
+        workflow_path.write_text("line 3\n")
+
+        outdated_workflows = WorkflowOrchestrator(
+            workflow_choice=workflow_name,
+            config=project_config_without_patcher,
+        ).find_differing_workflows()
+
+        assert outdated_workflows == ["merge-gate"]
+        assert "--- existing: merge-gate.yml" in capsys.readouterr().out

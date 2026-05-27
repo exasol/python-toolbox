@@ -1,3 +1,4 @@
+(( workflow_header ))
 name: Build Matrix (Exasol)
 
 on:

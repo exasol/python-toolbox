@@ -87,6 +87,12 @@ Add all Workflows to Your Project
 
     poetry run -- nox -s workflow:generate -- all
 
+After regenerating the workflows, you can verify that they are up-to-date with:
+
+.. code-block:: shell
+
+    poetry run -- nox -s workflow:check -- all
+
 .. warning::
     Some workflows depend on other workflows. Please ensure you have all
     the required workflows if you do not install all of them.

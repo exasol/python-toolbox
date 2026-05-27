@@ -129,3 +129,22 @@ class WorkflowOrchestrator(BaseModel):
         """
         for workflow in self._iter_workflows():
             workflow.write_to_file()
+
+    def find_differing_workflows(self) -> list[str]:
+        """
+        Find selected workflows that differ from the generated output.
+
+        Returns the names of the workflows that differ from the file on disk.
+        """
+        outdated_workflows: list[str] = []
+        for workflow in self._iter_workflows():
+            comparison = workflow.compare_to_file()
+            if comparison != "":
+                workflow_name = workflow.output_path.stem
+                outdated_workflows.append(workflow_name)
+                logger.info(
+                    "Workflow %s differs from rendered template: \n%s",
+                    workflow_name,
+                    comparison,
+                )
+        return outdated_workflows

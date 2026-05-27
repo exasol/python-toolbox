@@ -1,3 +1,4 @@
+(( workflow_header ))
 name: Status Report
 
 on:
