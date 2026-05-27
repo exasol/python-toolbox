@@ -68,9 +68,6 @@ def poetry_install(run_command, poetry_path, ptb_wheel):
     # template before releasing the PTB. We install a built wheel from the checked-out
     # PTB instead of using an editable dependency so the fixture mirrors release-like
     # installation behavior.
-    # This is needed due to pysonar hard-pinning requests. Without this addition,
-    # the selected requests has an active vulnerability.
-    run_command([poetry_path, "add", "--group", "dev", "requests>=2.33.0"])
     run_command([poetry_path, "install"])
     run_command(
         [
