@@ -3,7 +3,7 @@
 ## Summary
 
 This patch release resolves a bug found in `dependency-update.yml`. This was introduced
-in 8.0.0.
+in 8.1.0.
 
 ## Bugfix
 
