@@ -140,6 +140,11 @@ class WorkflowOrchestrator(BaseModel):
         for workflow in self._iter_workflows():
             comparison = workflow.compare_to_file()
             if comparison != "":
-                outdated_workflows.append(workflow.output_path.stem)
-                print(comparison)
+                workflow_name = workflow.output_path.stem
+                outdated_workflows.append(workflow_name)
+                logger.info(
+                    "Workflow %s differs from rendered template: \n%s",
+                    workflow_name,
+                    comparison,
+                )
         return outdated_workflows
