@@ -1,8 +1,6 @@
 import json
-import os
 import subprocess
 from inspect import cleandoc
-from pathlib import Path
 
 import pytest
 
@@ -23,20 +21,6 @@ def poetry_path() -> str:
         ["which", "poetry"], capture_output=True, text=True, check=True
     )
     return result.stdout.strip()
-
-
-@pytest.fixture
-def install_poetry_export(poetry_path, monkeypatch):
-    monkeypatch.setenv("PATH", str(Path(poetry_path).parent), prepend=os.pathsep)
-
-    def _install(cwd):
-        subprocess.run(
-            [poetry_path, "self", "add", "poetry-plugin-export"],
-            cwd=cwd,
-            check=True,
-        )
-
-    return _install
 
 
 class SampleVulnerability:

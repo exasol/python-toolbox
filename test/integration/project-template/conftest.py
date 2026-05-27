@@ -19,6 +19,22 @@ def package_name():
     return "package"
 
 
+@pytest.fixture(scope="session")
+def ptb_wheel_dir(cwd):
+    return cwd / "ptb-wheel"
+
+
+@pytest.fixture(scope="session")
+def ptb_wheel(poetry_path, ptb_wheel_dir):
+    ptb_wheel_dir.mkdir(parents=True, exist_ok=True)
+    subprocess.run(
+        [poetry_path, "build", "--output", ptb_wheel_dir],
+        cwd=PROJECT_CONFIG.root_path,
+        check=True,
+    )
+    return min(ptb_wheel_dir.glob("exasol_toolbox-*.whl"))
+
+
 @pytest.fixture(scope="session", autouse=True)
 def new_project(cwd, package_name):
     project_name = "project"
@@ -47,26 +63,27 @@ def new_project(cwd, package_name):
 
 
 @pytest.fixture(scope="session", autouse=True)
-def poetry_install(run_command, poetry_path):
+def poetry_install(run_command, poetry_path, ptb_wheel):
     # The tests want to verify the current branch of the PTB incl. its cookiecutter
-    # template before releasing the PTB. The following command therefore modifies the
-    # dependency to the PTB itself in the pyproject.toml file by replacing the latest
-    # released PTB version with the current checked-out branch in
-    # PROJECT_CONFIG.root_path:
-    run_command(
-        [
-            poetry_path,
-            "add",
-            "--group",
-            "dev",
-            "--editable",
-            str(PROJECT_CONFIG.root_path),
-        ]
-    )
+    # template before releasing the PTB. We install a built wheel from the checked-out
+    # PTB instead of using an editable dependency so the fixture mirrors release-like
+    # installation behavior.
     # This is needed due to pysonar hard-pinning requests. Without this addition,
     # the selected requests has an active vulnerability.
     run_command([poetry_path, "add", "--group", "dev", "requests>=2.33.0"])
     run_command([poetry_path, "install"])
+    run_command(
+        [
+            poetry_path,
+            "run",
+            "--",
+            "pip",
+            "install",
+            "--no-deps",
+            "--force-reinstall",
+            str(ptb_wheel),
+        ]
+    )
 
 
 @pytest.fixture(scope="session")
