@@ -11,7 +11,27 @@ import pytest
 from exasol.toolbox.util.dependencies.audit import (
     PipAuditEntry,
     audit_poetry_files,
+    export_dependencies_to_file,
 )
+
+EXPORT_PACKAGES = [
+    "astroid",
+    "black",  # group - analysis
+    "click",
+    "colorama",
+    "dill",
+    "isort",  # group - dev
+    "mccabe",
+    "mypy-extensions",
+    "packaging",
+    "pathspec",
+    "platformdirs",
+    "pylint",  # main
+    "ruff",  # optional-dependencies
+    "tomli",
+    "tomlkit",
+    "typing-extensions",
+]
 
 
 def aux_subprocess(*cmd, **kwargs) -> subprocess.CompletedProcess:
@@ -87,6 +107,39 @@ class PoetryProject:
 
 
 @pytest.fixture
+def create_export_poetry_project(tmp_path, poetry_path, ptb_minimum_python_version):
+    project = PoetryProject(poetry_path, tmp_path / "export").create()
+    project.set_minimum_python_version(ptb_minimum_python_version)
+
+    aux_subprocess(project.poetry, "add", "pylint==3.3.7", cwd=project.dir)
+    aux_subprocess(
+        project.poetry, "add", "--group", "dev", "isort==6.0.1", cwd=project.dir
+    )
+    aux_subprocess(
+        project.poetry,
+        "add",
+        "--group",
+        "analysis",
+        "black==25.1.0",
+        cwd=project.dir,
+    )
+    aux_subprocess(
+        project.poetry,
+        "add",
+        "ruff@0.14.14",
+        "--optional",
+        "ruff",
+        cwd=project.dir,
+    )
+    project.add_to_toml("""
+        [tool.poetry.requires-plugins]
+        poetry-plugin-export = ">=1.8"
+        """)
+    project.install()
+    return project.dir
+
+
+@pytest.fixture
 def create_poetry_project(
     tmp_path, sample_vulnerability, poetry_path, ptb_minimum_python_version
 ):
@@ -119,6 +172,26 @@ def without_vuln_descriptions(dep: PipAuditEntry):
 def find_dependency(dependencies: list[PipAuditEntry], name: str) -> PipAuditEntry:
     generator = (d for d in dependencies if d["name"] == name)
     return next(generator)
+
+
+class TestExportDependenciesToFile:
+    @staticmethod
+    def extract_package_names(content: str) -> list[str]:
+        return re.findall(
+            r"^([a-zA-Z0-9\-_]+)(?===|>=|<=|>|<|@)", content, re.MULTILINE
+        )
+
+    def test_poetry_export_versions(self, create_export_poetry_project, tmp_path):
+        requirements_txt = tmp_path / "requirements.txt"
+
+        export_dependencies_to_file(
+            output_file=requirements_txt,
+            working_directory=create_export_poetry_project,
+        )
+
+        content = requirements_txt.read_text()
+        assert self.extract_package_names(content) == EXPORT_PACKAGES
+        assert "--hash=" in content
 
 
 def test_pip_audit(create_poetry_project, sample_vulnerability):
