@@ -42,7 +42,7 @@ jobs:
         run: |
           set -o pipefail
           poetry self add poetry-plugin-export
-          poetry run -- nox -s dependency:audit 2>&1 | tee vulnerabilities.json
+          poetry run -- nox -s dependency:audit 2>&1 | tee /dev/stderr | sed -n '/^\[/,$p' > vulnerabilities.json
           LENGTH=$(jq 'length' vulnerabilities.json)
           echo "count=$LENGTH" >> "$GITHUB_OUTPUT"
 
