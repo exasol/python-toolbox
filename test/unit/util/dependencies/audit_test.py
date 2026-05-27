@@ -1,4 +1,5 @@
 import json
+import re
 from inspect import cleandoc
 from pathlib import Path
 from subprocess import CompletedProcess
@@ -126,22 +127,61 @@ class TestVulnerability:
 
 
 class TestExportDependenciesToFile:
+    PACKAGES = [
+        "astroid",
+        "black",  # group - analysis
+        "click",
+        "colorama",
+        "dill",
+        "isort",  # group - dev
+        "mccabe",
+        "mypy-extensions",
+        "packaging",
+        "pathspec",
+        "platformdirs",
+        "pylint",  # main
+        "ruff",  # optional-dependencies
+        "tomli",
+        "tomlkit",
+        "typing-extensions",
+    ]
+
+    @staticmethod
+    def extract_package_names(content) -> list[str]:
+        return re.findall(
+            r"^([a-zA-Z0-9\-_]+)(?===|>=|<=|>|<|@)", content, re.MULTILINE
+        )
+
     @staticmethod
     @mock.patch("subprocess.run")
-    def test_poetry_export_includes_hashes(mock_run, tmp_path):
+    def test_poetry_export_versions(mock_run, tmp_path):
         requirements_txt = tmp_path / "requirements.txt"
-        result = MagicMock(CompletedProcess)
-        result.returncode = 0
-        result.stdout = ""
-        result.stderr = ""
+        mock_run.return_value = MagicMock(CompletedProcess)
+        mock_run.return_value.returncode = 0
+        mock_run.return_value.stdout = ""
+        mock_run.return_value.stderr = ""
 
         def write_hashes(command, **kwargs):
             output_file = Path(command[command.index("-o") + 1])
             output_file.write_text(
-                "alabaster==0.7.16 --hash=sha256:deadbeef\n"
-                "click==8.4.0 --hash=sha256:cafebabe\n"
+                "astroid==4.0.4 --hash=sha256:deadbeef\n"
+                "black==26.5.1 --hash=sha256:cafebabe\n"
+                "click==8.4.0 --hash=sha256:deadbeef\n"
+                "colorama==0.4.6 --hash=sha256:cafebabe\n"
+                "dill==0.4.1 --hash=sha256:deadbeef\n"
+                "isort==7.0.0 --hash=sha256:cafebabe\n"
+                "mccabe==0.7.0 --hash=sha256:deadbeef\n"
+                "mypy-extensions==1.1.0 --hash=sha256:cafebabe\n"
+                "packaging==26.2 --hash=sha256:deadbeef\n"
+                "pathspec==1.1.1 --hash=sha256:cafebabe\n"
+                "platformdirs==4.9.6 --hash=sha256:deadbeef\n"
+                "pylint==4.0.5 --hash=sha256:cafebabe\n"
+                "ruff==0.14.14 --hash=sha256:deadbeef\n"
+                "tomli==2.4.1 --hash=sha256:cafebabe\n"
+                "tomlkit==0.15.0 --hash=sha256:deadbeef\n"
+                "typing-extensions==4.15.0 --hash=sha256:cafebabe\n"
             )
-            return result
+            return mock_run.return_value
 
         mock_run.side_effect = write_hashes
 
@@ -149,10 +189,26 @@ class TestExportDependenciesToFile:
             output_file=requirements_txt, working_directory=tmp_path
         )
 
-        assert requirements_txt.read_text().splitlines() == [
-            "alabaster==0.7.16 --hash=sha256:deadbeef",
-            "click==8.4.0 --hash=sha256:cafebabe",
-        ]
+        content = requirements_txt.read_text()
+        assert TestExportDependenciesToFile.extract_package_names(content) == (
+            TestExportDependenciesToFile.PACKAGES
+        )
+        assert "--hash=" in content
+
+    @staticmethod
+    @mock.patch("subprocess.run")
+    def test_poetry_export_command_includes_disable_pip(mock_run, tmp_path):
+        requirements_txt = tmp_path / "requirements.txt"
+        mock_poetry_export = MagicMock(CompletedProcess)
+        mock_poetry_export.returncode = 0
+        mock_poetry_export.stdout = ""
+        mock_poetry_export.stderr = ""
+        mock_run.side_effect = [mock_poetry_export, mock_poetry_export]
+
+        export_dependencies_to_file(
+            output_file=requirements_txt, working_directory=tmp_path
+        )
+
         assert mock_run.call_args.args[0] == [
             "poetry",
             "export",

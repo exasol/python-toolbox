@@ -27,16 +27,11 @@ def ptb_wheel_dir(cwd):
 @pytest.fixture(scope="session")
 def ptb_wheel(poetry_path, ptb_wheel_dir):
     ptb_wheel_dir.mkdir(parents=True, exist_ok=True)
-    build_output = subprocess.run(
-        [poetry_path, "build", "--output", ptb_wheel_dir], cwd=PROJECT_CONFIG.root_path
+    subprocess.run(
+        [poetry_path, "build", "--output", ptb_wheel_dir],
+        cwd=PROJECT_CONFIG.root_path,
+        check=True,
     )
-    if build_output.returncode != 0:
-        raise subprocess.CalledProcessError(
-            build_output.returncode,
-            build_output.args,
-            output=build_output.stdout,
-            stderr=build_output.stderr,
-        )
     return min(ptb_wheel_dir.glob("exasol_toolbox-*.whl"))
 
 
