@@ -5,7 +5,7 @@
 ## Bugfix
 
 * #840: Added `export` plugin installation within `dependency-update.yml`
-* Use hashed `poetry export` output with `pip-audit --disable-pip` to avoid the
+* #847: Used hashed `poetry export` output with `pip-audit --disable-pip` to avoid the
   copied-interpreter failure in Poetry-managed Python builds
 
 ## Feature
