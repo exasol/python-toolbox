@@ -67,6 +67,7 @@ jobs:
     # If you need additional jobs to be part of the merge gate, add them below
     needs:
       - run-fast-checks
+      - run-fast-tests
       - run-slow-checks
      (% if workflow_extension.merge_gate %)
       - merge-gate-extension
