@@ -5,23 +5,46 @@ on:
   schedule:
     # At 00:00 on Saturday. (https://crontab.guru)
     - cron: "0 0 * * 6"
+  workflow_dispatch:
 
 jobs:
+  restrict-to-default-branch:
+    name: Restrict to Default Branch
+    runs-on: "(( os_version ))"
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Fail if not running on the default branch
+        id: check-branch
+        if: github.ref != format('refs/heads/{0}', github.event.repository.default_branch)
+        uses: actions/github-script@v8
+        with:
+          script: |
+            core.setFailed('Not running on the default branch. github.ref is ${{ github.ref }}')
+
   run-fast-checks:
     name: Fast Checks
     uses: ./.github/workflows/checks.yml
+    needs:
+      - restrict-to-default-branch
     permissions:
       contents: read
 
   run-fast-tests:
     name: Fast Tests
     uses: ./.github/workflows/fast-tests.yml
+    needs:
+      - restrict-to-default-branch
     permissions:
       contents: read
 
   run-slow-checks:
     name: Slow Checks
     uses: ./.github/workflows/slow-checks.yml
+    needs:
+      - restrict-to-default-branch
     secrets: inherit
     permissions:
       contents: read
