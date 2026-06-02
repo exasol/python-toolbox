@@ -24,7 +24,7 @@ jobs:
       - run-fast-tests
     uses: ./.github/workflows/report.yml
     secrets:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      (( sonar_token_name )): ${{ secrets.(( sonar_token_name )) }}
     permissions:
       contents: read
 

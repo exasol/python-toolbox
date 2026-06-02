@@ -5,6 +5,7 @@
 ## Feature
 
 * #854: Added `workflow_dispatch` for `periodic-validation.yml`
+* #827: Modified `report.yml` to allow overriding the Sonar secret name via `BaseConfig`
 
 ## Refactoring
 

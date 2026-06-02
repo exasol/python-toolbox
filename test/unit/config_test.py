@@ -4,6 +4,7 @@ from pathlib import Path
 from unittest.mock import Mock
 
 import pytest
+from pydantic import computed_field
 from pydantic_core._pydantic_core import ValidationError
 
 from exasol.toolbox.config import (
@@ -50,6 +51,7 @@ class TestBaseConfig:
                 "dependency_manager_version": "2.3.0",
                 "minimum_python_version": "3.10",
                 "os_version": "ubuntu-24.04",
+                "sonar_token_name": "SONAR_TOKEN",
                 "python_versions": (
                     "3.10",
                     "3.11",
@@ -61,6 +63,7 @@ class TestBaseConfig:
             },
             "minimum_python_version": "3.10",
             "os_version": "ubuntu-24.04",
+            "sonar_token_name": "SONAR_TOKEN",
             "plugins_for_nox_sessions": (),
             "project_name": "test",
             "python_versions": ("3.10", "3.11", "3.12", "3.13", "3.14"),
@@ -110,6 +113,13 @@ class BaseConfigExpansion(BaseConfig):
     expansion1: str = "test1"
 
 
+class AlternateSonarConfig(BaseConfig):
+    @computed_field  # type: ignore[misc]
+    @property
+    def sonar_token_name(self) -> str:
+        return "SONAR_ANOTHER_TOKEN"
+
+
 def test_expansion_validation_fails_for_invalid_version():
     with pytest.raises(ValueError):
         BaseConfigExpansion(python_versions=("1.f.0",))
@@ -132,6 +142,13 @@ class TestOsVersion:
 def test_minimum_python_version(test_project_config_factory):
     conf = test_project_config_factory(python_versions=("5.5.5", "1.10", "9.9.9"))
     assert conf.minimum_python_version == "1.10"
+
+
+def test_sonar_token_name_can_be_overridden(tmp_path):
+    config = AlternateSonarConfig(project_name="test", root_path=tmp_path)
+
+    assert config.sonar_token_name == "SONAR_ANOTHER_TOKEN"
+    assert config.github_template_dict["sonar_token_name"] == "SONAR_ANOTHER_TOKEN"
 
 
 @pytest.mark.parametrize("minimum_python_version", ["3.10", "3.10.5"])
