@@ -29,5 +29,7 @@ jobs:
       - name: Check Release Tag
         id: check-release-tag
         # make sure the pushed/created tag matched the project version
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
         run: |-
           [[ "$(poetry version --short)" == "$GITHUB_REF_NAME" ]]
