@@ -205,7 +205,7 @@ class BaseConfig(BaseModel):
     @property
     def sonar_token_name(self) -> str:
         """
-        GitHub secret name used by the Sonar workflow template.
+        GitHub secret name used by the Sonar step in `report.yml`.
 
         Projects can override this property if they use a different secret name.
         """
