@@ -45,10 +45,11 @@ runs:
     - name: Set up Poetry (${{ inputs.poetry-version }})
       shell: bash
       run: |
-        POETRY_VERSION="${{ inputs.poetry-version }}" "$PYTHON_BINARY" "${{ github.action_path }}/ext/get_poetry.py"
+        POETRY_VERSION="${INPUTS_POETRY_VERSION}" "$PYTHON_BINARY" "${{ github.action_path }}/ext/get_poetry.py"
         echo "$HOME/.local/bin" >> $GITHUB_PATH
       env:
         PYTHON_BINARY: "python${{ inputs.python-version }}"
+        INPUTS_POETRY_VERSION: ${{ inputs.poetry-version }}
 
     - name: Setup cache variables
       id: setup-cache-variables
@@ -77,16 +78,20 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        EXTRAS=$(echo "${{ inputs.extras }}" | tr -d ' ')
+        EXTRAS=$(echo "${INPUTS_EXTRAS}" | tr -d ' ')
         if [[ -n "$EXTRAS" ]]; then
           poetry install --extras "$EXTRAS"
         else
           poetry install
         fi
+      env:
+        INPUTS_EXTRAS: ${{ inputs.extras }}
 
     - name: Validate Poetry environment
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
         poetry run python --version
-        poetry run python --version | grep "${{ inputs.python-version }}"
+        poetry run python --version | grep "${INPUTS_PYTHON_VERSION}"
+      env:
+        INPUTS_PYTHON_VERSION: ${{ inputs.python-version }}

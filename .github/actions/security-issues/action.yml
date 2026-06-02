@@ -44,12 +44,16 @@ runs:
     - name: Create Security Issue Report
       shell: bash
       run: |
-        ${{ inputs.command }} | tee input
+        ${INPUTS_COMMAND} | tee input
+      env:
+        INPUTS_COMMAND: ${{ inputs.command }}
 
     - name: Convert Report To Common Input Format
       shell: bash
       run: |
-        tbx security cve convert ${{inputs.format}} < input | tee cves.jsonl
+        tbx security cve convert ${INPUTS_FORMAT} < input | tee cves.jsonl
+      env:
+        INPUTS_FORMAT: ${{inputs.format}}
 
     - name: Filter Issues
       env:
@@ -62,9 +66,10 @@ runs:
     - name: Create Issues
       env:
         GH_TOKEN: ${{ inputs.github-token }}
+        INPUTS_PROJECT: ${{ inputs.project }}
       shell: bash
       run: |
-        tbx security cve create --project "${{ inputs.project }}" < issues.jsonl | tee created.jsonl
+        tbx security cve create --project "${INPUTS_PROJECT}" < issues.jsonl | tee created.jsonl
 
     - name: Define Output Parameter
       id: get-created-issues

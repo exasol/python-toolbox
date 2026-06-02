@@ -1,5 +1,5 @@
 # Generated and maintained by the exasol-toolbox.
-# Last generated with exasol-toolbox version 8.1.0.
+# Last generated with exasol-toolbox version 8.1.1.
 name: Fast-Tests
 
 on:
@@ -21,6 +21,7 @@ jobs:
         id: check-out-repository
         uses: actions/checkout@v6
         with:
+          persist-credentials: false
           fetch-depth: 0
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
