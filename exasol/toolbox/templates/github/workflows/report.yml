@@ -3,6 +3,9 @@ name: Status Report
 
 on:
   workflow_call:
+    secrets:
+      SONAR_TOKEN:
+        required: true
 
 jobs:
 
@@ -10,14 +13,13 @@ jobs:
     runs-on: "(( os_version ))"
     permissions:
       contents: read
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Check out Repository
         id: check-out-repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment

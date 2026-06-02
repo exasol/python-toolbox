@@ -1,5 +1,5 @@
 # Generated and maintained by the exasol-toolbox.
-# Last generated with exasol-toolbox version 8.1.0.
+# Last generated with exasol-toolbox version 8.1.1.
 name: Check Release Tag
 
 on:
@@ -16,6 +16,8 @@ jobs:
       - name: Check out Repository
         id: check-out-repository
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Set up Python & Poetry Environment
         id: set-up-python-and-poetry-environment
@@ -27,4 +29,7 @@ jobs:
       - name: Check Release Tag
         id: check-release-tag
         # make sure the pushed/created tag matched the project version
-        run: "[[ `poetry version --short` == ${{ github.ref_name }} ]]"
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: |-
+          [[ "$(poetry version --short)" == "$GITHUB_REF_NAME" ]]

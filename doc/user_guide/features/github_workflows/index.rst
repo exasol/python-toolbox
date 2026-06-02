@@ -308,7 +308,7 @@ coverage to Sonar for an overall report.
 .. literalinclude:: ../../../../exasol/toolbox/templates/github/workflows/periodic-validation.yml
    :language: yaml
    :start-at:   schedule:
-   :end-at:     - cron: "0 0 * * 6"
+   :end-at:  workflow_dispatch:
 
 .. mermaid::
 
