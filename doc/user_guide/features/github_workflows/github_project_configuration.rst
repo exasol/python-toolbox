@@ -48,5 +48,8 @@ map it to *environment variables* that are used by your CI/CD automation.
   `Python Package Index <pypi_>`_ (PyPi). Most projects will use the
   org-secret.
 * **SONAR_TOKEN**: See :ref:`Sonar Configuration <sonar_configuration>`.
+  If your repository uses a different secret name, override
+  :py:attr:`exasol.toolbox.config.BaseConfig.sonar_token_name` in your project
+  configuration.
 
 .. _pypi: https://pypi.org/

@@ -200,6 +200,17 @@ class BaseConfig(BaseModel):
         are supported.
         """,
     )
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def sonar_token_name(self) -> str:
+        """
+        GitHub secret name used by the Sonar step in `report.yml`.
+
+        Projects can override this property if they use a different secret name.
+        """
+        return "SONAR_TOKEN"
+
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
     @computed_field  # type: ignore[misc]
@@ -300,6 +311,7 @@ class BaseConfig(BaseModel):
             "minimum_python_version": self.minimum_python_version,
             "os_version": self.os_version,
             "python_versions": self.python_versions,
+            "sonar_token_name": self.sonar_token_name,
             "workflow_header": f"{WORKFLOW_HEADER_PREFIX}{__version__}.",
             "workflow_extension": {
                 "fast_tests": fast_tests_extension.is_file(),
