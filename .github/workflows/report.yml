@@ -4,6 +4,9 @@ name: Status Report
 
 on:
   workflow_call:
+    secrets:
+      SONAR_TOKEN:
+        required: true
 
 jobs:
 
@@ -11,8 +14,6 @@ jobs:
     runs-on: "ubuntu-24.04"
     permissions:
       contents: read
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Check out Repository
         id: check-out-repository

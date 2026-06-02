@@ -23,7 +23,8 @@ jobs:
       - run-fast-checks
       - run-fast-tests
     uses: ./.github/workflows/report.yml
-    secrets: inherit
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     permissions:
       contents: read
 
