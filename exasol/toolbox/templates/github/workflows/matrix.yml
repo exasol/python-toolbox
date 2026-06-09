@@ -1,15 +1,21 @@
 (( workflow_header ))
-name: Build Matrix (Python)
+name: Build Matrix
 
 on:
   workflow_call:
+    inputs:
+      matrix_keys:
+        description: "Space-separated BaseConfig keys to include in the generated matrix output"
+        default: python_versions exasol_versions
+        required: false
+        type: string
     outputs:
       matrix:
-        description: "Generates the python version build matrix"
-        value: ${{ jobs.set-matrix-python.outputs.matrix }}
+        description: "Generates the requested build matrix"
+        value: ${{ jobs.set-matrix.outputs.matrix }}
 
 jobs:
-  set-matrix-python:
+  set-matrix:
     runs-on: "(( os_version ))"
     permissions:
       contents: read
@@ -29,12 +35,12 @@ jobs:
 
       - name: Generate Matrix
         id: generate-matrix
-        run: poetry run -- nox -s matrix:python
+        run: poetry run -- nox -s matrix:generate -- ${{ inputs.matrix_keys }}
 
       - name: Set Matrix
         id: set-matrix
         run: |
-          echo "matrix=$(poetry run -- nox -s matrix:python)" >> $GITHUB_OUTPUT
+          echo "matrix=$(poetry run -- nox -s matrix:generate -- ${{ inputs.matrix_keys }})" >> $GITHUB_OUTPUT
 
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}

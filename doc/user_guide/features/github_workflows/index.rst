@@ -84,6 +84,10 @@ Maintained by the PTB
      - Workflow call
      - Calls Nox session ``matrix:all``, which typically evaluates ``exasol_versions``
        and ``python_versions`` from the ``PROJECT_CONFIG``.
+   * - ``matrix.yml``
+     - Workflow call
+     - Calls Nox session ``matrix:generate`` with one or more space-separated
+       ``BaseConfig`` keys to build a custom matrix from the ``PROJECT_CONFIG``.
    * - ``matrix-exasol.yml``
      - Workflow call
      - Calls Nox session ``matrix:exasol`` to get the ``exasol_versions`` from the

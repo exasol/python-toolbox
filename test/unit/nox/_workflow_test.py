@@ -39,7 +39,7 @@ class TestGenerateWorkflow:
     @staticmethod
     @pytest.mark.parametrize(
         "nox_session_runner_posargs, expected_count",
-        [(ALL, 16), *[(key, 1) for key in WORKFLOW_TEMPLATE_OPTIONS.keys()]],
+        [(ALL, 14), *[(key, 1) for key in WORKFLOW_TEMPLATE_OPTIONS.keys()]],
         indirect=["nox_session_runner_posargs"],
     )
     def test_works_as_expected(
@@ -128,7 +128,7 @@ class TestCheckWorkflow:
                 check_workflow(nox_session)
 
         assert str(exc.value) == (
-            "\n16 workflows are out of date:\n"
+            "\n14 workflows are out of date:\n"
             "- build-and-publish\n"
             "- cd\n"
             "- check-release-tag\n"
@@ -137,9 +137,7 @@ class TestCheckWorkflow:
             "- dependency-update\n"
             "- fast-tests\n"
             "- gh-pages\n"
-            "- matrix-all\n"
-            "- matrix-exasol\n"
-            "- matrix-python\n"
+            "- matrix\n"
             "- merge-gate\n"
             "- periodic-validation\n"
             "- pr-merge\n"

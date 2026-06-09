@@ -1,5 +1,7 @@
 # Generated and maintained by the exasol-toolbox.
 # Last generated with exasol-toolbox version 8.1.1.
+# This workflow is deprecated and will be removed by 2026-09-15. Use matrix.yml instead:
+#   https://github.com/exasol/python-toolbox/issues/859
 name: Build Matrix (All Versions)
 
 on:
