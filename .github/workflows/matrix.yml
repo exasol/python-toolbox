@@ -1,18 +1,22 @@
 # Generated and maintained by the exasol-toolbox.
 # Last generated with exasol-toolbox version 8.1.1.
-# This workflow is deprecated and will be removed by 2026-09-15. Use matrix.yml instead:
-#   https://github.com/exasol/python-toolbox/issues/859
-name: Build Matrix (Exasol)
+name: Build Matrix
 
 on:
   workflow_call:
+    inputs:
+      matrix_keys:
+        description: "Space-separated BaseConfig keys to include in the generated matrix output"
+        default: python_versions exasol_versions
+        required: false
+        type: string
     outputs:
       matrix:
-        description: "Generates the exasol version build matrix"
-        value: ${{ jobs.set-matrix-exasol.outputs.matrix }}
+        description: "Generates the requested build matrix"
+        value: ${{ jobs.set-matrix.outputs.matrix }}
 
 jobs:
-  set-matrix-exasol:
+  set-matrix:
     runs-on: "ubuntu-24.04"
     permissions:
       contents: read
@@ -32,12 +36,12 @@ jobs:
 
       - name: Generate Matrix
         id: generate-matrix
-        run: poetry run -- nox -s matrix:exasol
+        run: poetry run -- nox -s matrix:generate -- ${{ inputs.matrix_keys }}
 
       - name: Set Matrix
         id: set-matrix
         run: |
-          echo "matrix=$(poetry run -- nox -s matrix:exasol)" >> $GITHUB_OUTPUT
+          echo "matrix=$(poetry run -- nox -s matrix:generate -- ${{ inputs.matrix_keys }})" >> $GITHUB_OUTPUT
 
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
