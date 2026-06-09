@@ -66,6 +66,7 @@ from exasol.toolbox.nox._shared import (
 )
 
 from exasol.toolbox.nox._ci import (
+    generate_matrix,
     python_matrix,
     exasol_matrix,
     full_matrix,
