@@ -10,7 +10,7 @@ jobs:
     name: Build Matrix
     uses: ./.github/workflows/matrix.yml
     with:
-      matrix_keys: python_versions exasol_versions
+      matrix_keys_json: '["python_versions","exasol_versions"]'
     permissions:
       contents: read
 

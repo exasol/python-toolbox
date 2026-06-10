@@ -43,7 +43,7 @@ jobs:
     if: needs.check-changes.outputs.should_run == 'true'
     uses: ./.github/workflows/matrix.yml
     with:
-      matrix_keys: python_versions
+      matrix_keys_json: '["python_versions"]'
     permissions:
       contents: read
 

@@ -4,10 +4,9 @@ name: Build Matrix
 on:
   workflow_call:
     inputs:
-      matrix_keys:
-        description: "Space-separated BaseConfig keys to include in the generated matrix output"
-        default: python_versions exasol_versions
-        required: false
+      matrix_keys_json:
+        description: "JSON array of BaseConfig keys to include in the generated matrix output."
+        required: true
         type: string
     outputs:
       matrix:
@@ -33,14 +32,47 @@ jobs:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
 
-      - name: Generate Matrix
-        id: generate-matrix
-        run: poetry run -- nox -s matrix:generate -- ${{ inputs.matrix_keys }}
-
-      - name: Set Matrix
-        id: set-matrix
+      - name: Parse Matrix Keys
+        id: parse-matrix-keys
+        env:
+          MATRIX_KEYS_JSON: ${{ inputs.matrix_keys_json }}
         run: |
-          echo "matrix=$(poetry run -- nox -s matrix:generate -- ${{ inputs.matrix_keys }})" >> $GITHUB_OUTPUT
+          python - <<'PY'
+          import json
+          import os
+
+          matrix_keys = json.loads(os.environ["MATRIX_KEYS_JSON"])
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output_file:
+              print(f"matrix_keys_json={json.dumps(matrix_keys)}", file=output_file)
+          PY
+
+      - name: Generate Matrix
+        id: set-matrix
+        env:
+          MATRIX_KEYS_JSON: ${{ steps.parse-matrix-keys.outputs.matrix_keys_json }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+
+          matrix_keys = json.loads(os.environ["MATRIX_KEYS_JSON"])
+          matrix_json = subprocess.check_output(
+              [
+                  "poetry",
+                  "run",
+                  "--",
+                  "nox",
+                  "-s",
+                  "matrix:generate",
+                  "--",
+                  *matrix_keys,
+              ],
+              text=True,
+          ).strip()
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output_file:
+              print(f"matrix={matrix_json}", file=output_file)
+          PY
 
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
