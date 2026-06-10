@@ -35,7 +35,7 @@ include = [
 [tool.poetry.requires-plugins]
 poetry-plugin-export = ">=1.8"
 
-[poetry.urls]
+[project.urls]
 repository = "https://github.com/exasol/{{cookiecutter.repo_name}}"
 homepage = "https://github.com/exasol/{{cookiecutter.repo_name}}"
 
