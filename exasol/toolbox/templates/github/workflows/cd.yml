@@ -24,6 +24,14 @@ jobs:
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
 
+  (% if workflow_extension.cd %)
+  cd-extension:
+    uses: ./.github/workflows/cd-extension.yml
+    secrets: inherit
+    permissions:
+      contents: write
+  (% endif %)
+
   publish-docs:
     needs:
       - build-and-publish

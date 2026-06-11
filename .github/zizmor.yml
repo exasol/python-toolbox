@@ -1,0 +1,15 @@
+rules:
+  github-env:
+    disable: true
+  secrets-inherit:
+    disable: true
+  template-injection:
+    disable: true
+  unpinned-uses:
+    config:
+      policies:
+        "actions/*": ref-pin
+        exasol/python-toolbox/.github/actions/python-environment: ref-pin
+        "*": hash-pin
+  use-trusted-publishing:
+    disable: true

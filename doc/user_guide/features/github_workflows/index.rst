@@ -56,9 +56,8 @@ Maintained by the PTB
      - Packages the distribution and publishes it to PyPi and GitHub.
    * - ``cd.yml``
      - Push with new tag
-     - Manages continuous delivery by calling ``check-release-tag.yml``,
-       ``build-and-publish.yml``, and ``gh-pages.yml``. See :ref:`cd_yml`
-       for a graph of workflow calls.
+     - Manages continuous delivery by creating and uploading build artifacts and
+       documentation. See :ref:`cd_yml` for a graph of workflow calls.
    * - ``check-release-tag.yml``
      - Workflow call
      - Verifies that the release tag matches the project's internal versioning.
@@ -152,6 +151,9 @@ and is maintained by the PTB and what is project-specific.
    * - ``fast-tests-extension.yml``
      - Workflow call
      - This extends the ``fast-tests.yml`` and should include additional fast tests.
+   * - ``cd-extension.yml``
+     - Workflow call
+     - This extends the ``cd.yml``. Use it to add project-specific release steps.
    * - ``merge-gate-extension.yml``
      - Workflow call
      - This extends the ``merge-gate.yml`` and the ``needs`` criteria of the job
@@ -264,6 +266,7 @@ to main. This starts the release process by activating the ``cd.yml`` workflow.
     graph TD
         %% Workflow Triggers (Solid Lines)
         cd[cd.yml] --> check-release-tag[check-release-tag.yml]
+        cd --> cd-extension[cd-extension.yml]
 
         %% Dependencies / Waiting (Dotted Lines)
         check-release-tag -.->|needs| build-and-publish[build-and-publish.yml]

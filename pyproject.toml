@@ -1,6 +1,6 @@
 [project]
 name = "exasol-toolbox"
-version = "8.1.1"
+version = "8.2.0"
 description = "Your one-stop solution for managing all standard tasks and core workflows of your Python project."
 authors = [
     { name = "Nicola Coretti", email = "nicola.coretti@exasol.com" },
@@ -59,6 +59,7 @@ dependencies = [
     "structlog (>=25.5.0,<26.0.0)",
     "typer[all]>=0.7.0",
     "twine>=6.1.0,<7",
+    "zizmor (>=1.25.2,<2.0.0)",
 ]
 
 [project.scripts]
