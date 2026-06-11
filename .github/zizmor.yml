@@ -1,6 +1,4 @@
 rules:
-  artipacked:
-    disable: true
   github-env:
     disable: true
   secrets-inherit:
