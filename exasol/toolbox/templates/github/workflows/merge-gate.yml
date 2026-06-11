@@ -10,6 +10,7 @@ jobs:
     uses: ./.github/workflows/checks.yml
     permissions:
       contents: read
+      actions: read
 
   run-fast-tests:
     name: Fast Tests

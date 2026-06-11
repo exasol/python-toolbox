@@ -12,6 +12,7 @@ jobs:
     secrets: inherit
     permissions:
       contents: read
+      actions: read
 
   report:
     name: Report

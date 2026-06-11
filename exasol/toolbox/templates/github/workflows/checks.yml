@@ -226,3 +226,22 @@ jobs:
       - name: Check Workflows
         id: check-workflows
         run: poetry run -- nox -s workflow:check -- all
+
+  lint-github-actions:
+    name: Lint GitHub Actions
+    runs-on: "(( os_version ))"
+    permissions:
+      contents: read # only needed for private or internal repos
+      actions: read # only needed for private or internal repos
+    steps:
+      - name: Check out Repository
+        id: check-out-repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Lint GitHub actions with Zizmor
+        id: lint-github-actions
+        uses: zizmorcore/zizmor-action@v0.5.3
+        with:
+          advanced-security: false
