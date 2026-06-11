@@ -26,3 +26,21 @@ jobs:
       - name: Lint Imports
         id: lint-imports
         run: poetry run -- nox -s lint:import
+
+  # This will be moved to a standard check in the checks.yml in:
+  #  https://github.com/exasol/python-toolbox/issues/811
+  lint-github-actions:
+    name: Lint GitHub Actions
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out Repository
+        id: check-out-repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Lint GitHub actions with Zizmor
+        id: lint-github-actions
+        uses: zizmorcore/zizmor-action@b1d7e1fb5de872772f31590499237e7cce841e8e # v0.5.3
+        with:
+          advanced-security: false
