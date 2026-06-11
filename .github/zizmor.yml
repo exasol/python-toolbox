@@ -16,7 +16,7 @@ rules:
         actions/upload-artifact: ref-pin
         actions/upload-pages-artifact: hash-pin
         exasol/python-toolbox/.github/actions/python-environment: ref-pin
-        ravsamhq/notify-slack-action: ref-pin
+        ravsamhq/notify-slack-action: hash-pin
         zizmorcore/zizmor-action: hash-pin
   use-trusted-publishing:
     disable: true
