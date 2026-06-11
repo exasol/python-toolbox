@@ -59,6 +59,7 @@ dependencies = [
     "structlog (>=25.5.0,<26.0.0)",
     "typer[all]>=0.7.0",
     "twine>=6.1.0,<7",
+    "zizmor (>=1.25.2,<2.0.0)",
 ]
 
 [project.scripts]
