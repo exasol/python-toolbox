@@ -59,7 +59,11 @@ class TestBaseConfig:
                     "3.13",
                     "3.14",
                 ),
-                "workflow_extension": {"fast_tests": False, "merge_gate": False},
+                "workflow_extension": {
+                    "fast_tests": False,
+                    "cd": False,
+                    "merge_gate": False,
+                },
             },
             "minimum_python_version": "3.10",
             "os_version": "ubuntu-24.04",

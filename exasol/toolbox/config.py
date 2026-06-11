@@ -302,6 +302,7 @@ class BaseConfig(BaseModel):
         fast_tests_extension = (
             self.github_workflow_directory / "fast-tests-extension.yml"
         )
+        cd_extension = self.github_workflow_directory / "cd-extension.yml"
         merge_gate_extension = (
             self.github_workflow_directory / "merge-gate-extension.yml"
         )
@@ -315,6 +316,7 @@ class BaseConfig(BaseModel):
             "workflow_header": f"{WORKFLOW_HEADER_PREFIX}{__version__}.",
             "workflow_extension": {
                 "fast_tests": fast_tests_extension.is_file(),
+                "cd": cd_extension.is_file(),
                 "merge_gate": merge_gate_extension.is_file(),
             },
         }
