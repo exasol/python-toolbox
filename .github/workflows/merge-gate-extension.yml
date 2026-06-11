@@ -4,8 +4,20 @@ on:
   workflow_call:
 
 jobs:
+  approve-run-slow-tests:
+    name: Approve Running Slow Tests?
+    runs-on: "ubuntu-24.04"
+    permissions:
+      contents: read
+    environment: manual-approval
+    steps:
+      - name: Tests
+        run: echo "Slow tests approved"
+
   test-python-environment:
     name: Test python-environment Action
     uses: ./.github/workflows/test-python-environment.yml
+    needs:
+      - approve-run-slow-tests
     permissions:
       contents: read
