@@ -60,8 +60,8 @@ class TestBaseConfig:
                     "3.14",
                 ),
                 "workflow_extension": {
-                    "fast_tests": False,
                     "cd": False,
+                    "fast_tests": False,
                     "merge_gate": False,
                 },
             },
