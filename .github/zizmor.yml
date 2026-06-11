@@ -8,14 +8,7 @@ rules:
   unpinned-uses:
     config:
       policies:
-        actions/checkout: hash-pin
-        actions/cache: hash-pin
-        actions/deploy-pages: hash-pin
-        actions/download-artifact: hash-pin
-        actions/setup-python: hash-pin
-        actions/upload-artifact: hash-pin
-        actions/upload-pages-artifact: hash-pin
+        "*": hash-pin
         exasol/python-toolbox/.github/actions/python-environment: ref-pin
-        ravsamhq/notify-slack-action: hash-pin
   use-trusted-publishing:
     disable: true
