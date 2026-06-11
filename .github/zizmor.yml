@@ -8,7 +8,8 @@ rules:
   unpinned-uses:
     config:
       policies:
-        "*": hash-pin
+        "actions/*": ref-pin
         exasol/python-toolbox/.github/actions/python-environment: ref-pin
+        "*": hash-pin
   use-trusted-publishing:
     disable: true
