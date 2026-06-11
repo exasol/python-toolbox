@@ -14,7 +14,7 @@ rules:
         actions/download-artifact: ref-pin
         actions/setup-python: ref-pin
         actions/upload-artifact: ref-pin
-        actions/upload-pages-artifact: ref-pin
+        actions/upload-pages-artifact: hash-pin
         exasol/python-toolbox/.github/actions/python-environment: ref-pin
         ravsamhq/notify-slack-action: ref-pin
         zizmorcore/zizmor-action: ref-pin
