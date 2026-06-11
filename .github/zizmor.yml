@@ -11,7 +11,7 @@ rules:
         actions/checkout: hash-pin
         actions/cache: ref-pin
         actions/deploy-pages: ref-pin
-        actions/download-artifact: ref-pin
+        actions/download-artifact: hash-pin
         actions/setup-python: hash-pin
         actions/upload-artifact: hash-pin
         actions/upload-pages-artifact: hash-pin
