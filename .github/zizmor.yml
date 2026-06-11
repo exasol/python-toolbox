@@ -9,7 +9,7 @@ rules:
     config:
       policies:
         actions/checkout: hash-pin
-        actions/cache: ref-pin
+        actions/cache: hash-pin
         actions/deploy-pages: hash-pin
         actions/download-artifact: hash-pin
         actions/setup-python: hash-pin
