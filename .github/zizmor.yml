@@ -13,7 +13,7 @@ rules:
         actions/deploy-pages: ref-pin
         actions/download-artifact: ref-pin
         actions/setup-python: ref-pin
-        actions/upload-artifact: ref-pin
+        actions/upload-artifact: hash-pin
         actions/upload-pages-artifact: hash-pin
         exasol/python-toolbox/.github/actions/python-environment: ref-pin
         ravsamhq/notify-slack-action: hash-pin
