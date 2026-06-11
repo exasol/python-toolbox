@@ -9,7 +9,7 @@ GitHub Workflow Templates
 
     github_project_configuration
     create_and_update
-    template_variables
+    workflow_variables
     workflow_patcher
 
 The PTB ships with configurable GitHub workflow templates covering the most common
@@ -43,6 +43,12 @@ The PTB has three categories of workflows:
 
 Maintained by the PTB
 ^^^^^^^^^^^^^^^^^^^^^
+
+.. note::
+  The ``matrix.yml`` workflow replaces the older ``matrix-all.yml``, ``matrix-exasol.yml``,
+  and ``matrix-python.yml`` workflows. The associated nox sessions (``matrix:all``,
+  ``matrix:exasol``, and ``matrix:python``) are deprecated and will be removed
+  2026-09-15.
 
 .. list-table::
    :widths: 25 25 50
@@ -79,22 +85,10 @@ Maintained by the PTB
    * - ``gh-pages.yml``
      - Workflow call
      - Builds the documentation and deploys it to GitHub Pages.
-   * - ``matrix-all.yml``
-     - Workflow call
-     - Calls Nox session ``matrix:all``, which typically evaluates ``exasol_versions``
-       and ``python_versions`` from the ``PROJECT_CONFIG``.
    * - ``matrix.yml``
      - Workflow call
-     - Calls Nox session ``matrix:generate`` with one or more space-separated
-       ``BaseConfig`` keys to build a custom matrix from the ``PROJECT_CONFIG``.
-   * - ``matrix-exasol.yml``
-     - Workflow call
-     - Calls Nox session ``matrix:exasol`` to get the ``exasol_versions`` from the
-       ``PROJECT_CONFIG``.
-   * - ``matrix-python.yml``
-     - Workflow call
-     - Calls Nox session ``matrix:python`` to get the ``python_versions`` from the
-       ``PROJECT_CONFIG``.
+     - Calls Nox session ``matrix:generate`` to build a custom matrix from the
+       ``PROJECT_CONFIG``. See :ref:`workflow_matrix`.
    * - ``merge-gate.yml``
      - Workflow call
      - Acts as a final status check (gatekeeper) to ensure all required CI steps have
