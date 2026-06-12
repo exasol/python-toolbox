@@ -18,9 +18,13 @@ MATRIX_DEPRECATION_DATE = "2026-09-15"
 
 def _matrix_keys(config: BaseConfig) -> tuple[str, ...]:
     """
-    Return the config keys that are valid for matrix generation.
+    Return the config keys that can be selected for matrix generation.
 
-    Includes both declared fields and computed fields.
+    Pydantic stores explicitly declared config attributes in ``model_fields``
+    and derived ``@computed_field`` values in ``model_computed_fields``. We
+    include both because matrix inputs may come from either source: a declared
+    field such as ``extra_matrix_value`` or a computed value such as
+    ``computed_matrix_value``.
     """
 
     config_class = type(config)
