@@ -7,7 +7,7 @@ import pytest
 from pydantic import computed_field
 
 from exasol.toolbox.config import BaseConfig
-from exasol.toolbox.nox._ci import (
+from exasol.toolbox.nox._matrix import (
     exasol_matrix,
     full_matrix,
     generate_matrix,
@@ -47,7 +47,7 @@ class TestGenerateMatrix:
         capsys,
         nox_session_runner_posargs,
     ):
-        with patch("exasol.toolbox.nox._ci.PROJECT_CONFIG", new=config):
+        with patch("exasol.toolbox.nox._matrix.PROJECT_CONFIG", new=config):
             generate_matrix(nox_session)
 
         assert json.loads(capsys.readouterr().out) == {
@@ -67,7 +67,7 @@ class TestGenerateMatrix:
         capsys,
         nox_session_runner_posargs,
     ):
-        with patch("exasol.toolbox.nox._ci.PROJECT_CONFIG", new=config):
+        with patch("exasol.toolbox.nox._matrix.PROJECT_CONFIG", new=config):
             with pytest.raises(SystemExit):
                 generate_matrix(nox_session)
 
@@ -106,7 +106,7 @@ class TestDeprecatedMatrixSessions:
     def test_exasol_session_still_emits_field_names(
         nox_session, config, caplog, capsys
     ):
-        with patch("exasol.toolbox.nox._ci.PROJECT_CONFIG", new=config):
+        with patch("exasol.toolbox.nox._matrix.PROJECT_CONFIG", new=config):
             exasol_matrix(nox_session)
 
         captured = capsys.readouterr()
@@ -119,7 +119,7 @@ class TestDeprecatedMatrixSessions:
     def test_python_session_still_emits_field_names(
         nox_session, config, caplog, capsys
     ):
-        with patch("exasol.toolbox.nox._ci.PROJECT_CONFIG", new=config):
+        with patch("exasol.toolbox.nox._matrix.PROJECT_CONFIG", new=config):
             python_matrix(nox_session)
 
         captured = capsys.readouterr()
@@ -130,7 +130,7 @@ class TestDeprecatedMatrixSessions:
 
     @staticmethod
     def test_full_session_still_emits_field_names(nox_session, config, caplog, capsys):
-        with patch("exasol.toolbox.nox._ci.PROJECT_CONFIG", new=config):
+        with patch("exasol.toolbox.nox._matrix.PROJECT_CONFIG", new=config):
             full_matrix(nox_session)
 
         captured = capsys.readouterr()
