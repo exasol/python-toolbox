@@ -55,10 +55,7 @@ def _generate_matrix(config: BaseConfig, keys: Iterable[str]) -> dict[str, Any]:
     tuple-based config values to lists, so scalar values are wrapped in a
     single-element list here.
     """
-
-    requested_keys = tuple(keys)
-
-    matrix = config.model_dump(mode="json", include=set(requested_keys))
+    matrix = config.model_dump(mode="json", include=set(keys))
     for key, value in matrix.items():
         if not isinstance(value, list):
             matrix[key] = [value]
