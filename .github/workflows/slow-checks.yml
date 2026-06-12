@@ -6,12 +6,14 @@ on:
 jobs:
   build-matrix:
     name: Build Matrix
-    uses: ./.github/workflows/matrix-python.yml
+    uses: ./.github/workflows/matrix.yml
+    with:
+      matrix_keys_json: '["python_versions"]'
     permissions:
       contents: read
 
   run-integration-tests:
-    name: Run Integration Tests (Python-${{ matrix.python-version }})
+    name: Run Integration Tests (Python-${{ matrix.python_versions }})
     needs:
       - build-matrix
     runs-on: "ubuntu-24.04"
@@ -33,7 +35,7 @@ jobs:
         id: set-up-python-and-poetry-environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v8
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python_versions }}
           poetry-version: "2.3.0"
 
       - name: Run Integration Tests
@@ -44,7 +46,7 @@ jobs:
         id: upload-artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: coverage-python${{ matrix.python-version }}-slow
+          name: coverage-python${{ matrix.python_versions }}-slow
           path: .coverage
           include-hidden-files: true
           overwrite: false

@@ -1,15 +1,20 @@
 (( workflow_header ))
-name: Build Matrix (Python)
+name: Build Matrix
 
 on:
   workflow_call:
+    inputs:
+      matrix_keys_json:
+        description: "JSON array of BaseConfig keys to include in the generated matrix output."
+        required: true
+        type: string
     outputs:
       matrix:
-        description: "Generates the python version build matrix"
-        value: ${{ jobs.set-matrix-python.outputs.matrix }}
+        description: "Generates the requested build matrix"
+        value: ${{ jobs.set-matrix.outputs.matrix }}
 
 jobs:
-  set-matrix-python:
+  set-matrix:
     runs-on: "(( os_version ))"
     permissions:
       contents: read
@@ -28,13 +33,15 @@ jobs:
           poetry-version: "(( dependency_manager_version ))"
 
       - name: Generate Matrix
-        id: generate-matrix
-        run: poetry run -- nox -s matrix:python
-
-      - name: Set Matrix
         id: set-matrix
+        env:
+          MATRIX_KEYS_JSON: ${{ inputs.matrix_keys_json }}
         run: |
-          echo "matrix=$(poetry run -- nox -s matrix:python)" >> $GITHUB_OUTPUT
+          readarray -t matrix_keys < <(jq -r '.[]' <<< "$MATRIX_KEYS_JSON")
+          matrix_json="$(poetry run -- nox -s matrix:generate -- "${matrix_keys[@]}")"
+          echo "Generated matrix JSON:"
+          jq . <<< "$matrix_json"
+          echo "matrix=$matrix_json" >> "$GITHUB_OUTPUT"
 
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}

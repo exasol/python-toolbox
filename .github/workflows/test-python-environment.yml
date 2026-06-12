@@ -27,8 +27,8 @@ jobs:
 
           # Otherwise, check if any relevant files were changed in this PR
           else
-            if git diff --quiet "origin/$BASE_REF...HEAD" -- .github/actions/python-environment; then
-              echo "No changes in .github/actions/python-environment, skipping."
+            if git diff --quiet "origin/$BASE_REF...HEAD" -- .github/actions/python-environment .github/workflows/test-python-environment.yml; then
+              echo "No changes in .github/actions/python-environment or .github/workflows/test-python-environment.yml, skipping."
               echo "should_run=false" >> $GITHUB_OUTPUT
             else
               echo "Changes detected in directory, running."
@@ -41,7 +41,9 @@ jobs:
     needs:
       - check-changes
     if: needs.check-changes.outputs.should_run == 'true'
-    uses: ./.github/workflows/matrix-all.yml
+    uses: ./.github/workflows/matrix.yml
+    with:
+      matrix_keys_json: '["python_versions"]'
     permissions:
       contents: read
 
@@ -60,8 +62,8 @@ jobs:
           - int-linux-x64-4core-gpu-t4-ubuntu24.04-1
           - int-linux-x64-4core-ubuntu24.04-1
           - int-linux-x64-2core-ubuntu24.04-1
-        python-version: ${{ fromJson(needs.build-matrix.outputs.matrix).python-version }}
-    name: Verify Poetry Setup for ${{ matrix.runner }} (Python-${{ matrix.python-version }})
+        python-versions: ${{ fromJson(needs.build-matrix.outputs.matrix).python_versions }}
+    name: Verify Poetry Setup for ${{ matrix.runner }} (Python-${{ matrix.python-versions }})
     runs-on:
       labels: ${{ matrix.runner }}
     steps:
@@ -75,7 +77,7 @@ jobs:
         id: set-up-python-and-poetry-environment
         uses: ./.github/actions/python-environment
         with:
-          python-version: "${{ matrix.python-version }}"
+          python-version: "${{ matrix.python-versions }}"
           poetry-version: "2.3.0"
 
       - name: Check Poetry Version
@@ -85,7 +87,7 @@ jobs:
       - name: Validate Python Version
         id: validate-python-version
         env:
-          PYTHON_VERSION: ${{ matrix.python-version }}
+          PYTHON_VERSION: ${{ matrix.python-versions }}
         run: |
           poetry run which python
           poetry run python --version

@@ -8,10 +8,10 @@ update existing workflows.
 
 The workflows are based on Jinja templates with variables populated by the
 PTB. The PTB reads the values from various attributes and properties of your
-project's config, see :ref:`template_variables`.
+project's config, see :ref:`workflow_templates`.
 
 Please note that the PTB only updates the values in the GitHub workflows when
-*updating* the workflows. So, after updating the :ref:`list of Python versions
+updating the workflows in general. So, after updating the :ref:`list of Python versions
 <python_versions>` in file ``noxconfig.py``, you need to :ref:`re-generate
 <update_workflows>` the GitHub workflows.
 
@@ -48,6 +48,11 @@ The PTB has a default for these versions, but you can override it in the
 
 Some workflows are expected to not depend on a specific Python version and
 will use only the lowest Python version in the list specified above.
+
+If you need more than the built-in matrix inputs, you can extend
+:class:`exasol.toolbox.config.BaseConfig` with extra properties or computed fields
+and consume them from ``matrix.yml`` via ``matrix:generate``. See
+:ref:`workflow_matrix` for an example.
 
 .. _customize_workflows:
 

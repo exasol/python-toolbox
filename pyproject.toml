@@ -85,7 +85,7 @@ include = [
     "exasol/toolbox/templates/**/*"
 ]
 
-[poetry.urls]
+[project.urls]
 Homepage = "https://www.exasol.com/"
 Documentation = "https://exasol.github.io/python-toolbox/"
 Source = "https://github.com/exasol/python-toolbox"
