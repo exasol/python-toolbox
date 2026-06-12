@@ -56,11 +56,7 @@ def _generate_matrix(config: BaseConfig, keys: Iterable[str]) -> dict[str, Any]:
     single-element list here.
     """
 
-    allowed_keys = set(_matrix_keys(config))
     requested_keys = tuple(keys)
-    for key in requested_keys:
-        if key not in allowed_keys:
-            raise KeyError(key)
 
     matrix = config.model_dump(mode="json", include=set(requested_keys))
     for key, value in matrix.items():
