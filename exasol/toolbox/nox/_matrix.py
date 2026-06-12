@@ -56,10 +56,10 @@ def _generate_matrix(config: BaseConfig, keys: Iterable[str]) -> dict[str, Any]:
     single-element list here.
     """
     matrix = config.model_dump(mode="json", include=set(keys))
-    for key, value in matrix.items():
-        if not isinstance(value, list):
-            matrix[key] = [value]
-    return matrix
+    return {
+        key: value if isinstance(value, list) else [value]
+        for key, value in matrix.items()
+    }
 
 
 def _deprecated_generate_matrix(
