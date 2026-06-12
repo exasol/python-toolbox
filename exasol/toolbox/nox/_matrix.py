@@ -69,7 +69,7 @@ def _generate_matrix(config: BaseConfig, keys: Iterable[str]) -> dict[str, Any]:
     return matrix
 
 
-def _deprecated_matrix_output(
+def _deprecated_generate_matrix(
     session: Session,
     config: BaseConfig,
     workflow_key_map: dict[str, str],
@@ -110,7 +110,7 @@ def generate_matrix(session: Session) -> None:
 @nox.session(name="matrix:python", python=False)
 def python_matrix(session: Session) -> None:
     """Output the build matrix for Python versions as JSON."""
-    _deprecated_matrix_output(
+    _deprecated_generate_matrix(
         session=session,
         config=PROJECT_CONFIG,
         workflow_key_map={"python-version": "python_versions"},
@@ -122,7 +122,7 @@ def python_matrix(session: Session) -> None:
 @nox.session(name="matrix:exasol", python=False)
 def exasol_matrix(session: Session) -> None:
     """Output the build matrix for Exasol versions as JSON."""
-    _deprecated_matrix_output(
+    _deprecated_generate_matrix(
         session=session,
         config=PROJECT_CONFIG,
         workflow_key_map={"exasol-version": "exasol_versions"},
@@ -134,7 +134,7 @@ def exasol_matrix(session: Session) -> None:
 @nox.session(name="matrix:all", python=False)
 def full_matrix(session: Session) -> None:
     """Output the full build matrix for Python & Exasol versions as JSON."""
-    _deprecated_matrix_output(
+    _deprecated_generate_matrix(
         session=session,
         config=PROJECT_CONFIG,
         workflow_key_map={
