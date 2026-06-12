@@ -36,6 +36,10 @@ Extending the Matrix
 If you need to expose additional values via the ``matrix.yml``, you can extend
 :class:`exasol.toolbox.config.BaseConfig` as shown below.
 
+Declared fields are regular config attributes. Computed fields are derived values
+that Pydantic exposes separately via ``@computed_field``. Both can be used as
+matrix keys because the matrix generator accepts either kind of config value.
+
 .. code-block:: python
 
     from pydantic import computed_field
@@ -49,8 +53,8 @@ If you need to expose additional values via the ``matrix.yml``, you can extend
         @computed_field  # type: ignore[misc]
         @property
         def computed_matrix_value(self) -> str:
-          # This can be requested when generating the matrix. If it is a simple string value,
-          # like is shown here, then the code will automatically wrap it in an array.
+            # This can be requested when generating the matrix. If it is a simple
+            # string value, like is shown here, the generator wraps it in an array.
             return f"{self.project_name}-computed"
 
 You can consume the additional value in a workflow by passing the relevant
