@@ -11,7 +11,7 @@ PTB. The PTB reads the values from various attributes and properties of your
 project's config, see :ref:`workflow_templates`.
 
 Please note that the PTB only updates the values in the GitHub workflows when
-*updating* the workflows. So, after updating the :ref:`list of Python versions
+updating the workflows in general. So, after updating the :ref:`list of Python versions
 <python_versions>` in file ``noxconfig.py``, you need to :ref:`re-generate
 <update_workflows>` the GitHub workflows.
 
