@@ -12,7 +12,7 @@ Underlying the CLI, the PTB uses Jinja to dynamically generate project-specific
 workflows. The rendering process is supported by the ``github_template_dict`` found in
 your ``noxconfig.py::PROJECT_CONFIG``. This dictionary is inherited by default from
 :py:attr:`exasol.toolbox.config.BaseConfig.github_template_dict`, ensuring a
-standardized baseline that can be easily overridden, if necessary.
+standardized baseline that can be overridden in individual projects.
 
 .. literalinclude:: ../../../../exasol/toolbox/config.py
   :language: python
@@ -49,7 +49,8 @@ If you need to expose additional values via the ``matrix.yml``, you can extend
         @computed_field  # type: ignore[misc]
         @property
         def computed_matrix_value(self) -> str:
-            # A single value is automatically wrapped into a list when the matrix is generated.
+          # This can be requested when generating the matrix. If it is a simple string value,
+          # like is shown here, then the code will automatically wrap it in an array.
             return f"{self.project_name}-computed"
 
 You can consume the additional value in a workflow by passing the relevant
@@ -63,6 +64,6 @@ You can consume the additional value in a workflow by passing the relevant
         with:
           matrix_keys_json: '["extra_matrix_value","computed_matrix_value"]'
 
-Singular values such as ``computed_matrix_value`` do not need to be wrapped in an
+Simple string values such as ``computed_matrix_value`` do not need to be wrapped in an
 array in ``PROJECT_CONFIG``. The ``matrix.yml`` generation automatically converts them
 into arrays for the workflow matrix.
