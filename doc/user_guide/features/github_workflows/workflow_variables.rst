@@ -34,11 +34,14 @@ Extending the Matrix
 ^^^^^^^^^^^^^^^^^^^^
 
 If you need to expose additional values via the ``matrix.yml``, you can extend
-:class:`exasol.toolbox.config.BaseConfig` as shown below.
+:class:`exasol.toolbox.config.BaseConfig`. 
 
-Declared fields are regular config attributes. Computed fields are derived values
-that Pydantic exposes separately via ``@computed_field``. Both can be used as
-matrix keys because the matrix generator accepts either kind of config value.
+The example adds two additional matrix dimensions: A declared one
+`extra_matrix_value` and a computed one `computed_matrix_value`. Each of them
+returning only a simple string value.
+
+PTB's Nox task `generate:matrix` will then be able to use each of the these
+dimensions when generating a build matrix.
 
 .. code-block:: python
 
@@ -67,7 +70,3 @@ You can consume the additional value in a workflow by passing the relevant
         uses: ./.github/workflows/matrix.yml
         with:
           matrix_keys_json: '["extra_matrix_value","computed_matrix_value"]'
-
-Simple string values such as ``computed_matrix_value`` do not need to be wrapped in an
-array in ``PROJECT_CONFIG``. The ``matrix.yml`` generation automatically converts them
-into arrays for the workflow matrix.
