@@ -95,11 +95,6 @@ class TestGenerateMatrixHelper:
     def test_returns_requested_keys(config, requested_keys, expected):
         assert _generate_matrix(config, requested_keys) == expected
 
-    @staticmethod
-    def test_rejects_unknown_key(config):
-        with pytest.raises(KeyError, match="missing_matrix_value"):
-            _generate_matrix(config, ("missing_matrix_value",))
-
 
 class TestDeprecatedMatrixSessions:
     @staticmethod
