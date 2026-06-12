@@ -8,10 +8,10 @@ from pydantic import computed_field
 
 from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._matrix import (
+    _generate_matrix,
     exasol_matrix,
     full_matrix,
     generate_matrix,
-    _generate_matrix,
     python_matrix,
 )
 
