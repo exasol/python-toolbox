@@ -8,10 +8,10 @@ from pydantic import computed_field
 
 from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._ci import (
-    _dump_matrix,
     exasol_matrix,
     full_matrix,
     generate_matrix,
+    _generate_matrix,
     python_matrix,
 )
 
@@ -74,7 +74,7 @@ class TestGenerateMatrix:
         assert "invalid choice: 'missing_value'" in capsys.readouterr().err
 
 
-class TestDumpMatrix:
+class TestGenerateMatrixHelper:
     @staticmethod
     @pytest.mark.parametrize(
         ("requested_keys", "expected"),
@@ -93,12 +93,12 @@ class TestDumpMatrix:
         ],
     )
     def test_returns_requested_keys(config, requested_keys, expected):
-        assert _dump_matrix(config, requested_keys) == expected
+        assert _generate_matrix(config, requested_keys) == expected
 
     @staticmethod
     def test_rejects_unknown_key(config):
         with pytest.raises(KeyError, match="missing_matrix_value"):
-            _dump_matrix(config, ("missing_matrix_value",))
+            _generate_matrix(config, ("missing_matrix_value",))
 
 
 class TestDeprecatedMatrixSessions:

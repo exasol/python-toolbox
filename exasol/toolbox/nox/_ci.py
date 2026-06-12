@@ -46,10 +46,11 @@ def _matrix_args(session: Session, config: BaseConfig) -> list[str]:
     return parser.parse_args(session.posargs).keys
 
 
-def _dump_matrix(config: BaseConfig, keys: Iterable[str]) -> dict[str, Any]:
+def _generate_matrix(config: BaseConfig, keys: Iterable[str]) -> dict[str, Any]:
     """
-    Build a JSON-serializable matrix subset from the project's config.
+    Generate a JSON-serializable matrix subset from the project's config.
 
+    The selected keys may refer to either declared fields or computed fields.
     GitHub Actions matrix values must be arrays. Pydantic already serializes
     tuple-based config values to lists, so scalar values are wrapped in a
     single-element list here.
@@ -75,7 +76,7 @@ def _print_deprecated_matrix(
     session_name: str,
     replacement_args: str,
 ) -> None:
-    matrix = _dump_matrix(config, key_map.values())
+    matrix = _generate_matrix(config, key_map.values())
     renamed_matrix: dict[str, Any] = {}
     for output_key, config_key in key_map.items():
         renamed_matrix[output_key] = matrix[config_key]
@@ -92,7 +93,7 @@ def _print_deprecated_matrix(
 def generate_matrix(session: Session) -> None:
     """Output selected BaseConfig values as JSON."""
     keys = _matrix_args(session, PROJECT_CONFIG)
-    matrix = _dump_matrix(PROJECT_CONFIG, keys)
+    matrix = _generate_matrix(PROJECT_CONFIG, keys)
     print(json.dumps(matrix))
 
 
