@@ -1,6 +1,7 @@
 # Changelog
 
 * [unreleased](unreleased.md)
+* [9.0.0](changes_9.0.0.md)
 * [8.2.0](changes_8.2.0.md)
 * [8.1.1](changes_8.1.1.md)
 * [8.1.0](changes_8.1.0.md)
@@ -68,6 +69,7 @@
 hidden:
 ---
 unreleased
+changes_9.0.0
 changes_8.2.0
 changes_8.1.1
 changes_8.1.0
