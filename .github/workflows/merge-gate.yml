@@ -1,5 +1,5 @@
 # Generated and maintained by the exasol-toolbox.
-# Last generated with exasol-toolbox version 8.1.1.
+# Last generated with exasol-toolbox version 8.2.0.
 name: Merge-Gate
 
 on:
@@ -75,8 +75,10 @@ jobs:
     steps:
       - name: Branch Protection - failure if any ancestor failed or was cancelled
         if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        env:
+          NEEDS_JSON: ${{ toJSON(needs) }}
         run: |
-          echo '${{ toJSON(needs) }}'
+          echo "$NEEDS_JSON"
           exit 1
       - name: branch protection
         run: echo "All required checks passed. Merge allowed."
