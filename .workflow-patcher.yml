@@ -12,3 +12,15 @@ workflows:
             with:
               persist-credentials: false
               fetch-depth: 0
+  - name: checks
+    step_customizations:
+     - action: REPLACE
+       job: check-workflows
+       step_id: check-workflows
+       content:
+         # When preparing a (major) release, the GitHub templates are modified
+         # with the not yet-released version. This is problematic for this step.
+         - name: Check Workflows
+           id: check-workflows
+           if: ${{ !startsWith(github.head_ref || github.ref_name, 'release/prepare-') }}
+           run: poetry run -- nox -s workflow:check -- all
