@@ -149,11 +149,11 @@ class BaseConfig(BaseModel):
     root_path: Path = Field(description="Root directory of the project")
     python_versions: tuple[ValidVersionStr, ...] = Field(
         default=("3.10", "3.11", "3.12", "3.13", "3.14"),
+        min_length=1,
         description="Python versions to use in running CI workflows",
     )
-
     exasol_versions: tuple[ValidVersionStr, ...] = Field(
-        default=("7.1.30", "8.29.13", "2025.1.8"),
+        default=("8.29.13", "2025.1.8"),
         description="Exasol versions to use in running CI workflows for integration tests using the DB",
     )
     create_major_version_tags: bool = Field(

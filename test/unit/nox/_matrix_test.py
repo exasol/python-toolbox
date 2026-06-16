@@ -105,9 +105,7 @@ class TestDeprecatedMatrixSessions:
             exasol_matrix(nox_session)
 
         captured = capsys.readouterr()
-        assert json.loads(captured.out) == {
-            "exasol-version": ["7.1.30", "8.29.13", "2025.1.8"]
-        }
+        assert json.loads(captured.out) == {"exasol-version": ["8.29.13", "2025.1.8"]}
         assert len(caplog.messages) == 1
 
     @staticmethod
@@ -131,6 +129,6 @@ class TestDeprecatedMatrixSessions:
         captured = capsys.readouterr()
         assert json.loads(captured.out) == {
             "python-version": ["3.10", "3.11", "3.12", "3.13", "3.14"],
-            "exasol-version": ["7.1.30", "8.29.13", "2025.1.8"],
+            "exasol-version": ["8.29.13", "2025.1.8"],
         }
         assert len(caplog.messages) == 1

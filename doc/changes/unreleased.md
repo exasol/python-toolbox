@@ -31,3 +31,7 @@ these workflows in your project until you transition fully to using `matrix.yml`
 * #730: Added support to extend GitHub workflow `cd.yml`
 * #864: Modified PTB workflow templates to not persist credentials and to use pinned SHAs
 * #654: Added and used general matrix `matrix.yml` for PTB-provided workflows
+
+## Refactoring
+
+* #682: Modified PTB exasol_versions to an empty list

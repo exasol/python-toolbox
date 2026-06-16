@@ -43,7 +43,7 @@ class TestBaseConfig:
             "create_major_version_tags": False,
             "dependency_manager": {"name": "poetry", "version": "2.3.0"},
             "documentation_path": root_path / "doc",
-            "exasol_versions": ("7.1.30", "8.29.13", "2025.1.8"),
+            "exasol_versions": ("8.29.13", "2025.1.8"),
             "excluded_python_paths": expand_paths(config, DEFAULT_EXCLUDED_PATHS),
             "github_workflow_directory": tmp_path / ".github" / "workflows",
             "github_workflow_patcher_yaml": None,
@@ -81,6 +81,11 @@ class TestBaseConfig:
     @pytest.mark.parametrize(
         "wrong_input,expected_message",
         [
+            pytest.param(
+                {"python_versions": []},
+                "at least 1 item",
+                id="python_versions_empty",
+            ),
             pytest.param(
                 {"python_versions": ["1.2.3.1"]},
                 "Version has an invalid format",

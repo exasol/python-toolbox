@@ -82,8 +82,7 @@ PROJECT_CONFIG = Config(
         ".github/actions/python-environment/ext/get_poetry.py",
     ),
     create_major_version_tags=True,
-    # The PTB does not have integration tests run with an Exasol DB,
-    # so for running in the CI, we take the first element.
-    exasol_versions=("7.1.30",),
+    # The PTB does not have integration tests running with an Exasol DB.
+    exasol_versions=(),
     plugins_for_nox_sessions=(UpdateTemplates,),
 )
