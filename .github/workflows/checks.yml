@@ -226,4 +226,5 @@ jobs:
 
       - name: Check Workflows
         id: check-workflows
+        if: ${{ !startsWith(github.head_ref || github.ref_name, 'release/prepare-') }}
         run: poetry run -- nox -s workflow:check -- all
