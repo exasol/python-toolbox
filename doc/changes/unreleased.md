@@ -2,6 +2,6 @@
 
 ## Summary
 
-## Refactoring
+## Security
 
 * #867: Fixed zizmor linting results
