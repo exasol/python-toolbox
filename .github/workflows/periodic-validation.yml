@@ -1,5 +1,5 @@
 # Generated and maintained by the exasol-toolbox.
-# Last generated with exasol-toolbox version 8.1.1.
+# Last generated with exasol-toolbox version 9.0.0.
 name: Periodic-Validation
 
 on:
@@ -46,7 +46,7 @@ jobs:
     uses: ./.github/workflows/slow-checks.yml
     needs:
       - restrict-to-default-branch
-    secrets: inherit
+    secrets: inherit # zizmor: ignore[secrets-inherit] - PTB cannot customize inherited secrets here yet; tracked in https://github.com/exasol/python-toolbox/issues/872.
     permissions:
       contents: read
 

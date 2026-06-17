@@ -27,7 +27,9 @@ jobs:
   (% if workflow_extension.cd %)
   cd-extension:
     uses: ./.github/workflows/cd-extension.yml
-    secrets: inherit
+    needs:
+      - check-release-tag
+    secrets: inherit # zizmor: ignore[secrets-inherit] - PTB cannot customize inherited secrets here yet; tracked in https://github.com/exasol/python-toolbox/issues/872.
     permissions:
       contents: write
   (% endif %)
