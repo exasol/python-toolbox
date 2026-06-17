@@ -93,6 +93,13 @@ def valid_version_string(version_string: str) -> str:
     return version_string
 
 
+def minimum_declared_version(versions: tuple[str, ...]) -> str:
+    versioned = [Version.from_string(v) for v in versions]
+    min_version = min(versioned)
+    index_min_version = versioned.index(min_version)
+    return versions[index_min_version]
+
+
 ValidPluginHook = Annotated[type[Any], AfterValidator(validate_plugin_hook)]
 ValidVersionStr = Annotated[str, AfterValidator(valid_version_string)]
 
@@ -230,10 +237,20 @@ class BaseConfig(BaseModel):
         This is used in specific testing scenarios where it would be either
         costly to run the tests for all ``python_versions`` or we need a single metric.
         """
-        versioned = [Version.from_string(v) for v in self.python_versions]
-        min_version = min(versioned)
-        index_min_version = versioned.index(min_version)
-        return self.python_versions[index_min_version]
+        return minimum_declared_version(self.python_versions)
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def minimum_exasol_version(self) -> str | None:
+        """
+        Minimum Exasol version declared from the ``exasol_versions`` list.
+
+        This is used in scenarios where a single baseline Exasol version is
+        needed instead of iterating across the full configured matrix.
+        """
+        if len(self.exasol_versions) == 0:
+            return None
+        return minimum_declared_version(self.exasol_versions)
 
     @computed_field  # type: ignore[misc]
     @property
