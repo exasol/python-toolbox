@@ -44,7 +44,7 @@ runs:
 
     - name: Set up Poetry (${{ inputs.poetry-version }})
       shell: bash
-      run: |
+      run: | # zizmor: ignore[github-env] - This shared action is used by many workflows, and downstream steps need `poetry` on PATH; we do not have a safer replacement yet.
         POETRY_VERSION="${INPUTS_POETRY_VERSION}" "$PYTHON_BINARY" "${{ github.action_path }}/ext/get_poetry.py"
         echo "$HOME/.local/bin" >> $GITHUB_PATH
       env:
