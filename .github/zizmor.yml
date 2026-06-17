@@ -1,6 +1,4 @@
 rules:
-  secrets-inherit:
-    disable: true
   template-injection:
     disable: true
   unpinned-uses:
