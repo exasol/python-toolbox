@@ -1,6 +1,4 @@
 rules:
-  github-env:
-    disable: true
   secrets-inherit:
     disable: true
   template-injection:
