@@ -10,6 +10,7 @@ from pydantic_core._pydantic_core import ValidationError
 from exasol.toolbox.config import (
     DEFAULT_EXCLUDED_PATHS,
     BaseConfig,
+    CustomWorkflowSecrets,
     DependencyManager,
     minimum_declared_version,
     valid_version_string,
@@ -141,6 +142,60 @@ class AlternateSonarConfig(BaseConfig):
     @property
     def sonar_token_name(self) -> str:
         return "SONAR_ANOTHER_TOKEN"
+
+
+class TestCustomWorkflowSecrets:
+    @staticmethod
+    def test_default():
+        custom_workflow_secrets = CustomWorkflowSecrets()
+        secrets = custom_workflow_secrets.get_secrets_dict()
+
+        assert secrets == {
+            "cd_extension": (),
+            "merge_gate": (),
+            "merge_gate_extension": (),
+            "slow_checks": (),
+        }
+
+    @staticmethod
+    def test_single_override():
+        cd_ext_secret = "CD_SECRET"
+
+        custom_workflow_secrets = CustomWorkflowSecrets(
+            cd_extension=(cd_ext_secret,),
+        )
+        secrets = custom_workflow_secrets.get_secrets_dict()
+
+        assert secrets == {
+            "cd_extension": (cd_ext_secret,),
+            "merge_gate": (),
+            "merge_gate_extension": (),
+            "slow_checks": (),
+        }
+
+    @staticmethod
+    def test_multiple_overrides():
+        cd_ext_secret = "CD_SECRET"
+        merge_gate_ext_secret = "MERGE_GATE_SECRET"
+        slow_checks_secret = "SLOW_CHECKS_SECRET"
+
+        custom_workflow_secrets = CustomWorkflowSecrets(
+            cd_extension=(cd_ext_secret,),
+            merge_gate_extension=(merge_gate_ext_secret, merge_gate_ext_secret),
+            slow_checks=(slow_checks_secret,),
+        )
+        secrets = custom_workflow_secrets.get_secrets_dict()
+
+        assert secrets == {
+            "cd_extension": (cd_ext_secret,),
+            "merge_gate": (
+                merge_gate_ext_secret,
+                merge_gate_ext_secret,
+                slow_checks_secret,
+            ),
+            "merge_gate_extension": (merge_gate_ext_secret, merge_gate_ext_secret),
+            "slow_checks": (slow_checks_secret,),
+        }
 
 
 def test_expansion_validation_fails_for_invalid_version():
