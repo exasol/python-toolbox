@@ -64,3 +64,23 @@ def generate_workflow(session: Session) -> None:
         workflow_choice=args.workflow_choice,
         config=PROJECT_CONFIG,
     ).generate_workflows()
+
+
+@nox.session(name="workflow:audit", python=False)
+def audit_workflows(session: Session) -> None:
+    """
+    Audit GitHub actions & workflows with zizmor.
+    This Nox session passes through additional arguments that zizmor supports.
+    In some cases, zizmor findings can be automatically fixed with `--fix=safe`.
+    """
+    config_path = PROJECT_CONFIG.zizmor_config_path
+    if not config_path.is_file():
+        raise FileNotFoundError(f"{config_path} must exist.")
+
+    session.run(
+        "zizmor",
+        "--config",
+        config_path,
+        *session.posargs,
+        PROJECT_CONFIG.root_path,
+    )

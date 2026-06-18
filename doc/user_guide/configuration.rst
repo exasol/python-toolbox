@@ -16,4 +16,5 @@ features:
 
    features/metrics/sonar
    Formatting <features/formatting_code/configuration>
+   Zizmor <features/managing_dependencies/zizmor_configuration>
    features/github_workflows/github_project_configuration

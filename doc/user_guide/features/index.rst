@@ -10,7 +10,7 @@ Features
    github_workflows/index
    documentation/index
    creating_a_release
-   managing_dependencies
+   managing_dependencies/index
    git_hooks/index
    metrics/collecting_metrics
 

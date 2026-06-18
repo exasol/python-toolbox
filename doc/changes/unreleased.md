@@ -13,9 +13,14 @@ so ITDE-related test flows use the configured Exasol baseline and unit-test help
 
 * #744: Updated nox DB-version handling to use `BaseConfig.minimum_exasol_version` instead hardcoded `7.1.9`
 
+## Feature
+
+* #878: Added Nox session `workflow:audit` which uses `zizmor` and added it in `checks.yml`
+
 ## Refactoring
 
 * #744: Extracted shared minimum-version selection logic into `minimum_declared_version()`
+
 ## Security
 
 * #867: Fixed zizmor linting results
