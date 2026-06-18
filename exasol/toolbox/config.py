@@ -360,6 +360,7 @@ class BaseConfig(BaseModel):
         )
 
         secrets = self.custom_workflow_secrets.get_secrets_dict()
+        # merge-gate.yml also calls report.yml and needs Sonar token
         secrets["merge_gate"] += (self.sonar_token_name,)
 
         return {
