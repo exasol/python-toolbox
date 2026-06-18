@@ -152,7 +152,7 @@ class TestAuditWorkflows:
     @staticmethod
     @pytest.mark.parametrize(
         "nox_session_runner_posargs",
-        [["--config-file", "custom.yml", "--no-progress"]],
+        [["--version"]],
         indirect=["nox_session_runner_posargs"],
     )
     def test_passes_through_extra_arguments(
@@ -177,8 +177,6 @@ class TestAuditWorkflows:
             "zizmor",
             "--config",
             config_path,
-            "--config-file",
-            "custom.yml",
-            "--no-progress",
+            "--version",
             project_config_without_patcher.root_path,
         )
