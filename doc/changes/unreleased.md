@@ -7,7 +7,7 @@ so ITDE-related test flows use the configured Exasol baseline and unit-test help
 
 ## Feature
 
-* #874: Added the `security` label and `Integration Kanban` project to dependency update PR creation
+* #874: Added the `security` label to dependency update PR creation
 
 ## Bug
 
