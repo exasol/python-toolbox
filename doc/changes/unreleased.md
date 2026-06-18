@@ -12,6 +12,7 @@ so ITDE-related test flows use the configured Exasol baseline and unit-test help
 ## Feature
 
 * #878: Added Nox session `workflow:audit` which uses `zizmor` and added it in `checks.yml`
+* #872: Added `custom_workflow_secrets` to `BaseConfig` so that tuples of secrets can be defined for custom workflows, like `slow-checks.yml`
 
 ## Refactoring
 
