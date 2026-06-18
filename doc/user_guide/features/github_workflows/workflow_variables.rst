@@ -28,6 +28,24 @@ That field uses :class:`exasol.toolbox.config.CustomWorkflowSecrets` and lets yo
 define separate secret tuples for specific workflows. See the API reference for
 :class:`exasol.toolbox.config.CustomWorkflowSecrets` for the exact structure.
 
+Those custom secrets must be declared at the top of the reusable workflow file, under
+``on.workflow_call`` and before ``jobs``. The generated workflows rely on that shape
+when they call the reusable workflow with ``secrets:``.
+
+For example, ``slow-checks.yml`` keeps its reusable workflow header at the top of the
+file:
+
+.. code-block:: yaml
+
+   name: Slow-Checks
+
+   on:
+     workflow_call:
+       secrets:
+         EXAMPLE_SECRET:
+           required: true
+
+
 
 .. _workflow_matrix:
 
