@@ -145,18 +145,18 @@ class CustomWorkflowSecrets(BaseModel):
         cd-extension.yml.
         """,
     )
-    slow_checks: tuple[str, ...] = Field(
-        default=(),
-        description="""
-        This tuple defines the string names of secrets needed to pass to the 
-        slow_checks.yml.
-        """,
-    )
     merge_gate_extension: tuple[str, ...] = Field(
         default=(),
         description="""
         This tuple defines the string names of secrets needed to pass to the 
         merge-gate-extension.yml.
+        """,
+    )
+    slow_checks: tuple[str, ...] = Field(
+        default=(),
+        description="""
+        This tuple defines the string names of secrets needed to pass to the 
+        slow_checks.yml.
         """,
     )
 
