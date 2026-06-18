@@ -111,6 +111,8 @@ jobs:
 
           PR_URL=$(gh pr create \
                       --base "$BASE_BRANCH" \
+                      --label "security" \
+                      --project "Integration Kanban" \
                       --title "Update dependencies to fix vulnerabilities ($(date '+%Y-%m-%d'))" \
                       --body "$PR_BODY")
 
