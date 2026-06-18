@@ -246,6 +246,6 @@ jobs:
           python-version: "(( minimum_python_version ))"
           poetry-version: "(( dependency_manager_version ))"
 
-      - name: Check Workflows
-        id: check-workflows
+      - name: Audit Workflows
+        id: audit-workflows
         run: poetry run -- nox -s workflow:audit

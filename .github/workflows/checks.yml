@@ -247,6 +247,6 @@ jobs:
           python-version: "3.10"
           poetry-version: "2.3.0"
 
-      - name: Check Workflows
-        id: check-workflows
+      - name: Audit Workflows
+        id: audit-workflows
         run: poetry run -- nox -s workflow:audit
