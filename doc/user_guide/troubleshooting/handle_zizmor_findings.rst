@@ -1,7 +1,10 @@
-.. _ignore_zizmor_findings:
+.. _handle_zizmor_findings:
 
-Ignoring Zizmor Findings
+Handling Zizmor Findings
 ========================
+
+Fixing the Issues
+-----------------
 
 `zizmor <https://docs.zizmor.sh/>`__ can automatically fix some findings. The
 ``--fix`` flag accepts three modes:
@@ -10,6 +13,14 @@ Ignoring Zizmor Findings
 * ``--fix=unsafe-only`` applies only unsafe fixes, meaning fixes that may be
   correct but require human review because they can affect semantics.
 * ``--fix=all`` applies both safe and unsafe fixes.
+
+If a finding does not have a known auto-fix, check the relevant audit
+documentation in the `zizmor documentation <https://docs.zizmor.sh/>`__.
+That usually makes it clearer whether the issue needs a code change, a
+configuration change, or an accepted exception.
+
+Ignoring Accepted Issues
+------------------------
 
 When you are first enabling ``workflow:audit``, it can be practical to start with
 a broader ``.zizmor.yml`` configuration and then tighten it over time.
