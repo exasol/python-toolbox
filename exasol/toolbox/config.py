@@ -351,3 +351,11 @@ class BaseConfig(BaseModel):
         if workflow_patcher_yaml.is_file():
             return workflow_patcher_yaml
         return None
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def zizmor_config_path(self) -> Path:
+        """
+        Path where the zizmor configuration file for the project is stored.
+        """
+        return self.root_path / ".zizmor.yml"

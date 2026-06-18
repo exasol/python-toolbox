@@ -77,6 +77,7 @@ class TestBaseConfig:
             "root_path": root_path,
             "sonar_code_path": Path("exasol/test"),
             "source_code_path": root_path / "exasol" / "test",
+            "zizmor_config_path": root_path / ".zizmor.yml",
         }
 
     @staticmethod

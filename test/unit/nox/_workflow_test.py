@@ -6,6 +6,7 @@ from pydantic import computed_field
 
 from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._workflow import (
+    audit_workflows,
     check_workflow,
     generate_workflow,
 )
@@ -32,7 +33,8 @@ def project_config_without_patcher(tmp_path) -> BaseConfig:
 
 @pytest.fixture
 def nox_session_runner_posargs(request):
-    return [request.param]
+    value = request.param
+    return list(value) if isinstance(value, (list, tuple)) else [value]
 
 
 class TestGenerateWorkflow:
@@ -143,4 +145,40 @@ class TestCheckWorkflow:
             "- pr-merge\n"
             "- report\n"
             "- slow-checks"
+        )
+
+
+class TestAuditWorkflows:
+    @staticmethod
+    @pytest.mark.parametrize(
+        "nox_session_runner_posargs",
+        [["--config-file", "custom.yml", "--no-progress"]],
+        indirect=["nox_session_runner_posargs"],
+    )
+    def test_passes_through_extra_arguments(
+        nox_session,
+        project_config_without_patcher,
+        nox_session_runner_posargs,
+    ):
+        config_path = project_config_without_patcher.root_path / ".zizmor.yml"
+        config_path.parent.mkdir(parents=True, exist_ok=True)
+        config_path.write_text("rules: []\n")
+
+        with (
+            patch(
+                "exasol.toolbox.nox._workflow.PROJECT_CONFIG",
+                new=project_config_without_patcher,
+            ),
+            patch("nox.sessions.Session.run") as run_mock,
+        ):
+            audit_workflows(nox_session)
+
+        run_mock.assert_called_once_with(
+            "zizmor",
+            "--config",
+            config_path,
+            "--config-file",
+            "custom.yml",
+            "--no-progress",
+            project_config_without_patcher.root_path,
         )
