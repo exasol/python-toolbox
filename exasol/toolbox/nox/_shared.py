@@ -14,7 +14,6 @@ from typing import Any
 
 from nox import Session
 
-from exasol.toolbox.config import BaseConfig
 from noxconfig import (
     PROJECT_CONFIG,
 )
@@ -44,37 +43,49 @@ def _context_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    parser.add_argument(
-        "--coverage", action="store_true", help="Enable the collection of coverage data"
-    )
-    return parser
-
-
-def _integration_context_parser(config: BaseConfig | None = None) -> argparse.ArgumentParser:
-    config = config or PROJECT_CONFIG
-    parser = _context_parser()
-    parser.add_argument(
-        "--db-version",
-        default=config.minimum_exasol_version,
-        help="Specify the Exasol DB version to be used",
-    )
     return parser
 
 
 def _context(
     session: Session,
-    *,
-    include_db_version: bool = False,
+    parser: argparse.ArgumentParser,
+    default_context: dict[str, Any],
     **kwargs: Any,
 ) -> MutableMapping[str, Any]:
-    parser = (
-        _integration_context_parser() if include_db_version else _context_parser()
-    )
     namespace, args = parser.parse_known_args(session.posargs)
     cli_context: MutableMapping[str, Any] = vars(namespace)
     cli_context["fwd-args"] = args
-    default_context = {"coverage": False}
-    if include_db_version:
-        default_context["db_version"] = PROJECT_CONFIG.minimum_exasol_version
     # Note: ChainMap scans last to first
     return ChainMap(kwargs, cli_context, default_context)
+
+
+def _unit_test_context(session: Session, **kwargs: Any) -> MutableMapping[str, Any]:
+    parser = _context_parser()
+    parser.add_argument(
+        "--coverage", action="store_true", help="Enable the collection of coverage data"
+    )
+    return _context(session, parser, {"coverage": False}, **kwargs)
+
+
+def _integration_test_context(
+    session: Session,
+    **kwargs: Any,
+) -> MutableMapping[str, Any]:
+    parser = _context_parser()
+    parser.add_argument(
+        "--coverage", action="store_true", help="Enable the collection of coverage data"
+    )
+    parser.add_argument(
+        "--db-version",
+        default=PROJECT_CONFIG.minimum_exasol_version,
+        help="Specify the Exasol DB version to be used",
+    )
+    return _context(
+        session,
+        parser,
+        {
+            "coverage": False,
+            "db_version": PROJECT_CONFIG.minimum_exasol_version,
+        },
+        **kwargs,
+    )

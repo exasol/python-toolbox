@@ -4,6 +4,8 @@ from unittest.mock import patch
 import pytest
 
 from exasol.toolbox.nox._shared import (
+    _integration_test_context,
+    _unit_test_context,
     get_filtered_python_files,
 )
 
@@ -74,3 +76,52 @@ def test_get_filtered_python_files(
     exceptions = [f for f in actual if f.endswith("sample.py")]
     assert len(exceptions) == 1
     assert "toolbox/sample.py" in exceptions[0]
+
+
+def test_unit_test_context_help_excludes_db_version(nox_session):
+    captured: dict[str, str] = {}
+
+    def _capture_context(session, parser, default_context, **kwargs):
+        captured["help_text"] = parser.format_help()
+        return default_context
+
+    with patch("exasol.toolbox.nox._shared._context", side_effect=_capture_context):
+        _unit_test_context(nox_session)
+
+    help_text = captured["help_text"]
+    assert "--coverage" in help_text
+    assert "--db-version" not in help_text
+
+
+def test_integration_test_context_help_includes_db_version(nox_session):
+    captured: dict[str, str] = {}
+
+    def _capture_context(session, parser, default_context, **kwargs):
+        captured["help_text"] = parser.format_help()
+        return default_context
+
+    with patch("exasol.toolbox.nox._shared._context", side_effect=_capture_context):
+        _integration_test_context(nox_session)
+
+    help_text = captured["help_text"]
+    assert "--coverage" in help_text
+    assert "--db-version" in help_text
+
+
+def test_unit_test_context_has_no_db_version(nox_session):
+    context = _unit_test_context(nox_session)
+
+    assert context["coverage"] is False
+    assert "db_version" not in context
+
+
+def test_integration_test_context_uses_minimum_exasol_version(
+    nox_session, test_project_config_factory
+):
+    config = test_project_config_factory(exasol_versions=("2025.1.8", "8.29.13"))
+
+    with patch("exasol.toolbox.nox._shared.PROJECT_CONFIG", config):
+        context = _integration_test_context(nox_session)
+
+    assert context["coverage"] is False
+    assert context["db_version"] == "8.29.13"

@@ -11,7 +11,10 @@ import nox
 from nox import Session
 
 from exasol.toolbox.config import BaseConfig
-from exasol.toolbox.nox._shared import _context
+from exasol.toolbox.nox._shared import (
+    _integration_test_context,
+    _unit_test_context,
+)
 from exasol.toolbox.nox.plugin import NoxTasks
 from noxconfig import (
     PROJECT_CONFIG,
@@ -76,7 +79,7 @@ def _coverage(
 @nox.session(name="test:unit", python=False)
 def unit_tests(session: Session) -> None:
     """Runs all unit tests"""
-    context = _context(session)
+    context = _unit_test_context(session)
     _unit_tests(session, PROJECT_CONFIG, context)
 
 
@@ -90,12 +93,12 @@ def integration_tests(session: Session) -> None:
         * pre_integration_tests_hook(session: Session, config: Config, context: MutableMapping[str, Any]) -> bool:
         * post_integration_tests_hook(session: Session, config: Config, context: MutableMapping[str, Any]) -> bool:
     """
-    context = _context(session, include_db_version=True)
+    context = _integration_test_context(session)
     _integration_tests(session, PROJECT_CONFIG, context)
 
 
 @nox.session(name="test:coverage", python=False)
 def coverage(session: Session) -> None:
     """Runs all tests (unit + integration) and reports the code coverage"""
-    context = _context(session, include_db_version=True, coverage=True)
+    context = _integration_test_context(session, coverage=True)
     _coverage(session, PROJECT_CONFIG, context)
