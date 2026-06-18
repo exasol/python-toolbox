@@ -17,6 +17,7 @@ proposed mitigations, some potentially specific to the related tool.
    format_check_reports_unmodified_files
    formatting_disable
    "F401 unused import" (reported by Ruff) <ignore_ruff_findings>
+   Handling Zizmor Findings <handle_zizmor_findings>
    ../features/metrics/ignore_findings
    debug_github_workflows
 
