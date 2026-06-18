@@ -58,7 +58,12 @@ jobs:
   (% if workflow_extension.merge_gate %)
   merge-gate-extension:
     uses: ./.github/workflows/merge-gate-extension.yml
-    secrets: inherit # zizmor: ignore[secrets-inherit] - PTB cannot customize inherited secrets here yet; tracked in https://github.com/exasol/python-toolbox/issues/872.
+    (% if secrets.merge_gate_extension %)
+    secrets:
+      (% for secret_name in secrets.merge_gate_extension %)
+      (( secret_name )): ${{ secrets.(( secret_name )) }}
+      (% endfor %)
+    (% endif %)
     permissions:
       contents: read
   (% endif %)

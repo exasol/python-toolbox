@@ -137,6 +137,35 @@ class DependencyManager(BaseModel):
         return v
 
 
+class CustomWorkflowSecrets(BaseModel):
+    cd_extension: tuple[str, ...] = Field(
+        default=(),
+        description="""
+        This tuple defines the string names of secrets needed to pass to the
+        cd-extension.yml.
+        """,
+    )
+    slow_checks: tuple[str, ...] = Field(
+        default=(),
+        description="""
+        This tuple defines the string names of secrets needed to pass to the 
+        slow_checks.yml.
+        """,
+    )
+    merge_gate_extension: tuple[str, ...] = Field(
+        default=(),
+        description="""
+        This tuple defines the string names of secrets needed to pass to the 
+        merge-gate-extension.yml.
+        """,
+    )
+
+    def get_secrets_dict(self) -> dict[str, tuple[str, ...]]:
+        secrets = self.model_dump(exclude_computed_fields=True)
+        secrets["merge_gate"] = self.merge_gate_extension + self.slow_checks
+        return secrets
+
+
 class BaseConfig(BaseModel):
     """
     Basic configuration for projects using the PTB
@@ -207,11 +236,11 @@ class BaseConfig(BaseModel):
         are supported.
         """,
     )
-    secrets_slow_checks: tuple[str, ...] = Field(
-        default=(),
-        description="""This tuple defines the string names of secrets needed to pass
-        to the slow-checks.yml.
-        """
+    custom_workflow_secrets: CustomWorkflowSecrets = Field(
+        default=CustomWorkflowSecrets(),
+        description="""
+        This object is used to set the secret arrays for custom workflows.
+        """,
     )
 
     @computed_field  # type: ignore[misc]
@@ -330,11 +359,15 @@ class BaseConfig(BaseModel):
             self.github_workflow_directory / "merge-gate-extension.yml"
         )
 
+        secrets = self.custom_workflow_secrets.get_secrets_dict()
+        secrets["merge_gate"] += (self.sonar_token_name,)
+
         return {
             "dependency_manager_version": self.dependency_manager.version,
             "minimum_python_version": self.minimum_python_version,
             "os_version": self.os_version,
             "python_versions": self.python_versions,
+            "secrets": secrets,
             "sonar_token_name": self.sonar_token_name,
             "workflow_header": f"{WORKFLOW_HEADER_PREFIX}{__version__}.",
             "workflow_extension": {
@@ -342,10 +375,6 @@ class BaseConfig(BaseModel):
                 "fast_tests": fast_tests_extension.is_file(),
                 "merge_gate": merge_gate_extension.is_file(),
             },
-            "secrets":
-                {
-                    "slow_checks": self.secrets_slow_checks,
-                }
         }
 
     @computed_field  # type: ignore[misc]

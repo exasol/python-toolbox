@@ -42,6 +42,11 @@ class TestBaseConfig:
         assert config_dump == {
             "add_to_excluded_python_paths": (),
             "create_major_version_tags": False,
+            "custom_workflow_secrets": {
+                "cd_extension": (),
+                "merge_gate_extension": (),
+                "slow_checks": (),
+            },
             "dependency_manager": {"name": "poetry", "version": "2.3.0"},
             "documentation_path": root_path / "doc",
             "exasol_versions": ("8.29.13", "2025.1.8"),
@@ -60,6 +65,12 @@ class TestBaseConfig:
                     "3.13",
                     "3.14",
                 ),
+                "secrets": {
+                    "cd_extension": (),
+                    "merge_gate": ("SONAR_TOKEN",),
+                    "merge_gate_extension": (),
+                    "slow_checks": (),
+                },
                 "workflow_extension": {
                     "cd": False,
                     "fast_tests": False,
