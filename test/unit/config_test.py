@@ -11,6 +11,7 @@ from exasol.toolbox.config import (
     DEFAULT_EXCLUDED_PATHS,
     BaseConfig,
     DependencyManager,
+    minimum_declared_version,
     valid_version_string,
     warnings,
 )
@@ -65,6 +66,7 @@ class TestBaseConfig:
                     "merge_gate": False,
                 },
             },
+            "minimum_exasol_version": "8.29.13",
             "minimum_python_version": "3.10",
             "os_version": "ubuntu-24.04",
             "sonar_token_name": "SONAR_TOKEN",
@@ -151,6 +153,27 @@ class TestOsVersion:
 def test_minimum_python_version(test_project_config_factory):
     conf = test_project_config_factory(python_versions=("5.5.5", "1.10", "9.9.9"))
     assert conf.minimum_python_version == "1.10"
+
+
+@pytest.mark.parametrize(
+    "declared_versions,expected",
+    [
+        pytest.param(("3.11", "3.10", "3.12"), "3.10", id="python"),
+        pytest.param(("2025.1.8", "8.29.13", "9.9.9"), "8.29.13", id="exasol"),
+    ],
+)
+def test_minimum_declared_version(declared_versions, expected):
+    assert minimum_declared_version(declared_versions) == expected
+
+
+def test_minimum_exasol_version(test_project_config_factory):
+    conf = test_project_config_factory(exasol_versions=("2025.1.8", "8.29.13", "9.9.9"))
+    assert conf.minimum_exasol_version == "8.29.13"
+
+
+def test_minimum_exasol_version_when_empty(test_project_config_factory):
+    conf = test_project_config_factory(exasol_versions=())
+    assert conf.minimum_exasol_version is None
 
 
 def test_sonar_token_name_can_be_overridden(tmp_path):

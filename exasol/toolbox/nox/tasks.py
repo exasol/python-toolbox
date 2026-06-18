@@ -33,7 +33,7 @@ from noxconfig import PROJECT_CONFIG
 @nox.session(name="project:check", python=False)
 def check(session: Session) -> None:
     """Runs all available checks on the project"""
-    context = _context(session, coverage=True)
+    context = _integration_test_context(session, coverage=True)
     py_files = get_filtered_python_files(PROJECT_CONFIG.root_path)
     _code_format(session, Mode.Check, py_files)
     _pylint(session, py_files)
@@ -61,7 +61,7 @@ from exasol.toolbox.nox._documentation import (
 from exasol.toolbox.nox._release import prepare_release
 from exasol.toolbox.nox._shared import (
     Mode,
-    _context,
+    _integration_test_context,
     get_filtered_python_files,
 )
 
