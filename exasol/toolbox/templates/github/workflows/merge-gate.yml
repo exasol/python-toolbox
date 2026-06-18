@@ -3,6 +3,13 @@ name: Merge-Gate
 
 on:
   workflow_call:
+    (% if secrets.merge_gate %)
+    secrets:
+      (% for secret_name in secrets.merge_gate %)
+        (( secret_name )):
+          required: true
+      (% endfor %)
+    (% endif %)
 
 jobs:
   run-fast-checks:
@@ -80,9 +87,9 @@ jobs:
       - run-fast-checks
       - run-fast-tests
       - run-slow-checks
-     (% if workflow_extension.merge_gate %)
+    (% if workflow_extension.merge_gate %)
       - merge-gate-extension
-     (% endif %)
+    (% endif %)
     # To prevent accidentally merges, this step is required. For more details
     # see: https://github.com/exasol/python-toolbox/issues/563
     steps:
