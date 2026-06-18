@@ -207,6 +207,12 @@ class BaseConfig(BaseModel):
         are supported.
         """,
     )
+    secrets_slow_checks: tuple[str, ...] = Field(
+        default=(),
+        description="""This tuple defines the string names of secrets needed to pass
+        to the slow-checks.yml.
+        """
+    )
 
     @computed_field  # type: ignore[misc]
     @property
@@ -336,6 +342,10 @@ class BaseConfig(BaseModel):
                 "fast_tests": fast_tests_extension.is_file(),
                 "merge_gate": merge_gate_extension.is_file(),
             },
+            "secrets":
+                {
+                    "slow_checks": self.secrets_slow_checks,
+                }
         }
 
     @computed_field  # type: ignore[misc]
