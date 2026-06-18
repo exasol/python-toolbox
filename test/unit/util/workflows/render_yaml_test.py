@@ -252,7 +252,9 @@ class TestYamlRendererJinja:
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_does_not_add_jinja_block(test_yml, yaml_renderer, project_config):
+    def test_omits_block_when_extension_is_missing(
+        test_yml, yaml_renderer, project_config
+    ):
         input_yaml = """
         jobs:
           run-unit-tests:
@@ -304,7 +306,9 @@ class TestYamlRendererJinja:
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_adds_jinja_block(test_yml, project_config):
+    def test_includes_if_block_when_extension_is_present(
+        test_yml, project_config
+    ):
         input_yaml = """
         jobs:
           run-unit-tests:
@@ -366,6 +370,93 @@ class TestYamlRendererJinja:
 
         yaml_dict = yaml_renderer.get_yaml_dict()
 
+        assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
+
+    @staticmethod
+    def test_includes_extension_with_multiple_secrets(
+        test_yml, project_config
+    ):
+        input_yaml = """
+        jobs:
+          run-unit-tests:
+            name: Unit Tests (Python-${{ matrix.python-versions }})
+            runs-on: "(( os_version ))"
+            permissions:
+              contents: read
+            strategy:
+              fail-fast: false
+              matrix:
+                python-versions: (( python_versions | tojson ))
+
+            steps:
+              - name: Check out Repository
+                id: check-out-repository
+                uses: actions/checkout@v6
+
+        (% if workflow_extension.merge_gate %)
+          merge-gate-extension:
+            uses: ./.github/workflows/merge-gate-extension.yml
+            (% if secrets.merge_gate_extension %)
+            secrets:
+              (% for secret_name in secrets.merge_gate_extension %)
+              (( secret_name )): ${{ secrets.(( secret_name )) }}
+              (% endfor %)
+            (% endif %)
+            permissions:
+              contents: read
+          (% endif %)
+
+        """
+        expected_yaml = """
+        jobs:
+        run-unit-tests:
+          name: Unit Tests (Python-${{ matrix.python-versions }})
+          runs-on: "ubuntu-24.04"
+          permissions:
+            contents: read
+          strategy:
+            fail-fast: false
+            matrix:
+              python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+
+          steps:
+            - name: Check out Repository
+              id: check-out-repository
+              uses: actions/checkout@v6
+
+        merge-gate-extension:
+          uses: ./.github/workflows/merge-gate-extension.yml
+          secrets:
+            MERGE_GATE_SECRET: ${{ secrets.MERGE_GATE_SECRET }}
+            ANOTHER_SECRET: ${{ secrets.ANOTHER_SECRET }}
+          permissions:
+            contents: read
+
+        """
+        workflow_directory = project_config.github_workflow_directory
+        workflow_directory.mkdir(parents=True)
+        (workflow_directory / "merge-gate-extension.yml").touch()
+
+        custom_workflow_secrets = project_config.custom_workflow_secrets.model_copy(
+            update={
+                "merge_gate_extension": (
+                    "MERGE_GATE_SECRET",
+                    "ANOTHER_SECRET",
+                )
+            }
+        )
+        updated_project_config = project_config.model_copy(
+            update={"custom_workflow_secrets": custom_workflow_secrets}
+        )
+        yaml_renderer = YamlRenderer(
+            github_template_dict=updated_project_config.github_template_dict,
+            file_path=test_yml,
+        )
+
+        content = cleandoc(input_yaml)
+        test_yml.write_text(content)
+
+        yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod

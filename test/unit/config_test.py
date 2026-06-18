@@ -146,7 +146,7 @@ class AlternateSonarConfig(BaseConfig):
 
 class TestCustomWorkflowSecrets:
     @staticmethod
-    def test_default():
+    def test_get_secrets_dict_defaults():
         custom_workflow_secrets = CustomWorkflowSecrets()
         secrets = custom_workflow_secrets.get_secrets_dict()
 
@@ -158,7 +158,7 @@ class TestCustomWorkflowSecrets:
         }
 
     @staticmethod
-    def test_single_override():
+    def test_get_secrets_dict_with_cd_extension_override():
         cd_ext_secret = "CD_SECRET"
 
         custom_workflow_secrets = CustomWorkflowSecrets(
@@ -174,7 +174,7 @@ class TestCustomWorkflowSecrets:
         }
 
     @staticmethod
-    def test_multiple_overrides():
+    def test_get_secrets_dict_merges_merge_gate_extension_and_slow_checks():
         cd_ext_secret = "CD_SECRET"
         merge_gate_ext_secret = "MERGE_GATE_SECRET"
         slow_checks_secret = "SLOW_CHECKS_SECRET"
