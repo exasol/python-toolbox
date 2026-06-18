@@ -32,7 +32,7 @@ A typical line-level ignore looks like this:
 
 .. code-block:: yaml
 
-   secrets: inherit # zizmor: ignore[secrets-inherit] - PTB cannot customize inherited secrets here yet.
+   secrets: inherit # zizmor: ignore[github-env] - This shared action is used by many workflows, and downstream steps need `poetry` on PATH; we do not have a safer replacement yet.
 
 Use configuration rules in ``.zizmor.yml`` only when the finding is genuinely
 project-wide. If you add a temporary rule while working through a batch of
