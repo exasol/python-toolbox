@@ -19,6 +19,15 @@ standardized baseline that can be overridden in individual projects.
   :start-at: github_template_dict
   :end-before: @computed_field
 
+Custom Workflow Secrets
+^^^^^^^^^^^^^^^^^^^^^^^
+
+If your project needs to pass secrets into project-controlled workflows, configure
+the ``custom_workflow_secrets`` field on :class:`exasol.toolbox.config.BaseConfig`.
+That field uses :class:`exasol.toolbox.config.CustomWorkflowSecrets` and lets you
+define separate secret tuples for specific workflows. See the API reference for
+:class:`exasol.toolbox.config.CustomWorkflowSecrets` for the exact structure.
+
 
 .. _workflow_matrix:
 
