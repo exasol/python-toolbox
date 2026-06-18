@@ -306,9 +306,7 @@ class TestYamlRendererJinja:
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_includes_if_block_when_extension_is_present(
-        test_yml, project_config
-    ):
+    def test_includes_if_block_when_extension_is_present(test_yml, project_config):
         input_yaml = """
         jobs:
           run-unit-tests:
@@ -373,9 +371,7 @@ class TestYamlRendererJinja:
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_includes_extension_with_multiple_secrets(
-        test_yml, project_config
-    ):
+    def test_includes_extension_with_multiple_secrets(test_yml, project_config):
         input_yaml = """
         jobs:
           run-unit-tests:
