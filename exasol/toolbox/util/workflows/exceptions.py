@@ -31,7 +31,7 @@ class YamlOutputError(YamlError):
 
 class YamlParsingError(YamlError):
     """
-    Raised when the rendered template is not a valid YAML file, as it cannot be
+    Raised when the loaded YAML is not a valid YAML file, as it cannot be
     parsed by ruamel-yaml.
     """
 
