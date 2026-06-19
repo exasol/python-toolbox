@@ -26,6 +26,12 @@ from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
 
 
 class Workflow(BaseModel):
+    """A PTB-maintained GitHub workflow rendered from a workflow template.
+
+    These workflows are provided and maintained by the PTB. See
+    `Maintained by the PTB <https://exasol.github.io/python-toolbox/main/user_guide/features/github_workflows/index.html#maintained-by-the-ptb>`__.
+    """
+
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
     template_path: Path

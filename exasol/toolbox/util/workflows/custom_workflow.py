@@ -14,6 +14,14 @@ from exasol.toolbox.util.workflows.render_yaml import parse_yaml_text
 
 
 class CustomWorkflow(BaseModel):
+    """A project-owned workflow used for seeded workflows and extensions.
+
+    These workflows are seeded by the PTB or extend PTB-provided workflows, but
+    they are maintained by the project itself rather than the PTB. See
+    `Not Maintained by the PTB <https://exasol.github.io/python-toolbox/main/user_guide/features/github_workflows/index.html#not-maintained-by-the-ptb>`__
+    and `Workflow Extensions <https://exasol.github.io/python-toolbox/main/user_guide/features/github_workflows/index.html#workflow-extensions>`__.
+    """
+
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
     file_path: Path
