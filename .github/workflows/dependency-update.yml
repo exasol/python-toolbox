@@ -112,6 +112,7 @@ jobs:
 
           PR_URL=$(gh pr create \
                       --base "$BASE_BRANCH" \
+                      --label "security" \
                       --title "Update dependencies to fix vulnerabilities ($(date '+%Y-%m-%d'))" \
                       --body "$PR_BODY")
 
