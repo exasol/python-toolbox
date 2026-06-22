@@ -9,7 +9,7 @@ so ITDE-related test flows use the configured Exasol baseline and unit-test help
 
 * #874: Added the `security` label to dependency update PR creation
 * #699: Added `all-extras` support to the Python environment GitHub action
-* #875: Added `name: Extension` to generated `-extension.yml` workflow jobs
+* #875: Added `name` attribute to generated `-extension.yml` workflow jobs
 
 ## Bug
 
