@@ -413,9 +413,7 @@ class TestYamlRendererJinja:
         """
         workflow_directory = project_config.github_workflow_directory
         workflow_directory.mkdir(parents=True)
-        (workflow_directory / "fast-tests-extension.yml").write_text(
-            cleandoc(
-                """
+        (workflow_directory / "fast-tests-extension.yml").write_text(cleandoc("""
                 name: Fast-Tests-Extension
 
                 on:
@@ -423,9 +421,7 @@ class TestYamlRendererJinja:
                     secrets:
                       FAST_TEST_SECRET:
                         required: true
-                """
-            )
-        )
+                """))
 
         content = cleandoc(input_yaml)
         test_yml.write_text(content)
@@ -499,9 +495,7 @@ class TestYamlRendererJinja:
         """
         workflow_directory = project_config.github_workflow_directory
         workflow_directory.mkdir(parents=True)
-        (workflow_directory / "merge-gate-extension.yml").write_text(
-            cleandoc(
-                """
+        (workflow_directory / "merge-gate-extension.yml").write_text(cleandoc("""
                 name: Merge-Gate-Extension
 
                 on:
@@ -511,9 +505,7 @@ class TestYamlRendererJinja:
                         required: true
                       ANOTHER_SECRET:
                         required: true
-                """
-            )
-        )
+                """))
 
         content = cleandoc(input_yaml)
         test_yml.write_text(content)
