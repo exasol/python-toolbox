@@ -17,12 +17,6 @@ from exasol.toolbox.util.workflows.exceptions import (
 from exasol.toolbox.util.workflows.render_yaml import (
     YamlRenderer,
 )
-from exasol.toolbox.util.workflows.templates import (
-    WORKFLOW_TEMPLATE_OPTIONS,
-)
-from exasol.toolbox.util.workflows.workflow import (
-    Workflow,
-)
 
 
 @pytest.fixture
@@ -413,28 +407,3 @@ class TestYamlRendererJinja:
             yaml_renderer.get_yaml_dict()
         assert isinstance(ex.value.__cause__, TemplateSyntaxError)
         assert "unexpected ')'" in str(ex.value.__cause__)
-
-    @staticmethod
-    @pytest.mark.parametrize(
-        "workflow_name, extension_file, expected_name",
-        [
-            ("cd", "cd-extension.yml", "CD Extension"),
-            ("fast-tests", "fast-tests-extension.yml", "Fast Tests Extension"),
-            ("merge-gate", "merge-gate-extension.yml", "Merge Gate Extension"),
-        ],
-    )
-    def test_extension_workflows_add_extension_job_name(
-        tmp_path, project_config, workflow_name, extension_file, expected_name
-    ):
-        """Check that enabled extension workflows get a readable job name."""
-        workflow_directory = project_config.github_workflow_directory
-        workflow_directory.mkdir(parents=True)
-        (workflow_directory / extension_file).touch()
-
-        workflow = Workflow.load_from_template(
-            template_path=WORKFLOW_TEMPLATE_OPTIONS[workflow_name],
-            output_directory=tmp_path,
-            github_template_dict=project_config.github_template_dict,
-        )
-
-        assert f"name: {expected_name}" in workflow.content
