@@ -52,7 +52,7 @@ jobs:
 
   (% if workflow_extension.merge_gate %)
   merge-gate-extension:
-    name: Extension
+    name: Merge Gate Extension
     uses: ./.github/workflows/merge-gate-extension.yml
     secrets: inherit # zizmor: ignore[secrets-inherit] - PTB cannot customize inherited secrets here yet; tracked in https://github.com/exasol/python-toolbox/issues/872.
     permissions:

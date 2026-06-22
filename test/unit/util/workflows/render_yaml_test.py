@@ -278,7 +278,7 @@ class TestYamlRendererJinja:
 
         (% if workflow_extension.fast_tests %)
           fast-tests-extension:
-            name: Extension
+            name: Fast Tests Extension
             uses: ./.github/workflows/fast-tests-extension.yml
             permissions:
               contents: read
@@ -331,7 +331,7 @@ class TestYamlRendererJinja:
 
         (% if workflow_extension.fast_tests %)
           fast-tests-extension:
-            name: Extension
+            name: Fast Tests Extension
             uses: ./.github/workflows/fast-tests-extension.yml
             permissions:
               contents: read
@@ -356,7 +356,7 @@ class TestYamlRendererJinja:
               uses: actions/checkout@v6
 
         fast-tests-extension:
-          name: Extension
+          name: Fast Tests Extension
           uses: ./.github/workflows/fast-tests-extension.yml
           permissions:
             contents: read
@@ -416,15 +416,15 @@ class TestYamlRendererJinja:
 
     @staticmethod
     @pytest.mark.parametrize(
-        "workflow_name, extension_file",
+        "workflow_name, extension_file, expected_name",
         [
-            ("cd", "cd-extension.yml"),
-            ("fast-tests", "fast-tests-extension.yml"),
-            ("merge-gate", "merge-gate-extension.yml"),
+            ("cd", "cd-extension.yml", "CD Extension"),
+            ("fast-tests", "fast-tests-extension.yml", "Fast Tests Extension"),
+            ("merge-gate", "merge-gate-extension.yml", "Merge Gate Extension"),
         ],
     )
     def test_extension_workflows_add_extension_job_name(
-        tmp_path, project_config, workflow_name, extension_file
+        tmp_path, project_config, workflow_name, extension_file, expected_name
     ):
         workflow_directory = project_config.github_workflow_directory
         workflow_directory.mkdir(parents=True)
@@ -436,4 +436,4 @@ class TestYamlRendererJinja:
             github_template_dict=project_config.github_template_dict,
         )
 
-        assert "name: Extension" in workflow.content
+        assert f"name: {expected_name}" in workflow.content
