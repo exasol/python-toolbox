@@ -2,7 +2,7 @@
 
 ## Summary
 
-Updated the nox DB-version default to come from `BaseConfig` instead of the hardcoded `7.1.9`,
+In this major release, the nox DB-version default was updated to come from `BaseConfig` instead of the hardcoded `7.1.9`,
 so ITDE-related test flows use the configured Exasol baseline and unit-test help no longer advertises `--db-version`.
 
 ## Feature
