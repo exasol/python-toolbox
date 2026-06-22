@@ -24,14 +24,14 @@ jobs:
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
 
-  (% if workflow_extension.cd %)
+  (% if custom_workflows["cd-extension"].exists %)
   cd-extension:
     uses: ./.github/workflows/cd-extension.yml
     needs:
       - check-release-tag
-    (% if secrets.cd_extension %)
+    (% if custom_workflows["cd-extension"].secrets %)
     secrets:
-      (% for secret_name in secrets.cd_extension %)
+      (% for secret_name in custom_workflows["cd-extension"].secrets %)
       (( secret_name )): ${{ secrets.(( secret_name )) }}
       (% endfor %)
     (% endif %)

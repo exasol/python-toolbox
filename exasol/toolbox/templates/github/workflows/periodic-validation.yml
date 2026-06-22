@@ -45,9 +45,9 @@ jobs:
     uses: ./.github/workflows/slow-checks.yml
     needs:
       - restrict-to-default-branch
-    (% if secrets.slow_checks %)
+    (% if custom_workflows["slow-checks"].secrets %)
     secrets:
-      (% for secret_name in secrets.slow_checks %)
+      (% for secret_name in custom_workflows["slow-checks"].secrets %)
       (( secret_name )): ${{ secrets.(( secret_name )) }}
       (% endfor %)
     (% endif %)

@@ -3,9 +3,9 @@ name: Merge-Gate
 
 on:
   workflow_call:
-    (% if secrets.merge_gate %)
+    (% if custom_workflows["merge-gate"].secrets %)
     secrets:
-      (% for secret_name in secrets.merge_gate %)
+      (% for secret_name in custom_workflows["merge-gate"].secrets %)
         (( secret_name )):
           required: true
       (% endfor %)
@@ -53,21 +53,21 @@ jobs:
     needs:
       - approve-run-slow-tests
     uses: ./.github/workflows/slow-checks.yml
-    (% if secrets.slow_checks %)
+    (% if custom_workflows["slow-checks"].secrets %)
     secrets:
-      (% for secret_name in secrets.slow_checks %)
+      (% for secret_name in custom_workflows["slow-checks"].secrets %)
       (( secret_name )): ${{ secrets.(( secret_name )) }}
       (% endfor %)
     (% endif %)
     permissions:
       contents: read
 
-  (% if workflow_extension.merge_gate %)
+  (% if custom_workflows["merge-gate-extension"].exists %)
   merge-gate-extension:
     uses: ./.github/workflows/merge-gate-extension.yml
-    (% if secrets.merge_gate_extension %)
+    (% if custom_workflows["merge-gate-extension"].secrets %)
     secrets:
-      (% for secret_name in secrets.merge_gate_extension %)
+      (% for secret_name in custom_workflows["merge-gate-extension"].secrets %)
       (( secret_name )): ${{ secrets.(( secret_name )) }}
       (% endfor %)
     (% endif %)
@@ -87,7 +87,7 @@ jobs:
       - run-fast-checks
       - run-fast-tests
       - run-slow-checks
-    (% if workflow_extension.merge_gate %)
+    (% if custom_workflows["merge-gate-extension"].exists %)
       - merge-gate-extension
     (% endif %)
     # To prevent accidentally merges, this step is required. For more details

@@ -10,7 +10,6 @@ from pydantic_core._pydantic_core import ValidationError
 from exasol.toolbox.config import (
     DEFAULT_EXCLUDED_PATHS,
     BaseConfig,
-    CustomWorkflowSecrets,
     DependencyManager,
     minimum_declared_version,
     valid_version_string,
@@ -43,11 +42,6 @@ class TestBaseConfig:
         assert config_dump == {
             "add_to_excluded_python_paths": (),
             "create_major_version_tags": False,
-            "custom_workflow_secrets": {
-                "cd_extension": (),
-                "merge_gate_extension": (),
-                "slow_checks": (),
-            },
             "dependency_manager": {"name": "poetry", "version": "2.3.0"},
             "documentation_path": root_path / "doc",
             "exasol_versions": ("8.29.13", "2025.1.8"),
@@ -55,10 +49,16 @@ class TestBaseConfig:
             "github_workflow_directory": tmp_path / ".github" / "workflows",
             "github_workflow_patcher_yaml": None,
             "github_template_dict": {
+                "custom_workflows": {
+                    "cd-extension": {"exists": False, "secrets": ()},
+                    "fast-tests-extension": {"exists": False, "secrets": ()},
+                    "merge-gate-extension": {"exists": False, "secrets": ()},
+                    "slow-checks": {"exists": False, "secrets": ()},
+                    "merge-gate": {"exists": True, "secrets": ("SONAR_TOKEN",)},
+                },
                 "dependency_manager_version": "2.3.0",
                 "minimum_python_version": "3.10",
                 "os_version": "ubuntu-24.04",
-                "sonar_token_name": "SONAR_TOKEN",
                 "python_versions": (
                     "3.10",
                     "3.11",
@@ -66,17 +66,7 @@ class TestBaseConfig:
                     "3.13",
                     "3.14",
                 ),
-                "secrets": {
-                    "cd_extension": (),
-                    "merge_gate": ("SONAR_TOKEN",),
-                    "merge_gate_extension": (),
-                    "slow_checks": (),
-                },
-                "workflow_extension": {
-                    "cd": False,
-                    "fast_tests": False,
-                    "merge_gate": False,
-                },
+                "sonar_token_name": "SONAR_TOKEN",
             },
             "minimum_exasol_version": "8.29.13",
             "minimum_python_version": "3.10",
@@ -142,60 +132,6 @@ class AlternateSonarConfig(BaseConfig):
     @property
     def sonar_token_name(self) -> str:
         return "SONAR_ANOTHER_TOKEN"
-
-
-class TestCustomWorkflowSecrets:
-    @staticmethod
-    def test_get_secrets_dict_defaults():
-        custom_workflow_secrets = CustomWorkflowSecrets()
-        secrets = custom_workflow_secrets.get_secrets_dict()
-
-        assert secrets == {
-            "cd_extension": (),
-            "merge_gate": (),
-            "merge_gate_extension": (),
-            "slow_checks": (),
-        }
-
-    @staticmethod
-    def test_get_secrets_dict_with_cd_extension_override():
-        cd_ext_secret = "CD_SECRET"
-
-        custom_workflow_secrets = CustomWorkflowSecrets(
-            cd_extension=(cd_ext_secret,),
-        )
-        secrets = custom_workflow_secrets.get_secrets_dict()
-
-        assert secrets == {
-            "cd_extension": (cd_ext_secret,),
-            "merge_gate": (),
-            "merge_gate_extension": (),
-            "slow_checks": (),
-        }
-
-    @staticmethod
-    def test_get_secrets_dict_merges_merge_gate_extension_and_slow_checks():
-        cd_ext_secret = "CD_SECRET"
-        merge_gate_ext_secret = "MERGE_GATE_SECRET"
-        slow_checks_secret = "SLOW_CHECKS_SECRET"
-
-        custom_workflow_secrets = CustomWorkflowSecrets(
-            cd_extension=(cd_ext_secret,),
-            merge_gate_extension=(merge_gate_ext_secret, merge_gate_ext_secret),
-            slow_checks=(slow_checks_secret,),
-        )
-        secrets = custom_workflow_secrets.get_secrets_dict()
-
-        assert secrets == {
-            "cd_extension": (cd_ext_secret,),
-            "merge_gate": (
-                merge_gate_ext_secret,
-                merge_gate_ext_secret,
-                slow_checks_secret,
-            ),
-            "merge_gate_extension": (merge_gate_ext_secret, merge_gate_ext_secret),
-            "slow_checks": (slow_checks_secret,),
-        }
 
 
 def test_expansion_validation_fails_for_invalid_version():

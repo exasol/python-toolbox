@@ -26,6 +26,9 @@ from exasol.toolbox.nox.plugin import (
     PLUGIN_ATTR_NAME,
 )
 from exasol.toolbox.util.version import Version
+from exasol.toolbox.util.workflows.custom_workflow_extractor import (
+    CustomWorkflowExtractor,
+)
 
 WORKFLOW_HEADER_PREFIX = (
     "# Generated and maintained by the exasol-toolbox.\n"
@@ -137,35 +140,6 @@ class DependencyManager(BaseModel):
         return v
 
 
-class CustomWorkflowSecrets(BaseModel):
-    cd_extension: tuple[str, ...] = Field(
-        default=(),
-        description="""
-        This tuple defines the string names of secrets needed to pass to the
-        cd-extension.yml.
-        """,
-    )
-    merge_gate_extension: tuple[str, ...] = Field(
-        default=(),
-        description="""
-        This tuple defines the string names of secrets needed to pass to the 
-        merge-gate-extension.yml.
-        """,
-    )
-    slow_checks: tuple[str, ...] = Field(
-        default=(),
-        description="""
-        This tuple defines the string names of secrets needed to pass to the 
-        slow_checks.yml.
-        """,
-    )
-
-    def get_secrets_dict(self) -> dict[str, tuple[str, ...]]:
-        secrets = self.model_dump(exclude_computed_fields=True)
-        secrets["merge_gate"] = self.merge_gate_extension + self.slow_checks
-        return secrets
-
-
 class BaseConfig(BaseModel):
     """
     Basic configuration for projects using the PTB
@@ -234,12 +208,6 @@ class BaseConfig(BaseModel):
         This is used to set the OS-runner in the GitHub workflows that are
         provided as templates from the PTB. Currently, only ubuntu-based runners
         are supported.
-        """,
-    )
-    custom_workflow_secrets: CustomWorkflowSecrets = Field(
-        default=CustomWorkflowSecrets(),
-        description="""
-        This object is used to set the secret arrays for custom workflows.
         """,
     )
 
@@ -351,31 +319,19 @@ class BaseConfig(BaseModel):
         Dictionary of variables to dynamically render Jinja2 templates into valid YAML
         configurations.
         """
-        cd_extension = self.github_workflow_directory / "cd-extension.yml"
-        fast_tests_extension = (
-            self.github_workflow_directory / "fast-tests-extension.yml"
+        custom_workflow_extractor = CustomWorkflowExtractor(
+            github_workflow_directory=self.github_workflow_directory,
+            sonar_token_name=self.sonar_token_name,
         )
-        merge_gate_extension = (
-            self.github_workflow_directory / "merge-gate-extension.yml"
-        )
-
-        secrets = self.custom_workflow_secrets.get_secrets_dict()
-        # merge-gate.yml also calls report.yml and needs Sonar token
-        secrets["merge_gate"] += (self.sonar_token_name,)
 
         return {
+            "custom_workflows": custom_workflow_extractor.build_custom_workflow_dict(),
             "dependency_manager_version": self.dependency_manager.version,
             "minimum_python_version": self.minimum_python_version,
             "os_version": self.os_version,
             "python_versions": self.python_versions,
-            "secrets": secrets,
             "sonar_token_name": self.sonar_token_name,
             "workflow_header": f"{WORKFLOW_HEADER_PREFIX}{__version__}.",
-            "workflow_extension": {
-                "cd": cd_extension.is_file(),
-                "fast_tests": fast_tests_extension.is_file(),
-                "merge_gate": merge_gate_extension.is_file(),
-            },
         }
 
     @computed_field  # type: ignore[misc]

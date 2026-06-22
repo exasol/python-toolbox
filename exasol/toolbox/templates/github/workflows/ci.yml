@@ -9,9 +9,9 @@ jobs:
   merge-gate:
     name: Merge Gate
     uses: ./.github/workflows/merge-gate.yml
-    (% if secrets.merge_gate %)
+    (% if custom_workflows["merge-gate"].secrets %)
     secrets:
-      (% for secret_name in secrets.merge_gate %)
+      (% for secret_name in custom_workflows["merge-gate"].secrets %)
       (( secret_name )): ${{ secrets.(( secret_name )) }}
       (% endfor %)
     (% endif %)
