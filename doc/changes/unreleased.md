@@ -5,6 +5,21 @@
 In this major release, the nox DB-version default was updated to come from `BaseConfig` instead of the hardcoded `7.1.9`,
 so ITDE-related test flows use the configured Exasol baseline and unit-test help no longer advertises `--db-version`.
 
+The `github_template_dict.custom_workflows` entry now auto-detects secret names from
+custom workflow files and passes them into PTB-controlled workflow templates.
+
+For example:
+
+.. code-block:: yaml
+
+   on:
+     workflow_call:
+       secrets:
+         PYPI_TOKEN:
+           required: true
+         SONAR_TOKEN:
+           required: true
+
 ## Feature
 
 * #874: Added the `security` label to dependency update PR creation
@@ -17,7 +32,7 @@ so ITDE-related test flows use the configured Exasol baseline and unit-test help
 ## Feature
 
 * #878: Added Nox session `workflow:audit` which uses `zizmor` and added it in `checks.yml`
-* #872: Added `custom_workflow_secrets` to `BaseConfig` so that tuples of secrets can be defined for custom workflows, like `slow-checks.yml`
+* #872: Added `custom_workflows` to `github_template_dict` for automatic custom workflow secret extraction
 
 ## Refactoring
 
