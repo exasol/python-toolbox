@@ -19,6 +19,8 @@ standardized baseline that can be overridden in individual projects.
   :start-at: github_template_dict
   :end-before: @computed_field
 
+.. _custom_workflow_secrets:
+
 Custom Workflow Secrets
 ^^^^^^^^^^^^^^^^^^^^^^^
 
