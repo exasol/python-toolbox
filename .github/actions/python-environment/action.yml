@@ -65,13 +65,15 @@ runs:
         echo "ImageVersion=$ImageVersion"
         POETRY_ENV_PATH=$(poetry config virtualenvs.path)
         POETRY_SHA=$(cat pyproject.toml poetry.lock | sha256sum | cut -f 1 -d " ") #Remove trailing dash
-        EXTRAS_CACHE_KEY=$(echo "${{ inputs.extras }}" | tr ',[:space:]' '-')
+        EXTRAS_CACHE_KEY=$(echo "${INPUTS_EXTRAS}" | tr ',[:space:]' '-')
         # output to GITHUB_OUTPUT
         echo "IMAGE_OS=$ImageOS" >> $GITHUB_OUTPUT
         echo "IMAGE_VERSION=$ImageVersion" >> $GITHUB_OUTPUT
         echo "POETRY_ENV_PATH=$POETRY_ENV_PATH" >>  $GITHUB_OUTPUT
         echo "POETRY_SHA=$POETRY_SHA" >> $GITHUB_OUTPUT
         echo "EXTRAS_CACHE_KEY=$EXTRAS_CACHE_KEY" >> $GITHUB_OUTPUT
+      env:
+        INPUTS_EXTRAS: ${{ inputs.extras }}
 
     - name: Cache Poetry environment
       if: inputs.use-cache == 'true'
