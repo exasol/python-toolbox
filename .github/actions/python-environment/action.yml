@@ -19,8 +19,13 @@ inputs:
     default: "."
 
   extras:
-    description: 'Space-separated list of extras'
+    description: 'Comma-separated list of extras'
     required: false
+
+  all-extras:
+    description: 'Install all extras'
+    required: false
+    default: 'false'
 
   use-cache:
     description: 'Use cache for poetry environment'
@@ -72,20 +77,39 @@ runs:
       uses: actions/cache@v5
       with:
         path: ${{ steps.setup-cache-variables.outputs.POETRY_ENV_PATH }}
-        key: poetry-env-${{ steps.setup-cache-variables.outputs.POETRY_SHA }}-${{ steps.setup-cache-variables.outputs.IMAGE_OS }}-${{ steps.setup-cache-variables.outputs.IMAGE_VERSION }}-${{ runner.arch }}-${{ inputs.poetry-version }}-${{ inputs.python-version }}-${{ inputs.extras }}
+        key: poetry-env-${{ steps.setup-cache-variables.outputs.POETRY_SHA }}-${{ steps.setup-cache-variables.outputs.IMAGE_OS }}-${{ steps.setup-cache-variables.outputs.IMAGE_VERSION }}-${{ runner.arch }}-${{ inputs.poetry-version }}-${{ inputs.python-version }}-${{ inputs.extras }}-${{ inputs.all-extras }}
 
     - name: Poetry install with extras
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        EXTRAS=$(echo "${INPUTS_EXTRAS}" | tr -d ' ')
-        if [[ -n "$EXTRAS" ]]; then
-          poetry install --extras "$EXTRAS"
+        EXTRAS="${INPUTS_EXTRAS}"
+        ALL_EXTRAS="${INPUTS_ALL_EXTRAS}"
+        EXTRAS_TRIMMED=$(echo "${EXTRAS}" | tr -d '[:space:],')
+
+        if [[ "${ALL_EXTRAS}" == "true" && -n "${EXTRAS_TRIMMED}" ]]; then
+          echo "Inputs 'extras' and 'all-extras' are mutually exclusive." >&2
+          exit 1
+        fi
+
+        if [[ "${ALL_EXTRAS}" == "true" ]]; then
+          poetry install --all-extras
+        elif [[ -n "${EXTRAS_TRIMMED}" ]]; then
+          NORMALIZED_EXTRAS=$(echo "${EXTRAS}" | tr ',' ' ')
+          read -r -a EXTRAS_ARRAY <<< "${NORMALIZED_EXTRAS}"
+
+          INSTALL_COMMAND=(poetry install)
+          for EXTRA in "${EXTRAS_ARRAY[@]}"; do
+            INSTALL_COMMAND+=(--extras "${EXTRA}")
+          done
+
+          "${INSTALL_COMMAND[@]}"
         else
           poetry install
         fi
       env:
         INPUTS_EXTRAS: ${{ inputs.extras }}
+        INPUTS_ALL_EXTRAS: ${{ inputs.all-extras }}
 
     - name: Validate Poetry environment
       working-directory: ${{ inputs.working-directory }}
