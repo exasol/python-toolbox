@@ -27,6 +27,10 @@ Parameters
      - Comma-separated list of extras
      - False
      - (not used by default)
+   * - all-extras
+     - Install all extras
+     - False
+     - false
    * - use-cache
      - Use cache for poetry environment
      - False
@@ -59,5 +63,8 @@ Example Usage
               working-directory: pytest-backend
               use-cache: false
               extras: 'numpy,pandas'
+
+To install all extras instead of specific ones, set ``all-extras: true``. The
+inputs ``extras`` and ``all-extras`` are mutually exclusive.
 
             ...
