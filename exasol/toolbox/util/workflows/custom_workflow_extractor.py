@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TypedDict
 
 from pydantic import (
     BaseModel,
@@ -8,6 +9,11 @@ from pydantic import (
 )
 
 from exasol.toolbox.util.workflows.custom_workflow import CustomWorkflow
+
+
+class CustomWorkflowEntry(TypedDict):
+    exists: bool
+    secrets: tuple[str, ...]
 
 
 class CustomWorkflowExtractor(BaseModel):
@@ -25,10 +31,10 @@ class CustomWorkflowExtractor(BaseModel):
     def _build_custom_workflow_entry(
         self,
         workflow: str,
-    ) -> dict[str, bool | tuple[str, ...]]:
+    ) -> CustomWorkflowEntry:
         file_path = self.github_workflow_directory / f"{workflow}.yml"
 
-        secrets = ()
+        secrets: tuple[str, ...] = ()
         if file_path.is_file():
             custom_workflow = CustomWorkflow.load_from_file(file_path=file_path)
             secrets = custom_workflow.extract_secrets()
@@ -39,8 +45,8 @@ class CustomWorkflowExtractor(BaseModel):
         }
 
     def _build_merge_gate_entry(
-        self, custom_workflows_dict: dict[str, bool | tuple[str, ...]]
-    ) -> dict[str, bool | tuple[str, ...]]:
+        self, custom_workflows_dict: dict[str, CustomWorkflowEntry]
+    ) -> CustomWorkflowEntry:
         return {
             "exists": True,
             "secrets": custom_workflows_dict["merge-gate-extension"]["secrets"]
@@ -51,7 +57,7 @@ class CustomWorkflowExtractor(BaseModel):
 
     def build_custom_workflow_dict(
         self,
-    ) -> dict[str, dict[str, bool | tuple[str, ...]]]:
+    ) -> dict[str, CustomWorkflowEntry]:
         """
         Build the template metadata used to specify whether a custom workflow is
         present and which secrets its caller must pass through.
