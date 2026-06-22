@@ -272,7 +272,7 @@ class TestYamlRendererJinja:
 
         (% if workflow_extension.fast_tests %)
           fast-tests-extension:
-            name: Fast Tests Extension
+            name: Extension
             uses: ./.github/workflows/fast-tests-extension.yml
             permissions:
               contents: read
@@ -325,7 +325,7 @@ class TestYamlRendererJinja:
 
         (% if workflow_extension.fast_tests %)
           fast-tests-extension:
-            name: Fast Tests Extension
+            name: Extension
             uses: ./.github/workflows/fast-tests-extension.yml
             permissions:
               contents: read
@@ -350,7 +350,7 @@ class TestYamlRendererJinja:
               uses: actions/checkout@v6
 
         fast-tests-extension:
-          name: Fast Tests Extension
+          name: Extension
           uses: ./.github/workflows/fast-tests-extension.yml
           permissions:
             contents: read
