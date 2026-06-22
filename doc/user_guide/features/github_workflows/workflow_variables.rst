@@ -22,18 +22,16 @@ standardized baseline that can be overridden in individual projects.
 Custom Workflow Secrets
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-If your project needs to pass secrets into project-controlled workflows, configure
-the ``custom_workflow_secrets`` field on :class:`exasol.toolbox.config.BaseConfig`.
-That field uses :class:`exasol.toolbox.config.CustomWorkflowSecrets` and lets you
-define separate secret tuples for specific workflows. See the API reference for
-:class:`exasol.toolbox.config.CustomWorkflowSecrets` for the exact structure.
+The PTB extracts secret names from reusable custom workflow files and exposes them
+through :py:attr:`exasol.toolbox.config.BaseConfig.github_template_dict` under the
+``custom_workflows`` entry. PTB-controlled workflow templates use those extracted
+names when they call reusable workflows and forward secrets via ``secrets:``.
 
-Those custom secrets must be declared at the top of the reusable workflow file, under
-``on.workflow_call`` and before ``jobs``. The generated workflows rely on that shape
-when they call the reusable workflow with ``secrets:``.
+To make a custom workflow compatible with this extraction, declare its secrets at the
+top of the reusable workflow file under ``on.workflow_call`` and before ``jobs``.
+The extractor reads that section and collects the secret names automatically.
 
-For example, ``slow-checks.yml`` keeps its reusable workflow header at the top of the
-file:
+For example, ``slow-checks.yml`` can define its reusable workflow header like this:
 
 .. code-block:: yaml
 
@@ -42,10 +40,13 @@ file:
    on:
      workflow_call:
        secrets:
-         EXAMPLE_SECRET:
+         PYPI_TOKEN:
+           required: true
+         SONAR_TOKEN:
            required: true
 
-
+Those extracted secret names are then made available to the PTB templates that
+reference the custom workflow.
 
 .. _workflow_matrix:
 
