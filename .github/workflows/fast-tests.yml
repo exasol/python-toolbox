@@ -44,6 +44,7 @@ jobs:
           overwrite: false
 
   fast-tests-extension:
+    name: Fast Tests Extension
     uses: ./.github/workflows/fast-tests-extension.yml
     permissions:
       contents: read
