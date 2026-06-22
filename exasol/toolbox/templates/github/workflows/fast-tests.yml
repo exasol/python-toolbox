@@ -44,7 +44,7 @@ jobs:
 
 (% if workflow_extension.fast_tests %)
   fast-tests-extension:
-    name: Fast Tests Extension
+    name: Extension
     uses: ./.github/workflows/fast-tests-extension.yml
     permissions:
       contents: read
