@@ -13,7 +13,6 @@
     features/index
     troubleshooting/index
     customization
-    migrating
 
 Exasol's Python Toolbox (PTB) helps you creating and maintaining your Python projects.
 
