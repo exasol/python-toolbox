@@ -19,8 +19,13 @@ inputs:
     default: "."
 
   extras:
-    description: 'Space-separated list of extras'
+    description: 'Comma-separated list of extras'
     required: false
+
+  all-extras:
+    description: 'Install all extras'
+    required: false
+    default: 'false'
 
   use-cache:
     description: 'Use cache for poetry environment'
@@ -60,11 +65,15 @@ runs:
         echo "ImageVersion=$ImageVersion"
         POETRY_ENV_PATH=$(poetry config virtualenvs.path)
         POETRY_SHA=$(cat pyproject.toml poetry.lock | sha256sum | cut -f 1 -d " ") #Remove trailing dash
+        EXTRAS_CACHE_KEY=$(echo "${INPUTS_EXTRAS}" | tr ',[:space:]' '-')
         # output to GITHUB_OUTPUT
         echo "IMAGE_OS=$ImageOS" >> $GITHUB_OUTPUT
         echo "IMAGE_VERSION=$ImageVersion" >> $GITHUB_OUTPUT
         echo "POETRY_ENV_PATH=$POETRY_ENV_PATH" >>  $GITHUB_OUTPUT
         echo "POETRY_SHA=$POETRY_SHA" >> $GITHUB_OUTPUT
+        echo "EXTRAS_CACHE_KEY=$EXTRAS_CACHE_KEY" >> $GITHUB_OUTPUT
+      env:
+        INPUTS_EXTRAS: ${{ inputs.extras }}
 
     - name: Cache Poetry environment
       if: inputs.use-cache == 'true'
@@ -72,20 +81,39 @@ runs:
       uses: actions/cache@v5
       with:
         path: ${{ steps.setup-cache-variables.outputs.POETRY_ENV_PATH }}
-        key: poetry-env-${{ steps.setup-cache-variables.outputs.POETRY_SHA }}-${{ steps.setup-cache-variables.outputs.IMAGE_OS }}-${{ steps.setup-cache-variables.outputs.IMAGE_VERSION }}-${{ runner.arch }}-${{ inputs.poetry-version }}-${{ inputs.python-version }}-${{ inputs.extras }}
+        key: poetry-env-${{ steps.setup-cache-variables.outputs.POETRY_SHA }}-${{ steps.setup-cache-variables.outputs.IMAGE_OS }}-${{ steps.setup-cache-variables.outputs.IMAGE_VERSION }}-${{ runner.arch }}-${{ inputs.poetry-version }}-${{ inputs.python-version }}-${{ steps.setup-cache-variables.outputs.EXTRAS_CACHE_KEY }}-${{ inputs.all-extras }}
 
     - name: Poetry install with extras
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        EXTRAS=$(echo "${INPUTS_EXTRAS}" | tr -d ' ')
-        if [[ -n "$EXTRAS" ]]; then
-          poetry install --extras "$EXTRAS"
+        EXTRAS="${INPUTS_EXTRAS}"
+        ALL_EXTRAS="${INPUTS_ALL_EXTRAS}"
+        EXTRAS_TRIMMED=$(echo "${EXTRAS}" | tr -d '[:space:],')
+
+        if [[ "${ALL_EXTRAS}" == "true" && -n "${EXTRAS_TRIMMED}" ]]; then
+          echo "Inputs 'extras' and 'all-extras' are mutually exclusive." >&2
+          exit 1
+        fi
+
+        if [[ "${ALL_EXTRAS}" == "true" ]]; then
+          poetry install --all-extras
+        elif [[ -n "${EXTRAS_TRIMMED}" ]]; then
+          NORMALIZED_EXTRAS=$(echo "${EXTRAS}" | tr ',' ' ')
+          read -r -a EXTRAS_ARRAY <<< "${NORMALIZED_EXTRAS}"
+
+          INSTALL_COMMAND=(poetry install)
+          for EXTRA in "${EXTRAS_ARRAY[@]}"; do
+            INSTALL_COMMAND+=(--extras "${EXTRA}")
+          done
+
+          "${INSTALL_COMMAND[@]}"
         else
           poetry install
         fi
       env:
         INPUTS_EXTRAS: ${{ inputs.extras }}
+        INPUTS_ALL_EXTRAS: ${{ inputs.all-extras }}
 
     - name: Validate Poetry environment
       working-directory: ${{ inputs.working-directory }}
