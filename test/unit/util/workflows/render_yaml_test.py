@@ -426,6 +426,7 @@ class TestYamlRendererJinja:
     def test_extension_workflows_add_extension_job_name(
         tmp_path, project_config, workflow_name, extension_file, expected_name
     ):
+        """Check that enabled extension workflows get a readable job name."""
         workflow_directory = project_config.github_workflow_directory
         workflow_directory.mkdir(parents=True)
         (workflow_directory / extension_file).touch()
