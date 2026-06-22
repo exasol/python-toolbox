@@ -22,6 +22,10 @@ so ITDE-related test flows use the configured Exasol baseline and unit-test help
 
 * #744: Extracted shared minimum-version selection logic into `minimum_declared_version()`
 
+## Documentation
+
+* #789: Consolidated the metrics and Sonar documentation to reflect the current PTB reporting flow
+
 ## Security
 
 * #867: Fixed zizmor linting results
