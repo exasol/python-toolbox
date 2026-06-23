@@ -26,6 +26,7 @@ jobs:
 
   (% if custom_workflows["cd-extension"].exists %)
   cd-extension:
+    name: Extension
     uses: ./.github/workflows/cd-extension.yml
     needs:
       - check-release-tag

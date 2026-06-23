@@ -64,6 +64,7 @@ jobs:
 
   (% if custom_workflows["merge-gate-extension"].exists %)
   merge-gate-extension:
+    name: Extension
     uses: ./.github/workflows/merge-gate-extension.yml
     (% if custom_workflows["merge-gate-extension"].secrets %)
     secrets:

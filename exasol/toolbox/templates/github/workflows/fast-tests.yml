@@ -44,6 +44,7 @@ jobs:
 
 (% if custom_workflows["fast-tests-extension"].exists %)
   fast-tests-extension:
+    name: Extension
     uses: ./.github/workflows/fast-tests-extension.yml
     (% if custom_workflows["fast-tests-extension"].secrets %)
     secrets:

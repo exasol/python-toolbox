@@ -316,6 +316,7 @@ class TestYamlRendererJinja:
 
         (% if custom_workflows["fast-tests-extension"].exists %)
           fast-tests-extension:
+            name: Extension
             uses: ./.github/workflows/fast-tests-extension.yml
             (% if custom_workflows["fast-tests-extension"].secrets %)
             secrets:
@@ -374,6 +375,7 @@ class TestYamlRendererJinja:
 
         (% if custom_workflows["fast-tests-extension"].exists %)
           fast-tests-extension:
+            name: Extension
             uses: ./.github/workflows/fast-tests-extension.yml
             (% if custom_workflows["fast-tests-extension"].secrets %)
             secrets:
@@ -404,6 +406,7 @@ class TestYamlRendererJinja:
               uses: actions/checkout@v6
 
         fast-tests-extension:
+          name: Extension
           uses: ./.github/workflows/fast-tests-extension.yml
           secrets:
             FAST_TEST_SECRET: ${{ secrets.FAST_TEST_SECRET }}

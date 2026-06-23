@@ -37,6 +37,7 @@ In this major release, several modifications were made to the PTB's workflow tem
 
 * #874: Added the `security` label to dependency update PR creation
 * #699: Added `all-extras` support to the Python environment GitHub action
+* #875: Added `name` attribute to generated workflow jobs using `-extension.yml` workflows
 
 ## Bug
 

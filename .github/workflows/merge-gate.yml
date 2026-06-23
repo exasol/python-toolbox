@@ -54,6 +54,7 @@ jobs:
       contents: read
 
   merge-gate-extension:
+    name: Extension
     uses: ./.github/workflows/merge-gate-extension.yml
     permissions:
       contents: read
