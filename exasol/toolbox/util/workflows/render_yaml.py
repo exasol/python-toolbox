@@ -37,6 +37,30 @@ jinja_env = Environment(
 )
 
 
+def get_standard_yaml() -> YAML:
+    """
+    Prepare standard YAML class.
+    """
+    yaml = YAML()
+    yaml.width = 200
+    yaml.preserve_quotes = True
+    yaml.sort_base_mapping_type_on_output = False  # type: ignore
+    yaml.indent(mapping=2, sequence=4, offset=2)
+    return yaml
+
+
+def parse_yaml_text(origin_path: Path, workflow_string: str) -> CommentedMap:
+    """
+    Parse YAML from text while keeping the origin path for diagnostics.
+    """
+    try:
+        yaml = get_standard_yaml()
+        logger.debug("Parse %s with ruamel-yaml", origin_path)
+        return yaml.load(workflow_string)
+    except YAMLError as ex:
+        raise YamlParsingError(file_path=origin_path) from ex
+
+
 @dataclass(frozen=True)
 class YamlRenderer:
     """
@@ -48,18 +72,6 @@ class YamlRenderer:
 
     github_template_dict: dict[str, Any]
     file_path: Path
-
-    @staticmethod
-    def _get_standard_yaml() -> YAML:
-        """
-        Prepare standard YAML class.
-        """
-        yaml = YAML()
-        yaml.width = 200
-        yaml.preserve_quotes = True
-        yaml.sort_base_mapping_type_on_output = False  # type: ignore
-        yaml.indent(mapping=2, sequence=4, offset=2)
-        return yaml
 
     def _render_with_jinja(self, input_str: str) -> str:
         """
@@ -81,19 +93,17 @@ class YamlRenderer:
         raw_content = self.file_path.read_text()
         try:
             workflow_string = self._render_with_jinja(raw_content)
-            yaml = self._get_standard_yaml()
-            logger.debug("Parse template with ruamel-yaml")
-            return yaml.load(workflow_string)
         except TemplateError as ex:
             raise TemplateRenderingError(file_path=self.file_path) from ex
-        except YAMLError as ex:
-            raise YamlParsingError(file_path=self.file_path) from ex
+        return parse_yaml_text(
+            origin_path=self.file_path, workflow_string=workflow_string
+        )
 
     def get_as_string(self, yaml_dict: CommentedMap) -> str:
         """
         Output a YAML string.
         """
-        yaml = self._get_standard_yaml()
+        yaml = get_standard_yaml()
         try:
             logger.debug("Output workflow as string")
             with io.StringIO() as stream:

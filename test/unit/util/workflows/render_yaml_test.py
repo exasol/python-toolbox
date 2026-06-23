@@ -16,6 +16,7 @@ from exasol.toolbox.util.workflows.exceptions import (
 )
 from exasol.toolbox.util.workflows.render_yaml import (
     YamlRenderer,
+    parse_yaml_text,
 )
 
 
@@ -177,35 +178,6 @@ class TestYamlRenderer:
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(input_yaml)
 
     @staticmethod
-    def test_parsing_fails_when_yaml_malformed(test_yml, yaml_renderer):
-        bad_template = """
-        name: Publish Documentation
-
-        on:
-          workflow_call:
-          workflow_dispatch:
-
-        jobs:
-
-          build-documentation:
-            runs-on: "ubuntu-24.04"
-            permissions:
-              contents: read
-            steps:
-              - name: SCM Checkout
-              uses: actions/checkout@v5
-        """
-        test_yml.write_text(cleandoc(bad_template))
-
-        with pytest.raises(
-            YamlParsingError, match="Check for invalid YAML syntax."
-        ) as ex:
-            yaml_renderer.get_yaml_dict()
-
-        assert isinstance(ex.value.__cause__, ParserError)
-        assert "while parsing a block collection" in str(ex.value.__cause__)
-
-    @staticmethod
     def test_yaml_cannot_output_to_string(test_yml, yaml_renderer):
         input_yaml = """
         steps:
@@ -225,6 +197,76 @@ class TestYamlRenderer:
 
         assert isinstance(ex.value.__cause__, RepresenterError)
         assert "cannot represent an object" in str(ex.value.__cause__)
+
+
+class TestParseYamlText:
+    @staticmethod
+    def test_parsing_succeeds(tmp_path):
+        input_yaml = """
+        name: Build & Publish
+
+        on:
+          workflow_call:
+            secrets:
+              PYPI_TOKEN:
+                required: true
+
+        jobs:
+          cd-job:
+            name: Continuous Delivery
+            permissions:
+              contents: write
+        """
+
+        yaml_dict = parse_yaml_text(
+            origin_path=tmp_path / "dummy.yml", workflow_string=cleandoc(input_yaml)
+        )
+
+        assert yaml_dict == {
+            "name": "Build & Publish",
+            "on": {
+                "workflow_call": {
+                    "secrets": {"PYPI_TOKEN": {"required": True}},
+                }
+            },
+            "jobs": {
+                "cd-job": {
+                    "name": "Continuous Delivery",
+                    "permissions": {"contents": "write"},
+                }
+            },
+        }
+
+    @staticmethod
+    def test_parsing_fails_when_yaml_malformed(tmp_path):
+        bad_template = """
+        name: Publish Documentation
+
+        on:
+          workflow_call:
+          workflow_dispatch:
+
+        jobs:
+
+          build-documentation:
+            runs-on: "ubuntu-24.04"
+            permissions:
+              contents: read
+            steps:
+              - name: SCM Checkout
+              uses: actions/checkout@v5
+        """
+
+        with pytest.raises(
+            YamlParsingError, match="Check for invalid YAML syntax."
+        ) as ex:
+            parse_yaml_text(
+                origin_path=tmp_path / "dummy.yml",
+                workflow_string=cleandoc(bad_template),
+            )
+
+        assert isinstance(ex.value.__cause__, ParserError)
+        assert "while parsing a block collection" in str(ex.value.__cause__)
 
 
 class TestYamlRendererJinja:
@@ -252,7 +294,9 @@ class TestYamlRendererJinja:
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_does_not_add_jinja_block(test_yml, yaml_renderer, project_config):
+    def test_omits_block_when_extension_is_missing(
+        test_yml, yaml_renderer, project_config
+    ):
         input_yaml = """
         jobs:
           run-unit-tests:
@@ -270,10 +314,16 @@ class TestYamlRendererJinja:
                 id: check-out-repository
                 uses: actions/checkout@v6
 
-        (% if workflow_extension.fast_tests %)
+        (% if custom_workflows["fast-tests-extension"].exists %)
           fast-tests-extension:
             name: Extension
             uses: ./.github/workflows/fast-tests-extension.yml
+            (% if custom_workflows["fast-tests-extension"].secrets %)
+            secrets:
+              (% for secret_name in custom_workflows["fast-tests-extension"].secrets %)
+              (( secret_name )): ${{ secrets.(( secret_name )) }}
+              (% endfor %)
+            (% endif %)
             permissions:
               contents: read
           (% endif %)
@@ -305,7 +355,7 @@ class TestYamlRendererJinja:
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
-    def test_adds_jinja_block(test_yml, project_config):
+    def test_includes_if_block_when_extension_is_present(test_yml, project_config):
         input_yaml = """
         jobs:
           run-unit-tests:
@@ -323,10 +373,16 @@ class TestYamlRendererJinja:
                 id: check-out-repository
                 uses: actions/checkout@v6
 
-        (% if workflow_extension.fast_tests %)
+        (% if custom_workflows["fast-tests-extension"].exists %)
           fast-tests-extension:
             name: Extension
             uses: ./.github/workflows/fast-tests-extension.yml
+            (% if custom_workflows["fast-tests-extension"].secrets %)
+            secrets:
+              (% for secret_name in custom_workflows["fast-tests-extension"].secrets %)
+              (( secret_name )): ${{ secrets.(( secret_name )) }}
+              (% endfor %)
+            (% endif %)
             permissions:
               contents: read
           (% endif %)
@@ -352,13 +408,23 @@ class TestYamlRendererJinja:
         fast-tests-extension:
           name: Extension
           uses: ./.github/workflows/fast-tests-extension.yml
+          secrets:
+            FAST_TEST_SECRET: ${{ secrets.FAST_TEST_SECRET }}
           permissions:
             contents: read
 
         """
         workflow_directory = project_config.github_workflow_directory
         workflow_directory.mkdir(parents=True)
-        (workflow_directory / "fast-tests-extension.yml").touch()
+        (workflow_directory / "fast-tests-extension.yml").write_text(cleandoc("""
+                name: Fast-Tests-Extension
+
+                on:
+                  workflow_call:
+                    secrets:
+                      FAST_TEST_SECRET:
+                        required: true
+                """))
 
         content = cleandoc(input_yaml)
         test_yml.write_text(content)
@@ -369,6 +435,90 @@ class TestYamlRendererJinja:
 
         yaml_dict = yaml_renderer.get_yaml_dict()
 
+        assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
+
+    @staticmethod
+    def test_includes_extension_with_multiple_secrets(test_yml, project_config):
+        input_yaml = """
+        jobs:
+          run-unit-tests:
+            name: Unit Tests (Python-${{ matrix.python-versions }})
+            runs-on: "(( os_version ))"
+            permissions:
+              contents: read
+            strategy:
+              fail-fast: false
+              matrix:
+                python-versions: (( python_versions | tojson ))
+
+            steps:
+              - name: Check out Repository
+                id: check-out-repository
+                uses: actions/checkout@v6
+
+        (% if custom_workflows["merge-gate"].exists %)
+          merge-gate-extension:
+            uses: ./.github/workflows/merge-gate-extension.yml
+            (% if custom_workflows["merge-gate-extension"].secrets %)
+            secrets:
+              (% for secret_name in custom_workflows["merge-gate-extension"].secrets %)
+              (( secret_name )): ${{ secrets.(( secret_name )) }}
+              (% endfor %)
+            (% endif %)
+            permissions:
+              contents: read
+          (% endif %)
+
+        """
+        expected_yaml = """
+        jobs:
+        run-unit-tests:
+          name: Unit Tests (Python-${{ matrix.python-versions }})
+          runs-on: "ubuntu-24.04"
+          permissions:
+            contents: read
+          strategy:
+            fail-fast: false
+            matrix:
+              python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+
+          steps:
+            - name: Check out Repository
+              id: check-out-repository
+              uses: actions/checkout@v6
+
+        merge-gate-extension:
+          uses: ./.github/workflows/merge-gate-extension.yml
+          secrets:
+            MERGE_GATE_SECRET: ${{ secrets.MERGE_GATE_SECRET }}
+            ANOTHER_SECRET: ${{ secrets.ANOTHER_SECRET }}
+          permissions:
+            contents: read
+
+        """
+        workflow_directory = project_config.github_workflow_directory
+        workflow_directory.mkdir(parents=True)
+        (workflow_directory / "merge-gate-extension.yml").write_text(cleandoc("""
+                name: Merge-Gate-Extension
+
+                on:
+                  workflow_call:
+                    secrets:
+                      MERGE_GATE_SECRET:
+                        required: true
+                      ANOTHER_SECRET:
+                        required: true
+                """))
+
+        content = cleandoc(input_yaml)
+        test_yml.write_text(content)
+
+        yaml_renderer = YamlRenderer(
+            github_template_dict=project_config.github_template_dict,
+            file_path=test_yml,
+        )
+
+        yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
