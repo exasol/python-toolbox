@@ -1,8 +1,8 @@
-Collecting Metrics
-==================
+Measuring Code Quality
+======================
 
-The PTB collects code-quality data from its Nox sessions and then uploads the
-relevant results to Sonar for aggregation and review.
+The PTB uses various Nox sessions incl. linting and tests to collect code-quality data
+and upload the results to Sonar for aggregation and review.
 
 .. toctree::
    :maxdepth: 2
@@ -16,7 +16,7 @@ relevant results to Sonar for aggregation and review.
 Overview
 ++++++++
 
-The PTB metrics flow has three stages:
+The PTB code-quality flow has three stages:
 
 1. Run linting and test sessions that generate artifact files.
 2. Collect and validate those artifacts in ``report.yml``.
@@ -26,10 +26,10 @@ The individual tools still produce the raw data, but Sonar is the main place
 where PTB projects review the combined results in CI.
 
 
-Generate Metrics
-++++++++++++++++
+Generate Code Quality Results
++++++++++++++++++++++++++++++
 
-For each metric, there is a dedicated nox session, generating one or multiple
+For each result type, there is a dedicated nox session, generating one or multiple
 files and based on a selected external Python tool.
 
 +------------------------------------+-----------------------------+--------------+
@@ -44,17 +44,17 @@ files and based on a selected external Python tool.
 | ``test:integration -- --coverage`` | ``.coverage``               | ``coverage`` |
 +------------------------------------+-----------------------------+--------------+
 
-These metrics are computed for each element in your build matrix, e.g. for each
+These results are computed for each element in your build matrix, e.g. for each
 Python version defined in the `PROJECT_CONFIG` of the ``noxconfig.py`` file.
 
 The GitHub workflows of your project can use a build matrix and multiple test
 workflows, for example to distinguish fast and slow tests.
 
 
-Report Metrics
-+++++++++++++++
+Report Code Quality Results
++++++++++++++++++++++++++++
 
-The PTB uses only the metrics associated with the Python version specified by
+The PTB uses only the results associated with the Python version specified by
 :meth:`exasol.toolbox.config.BaseConfig.minimum_python_version`.
 
 In CI, workflow ``report.yml`` downloads the previously generated artifacts and
@@ -76,7 +76,7 @@ then runs the following Nox sessions:
 |                          | * Uploads lint, security, and coverage data to Sonar     |
 +--------------------------+----------------------------------------------------------+
 
-After that, Sonar becomes the main review surface for combined PTB metrics.
+After that, Sonar becomes the main review surface for combined PTB code-quality results.
 
 
 Configure Sonar

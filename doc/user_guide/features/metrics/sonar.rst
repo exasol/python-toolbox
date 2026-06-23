@@ -14,7 +14,7 @@ methodology. If code modified in a pull request does not satisfy the configured
 criteria, the Sonar analysis fails.
 
 The PTB workflow ``report.yml`` runs ``sonar:check`` after the linting and test
-jobs have produced their artifacts. For the end-to-end PTB metrics flow, see
+jobs have produced their artifacts. For the end-to-end PTB code-quality flow, see
 :doc:`collecting_metrics`.
 
 .. _sonar_configuration:
