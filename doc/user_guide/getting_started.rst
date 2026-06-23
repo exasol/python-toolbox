@@ -126,7 +126,7 @@ If you are integrating PTB into a legacy project, make sure the project is:
 
 Before enabling the full PTB workflow, establish a minimal baseline in
 ``pyproject.toml`` for coverage, formatting, linting, and type checking.
-Create follow-up tickets for the remaining cleanup work.clean
+Create follow-up tickets for the remaining cleanup work.
 
 
 4. Make the toolbox sessions available
