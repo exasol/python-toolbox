@@ -37,9 +37,10 @@ In this major release, several modifications were made to the PTB's workflow tem
 
 This release fixes vulnerabilities by updating dependencies:
 
-| Dependency | Vulnerability | Affected | Fixed in |
-|------------|---------------|----------|----------|
-| cryptography | GHSA-537c-gmf6-5ccf | 48.0.0 | 48.0.1 |
+| Dependency   | Vulnerability       | Affected | Fixed in |
+|--------------|---------------------|----------|----------|
+| cryptography | GHSA-537c-gmf6-5ccf | 48.0.0   | 48.0.1   |
+| msgpack      | GHSA-6v7p-g79w-8964 | 1.1.2    | 1.2.1    |
 
 ## Feature
 
@@ -73,6 +74,9 @@ This release fixes vulnerabilities by updating dependencies:
 
 ### `main`
 
+* Updated dependency `coverage:7.14.1` to `7.14.3`
+* Updated dependency `import-linter:2.11` to `2.12`
 * Updated dependency `pip-audit:2.10.0` to `2.10.1`
 * Updated dependency `pylint:4.0.5` to `4.0.6`
-* Updated dependency `pytest:9.0.3` to `9.1.0`
+* Updated dependency `pytest:9.0.3` to `9.1.1`
+* Updated dependency `zizmor:1.25.2` to `1.26.1`
