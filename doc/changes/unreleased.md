@@ -53,6 +53,10 @@ In this major release, several modifications were made to the PTB's workflow tem
 * #744: Extracted shared minimum-version selection logic into `minimum_declared_version()`
 * #699: Switched `extras` in the Python environment GitHub action to comma-separation
 
+## Documentation
+
+* #828: Removed the legacy migration page and merged the useful guidance into getting started
+
 ## Security
 
 * #867: Fixed zizmor linting results
