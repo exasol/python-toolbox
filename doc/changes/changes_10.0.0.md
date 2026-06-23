@@ -65,6 +65,7 @@ This release fixes vulnerabilities by updating dependencies:
 ## Documentation
 
 * #828: Removed the legacy migration page and merged the useful guidance into getting started
+* #789: Consolidated the metrics and Sonar documentation to reflect the current PTB reporting flow
 
 ## Security
 
