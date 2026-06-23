@@ -124,10 +124,9 @@ If you are integrating PTB into a legacy project, make sure the project is:
 * using ``sphinx`` for documentation
 * able to run its automated tasks via Python code or Nox
 
-For legacy projects, it is also worth establishing a minimal baseline in
-``pyproject.toml`` before enabling the full PTB workflow. In practice, that
-usually means reviewing configuration for coverage, formatting, linting, and
-type checking and then creating follow-up tickets for the remaining cleanups.
+Before enabling the full PTB workflow, establish a minimal baseline in
+``pyproject.toml`` for coverage, formatting, linting, and type checking.
+Create follow-up tickets for the remaining cleanup work.clean
 
 
 4. Make the toolbox sessions available
@@ -142,9 +141,9 @@ straightforward, and you just can use the example ``noxfile.py`` below.
        :language: python3
 
 If your project cannot adopt a PTB session exactly as-is, prefer a temporary
-override only as a migration aid. Long term, it is usually better to use
-configuration, plugin hooks, or PTB extension points so that reporting,
-artifacts, and CI behavior stay aligned with the standard PTB flow.
+override only as a migration aid. Long term, prefer configuration, plugin
+hooks, or PTB extension points so that reporting, artifacts, and CI behavior
+stay aligned with the standard PTB flow.
 
 5. Set up the GitHub ``pre-commit`` hooks [optional]
 ++++++++++++++++++++++++++++++++++++++++++++++++++++
