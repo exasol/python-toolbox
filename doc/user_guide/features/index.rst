@@ -37,3 +37,9 @@ Important Nox Commands
 
 * :code:`nox -l` shows a list of all available nox sessions
 * :code:`nox -s <session>` run the specified session(s)
+
+The most commonly used PTB sessions are cataloged below. The links in the
+right-hand column point to the feature pages that explain the user-facing
+workflow behind each session.
+
+.. include:: ../../_includes/nox_sessions_catalog.rst
