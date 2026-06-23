@@ -1,8 +1,8 @@
-Collecting Metrics
-==================
+Measuring Code Quality
+======================
 
-The PTB allows you to collect various metrics on the quality of your project
-regarding Coverage, Security, and Static Code Analysis.
+The PTB uses various Nox sessions incl. linting and tests to collect code-quality data
+and upload the results to Sonar for aggregation and review.
 
 .. toctree::
    :maxdepth: 2
@@ -13,16 +13,29 @@ regarding Coverage, Security, and Static Code Analysis.
 
 .. _generated_metrics:
 
-Generating Metrics
-++++++++++++++++++
+Overview
+++++++++
 
-For each metric, there is a dedicated nox session, generating one or multiple
+The PTB code-quality flow has three stages:
+
+1. Run linting and test sessions that generate artifact files.
+2. Collect and validate those artifacts in ``report.yml``.
+3. Upload the consolidated results with ``sonar:check``.
+
+The individual tools still produce the raw data, but Sonar is the main place
+where PTB projects review the combined results in CI.
+
+
+Generate Code Quality Results
++++++++++++++++++++++++++++++
+
+For each result type, there is a dedicated nox session, generating one or multiple
 files and based on a selected external Python tool.
 
 +------------------------------------+-----------------------------+--------------+
 | Nox session                        | Generated files             | Based on     |
 +====================================+=============================+==============+
-| ``lint:code``                      | ``lint.txt``, ``lint.json`` | ``pylint``   |
+| ``lint:code``                      | ``.lint.json``              | ``pylint``   |
 +------------------------------------+-----------------------------+--------------+
 | ``lint:security``                  | ``.security.json``          | ``bandit``   |
 +------------------------------------+-----------------------------+--------------+
@@ -31,28 +44,21 @@ files and based on a selected external Python tool.
 | ``test:integration -- --coverage`` | ``.coverage``               | ``coverage`` |
 +------------------------------------+-----------------------------+--------------+
 
-These metrics are computed for each element in your build matrix, e.g. for each
+These results are computed for each element in your build matrix, e.g. for each
 Python version defined in the `PROJECT_CONFIG` of the ``noxconfig.py`` file.
 
-The GitHub workflows of your project can:
-
-* Use a build matrix, e.g. using different Python versions as shown above
-* Define multiple test sessions, e.g. for distinguishing fast vs. slow or expensive tests.
+The GitHub workflows of your project can use a build matrix and multiple test
+workflows, for example to distinguish fast and slow tests.
 
 
-Reporting Metrics
-+++++++++++++++++
+Report Code Quality Results
++++++++++++++++++++++++++++
 
-The PTB uses only the metrics associated with the Python version specified by
+The PTB uses only the results associated with the Python version specified by
 :meth:`exasol.toolbox.config.BaseConfig.minimum_python_version`.
 
-Nox session ``sonar:check`` uploads the :ref:`findings <generated_metrics>` to
-:ref:`SonarQube <sonarqube_analysis>` for aggregation and additional static
-code analysis, presenting the results in Sonar's `feature-rich UI
-<https://docs.sonarsource.com/sonarqube-server>`__.
-
-The CI workflow ``report.yml`` runs ``sonar:check`` after two additional Nox
-sessions collect the artifacts from various jobs:
+In CI, workflow ``report.yml`` downloads the previously generated artifacts and
+then runs the following Nox sessions:
 
 +--------------------------+----------------------------------------------------------+
 | Nox session              | Actions                                                  |
@@ -66,3 +72,22 @@ sessions collect the artifacts from various jobs:
 |                          | * Checks that each file contains the expected attributes |
 |                          |   for that file type                                     |
 +--------------------------+----------------------------------------------------------+
+| ``sonar:check``          | * Creates ``ci-coverage.xml`` from ``.coverage``         |
+|                          | * Uploads lint, security, and coverage data to Sonar     |
++--------------------------+----------------------------------------------------------+
+
+After that, Sonar becomes the main review surface for combined PTB code-quality results.
+
+
+Configure Sonar
++++++++++++++++
+
+See :ref:`sonarqube_analysis` for the repository, secret, and
+``pyproject.toml`` configuration needed for Sonar.
+
+
+Handle Findings
++++++++++++++++
+
+See :ref:`ignore_findings` if a Sonar finding cannot be fixed immediately and
+must be explicitly accepted or ignored.

@@ -55,6 +55,7 @@ In this major release, several modifications were made to the PTB's workflow tem
 
 ## Documentation
 
+* #789: Consolidated the metrics and Sonar documentation to reflect the current PTB reporting flow
 * #828: Removed the legacy migration page and merged the useful guidance into getting started
 
 ## Security
