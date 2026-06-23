@@ -24,13 +24,18 @@ jobs:
     secrets:
       PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
 
-  (% if workflow_extension.cd %)
+  (% if custom_workflows["cd-extension"].exists %)
   cd-extension:
     name: Extension
     uses: ./.github/workflows/cd-extension.yml
     needs:
       - check-release-tag
-    secrets: inherit # zizmor: ignore[secrets-inherit] - PTB cannot customize inherited secrets here yet; tracked in https://github.com/exasol/python-toolbox/issues/872.
+    (% if custom_workflows["cd-extension"].secrets %)
+    secrets:
+      (% for secret_name in custom_workflows["cd-extension"].secrets %)
+      (( secret_name )): ${{ secrets.(( secret_name )) }}
+      (% endfor %)
+    (% endif %)
     permissions:
       contents: write
   (% endif %)

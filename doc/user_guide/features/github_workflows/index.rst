@@ -36,10 +36,15 @@ compare the rendered workflow templates against the files in ``.github/workflows
 Workflows
 ---------
 
-The PTB has three categories of workflows:
+The PTB allows for two categories of workflows:
   #. those maintained by the PTB, which can be modified using the :ref:`workflow_patcher`.
-  #. those which are seeded by the PTB but owned and maintained by the project after initial creation.
-  #. those which extend the PTB-provided workflows and are maintained by the project (not the PTB).
+  #. custom workflows, which are project-owned.
+  
+Custom workflows can optionally be 
+* seeded by the PTB, i.e. PTB generates an initial version but ignores future changes.
+* extend PTB-provided workflows, i.e. ending in `-extension.yml`
+ 
+Besides that, you can also create individual workflow files which are ignored by the PTB.
 
 Maintained by the PTB
 ^^^^^^^^^^^^^^^^^^^^^
@@ -108,8 +113,26 @@ Maintained by the PTB
        the action, and uploads the results to Sonar.
 
 
-Not Maintained by the PTB
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Custom Workflows
+^^^^^^^^^^^^^^^^
+
+Custom workflows are project-owned. The two custom workflow forms are:
+
+* workflows seeded once by the PTB and then owned by the project
+* workflow extensions that are enabled when the project adds the corresponding file
+
+
+The PTB detects whether the relevant workflow file is present and activates a block
+where is it called in corresponding calling workflow. If the file is absent, the PTB
+does not add that block to the PTB-controlled workflows.
+
+For these custom workflows to work correctly, the reusable workflow must follow
+the secret declaration format described in :ref:`custom_workflow_secrets` so the
+calling PTB workflow can pass the required secrets through.
+
+
+Workflows Initially Seeded by the PTB
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The PTB seeds these workflows for new projects, but after that the project owns
 them and PTB regeneration does not overwrite them.
@@ -126,7 +149,7 @@ them and PTB regeneration does not overwrite them.
      - Runs long-running checks, which typically involve an Exasol database instance.
 
 Workflow Extensions
-^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~
 
 To use a workflow extension, a user must simply add the file to their project's
 ``.github/workflows`` directory. The PTB checks that this file exists, and if it does,

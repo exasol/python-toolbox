@@ -42,10 +42,16 @@ jobs:
           include-hidden-files: true
           overwrite: false
 
-(% if workflow_extension.fast_tests %)
+(% if custom_workflows["fast-tests-extension"].exists %)
   fast-tests-extension:
     name: Extension
     uses: ./.github/workflows/fast-tests-extension.yml
+    (% if custom_workflows["fast-tests-extension"].secrets %)
+    secrets:
+      (% for secret_name in custom_workflows["fast-tests-extension"].secrets %)
+      (( secret_name )): ${{ secrets.(( secret_name )) }}
+      (% endfor %)
+    (% endif %)
     permissions:
       contents: read
   (% endif %)

@@ -19,6 +19,36 @@ standardized baseline that can be overridden in individual projects.
   :start-at: github_template_dict
   :end-before: @computed_field
 
+.. _custom_workflow_secrets:
+
+Custom Workflow Secrets
+^^^^^^^^^^^^^^^^^^^^^^^
+
+The PTB extracts secret names from reusable custom workflow files and exposes them
+through :py:attr:`exasol.toolbox.config.BaseConfig.github_template_dict` under the
+``custom_workflows`` entry. PTB-controlled workflow templates use those extracted
+names when they call reusable workflows and forward secrets via ``secrets:``.
+
+To make a custom workflow compatible with this extraction, declare its secrets at the
+top of the reusable workflow file under ``on.workflow_call`` and before ``jobs``.
+The extractor reads that section and collects the secret names automatically.
+
+For example, ``slow-checks.yml`` can define its reusable workflow header like this:
+
+.. code-block:: yaml
+
+   name: Slow-Checks
+
+   on:
+     workflow_call:
+       secrets:
+         PYPI_TOKEN:
+           required: true
+         SONAR_TOKEN:
+           required: true
+
+Those extracted secret names are then made available to the PTB templates that
+reference the custom workflow.
 
 .. _workflow_matrix:
 
