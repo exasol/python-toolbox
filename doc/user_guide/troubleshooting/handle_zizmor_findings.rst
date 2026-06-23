@@ -32,7 +32,11 @@ A typical line-level ignore looks like this:
 
 .. code-block:: yaml
 
-   secrets: inherit # zizmor: ignore[github-env] - This shared action is used by many workflows, and downstream steps need `poetry` on PATH; we do not have a safer replacement yet.
+    - name: Set up Poetry (${{ inputs.poetry-version }})
+      shell: bash
+      run: | # zizmor: ignore[github-env] - This shared action is used by many workflows, and downstream steps need `poetry` on PATH; we do not have a safer replacement yet.
+        POETRY_VERSION="${INPUTS_POETRY_VERSION}" "$PYTHON_BINARY" "${{ github.action_path }}/ext/get_poetry.py"
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
 
 Use configuration rules in ``.zizmor.yml`` only when the finding is genuinely
 project-wide. If you add a temporary rule while working through a batch of
