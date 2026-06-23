@@ -4,7 +4,7 @@
 
 In this major release, several modifications were made to the PTB's workflow templates and actions:
 
-* the nox DB-version default was updated to come from `BaseConfig` instead of the
+* the default DB-version was updated to come from `BaseConfig` instead of the
   hardcoded `7.1.9`, so ITDE-related test flows use the configured Exasol baseline
   and unit-test help no longer advertises `--db-version`.
 * the `github_template_dict.custom_workflows` entry now auto-detects secret names

@@ -18,8 +18,7 @@ class CustomWorkflow(BaseModel):
 
     These workflows are seeded by the PTB or extend PTB-provided workflows, but
     they are maintained by the project itself rather than the PTB. See
-    `Not Maintained by the PTB <https://exasol.github.io/python-toolbox/main/user_guide/features/github_workflows/index.html#not-maintained-by-the-ptb>`__
-    and `Workflow Extensions <https://exasol.github.io/python-toolbox/main/user_guide/features/github_workflows/index.html#workflow-extensions>`__.
+    `Custom Workflows <file:///home/chku/git/ptb/.html-documentation/user_guide/features/github_workflows/index.html#custom-workflows>`__.
     """
 
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)

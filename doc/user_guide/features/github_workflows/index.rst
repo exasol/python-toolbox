@@ -36,10 +36,15 @@ compare the rendered workflow templates against the files in ``.github/workflows
 Workflows
 ---------
 
-The PTB has two categories of workflows:
+The PTB manages two categories of workflows:
   #. those maintained by the PTB, which can be modified using the :ref:`workflow_patcher`.
-  #. custom workflows, which are project-owned and either seeded by the PTB or
-     extend PTB-provided workflows.
+  #. custom workflows, which are project-owned.
+  
+Custom workflows can optionally be 
+* seeded by the PTB, i.e. PTB generates an initial version but ignores future changes.
+* extend PTB-provided workflows, i.e. ending in `-extension.yml`
+ 
+Besides that you can also create individual additional workflow files with are ignored by the PTB.
 
 Maintained by the PTB
 ^^^^^^^^^^^^^^^^^^^^^
