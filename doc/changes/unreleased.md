@@ -24,6 +24,14 @@ In this major release, several modifications were made to the PTB's workflow tem
   list, which makes it easier to pass multiple optional dependency groups in one
   value. Additionally, it supports `all-extras`, so that all extras are installed
   without further specification needed.
+* the new `workflow:audit` Nox session runs `zizmor` against GitHub Actions and
+  reusable workflows, so security checks are part of the normal `checks.yml`
+  pipeline instead of being a separate manual step. It also keeps the audit
+  configuration in the project root via `.zizmor.yml`; see the
+  [zizmor configuration guide](https://exasol.github.io/python-toolbox/main/user_guide/features/managing_dependencies/zizmor_configuration.html)
+  and the
+  [troubleshooting guide for findings](https://exasol.github.io/python-toolbox/main/user_guide/troubleshooting/handle_zizmor_findings.html)
+  for details on tuning or suppressing findings locally.
 
 ## Feature
 
