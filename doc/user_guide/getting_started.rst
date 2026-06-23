@@ -81,7 +81,12 @@ List all available nox sessions:
 Integrating Exasol-Toolbox into your Project
 --------------------------------------------
 
-See also :ref:`migrating_legacy_projects`.
+If you are integrating PTB into a legacy project, make sure the project is:
+
+* based on ``pyproject.toml``
+* using ``poetry``
+* using published PyPI dependencies instead of git or path references
+* able to run its automated tasks via Python code or Nox
 
 1. Add the toolbox as a dependency
 ++++++++++++++++++++++++++++++++++
@@ -130,6 +135,10 @@ straightforward, and you just can use the example ``noxfile.py`` below.
     .. literalinclude:: ../../project-template/{{cookiecutter.repo_name}}/noxfile.py
        :language: python3
 
+If your project cannot adopt a PTB session exactly as-is, prefer a temporary
+override only as a migration aid. Long term, prefer configuration, plugin
+hooks, or PTB extension points so that reporting, artifacts, and CI behavior
+stay aligned with the standard PTB flow.
 
 5. Set up the GitHub ``pre-commit`` hooks [optional]
 ++++++++++++++++++++++++++++++++++++++++++++++++++++

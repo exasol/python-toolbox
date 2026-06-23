@@ -23,6 +23,10 @@ so ITDE-related test flows use the configured Exasol baseline and unit-test help
 
 * #744: Extracted shared minimum-version selection logic into `minimum_declared_version()`
 
+## Documentation
+
+* #828: Removed the legacy migration page and merged the useful guidance into getting started
+
 ## Security
 
 * #867: Fixed zizmor linting results
