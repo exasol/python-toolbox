@@ -88,13 +88,9 @@ class TestFilter:
         json_path = tmp_path / "input.json"
         json_path.write_text(sample_maven_vulnerabilities.issues_json)
 
-        with patch(
-            "exasol.toolbox.tools.security.gh_security_issues",
-            return_value=(),
-        ):
-            result = cli_runner.invoke(
-                CVE_CLI, ["filter", Filter.GitHubIssues.value, str(json_path)]
-            )
+        result = cli_runner.invoke(
+            CVE_CLI, ["filter", Filter.GitHubIssues.value, str(json_path)]
+        )
 
         assert result.exit_code == 0
         assert result.output.strip() == sample_maven_vulnerabilities.issues_json
