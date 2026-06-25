@@ -20,6 +20,7 @@ jobs:
     permissions:
       contents: read
     env:
+      # Required for integration tests that call the GitHub CLI.
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       fail-fast: false
