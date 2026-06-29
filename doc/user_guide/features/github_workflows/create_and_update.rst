@@ -93,8 +93,8 @@ exceptional cases where a project does not serve documentation, set
 :py:attr:`exasol.toolbox.config.BaseConfig.has_documentation` to ``False`` in
 the project configuration.
 
-When this switch is disabled, the PTB no longer expects ``pr-merge.yml`` for
-the project and excludes other documentation-focused jobs.
+When this switch is disabled, the PTB no longer generates or expects documentation
+relevant parts in the GitHub workflows.
 
 .. _update_workflows:
 
