@@ -25,6 +25,7 @@ from exasol.toolbox.util.workflows.patch_workflow import (
     WorkflowPatcher,
 )
 from exasol.toolbox.util.workflows.templates import (
+    DOCUMENTATION_ONLY_WORKFLOW_NAMES,
     WORKFLOW_TEMPLATE_OPTIONS,
     validate_workflow_name,
 )
@@ -63,7 +64,7 @@ class WorkflowOrchestrator(BaseModel):
         )
 
     def _extract_workflow_patch(
-        self, workflow_name: str
+            self, workflow_name: str
     ) -> WorkflowCommentedMap | None:
         """
         Return the patch data for a workflow, or ``None`` if no patcher is configured.
@@ -92,7 +93,7 @@ class WorkflowOrchestrator(BaseModel):
             )
 
     def _load_workflow(
-        self, template_path: Path, patch_yaml: WorkflowCommentedMap | None
+            self, template_path: Path, patch_yaml: WorkflowCommentedMap | None
     ):
         try:
             return Workflow.load_from_template(
@@ -110,7 +111,7 @@ class WorkflowOrchestrator(BaseModel):
     def _skip_workflow(self, workflow_name: str, is_new_project: bool) -> bool:
         """
         Return ``True`` if the workflow should be skipped because it is not maintained
-        by the PTB, otherwise return ``False``.
+        by the PTB or not applicable to the current project, otherwise return ``False``.
         """
         try:
             validate_workflow_name(workflow_name)
@@ -121,6 +122,14 @@ class WorkflowOrchestrator(BaseModel):
                     workflow_name,
                 )
                 return True
+
+        if workflow_name in DOCUMENTATION_ONLY_WORKFLOW_NAMES and not self.config.has_documentation:
+            logger.debug(
+                "Skipping documentation workflow for project without documentation: %s",
+                workflow_name,
+            )
+            return True
+
         return False
 
     def generate_workflows(self) -> None:
