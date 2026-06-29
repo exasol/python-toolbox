@@ -85,6 +85,17 @@ used when you :ref:`install or update your workflows <update_workflows>`.
   generated, each removed job or modified step_id is checked to see if it exists.
   If it does not exist, an exception will be raised (:ref:`workflow_exceptions`).
 
+Projects Without Documentation
+------------------------------
+
+Most projects using the PTB should serve Sphinx-based documentation. For
+exceptional cases where a project does not serve documentation, set
+:py:attr:`exasol.toolbox.config.BaseConfig.has_documentation` to ``False`` in
+the project configuration.
+
+When this switch is disabled, the PTB no longer expects ``pr-merge.yml`` for
+the project and excludes other documentation-focused jobs.
+
 .. _update_workflows:
 
 Add all Workflows to Your Project
