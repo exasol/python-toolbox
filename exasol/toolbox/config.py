@@ -211,6 +211,17 @@ class BaseConfig(BaseModel):
         """,
     )
 
+    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def has_documentation(self) -> bool:
+        """
+        Indicates that the project serves Sphinx-based documentation. With a few
+        exceptions, this should be the case for most projects.
+        """
+        return True
+
     @computed_field  # type: ignore[misc]
     @property
     def sonar_token_name(self) -> str:
@@ -220,8 +231,6 @@ class BaseConfig(BaseModel):
         Projects can override this property if they use a different secret name.
         """
         return "SONAR_TOKEN"
-
-    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
 
     @computed_field  # type: ignore[misc]
     @property
