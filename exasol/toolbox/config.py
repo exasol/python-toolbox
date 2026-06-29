@@ -336,6 +336,7 @@ class BaseConfig(BaseModel):
         return {
             "custom_workflows": custom_workflow_extractor.build_custom_workflow_dict(),
             "dependency_manager_version": self.dependency_manager.version,
+            "has_documentation": self.has_documentation,
             "minimum_python_version": self.minimum_python_version,
             "os_version": self.os_version,
             "python_versions": self.python_versions,

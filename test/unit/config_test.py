@@ -58,6 +58,7 @@ class TestBaseConfig:
                     "merge-gate": {"exists": True, "secrets": ("SONAR_TOKEN",)},
                 },
                 "dependency_manager_version": "2.3.0",
+                "has_documentation": True,
                 "minimum_python_version": "3.10",
                 "os_version": "ubuntu-24.04",
                 "python_versions": (
