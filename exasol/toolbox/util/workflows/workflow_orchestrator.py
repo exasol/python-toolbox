@@ -64,7 +64,7 @@ class WorkflowOrchestrator(BaseModel):
         )
 
     def _extract_workflow_patch(
-            self, workflow_name: str
+        self, workflow_name: str
     ) -> WorkflowCommentedMap | None:
         """
         Return the patch data for a workflow, or ``None`` if no patcher is configured.
@@ -93,7 +93,7 @@ class WorkflowOrchestrator(BaseModel):
             )
 
     def _load_workflow(
-            self, template_path: Path, patch_yaml: WorkflowCommentedMap | None
+        self, template_path: Path, patch_yaml: WorkflowCommentedMap | None
     ):
         try:
             return Workflow.load_from_template(
@@ -123,7 +123,10 @@ class WorkflowOrchestrator(BaseModel):
                 )
                 return True
 
-        if workflow_name in DOCUMENTATION_ONLY_WORKFLOW_NAMES and not self.config.has_documentation:
+        if (
+            workflow_name in DOCUMENTATION_ONLY_WORKFLOW_NAMES
+            and not self.config.has_documentation
+        ):
             logger.debug(
                 "Skipping documentation workflow for project without documentation: %s",
                 workflow_name,

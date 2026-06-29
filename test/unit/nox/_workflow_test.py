@@ -131,9 +131,9 @@ class TestGenerateWorkflow:
                 "*.yml"
             )
         }
-        assert {
-            f"{name}.yml" for name in DOCUMENTATION_ONLY_WORKFLOW_NAMES
-        }.isdisjoint(existing_workflows)
+        assert {f"{name}.yml" for name in DOCUMENTATION_ONLY_WORKFLOW_NAMES}.isdisjoint(
+            existing_workflows
+        )
 
 
 class TestCheckWorkflow:

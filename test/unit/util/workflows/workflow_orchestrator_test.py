@@ -112,7 +112,6 @@ class TestSkipWorkflow:
 
         assert result is False
 
-
     @staticmethod
     @pytest.mark.parametrize("workflow_name", DOCUMENTATION_ONLY_WORKFLOW_NAMES)
     def test_returns_true_for_documentation_only_workflow_when_docs_disabled(
