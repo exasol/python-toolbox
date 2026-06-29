@@ -40,6 +40,7 @@ jobs:
       contents: write
   (% endif %)
 
+  (% if has_documentation %)
   publish-docs:
     needs:
       - build-and-publish
@@ -49,3 +50,4 @@ jobs:
       contents: read
       pages: write
       id-token: write
+  (% endif %)
