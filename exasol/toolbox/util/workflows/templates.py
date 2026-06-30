@@ -1,5 +1,6 @@
 from collections.abc import Mapping
 from pathlib import Path
+from typing import Final
 
 import importlib_resources as resources
 
@@ -9,7 +10,8 @@ from exasol.toolbox.util.workflows.exceptions import (
 )
 
 WORKFLOW_TEMPLATES_DIRECTORY = "exasol.toolbox.templates.github.workflows"
-NOT_MAINTAINED_WORKFLOW_NAMES: list[str] = ["slow-checks"]
+NOT_MAINTAINED_WORKFLOW_NAMES: Final[list[str]] = ["slow-checks"]
+DOCUMENTATION_ONLY_WORKFLOW_NAMES: Final[list[str]] = ["pr-merge"]
 
 
 def get_workflow_templates() -> Mapping[str, Path]:
