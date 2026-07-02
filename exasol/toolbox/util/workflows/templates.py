@@ -11,7 +11,7 @@ from exasol.toolbox.util.workflows.exceptions import (
 
 WORKFLOW_TEMPLATES_DIRECTORY = "exasol.toolbox.templates.github.workflows"
 NOT_MAINTAINED_WORKFLOW_NAMES: Final[list[str]] = ["slow-checks"]
-DOCUMENTATION_ONLY_WORKFLOW_NAMES: Final[list[str]] = ["pr-merge"]
+DOCUMENTATION_ONLY_WORKFLOW_NAMES: Final[list[str]] = ["gh-pages", "pr-merge"]
 
 
 def get_workflow_templates() -> Mapping[str, Path]:

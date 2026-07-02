@@ -103,7 +103,7 @@ class TestGenerateWorkflow:
     @staticmethod
     @pytest.mark.parametrize(
         "nox_session_runner_posargs, expected_count",
-        [(ALL, 13)],
+        [(ALL, 12)],
         indirect=["nox_session_runner_posargs"],
     )
     def test_skips_documentation_workflows_when_docs_disabled(
@@ -221,7 +221,7 @@ class TestCheckWorkflow:
                 check_workflow(nox_session)
 
         assert str(exc.value) == (
-            "\n13 workflows are out of date:\n"
+            "\n12 workflows are out of date:\n"
             "- build-and-publish\n"
             "- cd\n"
             "- check-release-tag\n"
@@ -229,7 +229,6 @@ class TestCheckWorkflow:
             "- ci\n"
             "- dependency-update\n"
             "- fast-tests\n"
-            "- gh-pages\n"
             "- matrix\n"
             "- merge-gate\n"
             "- periodic-validation\n"
