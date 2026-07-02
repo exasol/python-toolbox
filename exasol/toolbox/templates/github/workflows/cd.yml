@@ -29,7 +29,7 @@ jobs:
     name: Extension
     uses: ./.github/workflows/cd-extension.yml
     needs:
-      - check-release-tag
+      - build-and-publish
     (% if custom_workflows["cd-extension"].secrets %)
     secrets:
       (% for secret_name in custom_workflows["cd-extension"].secrets %)
