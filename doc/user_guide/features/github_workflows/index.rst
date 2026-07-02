@@ -171,6 +171,7 @@ and is maintained by the PTB and what is project-specific.
    * - ``cd-extension.yml``
      - Workflow call
      - This extends the ``cd.yml``. Use it to add project-specific release steps.
+       Runs after ``build-and-publish.yml`` workflow has finished successfully.
    * - ``merge-gate-extension.yml``
      - Workflow call
      - This extends the ``merge-gate.yml`` and the ``needs`` criteria of the job
@@ -287,6 +288,7 @@ to main. This starts the release process by activating the ``cd.yml`` workflow.
 
         %% Dependencies / Waiting (Dotted Lines)
         check-release-tag -.->|needs| build-and-publish[build-and-publish.yml]
+        build-and-publish -.->|needs| cd-extension[cd-extension.yml]
         build-and-publish -.->|needs| gh-pages[gh-pages.yml]
 
 .. _automated_activities:
