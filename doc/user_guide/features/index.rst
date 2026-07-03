@@ -37,3 +37,17 @@ Important Nox Commands
 
 * :code:`nox -l` shows a list of all available nox sessions
 * :code:`nox -s <session>` run the specified session(s)
+
+The command :code:`nox -l` is the most reliable way to see the full current
+session list for your project.
+
+Common examples are:
+
+* :code:`nox -s format:fix` to apply formatting changes
+* :code:`nox -s project:check` to run the main local quality gate
+* :code:`nox -s test:unit` to run unit tests
+* :code:`nox -s workflow:generate -- all` to regenerate PTB workflows
+
+Use the feature pages in this guide for task-specific details, for example
+formatting, GitHub workflows, dependency management, release preparation, and
+code-quality reporting.

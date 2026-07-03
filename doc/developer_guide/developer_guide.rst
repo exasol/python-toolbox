@@ -9,4 +9,3 @@
 
     ../design
     plugins
-    modules/modules
