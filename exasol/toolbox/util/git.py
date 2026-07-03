@@ -51,3 +51,16 @@ class Git:
     @run_command
     def toplevel():
         return ["git", "rev-parse", "--show-toplevel"]
+
+    @staticmethod
+    def has_uncommitted_path_changes(paths: tuple[Path, ...]) -> bool:
+        """
+        Return whether the given path or paths have uncommitted changes.
+        """
+        command = ["git", "diff", "--quiet", "--", *map(str, paths)]
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            cwd=Git.toplevel(),
+        )  # nosec: B603, B607 - fixed git command; repository root is trusted here
+        return result.returncode != 0
