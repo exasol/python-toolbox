@@ -5,6 +5,7 @@ on:
   workflow_call:
 
 jobs:
+  (% if has_documentation %)
   build-documentation-and-check-links:
     name: Docs
     runs-on: "(( os_version ))"
@@ -31,6 +32,7 @@ jobs:
       - name: Check Links
         id: check-links
         run: poetry run -- nox -s links:check
+  (% endif %)
 
   check-changelog-was-updated:
     name: Check Changelog was Updated

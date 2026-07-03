@@ -118,7 +118,7 @@ class WorkflowModifier:
             needs_without_removed_job = [need for need in needs if need != job_name]
             if len(needs_without_removed_job) == 0:
                 other_job.pop("needs")
-                return
+                continue
             other_job["needs"] = needs_without_removed_job
 
     def _verify_job_exists(self, job_name: str) -> None:

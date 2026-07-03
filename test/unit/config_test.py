@@ -44,6 +44,7 @@ class TestBaseConfig:
             "create_major_version_tags": False,
             "dependency_manager": {"name": "poetry", "version": "2.3.0"},
             "documentation_path": root_path / "doc",
+            "has_documentation": True,
             "exasol_versions": ("8.29.13", "2025.1.8"),
             "excluded_python_paths": expand_paths(config, DEFAULT_EXCLUDED_PATHS),
             "github_workflow_directory": tmp_path / ".github" / "workflows",
@@ -57,6 +58,7 @@ class TestBaseConfig:
                     "merge-gate": {"exists": True, "secrets": ("SONAR_TOKEN",)},
                 },
                 "dependency_manager_version": "2.3.0",
+                "has_documentation": True,
                 "minimum_python_version": "3.10",
                 "os_version": "ubuntu-24.04",
                 "python_versions": (

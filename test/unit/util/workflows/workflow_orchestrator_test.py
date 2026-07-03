@@ -2,12 +2,15 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+from pydantic import computed_field
 
+from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.util.workflows.exceptions import (
     InvalidWorkflowPatcherEntryError,
     YamlJobValueError,
 )
 from exasol.toolbox.util.workflows.templates import (
+    DOCUMENTATION_ONLY_WORKFLOW_NAMES,
     NOT_MAINTAINED_WORKFLOW_NAMES,
     WORKFLOW_TEMPLATE_OPTIONS,
 )
@@ -92,6 +95,45 @@ class TestSkipWorkflow:
         )._skip_workflow(workflow_name="checks", is_new_project=False)
 
         assert result is False
+
+    @staticmethod
+    @pytest.mark.parametrize("workflow_name", DOCUMENTATION_ONLY_WORKFLOW_NAMES)
+    def test_returns_ralse_for_documentation_only_workflow_when_docs_enabled(
+        project_config, workflow_name
+    ):
+
+        result = WorkflowOrchestrator(
+            workflow_choice=workflow_name,
+            config=project_config,
+        )._skip_workflow(
+            workflow_name=workflow_name,
+            is_new_project=False,
+        )
+
+        assert result is False
+
+    @staticmethod
+    @pytest.mark.parametrize("workflow_name", DOCUMENTATION_ONLY_WORKFLOW_NAMES)
+    def test_returns_true_for_documentation_only_workflow_when_docs_disabled(
+        tmp_path, workflow_name
+    ):
+        class Config(BaseConfig):
+            @computed_field  # type: ignore[misc]
+            @property
+            def has_documentation(self) -> bool:
+                return False
+
+        config = Config(root_path=tmp_path, project_name="test")
+
+        result = WorkflowOrchestrator(
+            workflow_choice=workflow_name,
+            config=config,
+        )._skip_workflow(
+            workflow_name=workflow_name,
+            is_new_project=False,
+        )
+
+        assert result is True
 
 
 class TestIterWorkflows:
