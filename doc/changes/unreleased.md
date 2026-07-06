@@ -3,9 +3,8 @@
 ## Summary
 
 This minor release adds automated vulnerability updates through Nox session
-`vulnerabilities:update` and improves the dependency update workflow
-so it can publish the post-update vulnerability summary. It also includes a few
-workflow-related bug fixes and documentation updates.
+`vulnerabilities:update` and improves the `dependency-update.yml`. It also includes a
+few  workflow-related bug fixes and documentation updates.
 
 ## Bug
 
