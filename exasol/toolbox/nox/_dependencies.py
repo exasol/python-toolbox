@@ -59,11 +59,11 @@ def update_vulnerabilities(session: Session) -> None:
     except PipAuditException as e:
         session.error(e.returncode, e.stdout, e.stderr)
 
-    report_path = session.env.get("VULNERABILITIES_UPDATE_REPORT_PATH", None)
-    if report_json is None or report_path is None:
+    report_path_str = session.env.get("VULNERABILITIES_UPDATE_REPORT_PATH", None)
+    if report_json is None or report_path_str is None:
         return
 
-    report_path = Path(report_path)
+    report_path = Path(report_path_str)
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(report_json + "\n", encoding="utf-8")
 
