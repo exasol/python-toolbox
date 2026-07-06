@@ -14,6 +14,8 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    env:
+      VULNERABILITIES_UPDATE_REPORT_PATH: vulnerabilities.json
 
     steps:
       - name: Check out Repository
@@ -59,8 +61,6 @@ jobs:
 
       - name: Update Dependencies
         id: update-dependencies
-        env:
-          VULNERABILITIES_UPDATE_REPORT_PATH: vulnerabilities.json
         run: |
           poetry self add poetry-plugin-export
           poetry run -- nox -s vulnerabilities:update
