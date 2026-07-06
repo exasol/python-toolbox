@@ -14,8 +14,6 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    env:
-      VULNERABILITIES_UPDATE_REPORT_PATH: vulnerabilities.json
 
     steps:
       - name: Check out Repository
@@ -53,6 +51,11 @@ jobs:
           branch_name="dependency-update/$(date "+%Y-%m-%d")"
           echo "Creating branch $branch_name"
           git switch -C "$branch_name"
+
+      - name: Set report path
+        id: set-report-path
+        run: |
+          echo "VULNERABILITIES_UPDATE_REPORT_PATH=vulnerabilities.json" >> "$GITHUB_ENV"
 
       - name: Record current commit
         id: record-current-commit

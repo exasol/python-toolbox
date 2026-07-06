@@ -44,6 +44,11 @@ jobs:
           echo "Creating branch $branch_name"
           git switch -C "$branch_name"
 
+      - name: Set report path
+        id: set-report-path
+        run: |
+          echo "VULNERABILITIES_UPDATE_REPORT_PATH=vulnerabilities.json" >> "$GITHUB_ENV"
+
       - name: Record current commit
         id: record-current-commit
         run: |
@@ -51,8 +56,6 @@ jobs:
 
       - name: Update Dependencies
         id: update-dependencies
-        env:
-          VULNERABILITIES_UPDATE_REPORT_PATH: vulnerabilities.json
         run: |
           poetry self add poetry-plugin-export
           poetry run -- nox -s vulnerabilities:update
