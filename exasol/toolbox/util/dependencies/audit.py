@@ -278,9 +278,24 @@ class Vulnerabilities(BaseModel):
 
     @property
     def security_issue_dict(self) -> list[PipAuditEntry]:
+        """Return pip-audit-compatible entries for `tbx security cve convert`."""
         return [
             vulnerability.security_issue_entry for vulnerability in self.vulnerabilities
         ]
+
+    @property
+    def report_json(self) -> str:
+        """Return a compact JSON report."""
+        summary = [
+            {
+                "name": vulnerability.package.name,
+                "version": str(vulnerability.package.version),
+                "vulnerability": vulnerability.vulnerability_id,
+                "fix_versions": vulnerability.fix_versions,
+            }
+            for vulnerability in self.vulnerabilities
+        ]
+        return json.dumps(summary, indent=2)
 
 
 def get_vulnerabilities(working_directory: Path) -> list[Vulnerability]:
