@@ -60,11 +60,9 @@ jobs:
 
       - name: Update Dependencies
         id: update-dependencies
-        env:
-          VULNERABILITIES_UPDATE_REPORT_PATH: vulnerabilities.json
         run: |
           poetry self add poetry-plugin-export
-          poetry run -- nox -s vulnerabilities:update
+          poetry run -- nox -s vulnerabilities:update -- vulnerabilities.json
 
       - name: Check for New Commit
         id: check-for-new-commit
@@ -91,7 +89,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           BASE_BRANCH=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name)
-          DEPENDENCY_UPDATE_REPORT="$(cat "$VULNERABILITIES_UPDATE_REPORT_PATH")"
+          DEPENDENCY_UPDATE_REPORT="$(cat vulnerabilities.json)"
 
           PR_BODY="Automated dependency update for \`poetry.lock\`.
           This PR was created by the workflow \`dependency-update.yml\`

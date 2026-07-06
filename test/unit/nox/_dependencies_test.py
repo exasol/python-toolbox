@@ -1,4 +1,7 @@
+from pathlib import Path
 from unittest.mock import Mock
+
+import pytest
 
 from exasol.toolbox.nox import _dependencies
 from exasol.toolbox.util.dependencies.audit import Vulnerabilities
@@ -20,7 +23,12 @@ def test_audit(monkeypatch, nox_session, sample_vulnerability, capsys):
 
 class TestUpdateVulnerabilities:
     @staticmethod
-    def test_writes_report_when_path_is_set(monkeypatch, nox_session, tmp_path):
+    @pytest.mark.parametrize(
+        "nox_session_runner_posargs", [["vulnerabilities.json"]], indirect=True
+    )
+    def test_writes_report_when_path_is_provided(
+        monkeypatch, nox_session, tmp_path, nox_session_runner_posargs
+    ):
         delegate = Mock(return_value="[]")
         monkeypatch.setattr(
             _dependencies.DependencyUpdater,
@@ -28,7 +36,6 @@ class TestUpdateVulnerabilities:
             delegate,
         )
         report_path = tmp_path / "vulnerabilities.json"
-        nox_session.env["VULNERABILITIES_UPDATE_REPORT_PATH"] = str(report_path)
 
         _dependencies.update_vulnerabilities(nox_session)
 
@@ -45,9 +52,8 @@ class TestUpdateVulnerabilities:
             "update_vulnerable_dependencies",
             delegate,
         )
-
         write_text = Mock()
-        monkeypatch.setattr(tmp_path.__class__, "write_text", write_text, raising=False)
+        monkeypatch.setattr(Path, "write_text", write_text, raising=False)
 
         _dependencies.update_vulnerabilities(nox_session)
 
