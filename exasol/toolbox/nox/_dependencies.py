@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
@@ -50,20 +51,30 @@ def audit(session: Session) -> None:
 @nox.session(name="vulnerabilities:update", python=False)
 def update_vulnerabilities(session: Session) -> None:
     """
-    Update vulnerabilities, and save the JSON of remaining vulnerabilities to
-    `VULNERABILITIES_UPDATE_REPORT_PATH` if it is set in the environment.
+    Update vulnerabilities and optionally save the JSON of remaining vulnerabilities
+    to a file provided on the command line.
     """
+    parser = argparse.ArgumentParser(
+        prog="nox -s vulnerabilities:update",
+        description="Update vulnerable dependencies and optionally write a report file.",
+    )
+    parser.add_argument(
+        "report_path",
+        nargs="?",
+        help="Optional path for the JSON report of remaining vulnerabilities.",
+    )
+    args = parser.parse_args(session.posargs)
+
     try:
         dependency_updater = DependencyUpdater(root_path=PROJECT_CONFIG.root_path)
         report_json = dependency_updater.update_vulnerable_dependencies()
     except PipAuditException as e:
         session.error(e.returncode, e.stdout, e.stderr)
 
-    report_path_str = session.env.get("VULNERABILITIES_UPDATE_REPORT_PATH", None)
-    if report_json is None or report_path_str is None:
+    if report_json is None or args.report_path is None:
         return
 
-    report_path = Path(report_path_str)
+    report_path = Path(args.report_path)
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(report_json + "\n", encoding="utf-8")
 
