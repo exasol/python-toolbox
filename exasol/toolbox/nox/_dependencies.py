@@ -23,6 +23,14 @@ from exasol.toolbox.util.dependencies.update_dependencies import DependencyUpdat
 from noxconfig import PROJECT_CONFIG
 
 
+def _format_update_vulnerabilities_message(was_updated: bool, report_json: str) -> str:
+    if not was_updated:
+        return "No vulnerable dependencies were found."
+    if report_json == "[]":
+        return "No vulnerable dependencies remain after updating."
+    return report_json
+
+
 @nox.session(name="dependency:licenses", python=False)
 def dependency_licenses(session: Session) -> None:
     """Report licenses for all dependencies."""
@@ -67,11 +75,12 @@ def update_vulnerabilities(session: Session) -> None:
 
     try:
         dependency_updater = DependencyUpdater(root_path=PROJECT_CONFIG.root_path)
-        report_json = dependency_updater.update_vulnerable_dependencies()
+        was_updated, report_json = dependency_updater.update_vulnerable_dependencies()
     except PipAuditException as e:
         session.error(e.returncode, e.stdout, e.stderr)
 
-    if report_json is None or args.report_path is None:
+    if args.report_path is None:
+        print(_format_update_vulnerabilities_message(was_updated, report_json))
         return
 
     report_path = Path(args.report_path)

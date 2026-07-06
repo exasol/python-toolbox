@@ -1,10 +1,24 @@
-from pathlib import Path
 from unittest.mock import Mock
 
 import pytest
 
 from exasol.toolbox.nox import _dependencies
 from exasol.toolbox.util.dependencies.audit import Vulnerabilities
+
+
+@pytest.mark.parametrize(
+    ("was_updated", "report_json", "expected"),
+    [
+        (False, "[]", "No vulnerable dependencies were found."),
+        (True, "[]", "No vulnerable dependencies remain after updating."),
+        (True, '{"a": 1}', '{"a": 1}'),
+    ],
+)
+def test_format_update_vulnerabilities_message(was_updated, report_json, expected):
+    assert (
+        _dependencies._format_update_vulnerabilities_message(was_updated, report_json)
+        == expected
+    )
 
 
 def test_audit(monkeypatch, nox_session, sample_vulnerability, capsys):
@@ -23,19 +37,15 @@ def test_audit(monkeypatch, nox_session, sample_vulnerability, capsys):
 
 class TestUpdateVulnerabilities:
     @staticmethod
-    @pytest.mark.parametrize(
-        "nox_session_runner_posargs", [["vulnerabilities.json"]], indirect=True
-    )
-    def test_writes_report_when_path_is_provided(
-        monkeypatch, nox_session, tmp_path, nox_session_runner_posargs
-    ):
-        delegate = Mock(return_value="[]")
+    def test_writes_report_when_path_is_provided(monkeypatch, nox_session, tmp_path):
+        delegate = Mock(return_value=(True, "[]"))
         monkeypatch.setattr(
             _dependencies.DependencyUpdater,
             "update_vulnerable_dependencies",
             delegate,
         )
         report_path = tmp_path / "vulnerabilities.json"
+        nox_session._runner.posargs = [str(report_path)]
 
         _dependencies.update_vulnerabilities(nox_session)
 
@@ -43,19 +53,15 @@ class TestUpdateVulnerabilities:
         assert report_path.read_text() == "[]\n"
 
     @staticmethod
-    def test_does_not_write_report_when_path_is_unset(
-        monkeypatch, nox_session, tmp_path
-    ):
-        delegate = Mock(return_value="[]")
+    def test_does_not_write_report_when_path_is_unset(monkeypatch, nox_session, capsys):
+        delegate = Mock(return_value=(False, "[]"))
         monkeypatch.setattr(
             _dependencies.DependencyUpdater,
             "update_vulnerable_dependencies",
             delegate,
         )
-        write_text = Mock()
-        monkeypatch.setattr(Path, "write_text", write_text, raising=False)
 
         _dependencies.update_vulnerabilities(nox_session)
 
         assert delegate.call_count == 1
-        write_text.assert_not_called()
+        assert capsys.readouterr().out == "No vulnerable dependencies were found.\n"

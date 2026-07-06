@@ -35,21 +35,18 @@ class DependencyUpdater(BaseModel):
             check=True,
         )
 
-    def update_vulnerable_dependencies(self) -> str | None:
+    def update_vulnerable_dependencies(self) -> tuple[bool, str]:
         """
         Check for vulnerable dependencies, and if present, attempt to update dependencies.
         """
         initial_report = self._get_report_json()
-        print(initial_report)
         if initial_report == "[]":
-            return None
+            return False, initial_report
 
         self._run_poetry_update()
-        post_update_report = self._get_report_json()
-        print(post_update_report)
 
         if Git.has_uncommitted_path_changes((self.poetry_lock_path,)):
             Git.add((self.poetry_lock_path,))
             Git.commit("Updated poetry.lock")
 
-        return post_update_report
+        return True, self._get_report_json()

@@ -44,9 +44,9 @@ class TestUpdateVulnerableDependencies:
         updater = update_dependencies.DependencyUpdater(root_path=tmp_path)
         result = updater.update_vulnerable_dependencies()
 
-        assert capsys.readouterr().out == "[]\n"
+        assert capsys.readouterr().out == ""
         mock_subprocess_run.assert_not_called()
-        assert result is None
+        assert result == (False, "[]")
 
     @staticmethod
     def test_when_poetry_lock_is_not_updated(
@@ -71,7 +71,7 @@ class TestUpdateVulnerableDependencies:
         )
         update_dependencies.Git.add.assert_not_called()
         update_dependencies.Git.commit.assert_not_called()
-        assert result == sample_vulnerability.report_json
+        assert result == (True, sample_vulnerability.report_json)
 
     @staticmethod
     def test_when_poetry_lock_is_updated(
@@ -97,4 +97,4 @@ class TestUpdateVulnerableDependencies:
         ]
         update_dependencies.Git.add.assert_called_once_with((updater.poetry_lock_path,))
         update_dependencies.Git.commit.assert_called_once_with("Updated poetry.lock")
-        assert result == "[]"
+        assert result == (True, "[]")
