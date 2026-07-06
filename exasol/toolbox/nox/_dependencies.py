@@ -18,6 +18,7 @@ from exasol.toolbox.util.dependencies.licenses import (
 )
 from exasol.toolbox.util.dependencies.poetry_dependencies import get_dependencies
 from exasol.toolbox.util.dependencies.track_vulnerabilities import DependenciesAudit
+from exasol.toolbox.util.dependencies.update_dependencies import DependencyUpdater
 from noxconfig import PROJECT_CONFIG
 
 
@@ -35,14 +36,36 @@ def dependency_licenses(session: Session) -> None:
 @nox.session(name="dependency:audit", python=False)
 def audit(session: Session) -> None:
     """Report known vulnerabilities."""
-
     try:
-        vulnerabilities = Vulnerabilities.load_from_pip_audit(working_directory=Path())
+        vulnerabilities = Vulnerabilities.load_from_pip_audit(
+            working_directory=PROJECT_CONFIG.root_path
+        )
     except PipAuditException as e:
         session.error(e.returncode, e.stdout, e.stderr)
 
     security_issue_dict = vulnerabilities.security_issue_dict
     print(json.dumps(security_issue_dict, indent=2))
+
+
+@nox.session(name="vulnerabilities:update", python=False)
+def update_vulnerabilities(session: Session) -> None:
+    """
+    Update vulnerabilities, and save the JSON of remaining vulnerabilities to
+    `VULNERABILITIES_UPDATE_REPORT_PATH` if it is set in the environment.
+    """
+    try:
+        dependency_updater = DependencyUpdater(root_path=PROJECT_CONFIG.root_path)
+        report_json = dependency_updater.update_vulnerable_dependencies()
+    except PipAuditException as e:
+        session.error(e.returncode, e.stdout, e.stderr)
+
+    report_path = session.env.get("VULNERABILITIES_UPDATE_REPORT_PATH", None)
+    if report_json is None or report_path is None:
+        return
+
+    report_path = Path(report_path)
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(report_json + "\n", encoding="utf-8")
 
 
 @nox.session(name="vulnerabilities:resolved", python=False)
