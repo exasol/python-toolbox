@@ -62,9 +62,14 @@ def _get_changelogs(version: Version) -> Changelog:
     )
 
 
-def _add_files_to_index(session: Session, files: list[Path]) -> None:
-    for file in files:
-        session.run("git", "add", f"{file}")
+def _collect_release_files(session: Session, pm) -> tuple[Path, ...]:
+    return tuple(
+        path
+        for plugin_files in pm.hook.prepare_release_add_files(
+            session=session, config=PROJECT_CONFIG
+        )
+        for path in plugin_files
+    )
 
 
 class ReleaseError(Exception):
@@ -120,9 +125,7 @@ def prepare_release(session: Session) -> None:
     if not args.no_branch and not args.no_add:
         Git.create_and_switch_to_branch(f"release/prepare-{new_version}")
 
-    changed_files = (
-        _get_changelogs(version=new_version).prepare_release().get_changed_files()
-    )
+    changelogs = _get_changelogs(version=new_version).prepare_release()
 
     pm = NoxTasks.plugin_manager(PROJECT_CONFIG)
     pm.hook.prepare_release_update_version(
@@ -132,16 +135,11 @@ def prepare_release(session: Session) -> None:
     if args.no_add:
         return
 
-    changed_files += [
-        PROJECT_CONFIG.root_path / PoetryFiles.pyproject_toml,
-    ]
-    results = pm.hook.prepare_release_add_files(session=session, config=PROJECT_CONFIG)
-    changed_files += [f for plugin_response in results for f in plugin_response]
-    _add_files_to_index(
-        session,
-        changed_files,
-    )
-    session.run("git", "commit", "-m", f"Prepare release {new_version}")
+    version_files = (PROJECT_CONFIG.root_path / PoetryFiles.pyproject_toml,)
+    release_files = _collect_release_files(session=session, pm=pm)
+    changed_files = changelogs.get_changed_files() + release_files + version_files
+    Git.add(changed_files)
+    Git.commit(f"Prepare release {new_version}")
 
     if not args.no_pr:
         session.run(

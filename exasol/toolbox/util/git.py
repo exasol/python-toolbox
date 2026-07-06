@@ -64,3 +64,19 @@ class Git:
             cwd=Git.toplevel(),
         )  # nosec: B603, B607 - fixed git command; repository root is trusted here
         return result.returncode != 0
+
+    @staticmethod
+    @run_command
+    def add(paths: tuple[Path, ...]):
+        """
+        Stage the given path or paths.
+        """
+        return ["git", "add", *map(str, paths)]
+
+    @staticmethod
+    @run_command
+    def commit(message: str):
+        """
+        Create a commit with the given message.
+        """
+        return ["git", "commit", "--message", message]
