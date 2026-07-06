@@ -29,7 +29,7 @@ class DependencyUpdater(BaseModel):
         return vulnerabilities.report_json
 
     def _run_poetry_update(self) -> None:
-        subprocess.run(  # nosec: B603 - fixed poetry command is trusted here
+        subprocess.run(  # nosec: B603, B607 - trusted fixed poetry command path
             ["poetry", "update"],
             cwd=self.root_path,
             check=True,
