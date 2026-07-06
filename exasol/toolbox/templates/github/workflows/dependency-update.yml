@@ -67,8 +67,10 @@ jobs:
 
       - name: Check for New Commit
         id: check-for-new-commit
+        env:
+          PRE_UPDATE_HEAD_SHA: ${{ steps.record-current-commit.outputs.head_sha }}
         run: |
-          if [ "$(git rev-parse HEAD)" = "${{ steps.record-current-commit.outputs.head_sha }}" ]; then
+          if [ "$(git rev-parse HEAD)" = "$PRE_UPDATE_HEAD_SHA" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
