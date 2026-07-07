@@ -3,6 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 from exasol.toolbox.nox import _dependencies
+from exasol.toolbox.nox import _shared as nox_shared
 from exasol.toolbox.util.dependencies.audit import Vulnerabilities
 
 
@@ -37,16 +38,22 @@ def test_audit(monkeypatch, nox_session, sample_vulnerability, capsys):
 
 class TestUpdateVulnerabilities:
     @staticmethod
-    def test_writes_report_when_path_is_provided(monkeypatch, nox_session, tmp_path):
+    def test_writes_report_when_path_is_provided(
+        monkeypatch, nox_session, tmp_path, test_project_config_factory
+    ):
         delegate = Mock(return_value=(True, "[]"))
+        project_config = test_project_config_factory()
         monkeypatch.setattr(
             _dependencies.DependencyUpdater,
             "update_vulnerable_dependencies",
             delegate,
         )
-        report_path = tmp_path / "vulnerabilities.json"
-        nox_session._runner.posargs = [str(report_path)]
+        report_filename = "vulnerabilities.json"
+        report_path = tmp_path / report_filename
+        nox_session._runner.posargs = [report_filename]
 
+        monkeypatch.setattr(_dependencies, "PROJECT_CONFIG", project_config)
+        monkeypatch.setattr(nox_shared, "PROJECT_CONFIG", project_config)
         _dependencies.update_vulnerabilities(nox_session)
 
         assert delegate.call_count == 1

@@ -7,6 +7,7 @@ from pathlib import Path
 import nox
 from nox import Session
 
+from exasol.toolbox.nox._shared import validate_path_within_root
 from exasol.toolbox.util.dependencies.audit import (
     PipAuditException,
     Vulnerabilities,
@@ -67,9 +68,9 @@ def update_vulnerabilities(session: Session) -> None:
         description="Update vulnerable dependencies and optionally write a report file.",
     )
     parser.add_argument(
-        "report_path",
+        "report_filename",
         nargs="?",
-        help="Optional path for the JSON report of remaining vulnerabilities.",
+        help="Optional filename for the JSON report of remaining vulnerabilities.",
     )
     args = parser.parse_args(session.posargs)
 
@@ -79,11 +80,13 @@ def update_vulnerabilities(session: Session) -> None:
     except PipAuditException as e:
         session.error(e.returncode, e.stdout, e.stderr)
 
-    if args.report_path is None:
+    if args.report_filename is None:
         print(_format_update_vulnerabilities_message(was_updated, report_json))
         return
 
-    report_path = Path(args.report_path)
+    report_path = validate_path_within_root(
+        PROJECT_CONFIG.root_path / args.report_filename
+    )
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(report_json + "\n", encoding="utf-8")
 
