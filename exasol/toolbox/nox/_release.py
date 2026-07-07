@@ -139,7 +139,7 @@ def prepare_release(session: Session) -> None:
     release_files = _collect_release_files(session=session, pm=pm)
     changed_files = changelogs.get_changed_files() + release_files + version_files
     Git.add(changed_files)
-    Git.commit(f"Prepare release {new_version}")
+    session.run("git", "commit", "-m", f"Prepare release {new_version}")
 
     if not args.no_pr:
         session.run(
