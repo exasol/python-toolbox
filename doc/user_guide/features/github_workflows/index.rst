@@ -39,11 +39,11 @@ Workflows
 The PTB allows for two categories of workflows:
   #. those maintained by the PTB, which can be modified using the :ref:`workflow_patcher`.
   #. custom workflows, which are project-owned.
-  
-Custom workflows can optionally be 
+
+Custom workflows can optionally be
 * seeded by the PTB, i.e. PTB generates an initial version but ignores future changes.
 * extend PTB-provided workflows, i.e. ending in `-extension.yml`
- 
+
 Besides that, you can also create individual workflow files which are ignored by the PTB.
 
 Maintained by the PTB
@@ -311,14 +311,17 @@ checks for known vulnerabilities and tries to fix them by updating dependencies.
    :start-at: on:
    :end-at:  workflow_dispatch:
 
-The workflow first audits dependencies for known vulnerabilities:
+The workflow runs a dedicated ``vulnerabilities:update`` nox session that audits the
+current dependency set and attempts to resolve any detected vulnerabilities:
 
 * If no vulnerabilities are detected, then no update is needed.
-* If vulnerabilities are detected, it updates the dependencies using ``poetry update``.
+* If vulnerabilities are detected, the session updates the dependencies and
+  records the outcome for the pull request.
 
-   * If the ``poetry.lock`` is unchanged, then no further action is taken.
-   * If the ``poetry.lock`` is changed, then it creates a branch, stages the commit,
-     creates a pull request, and sends a Slack notification.
+   * If the update makes no effective change, then no further action is taken.
+   * If the update changes the dependency state, then the workflow pushes the
+     resulting commit, includes the post-update summary in the PR description,
+     opens a pull request, and sends a Slack notification.
 
 Afterwards, users need to perform some manual steps which are described in the PR description.
 

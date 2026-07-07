@@ -7,6 +7,7 @@ from exasol.toolbox.nox._shared import (
     _integration_test_context,
     _unit_test_context,
     get_filtered_python_files,
+    validate_path_within_root,
 )
 
 
@@ -125,3 +126,38 @@ def test_integration_test_context_uses_minimum_exasol_version(
 
     assert context["coverage"] is False
     assert context["db_version"] == "8.29.13"
+
+
+class TestValidatePathWithinRoot:
+    @staticmethod
+    @pytest.mark.parametrize(
+        "candidate_path",
+        [
+            Path("reports/vulnerabilities.json"),
+            Path("reports/subdir/output.json"),
+        ],
+    )
+    def test_accepts_paths_inside_root(test_project_config_factory, candidate_path):
+        config = test_project_config_factory()
+
+        with patch("exasol.toolbox.nox._shared.PROJECT_CONFIG", config):
+            actual = validate_path_within_root(config.root_path / candidate_path)
+
+        assert actual == (config.root_path / candidate_path).resolve(strict=False)
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "candidate_path",
+        [
+            Path("../vulnerabilities.json"),
+            Path(".."),
+        ],
+    )
+    def test_rejects_paths_outside_root(test_project_config_factory, candidate_path):
+        config = test_project_config_factory()
+
+        with patch("exasol.toolbox.nox._shared.PROJECT_CONFIG", config):
+            with pytest.raises(
+                ValueError, match="path must be located inside the project root"
+            ):
+                validate_path_within_root(config.root_path / candidate_path)
