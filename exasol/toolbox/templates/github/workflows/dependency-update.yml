@@ -97,9 +97,6 @@ jobs:
           \`\`\`json
           ${DEPENDENCY_UPDATE_REPORT}
           \`\`\`
-
-          Please perform the following actions on a locally checked out branch:
-          - [ ] Execute \`poetry run -- nox -s workflow:generate -- all\`
           "
 
           PR_URL=$(gh pr create \
