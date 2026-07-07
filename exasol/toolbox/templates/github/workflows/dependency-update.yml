@@ -62,6 +62,7 @@ jobs:
         run: |
           poetry self add poetry-plugin-export
           poetry run -- nox -s vulnerabilities:update -- vulnerabilities.json
+          cat vulnerabilities.json
 
       - name: Check for New Commit
         id: check-for-new-commit
