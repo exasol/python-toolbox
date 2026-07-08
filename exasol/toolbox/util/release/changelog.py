@@ -167,7 +167,7 @@ class Changelog:
                 section.intro = resolved_vulnerabilities.intro
             else:
                 versioned.add_child(resolved_vulnerabilities)
-        self.versioned_changes.write_text(versioned.rendered)
+        self.versioned_changes.write_text(f"{versioned.rendered}\n")
 
     def prepare_release(self) -> Changelog:
         """
