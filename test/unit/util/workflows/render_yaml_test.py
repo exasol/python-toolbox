@@ -490,8 +490,8 @@ class TestYamlRendererJinja:
         merge-gate-extension:
           uses: ./.github/workflows/merge-gate-extension.yml
           secrets:
-            MERGE_GATE_SECRET: ${{ secrets.MERGE_GATE_SECRET }}
             ANOTHER_SECRET: ${{ secrets.ANOTHER_SECRET }}
+            MERGE_GATE_SECRET: ${{ secrets.MERGE_GATE_SECRET }}
           permissions:
             contents: read
 
