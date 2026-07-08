@@ -6,6 +6,7 @@ on:
     tags:
       - '**'
       - '!v*'
+      - '!latest'
 
 jobs:
   check-release-tag:
@@ -29,6 +30,7 @@ jobs:
     name: Extension
     uses: ./.github/workflows/cd-extension.yml
     needs:
+      - check-release-tag
       - build-and-publish
     (% if custom_workflows["cd-extension"].secrets %)
     secrets:
