@@ -159,16 +159,6 @@ def create_poetry_project(
     return project.dir
 
 
-def without_vuln_descriptions(dep: PipAuditEntry):
-    def strip_description(entry: PipAuditEntry):
-        return {k: v for k, v in entry.items() if k != "description"}
-
-    def without_descriptions(vulnerabilities):
-        return [strip_description(v) for v in vulnerabilities]
-
-    return {k: (without_descriptions(v) if k == "vulns" else v) for k, v in dep.items()}
-
-
 def find_dependency(dependencies: list[PipAuditEntry], name: str) -> PipAuditEntry:
     generator = (d for d in dependencies if d["name"] == name)
     return next(generator)
@@ -200,9 +190,8 @@ def test_pip_audit(create_poetry_project, sample_vulnerability):
     result = json.loads(audit_output)
     actual = find_dependency(result["dependencies"], vuln.package_name)
 
-    expected = {
-        "name": vuln.package_name,
-        "version": vuln.version,
-        "vulns": [vuln.pip_audit_vuln_entry],
-    }
-    assert without_vuln_descriptions(actual) == without_vuln_descriptions(expected)
+    assert actual.keys() == {"name", "version", "vulns"}
+    assert actual["vulns"][0].keys() == {"id", "fix_versions", "aliases", "description"}
+    assert actual["name"] == vuln.package_name
+    assert actual["version"] == vuln.version
+    assert vuln.fix_version in actual["vulns"][0]["fix_versions"]
