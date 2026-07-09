@@ -15,8 +15,12 @@ jobs:
       (( secret_name )): ${{ secrets.(( secret_name )) }}
       (% endfor %)
     (% endif %)
+    (% if custom_workflows["merge-gate"].permissions %)
     permissions:
-      contents: read
+      (% for permission_name, permission_level in custom_workflows["merge-gate"].permissions.items() %)
+      (( permission_name )): (( permission_level ))
+      (% endfor %)
+    (% endif %)
 
   report:
     name: Report

@@ -38,8 +38,12 @@ jobs:
       (( secret_name )): ${{ secrets.(( secret_name )) }}
       (% endfor %)
     (% endif %)
+    (% if custom_workflows["cd-extension"].permissions %)
     permissions:
-      contents: write
+      (% for permission_name, permission_level in custom_workflows["cd-extension"].permissions.items() %)
+      (( permission_name )): (( permission_level ))
+      (% endfor %)
+    (% endif %)
   (% endif %)
 
   (% if has_documentation %)

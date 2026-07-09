@@ -52,6 +52,10 @@ jobs:
       (( secret_name )): ${{ secrets.(( secret_name )) }}
       (% endfor %)
     (% endif %)
+    (% if custom_workflows["fast-tests-extension"].permissions %)
     permissions:
-      contents: read
+      (% for permission_name, permission_level in custom_workflows["fast-tests-extension"].permissions.items() %)
+      (( permission_name )): (( permission_level ))
+      (% endfor %)
+    (% endif %)
   (% endif %)
