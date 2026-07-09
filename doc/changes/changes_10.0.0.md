@@ -48,7 +48,7 @@ This release fixes vulnerabilities by updating dependencies:
 * #699: Added `all-extras` support to the Python environment GitHub action
 * #875: Added `name` attribute to generated workflow jobs using `-extension.yml` workflows
 
-## Bug
+## Bug Fix
 
 * #744: Updated nox DB-version handling to use `BaseConfig.minimum_exasol_version` instead hardcoded `7.1.9`
 
