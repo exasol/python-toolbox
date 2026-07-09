@@ -51,11 +51,31 @@ class TestBaseConfig:
             "github_workflow_patcher_yaml": None,
             "github_template_dict": {
                 "custom_workflows": {
-                    "cd-extension": {"exists": False, "secrets": ()},
-                    "fast-tests-extension": {"exists": False, "secrets": ()},
-                    "merge-gate-extension": {"exists": False, "secrets": ()},
-                    "slow-checks": {"exists": False, "secrets": ()},
-                    "merge-gate": {"exists": True, "secrets": ("SONAR_TOKEN",)},
+                    "cd-extension": {
+                        "exists": False,
+                        "secrets": (),
+                        "permissions": {},
+                    },
+                    "fast-tests-extension": {
+                        "exists": False,
+                        "secrets": (),
+                        "permissions": {},
+                    },
+                    "merge-gate-extension": {
+                        "exists": False,
+                        "secrets": (),
+                        "permissions": {},
+                    },
+                    "slow-checks": {
+                        "exists": False,
+                        "secrets": (),
+                        "permissions": {},
+                    },
+                    "merge-gate": {
+                        "exists": True,
+                        "secrets": ("SONAR_TOKEN",),
+                        "permissions": {"contents": "read"},
+                    },
                 },
                 "dependency_manager_version": "2.3.0",
                 "has_documentation": True,
