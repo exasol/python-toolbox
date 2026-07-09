@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from enum import IntEnum
 from pathlib import Path
 
 from pydantic import (
@@ -13,12 +14,43 @@ from ruamel.yaml import (
 from exasol.toolbox.util.workflows.render_yaml import parse_yaml_text
 
 
+class PermissionRank(IntEnum):
+    """GitHub permission levels ranked from least to most permissive."""
+
+    NONE = 0
+    READ = 1
+    WRITE = 2
+
+    @classmethod
+    def _missing_(cls, value: object) -> PermissionRank:
+        """Convert a GitHub permission string to its rank."""
+        if isinstance(value, str):
+            for rank in cls:
+                if rank.name.lower() == value:
+                    return rank
+        raise ValueError(f"Unknown GitHub permission level: {value!r}")
+
+
+def merge_permissions(permission_maps: list[dict[str, str]]) -> dict[str, str]:
+    """Merge permission maps to keep the greater permission."""
+    merged_permissions: dict[str, str] = {}
+    for permission_map in permission_maps:
+        for permission_name, requested_level in permission_map.items():
+            current_level = merged_permissions.get(permission_name, None)
+            if current_level is None:
+                merged_permissions[permission_name] = requested_level
+                continue
+            if PermissionRank(requested_level) > PermissionRank(current_level):  # type: ignore[arg-type]
+                merged_permissions[permission_name] = requested_level
+    return merged_permissions
+
+
 class CustomWorkflow(BaseModel):
     """A project-owned workflow used for seeded workflows and extensions.
 
     These workflows are seeded by the PTB or extend PTB-provided workflows, but
     they are maintained by the project itself rather than the PTB. See
-    `Custom Workflows <file:///home/chku/git/ptb/.html-documentation/user_guide/features/github_workflows/index.html#custom-workflows>`__.
+    `Custom Workflows <https://exasol.github.io/python-toolbox/main/user_guide/features/github_workflows/index.html#custom-workflows>`__.
     """
 
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
@@ -53,3 +85,28 @@ class CustomWorkflow(BaseModel):
             if secrets := workflow_call.get("secrets", {}):
                 return tuple(secrets.keys())
         return ()
+
+    def extract_permissions(self) -> dict[str, str]:
+        """Return the effective job permissions required by the workflow.
+
+        The extractor scans all jobs and merges their ``permissions`` blocks into a
+        single mapping. When the same permission appears multiple times, the more
+        permissive level wins while preserving the first-seen order of the keys.
+
+        For example, a custom workflow can declare permissions like this:
+
+        .. code-block:: yaml
+
+           name: Slow-Checks
+
+           on:
+             workflow_call:
+
+           jobs:
+             run-integration-tests:
+               permissions:
+                 contents: read
+        """
+        jobs = self.yaml_content.get("jobs", {})
+        permission_maps = [job.get("permissions", {}) for job in jobs.values()]
+        return merge_permissions(permission_maps)
