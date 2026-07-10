@@ -34,7 +34,7 @@ when they call reusable workflows.
 Secrets
 -------
 
-The PTB extracts secret names from reusable custom workflow files and exposes them
+The PTB extracts secret names from custom workflow files and exposes them
 through :py:attr:`exasol.toolbox.config.BaseConfig.github_template_dict` under the
 ``custom_workflows`` entry. PTB-controlled workflow templates use those extracted
 names when they call reusable workflows and forward secrets via ``secrets:``.
@@ -65,18 +65,13 @@ reference the custom workflow.
 Permissions
 -----------
 
-The PTB extracts the effective GitHub permissions required by reusable custom
-workflow files. It scans every job in the workflow, reads each job's
-``permissions`` block, and combines the results into a single ordered mapping.
+The PTB extracts the permissions required by custom workflow files. It reads every job's
+``permissions`` block and combines the results into a single ordered mapping, where
+the most permissive level wins.
 
-When multiple jobs request the same permission, the most permissive level wins
-while the first-seen key order is preserved. For example, if one job requests
-``contents: read`` and another later job requests ``contents: write``, the final
-mapping keeps ``contents`` once, with ``write`` as the level.
-
-Please only configure the minimum required permissions and granting the least required
+Please only configure the minimum required permissions by granting the least required
 access. In practice, ``contents: read`` is the most common baseline for workflows, and
-other permissions should only be added when a particular step truly requires them.
+other permissions should only be added when it is truly required.
 
 For example, a custom workflow can declare permissions like this:
 
