@@ -21,9 +21,12 @@ def get_workflow_templates() -> Mapping[str, Path]:
     """
     package_resources = resources.files(WORKFLOW_TEMPLATES_DIRECTORY)
     return {
-        workflow_path.name.removesuffix(".yml"): Path(str(workflow_path))
+        workflow_name: Path(str(workflow_path))
         for workflow_path in package_resources.iterdir()
-        if workflow_path.is_file() and workflow_path.name.endswith(".yml")
+        if workflow_path.is_file()
+        and workflow_path.name.endswith(".yml")
+        and (workflow_name := workflow_path.name.removesuffix(".yml"))
+        not in NOT_MAINTAINED_WORKFLOW_NAMES
     }
 
 
