@@ -14,6 +14,10 @@ from exasol.toolbox.nox._shared import get_filtered_python_files
 from exasol.toolbox.util.dependencies.shared_models import PoetryFiles
 from noxconfig import PROJECT_CONFIG
 
+# The relevant nox session will be removed in:
+#   https://github.com/exasol/python-toolbox/issues/924
+LINT_DEPENDENCIES_DEPRECATION_DATE = "2026-10-08"
+
 
 def _pylint(session: Session, files: Iterable[str]) -> None:
     json_file = PROJECT_CONFIG.root_path / ".lint.json"
@@ -149,6 +153,10 @@ def dependency_check(session: Session) -> None:
     if illegal := dependencies.illegal:
         report_illegal(illegal, console)
         sys.exit(1)
+    session.warn(
+        f"Warning: `nox -s lint:dependencies` is deprecated and will be removed on "
+        f"{LINT_DEPENDENCIES_DEPRECATION_DATE}."
+    )
 
 
 @nox.session(name="lint:import", python=False)
