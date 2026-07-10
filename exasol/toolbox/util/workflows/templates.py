@@ -27,6 +27,17 @@ def get_workflow_templates() -> Mapping[str, Path]:
     }
 
 
+def get_not_maintained_workflow_templates() -> Mapping[str, Path]:
+    """
+    A mapping of not-maintained workflow template names to paths.
+    """
+    package_resources = resources.files(WORKFLOW_TEMPLATES_DIRECTORY)
+    return {
+        workflow_name: Path(str(package_resources / f"{workflow_name}.yml"))
+        for workflow_name in NOT_MAINTAINED_WORKFLOW_NAMES
+    }
+
+
 def validate_workflow_name(workflow_name: str) -> str:
     """
     Validate that the given workflow exists and is allowed in the current context.

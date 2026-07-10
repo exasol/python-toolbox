@@ -114,10 +114,11 @@ class TestIterWorkflows:
         project_config_without_patcher.github_workflow_directory.mkdir(parents=True)
         input_text = WORKFLOW_TEMPLATE_OPTIONS[workflow_name].read_text()
 
-        result = WorkflowOrchestrator(
+        orchestrator = WorkflowOrchestrator(
             workflow_choice=workflow_name,
             config=project_config_without_patcher,
-        )._iter_workflows()
+        )
+        result = orchestrator._iter_workflows(orchestrator.templates)
 
         result = list(result)
         assert len(result) == 1
@@ -137,10 +138,11 @@ class TestIterWorkflows:
         assert removed_job_name in remove_job_yaml
         assert removed_job_name in input_text
 
-        result = WorkflowOrchestrator(
+        orchestrator = WorkflowOrchestrator(
             workflow_choice=workflow_name,
             config=project_config,
-        )._iter_workflows()
+        )
+        result = orchestrator._iter_workflows(orchestrator.templates)
 
         result = list(result)
         assert len(result) == 1
@@ -159,10 +161,11 @@ class TestIterWorkflows:
         project_config.github_workflow_directory.mkdir(parents=True)
         input_text = WORKFLOW_TEMPLATE_OPTIONS[workflow_name].read_text()
 
-        result = WorkflowOrchestrator(
+        orchestrator = WorkflowOrchestrator(
             workflow_choice=workflow_name,
             config=project_config,
-        )._iter_workflows()
+        )
+        result = orchestrator._iter_workflows(orchestrator.templates)
 
         result = list(result)
         assert len(result) == 1
@@ -171,55 +174,6 @@ class TestIterWorkflows:
             Workflow._normalize_content(result[0].content)[:10]
             == _remove_header(input_text)[:10]
         )
-
-    @staticmethod
-    def test_not_maintained_workflows_added_to_new_project(
-        project_config_without_patcher,
-    ):
-        directory = project_config_without_patcher.github_workflow_directory
-        directory.mkdir(parents=True)
-
-        result = WorkflowOrchestrator(
-            workflow_choice="all",
-            config=project_config_without_patcher,
-        )._iter_workflows()
-
-        assert {f"{name}.yml" for name in NOT_MAINTAINED_WORKFLOW_NAMES}.issubset(
-            {workflow.output_path.name for workflow in result}
-        )
-
-    @staticmethod
-    @pytest.mark.parametrize("workflow_name", NOT_MAINTAINED_WORKFLOW_NAMES)
-    def test_not_maintained_workflows_not_modified_in_old_project(
-        project_config_without_patcher, workflow_name
-    ):
-        directory = project_config_without_patcher.github_workflow_directory
-        directory.mkdir(parents=True, exist_ok=True)
-        workflow = "slow-checks.yml"
-        (directory / workflow).touch()
-
-        result = WorkflowOrchestrator(
-            workflow_choice=workflow_name,
-            config=project_config_without_patcher,
-        )._iter_workflows()
-
-        assert list(result) == []
-
-    @staticmethod
-    @pytest.mark.parametrize("workflow_name", NOT_MAINTAINED_WORKFLOW_NAMES)
-    def test_not_maintained_workflows_not_added_to_old_project(
-        project_config_without_patcher, workflow_name
-    ):
-        directory = project_config_without_patcher.github_workflow_directory
-        directory.mkdir(parents=True, exist_ok=True)
-        (directory / "dummy.yml").touch()
-
-        result = WorkflowOrchestrator(
-            workflow_choice=workflow_name,
-            config=project_config_without_patcher,
-        )._iter_workflows()
-
-        assert list(result) == []
 
     @staticmethod
     def test_raises_invalidworkflowpatcherentryerror(project_config):
@@ -232,10 +186,11 @@ class TestIterWorkflows:
         project_config.github_workflow_patcher_yaml.write_text(patcher_yml)
 
         with pytest.raises(InvalidWorkflowPatcherEntryError) as ex:
-            for _ in WorkflowOrchestrator(
+            orchestrator = WorkflowOrchestrator(
                 workflow_choice="checks",
                 config=project_config,
-            )._iter_workflows():
+            )
+            for _ in orchestrator._iter_workflows(orchestrator.templates):
                 pass
 
         assert (
@@ -258,6 +213,23 @@ class TestGenerateWorkflows:
 
         assert all(
             (directory / f"{name}.yml").exists() for name in WORKFLOW_TEMPLATE_OPTIONS
+        )
+
+    @staticmethod
+    def test_writes_not_maintained_workflows_on_fresh_project(
+        project_config_without_patcher,
+    ):
+        directory = project_config_without_patcher.github_workflow_directory
+        directory.mkdir(parents=True)
+
+        WorkflowOrchestrator(
+            workflow_choice="all",
+            config=project_config_without_patcher,
+        ).generate_workflows()
+
+        assert all(
+            (directory / f"{name}.yml").exists()
+            for name in NOT_MAINTAINED_WORKFLOW_NAMES
         )
 
     @staticmethod

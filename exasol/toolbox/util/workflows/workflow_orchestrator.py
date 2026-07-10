@@ -26,6 +26,7 @@ from exasol.toolbox.util.workflows.patch_workflow import (
 from exasol.toolbox.util.workflows.templates import (
     DOCUMENTATION_ONLY_WORKFLOW_NAMES,
     WORKFLOW_TEMPLATE_OPTIONS,
+    get_not_maintained_workflow_templates,
 )
 from exasol.toolbox.util.workflows.workflow import Workflow
 
@@ -77,9 +78,9 @@ class WorkflowOrchestrator(BaseModel):
         """
         return not any(self.config.github_workflow_directory.glob("*.yml"))
 
-    def _iter_workflows(self) -> Iterator[Workflow]:
-        logger.info(f"Selected workflow(s) to update: {list(self.templates.keys())}")
-        for workflow_name, template_path in self.templates.items():
+    def _iter_workflows(self, templates: Mapping[str, Path]) -> Iterator[Workflow]:
+        logger.info(f"Selected workflow(s) to update: {list(templates.keys())}")
+        for workflow_name, template_path in templates.items():
             patch_yaml = self._extract_workflow_patch(workflow_name=workflow_name)
 
             if self._skip_workflow(workflow_name):
@@ -126,7 +127,16 @@ class WorkflowOrchestrator(BaseModel):
         """
         Render the selected workflows and write them to disk.
         """
-        for workflow in self._iter_workflows():
+        # First, generate not-maintained workflows for a new project.
+        # This ensures proper extraction and passing of secrets & permissions
+        # before parent workflows such as `merge-gate.yml` and
+        # `periodic-validation.yml` are rendered.
+        if self._is_new_project() and self.workflow_choice == ALL:
+            not_maintainted_templates = get_not_maintained_workflow_templates()
+            for workflow in self._iter_workflows(not_maintainted_templates):
+                workflow.write_to_file()
+
+        for workflow in self._iter_workflows(self.templates):
             workflow.write_to_file()
 
     def find_differing_workflows(self) -> list[str]:
@@ -136,7 +146,7 @@ class WorkflowOrchestrator(BaseModel):
         Returns the names of the workflows that differ from the file on disk.
         """
         outdated_workflows: list[str] = []
-        for workflow in self._iter_workflows():
+        for workflow in self._iter_workflows(self.templates):
             comparison = workflow.compare_to_file()
             if comparison != "":
                 workflow_name = workflow.output_path.stem
