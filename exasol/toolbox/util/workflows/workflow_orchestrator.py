@@ -17,7 +17,6 @@ from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.util.workflows import logger
 from exasol.toolbox.util.workflows.exceptions import (
     InvalidWorkflowPatcherEntryError,
-    NotMaintainedWorkflowError,
     YamlKeyError,
 )
 from exasol.toolbox.util.workflows.patch_workflow import (
@@ -81,11 +80,10 @@ class WorkflowOrchestrator(BaseModel):
 
     def _iter_workflows(self) -> Iterator[Workflow]:
         logger.info(f"Selected workflow(s) to update: {list(self.templates.keys())}")
-        is_new_project = self._is_new_project()
         for workflow_name, template_path in self.templates.items():
             patch_yaml = self._extract_workflow_patch(workflow_name=workflow_name)
 
-            if self._skip_workflow(workflow_name, is_new_project):
+            if self._skip_workflow(workflow_name):
                 continue
 
             yield self._load_workflow(
@@ -108,20 +106,12 @@ class WorkflowOrchestrator(BaseModel):
                 entry=ex.entry,
             ) from ex
 
-    def _skip_workflow(self, workflow_name: str, is_new_project: bool) -> bool:
+    def _skip_workflow(self, workflow_name: str) -> bool:
         """
         Return ``True`` if the workflow should be skipped because it is not maintained
         by the PTB or not applicable to the current project, otherwise return ``False``.
         """
-        try:
-            validate_workflow_name(workflow_name)
-        except NotMaintainedWorkflowError:
-            if not is_new_project:
-                logger.debug(
-                    "Skipping not-maintained workflow in older project: %s",
-                    workflow_name,
-                )
-                return True
+        validate_workflow_name(workflow_name)
 
         if (
             workflow_name in DOCUMENTATION_ONLY_WORKFLOW_NAMES

@@ -182,7 +182,7 @@ class TestCheckWorkflow:
                 check_workflow(nox_session)
 
         assert str(exc.value) == (
-            "\n14 workflows are out of date:\n"
+            "\n13 workflows are out of date:\n"
             "- build-and-publish\n"
             "- cd\n"
             "- check-release-tag\n"
@@ -195,8 +195,7 @@ class TestCheckWorkflow:
             "- merge-gate\n"
             "- periodic-validation\n"
             "- pr-merge\n"
-            "- report\n"
-            "- slow-checks"
+            "- report"
         )
 
     @staticmethod
@@ -221,7 +220,7 @@ class TestCheckWorkflow:
                 check_workflow(nox_session)
 
         assert str(exc.value) == (
-            "\n12 workflows are out of date:\n"
+            "\n11 workflows are out of date:\n"
             "- build-and-publish\n"
             "- cd\n"
             "- check-release-tag\n"
@@ -232,8 +231,7 @@ class TestCheckWorkflow:
             "- matrix\n"
             "- merge-gate\n"
             "- periodic-validation\n"
-            "- report\n"
-            "- slow-checks"
+            "- report"
         )
 
 

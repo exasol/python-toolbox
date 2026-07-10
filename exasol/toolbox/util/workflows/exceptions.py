@@ -99,18 +99,6 @@ class InvalidWorkflowNameError(ValueError):
         )
 
 
-class NotMaintainedWorkflowError(ValueError):
-    """
-    Raised when a PTB-seeded workflow is requested in an existing project.
-    """
-
-    def __init__(self, workflow_name: str):
-        super().__init__(
-            f"Workflow '{workflow_name}' is a PTB-seeded workflow that is "
-            "originally provided by the PTB and can only be seeded for a new project."
-        )
-
-
 class YamlKeyError(Exception):
     """
     Base exception for when a specified value cannot be found in a YAML.

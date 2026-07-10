@@ -70,35 +70,8 @@ class TestIsNewProject:
 
 class TestSkipWorkflow:
     @staticmethod
-    def test_returns_true_for_not_maintained_workflow_in_existing_project(
-        project_config,
-    ):
-        workflow_directory = project_config.github_workflow_directory
-        workflow_directory.mkdir(parents=True)
-        (workflow_directory / "existing.yml").touch()
-
-        result = WorkflowOrchestrator(
-            workflow_choice=NOT_MAINTAINED_WORKFLOW_NAMES[0],
-            config=project_config,
-        )._skip_workflow(
-            workflow_name=NOT_MAINTAINED_WORKFLOW_NAMES[0],
-            is_new_project=False,
-        )
-
-        assert result is True
-
-    @staticmethod
-    def test_returns_false_for_maintained_workflow(project_config):
-        result = WorkflowOrchestrator(
-            workflow_choice="checks",
-            config=project_config,
-        )._skip_workflow(workflow_name="checks", is_new_project=False)
-
-        assert result is False
-
-    @staticmethod
     @pytest.mark.parametrize("workflow_name", DOCUMENTATION_ONLY_WORKFLOW_NAMES)
-    def test_returns_ralse_for_documentation_only_workflow_when_docs_enabled(
+    def test_returns_false_for_documentation_only_workflow_when_docs_enabled(
         project_config, workflow_name
     ):
 
@@ -107,7 +80,6 @@ class TestSkipWorkflow:
             config=project_config,
         )._skip_workflow(
             workflow_name=workflow_name,
-            is_new_project=False,
         )
 
         assert result is False
@@ -130,7 +102,6 @@ class TestSkipWorkflow:
             config=config,
         )._skip_workflow(
             workflow_name=workflow_name,
-            is_new_project=False,
         )
 
         assert result is True
