@@ -26,7 +26,6 @@ from exasol.toolbox.util.workflows.patch_workflow import (
 from exasol.toolbox.util.workflows.templates import (
     DOCUMENTATION_ONLY_WORKFLOW_NAMES,
     WORKFLOW_TEMPLATE_OPTIONS,
-    validate_workflow_name,
 )
 from exasol.toolbox.util.workflows.workflow import Workflow
 
@@ -111,8 +110,6 @@ class WorkflowOrchestrator(BaseModel):
         Return ``True`` if the workflow should be skipped because it is not maintained
         by the PTB or not applicable to the current project, otherwise return ``False``.
         """
-        validate_workflow_name(workflow_name)
-
         if (
             workflow_name in DOCUMENTATION_ONLY_WORKFLOW_NAMES
             and not self.config.has_documentation
