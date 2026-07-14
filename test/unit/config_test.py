@@ -205,7 +205,7 @@ def test_sonar_token_name_can_be_overridden(tmp_path):
     config = AlternateSonarConfig(project_name="test", root_path=tmp_path)
 
     assert config.sonar_token_name == "SONAR_ANOTHER_TOKEN"
-    assert config.github_template_dict["sonar_token_name"] == "SONAR_ANOTHER_TOKEN"
+    assert config.github_template_dict.sonar_token_name == "SONAR_ANOTHER_TOKEN"
 
 
 @pytest.mark.parametrize("minimum_python_version", ["3.10", "3.10.5"])

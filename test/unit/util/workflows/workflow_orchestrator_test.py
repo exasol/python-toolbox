@@ -190,14 +190,13 @@ class TestIterWorkflows:
             - unknown-job
         """
         project_config.github_workflow_patcher_yaml.write_text(patcher_yml)
+        orchestrator = WorkflowOrchestrator(
+            workflow_choice="checks",
+            config=project_config,
+        )
 
         with pytest.raises(InvalidWorkflowPatcherEntryError) as ex:
-            orchestrator = WorkflowOrchestrator(
-                workflow_choice="checks",
-                config=project_config,
-            )
-            for _ in orchestrator._iter_workflows(orchestrator.templates):
-                pass
+            list(orchestrator._iter_workflows(orchestrator.templates))
 
         assert (
             f"In file '{project_config.github_workflow_patcher_yaml}', "

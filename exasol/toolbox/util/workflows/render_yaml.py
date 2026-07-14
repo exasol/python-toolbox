@@ -89,10 +89,14 @@ class YamlRenderer:
         logger.debug(
             "Render template with Jinja",
             jinja_dict_source="PROJECT_CONFIG.github_template_dict",
-            jinja_dict_values=self.github_template_dict,
         )
         jinja_template = build_jinja_env(self.file_path).from_string(input_str)
-        return jinja_template.render(self.github_template_dict)
+        render_context = (
+            self.github_template_dict.model_dump()
+            if hasattr(self.github_template_dict, "model_dump")
+            else self.github_template_dict
+        )
+        return jinja_template.render(**render_context)
 
     def get_yaml_dict(self) -> CommentedMap:
         """
