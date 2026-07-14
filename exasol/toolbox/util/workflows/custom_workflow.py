@@ -1,7 +1,10 @@
 from __future__ import annotations
 
-from enum import IntEnum
 from pathlib import Path
+from typing import (
+    Literal,
+    TypeAlias,
+)
 
 from pydantic import (
     BaseModel,
@@ -13,34 +16,18 @@ from ruamel.yaml import (
 
 from exasol.toolbox.util.workflows.render_yaml import parse_yaml_text
 
-
-class PermissionRank(IntEnum):
-    """GitHub permission levels ranked from least to most permissive."""
-
-    NONE = 0
-    READ = 1
-    WRITE = 2
-
-    @classmethod
-    def _missing_(cls, value: object) -> PermissionRank:
-        """Convert a GitHub permission string to its rank."""
-        if isinstance(value, str):
-            for rank in cls:
-                if rank.name.lower() == value:
-                    return rank
-        raise ValueError(f"Unknown GitHub permission level: {value!r}")
+PermissionLevel: TypeAlias = Literal["none", "read", "write"]
+PERMISSION_RANK: dict[PermissionLevel, int] = {"none": 0, "read": 1, "write": 2}
+Permissions: TypeAlias = dict[str, PermissionLevel]
 
 
-def merge_permissions(permission_maps: list[dict[str, str]]) -> dict[str, str]:
+def merge_permissions(permission_maps: list[Permissions]) -> Permissions:
     """Merge permission maps to keep the greater permission."""
-    merged_permissions: dict[str, str] = {}
+    merged_permissions: Permissions = {}
     for permission_map in permission_maps:
         for permission_name, requested_level in permission_map.items():
-            current_level = merged_permissions.get(permission_name, None)
-            if current_level is None:
-                merged_permissions[permission_name] = requested_level
-                continue
-            if PermissionRank(requested_level) > PermissionRank(current_level):  # type: ignore[arg-type]
+            current_level = merged_permissions.get(permission_name, "none")
+            if PERMISSION_RANK[requested_level] > PERMISSION_RANK[current_level]:
                 merged_permissions[permission_name] = requested_level
     return merged_permissions
 
