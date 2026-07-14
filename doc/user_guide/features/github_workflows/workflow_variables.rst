@@ -34,7 +34,7 @@ when they call reusable workflows.
 Secrets
 -------
 
-The PTB extracts secret names from custom workflow files and exposes them
+The PTB extracts the names of secrets from custom workflow files and exposes them
 through :py:attr:`exasol.toolbox.config.BaseConfig.github_template_dict` under the
 ``custom_workflows`` entry. PTB-controlled workflow templates use those extracted
 names when they call reusable workflows and forward secrets via ``secrets:``.

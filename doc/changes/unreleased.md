@@ -2,9 +2,9 @@
 
 ## Summary
 
-## Feature
+## Features
 
-* #922:  Extended `custom_workflows` of `github_template_dict` for automatic custom workflow permissions extraction
+* #922: Extended `custom_workflows` of `github_template_dict` for automatic custom workflow permissions extraction
 
 ## Refactoring
 
