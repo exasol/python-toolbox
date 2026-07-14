@@ -8,6 +8,7 @@ from jinja2 import (
     FileSystemLoader,
     StrictUndefined,
     TemplateError,
+    select_autoescape,
 )
 from pydantic import (
     BaseModel,
@@ -52,7 +53,14 @@ def build_jinja_env(template_path: Path) -> Environment:
         loader=FileSystemLoader([template_path.parent, workflow_template_directory]),
         variable_start_string="((",
         variable_end_string="))",
-        autoescape=False,
+        # Workflow templates are YAML-only. We still route through select_autoescape
+        # so the Jinja environment has an explicit escaping policy, but no file
+        # extensions are treated as HTML/XML templates here.
+        autoescape=select_autoescape(
+            enabled_extensions=(),
+            default_for_string=False,
+            default=False,
+        ),
         # This requires that all Jinja variables must be defined in the provided
         # dictionary. If not, then a `jinja2.exceptions.UndefinedError` exception
         # will be raised.
