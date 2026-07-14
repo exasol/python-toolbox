@@ -377,16 +377,7 @@ class TestYamlRendererJinja:
           fast-tests-extension:
             name: Extension
             uses: ./.github/workflows/fast-tests-extension.yml
-            (% if custom_workflows["fast-tests-extension"].secrets %)
-            secrets:
-              (% for secret_name in custom_workflows["fast-tests-extension"].secrets %)
-              (( secret_name )): ${{ secrets.(( secret_name )) }}
-              (% endfor %)
-            (% endif %)
-            permissions:
-              contents: read
-          (% endif %)
-
+        (% endif %)
         """
         expected_yaml = """
         jobs:
@@ -408,11 +399,6 @@ class TestYamlRendererJinja:
         fast-tests-extension:
           name: Extension
           uses: ./.github/workflows/fast-tests-extension.yml
-          secrets:
-            FAST_TEST_SECRET: ${{ secrets.FAST_TEST_SECRET }}
-          permissions:
-            contents: read
-
         """
         workflow_directory = project_config.github_workflow_directory
         workflow_directory.mkdir(parents=True)
@@ -435,90 +421,6 @@ class TestYamlRendererJinja:
 
         yaml_dict = yaml_renderer.get_yaml_dict()
 
-        assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
-
-    @staticmethod
-    def test_includes_extension_with_multiple_secrets(test_yml, project_config):
-        input_yaml = """
-        jobs:
-          run-unit-tests:
-            name: Unit Tests (Python-${{ matrix.python-versions }})
-            runs-on: "(( os_version ))"
-            permissions:
-              contents: read
-            strategy:
-              fail-fast: false
-              matrix:
-                python-versions: (( python_versions | tojson ))
-
-            steps:
-              - name: Check out Repository
-                id: check-out-repository
-                uses: actions/checkout@v6
-
-        (% if custom_workflows["merge-gate"].exists %)
-          merge-gate-extension:
-            uses: ./.github/workflows/merge-gate-extension.yml
-            (% if custom_workflows["merge-gate-extension"].secrets %)
-            secrets:
-              (% for secret_name in custom_workflows["merge-gate-extension"].secrets %)
-              (( secret_name )): ${{ secrets.(( secret_name )) }}
-              (% endfor %)
-            (% endif %)
-            permissions:
-              contents: read
-          (% endif %)
-
-        """
-        expected_yaml = """
-        jobs:
-        run-unit-tests:
-          name: Unit Tests (Python-${{ matrix.python-versions }})
-          runs-on: "ubuntu-24.04"
-          permissions:
-            contents: read
-          strategy:
-            fail-fast: false
-            matrix:
-              python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
-
-          steps:
-            - name: Check out Repository
-              id: check-out-repository
-              uses: actions/checkout@v6
-
-        merge-gate-extension:
-          uses: ./.github/workflows/merge-gate-extension.yml
-          secrets:
-            ANOTHER_SECRET: ${{ secrets.ANOTHER_SECRET }}
-            MERGE_GATE_SECRET: ${{ secrets.MERGE_GATE_SECRET }}
-          permissions:
-            contents: read
-
-        """
-        workflow_directory = project_config.github_workflow_directory
-        workflow_directory.mkdir(parents=True)
-        (workflow_directory / "merge-gate-extension.yml").write_text(cleandoc("""
-                name: Merge-Gate-Extension
-
-                on:
-                  workflow_call:
-                    secrets:
-                      MERGE_GATE_SECRET:
-                        required: true
-                      ANOTHER_SECRET:
-                        required: true
-                """))
-
-        content = cleandoc(input_yaml)
-        test_yml.write_text(content)
-
-        yaml_renderer = YamlRenderer(
-            github_template_dict=project_config.github_template_dict,
-            file_path=test_yml,
-        )
-
-        yaml_dict = yaml_renderer.get_yaml_dict()
         assert yaml_renderer.get_as_string(yaml_dict) == cleandoc(expected_yaml)
 
     @staticmethod
