@@ -52,7 +52,7 @@ def build_jinja_env(template_path: Path) -> Environment:
         loader=FileSystemLoader([template_path.parent, workflow_template_directory]),
         variable_start_string="((",
         variable_end_string="))",
-        autoescape=True,
+        autoescape=False,
         # This requires that all Jinja variables must be defined in the provided
         # dictionary. If not, then a `jinja2.exceptions.UndefinedError` exception
         # will be raised.
