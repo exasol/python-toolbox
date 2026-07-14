@@ -194,9 +194,10 @@ class TestIterWorkflows:
             workflow_choice="checks",
             config=project_config,
         )
+        workflow_iter = orchestrator._iter_workflows(orchestrator.templates)
 
         with pytest.raises(InvalidWorkflowPatcherEntryError) as ex:
-            list(orchestrator._iter_workflows(orchestrator.templates))
+            next(workflow_iter)
 
         assert (
             f"In file '{project_config.github_workflow_patcher_yaml}', "
