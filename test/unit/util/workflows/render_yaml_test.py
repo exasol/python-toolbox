@@ -256,13 +256,13 @@ class TestParseYamlText:
               - name: SCM Checkout
               uses: actions/checkout@v5
         """
+        workflow_string = cleandoc(bad_template)
 
         with pytest.raises(
             YamlParsingError, match="Check for invalid YAML syntax."
         ) as ex:
             parse_yaml_text(
-                origin_path=tmp_path / "dummy.yml",
-                workflow_string=cleandoc(bad_template),
+                origin_path=tmp_path / "dummy.yml", workflow_string=workflow_string
             )
 
         assert isinstance(ex.value.__cause__, ParserError)
