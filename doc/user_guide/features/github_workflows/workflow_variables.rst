@@ -22,7 +22,7 @@ standardized baseline that can be overridden in individual projects.
 .. _custom_workflow_metadata:
 
 Custom Workflow Metadata
-^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------
 
 The PTB extracts metadata from reusable custom workflow files and exposes it
 through :py:attr:`exasol.toolbox.config.BaseConfig.github_template_dict` under the
@@ -32,7 +32,7 @@ when they call reusable workflows.
 .. _custom_workflow_secrets:
 
 Secrets
--------
+^^^^^^^
 
 The PTB extracts the names of secrets from custom workflow files and exposes them
 through :py:attr:`exasol.toolbox.config.BaseConfig.github_template_dict` under the
@@ -63,7 +63,7 @@ reference the custom workflow.
 .. _custom_workflow_permissions:
 
 Permissions
------------
+^^^^^^^^^^^
 
 The PTB extracts the permissions required by custom workflow files. It reads every job's
 ``permissions`` block and combines the results into a single ordered mapping, where
