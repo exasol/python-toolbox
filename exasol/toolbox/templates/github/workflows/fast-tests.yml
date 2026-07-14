@@ -1,4 +1,5 @@
 (( workflow_header ))
+(% from "_workflow_macros.j2" import workflow_permissions with context %)
 name: Fast-Tests
 
 on:
@@ -52,10 +53,5 @@ jobs:
       (( secret_name )): ${{ secrets.(( secret_name )) }}
       (% endfor %)
     (% endif %)
-    (% if custom_workflows["fast-tests-extension"].permissions %)
-    permissions:
-      (% for permission_name, permission_level in custom_workflows["fast-tests-extension"].permissions.items() %)
-      (( permission_name )): (( permission_level ))
-      (% endfor %)
-    (% endif %)
+    (( workflow_permissions("fast-tests-extension") | trim ))
   (% endif %)

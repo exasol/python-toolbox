@@ -1,0 +1,9 @@
+(% macro workflow_permissions(workflow_name) -%)
+(% set permissions = custom_workflows[workflow_name].permissions -%)
+(% if permissions -%)
+permissions:
+(% for permission_name, permission_level in permissions.items() %)
+      (( permission_name )): (( permission_level ))
+(% endfor -%)
+(% endif -%)
+(% endmacro %)

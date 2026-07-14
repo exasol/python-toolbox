@@ -6,6 +6,7 @@ from typing import Any
 
 from jinja2 import (
     Environment,
+    FileSystemLoader,
     StrictUndefined,
     TemplateError,
 )
@@ -21,20 +22,28 @@ from exasol.toolbox.util.workflows.exceptions import (
     YamlOutputError,
     YamlParsingError,
 )
+from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
 
-jinja_env = Environment(
-    variable_start_string="((",
-    variable_end_string="))",
-    autoescape=True,
-    # This requires that all Jinja variables must be defined in the provided
-    # dictionary. If not, then a `jinja2.exceptions.UndefinedError` exception
-    # will be raised.
-    undefined=StrictUndefined,
-    block_start_string="(%",
-    block_end_string="%)",
-    trim_blocks=True,  # Removes the newline after a block
-    lstrip_blocks=True,  # Removes tabs/spaces before a block
-)
+
+def build_jinja_env(template_path: Path) -> Environment:
+    """
+    Create a Jinja environment for a workflow template file.
+    """
+    workflow_template_directory = WORKFLOW_TEMPLATE_OPTIONS["ci"].parent
+    return Environment(
+        loader=FileSystemLoader([template_path.parent, workflow_template_directory]),
+        variable_start_string="((",
+        variable_end_string="))",
+        autoescape=True,
+        # This requires that all Jinja variables must be defined in the provided
+        # dictionary. If not, then a `jinja2.exceptions.UndefinedError` exception
+        # will be raised.
+        undefined=StrictUndefined,
+        block_start_string="(%",
+        block_end_string="%)",
+        trim_blocks=True,  # Removes the newline after a block
+        lstrip_blocks=True,  # Removes tabs/spaces before a block
+    )
 
 
 def get_standard_yaml() -> YAML:
@@ -82,7 +91,7 @@ class YamlRenderer:
             jinja_dict_source="PROJECT_CONFIG.github_template_dict",
             jinja_dict_values=self.github_template_dict,
         )
-        jinja_template = jinja_env.from_string(input_str)
+        jinja_template = build_jinja_env(self.file_path).from_string(input_str)
         return jinja_template.render(self.github_template_dict)
 
     def get_yaml_dict(self) -> CommentedMap:

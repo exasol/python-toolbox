@@ -20,9 +20,15 @@ from exasol.toolbox.util.workflows.workflow_orchestrator import WorkflowOrchestr
 
 def _remove_header(template_text: str) -> str:
     """
-    Remove the Jinja header placeholder line from a workflow template.
+    Remove leading Jinja-only lines from a workflow template.
     """
-    return template_text.split("\n", 1)[1].strip()
+    lines = template_text.splitlines()
+    while lines and (
+        lines[0].strip() == "(( workflow_header ))"
+        or lines[0].strip().startswith('(% from "_workflow_macros.j2" import ')
+    ):
+        lines.pop(0)
+    return "\n".join(lines).strip()
 
 
 class TestTemplates:

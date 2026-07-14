@@ -1,4 +1,5 @@
 (( workflow_header ))
+(% from "_workflow_macros.j2" import workflow_permissions with context %)
 name: CI
 
 on:
@@ -15,12 +16,7 @@ jobs:
       (( secret_name )): ${{ secrets.(( secret_name )) }}
       (% endfor %)
     (% endif %)
-    (% if custom_workflows["merge-gate"].permissions %)
-    permissions:
-      (% for permission_name, permission_level in custom_workflows["merge-gate"].permissions.items() %)
-      (( permission_name )): (( permission_level ))
-      (% endfor %)
-    (% endif %)
+    (( workflow_permissions("merge-gate") | trim ))
 
   report:
     name: Report

@@ -1,4 +1,5 @@
 (( workflow_header ))
+(% from "_workflow_macros.j2" import workflow_permissions with context %)
 name: CD
 
 on:
@@ -38,12 +39,7 @@ jobs:
       (( secret_name )): ${{ secrets.(( secret_name )) }}
       (% endfor %)
     (% endif %)
-    (% if custom_workflows["cd-extension"].permissions %)
-    permissions:
-      (% for permission_name, permission_level in custom_workflows["cd-extension"].permissions.items() %)
-      (( permission_name )): (( permission_level ))
-      (% endfor %)
-    (% endif %)
+    (( workflow_permissions("cd-extension") | trim ))
   (% endif %)
 
   (% if has_documentation %)

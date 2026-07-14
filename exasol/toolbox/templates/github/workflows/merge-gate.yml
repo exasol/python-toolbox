@@ -1,4 +1,5 @@
 (( workflow_header ))
+(% from "_workflow_macros.j2" import workflow_permissions with context %)
 name: Merge-Gate
 
 on:
@@ -59,12 +60,7 @@ jobs:
       (( secret_name )): ${{ secrets.(( secret_name )) }}
       (% endfor %)
     (% endif %)
-    (% if custom_workflows["slow-checks"].permissions %)
-    permissions:
-      (% for permission_name, permission_level in custom_workflows["slow-checks"].permissions.items() %)
-      (( permission_name )): (( permission_level ))
-      (% endfor %)
-    (% endif %)
+    (( workflow_permissions("slow-checks") | trim ))
 
   (% if custom_workflows["merge-gate-extension"].exists %)
   merge-gate-extension:
@@ -76,12 +72,7 @@ jobs:
       (( secret_name )): ${{ secrets.(( secret_name )) }}
       (% endfor %)
     (% endif %)
-    (% if custom_workflows["merge-gate-extension"].permissions %)
-    permissions:
-      (% for permission_name, permission_level in custom_workflows["merge-gate-extension"].permissions.items() %)
-      (( permission_name )): (( permission_level ))
-      (% endfor %)
-    (% endif %)
+    (( workflow_permissions("merge-gate-extension") | trim ))
   (% endif %)
 
   # This job ensures inputs have been executed successfully.
