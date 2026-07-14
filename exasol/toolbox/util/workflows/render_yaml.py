@@ -108,7 +108,7 @@ class YamlRenderer:
     github_template_dict: GithubTemplateContext
     file_path: Path
 
-    def _render_with_jinja(self, input_str: str) -> str:
+    def _render_with_jinja(self) -> str:
         """
         Render the template with Jinja.
         """
@@ -116,7 +116,9 @@ class YamlRenderer:
             "Render template with Jinja",
             jinja_dict_source="PROJECT_CONFIG.github_template_dict",
         )
-        jinja_template = build_jinja_env(self.file_path).from_string(input_str)
+        jinja_template = build_jinja_env(self.file_path).get_template(
+            self.file_path.name
+        )
         if isinstance(self.github_template_dict, dict):
             render_context = self.github_template_dict
         else:
@@ -128,9 +130,8 @@ class YamlRenderer:
         Load a file as a CommentedMap (dictionary form of a YAML), after
         rendering it with Jinja.
         """
-        raw_content = self.file_path.read_text()
         try:
-            workflow_string = self._render_with_jinja(raw_content)
+            workflow_string = self._render_with_jinja()
         except TemplateError as ex:
             raise TemplateRenderingError(file_path=self.file_path) from ex
         return parse_yaml_text(
