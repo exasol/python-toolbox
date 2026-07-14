@@ -73,7 +73,7 @@ class CustomWorkflow(BaseModel):
                 return tuple(secrets.keys())
         return ()
 
-    def extract_permissions(self) -> dict[str, str]:
+    def extract_permissions(self) -> Permissions:
         """Return the effective job permissions required by the workflow.
 
         The extractor scans all jobs and merges their ``permissions`` blocks into a

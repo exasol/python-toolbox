@@ -2,13 +2,16 @@ import io
 from dataclasses import dataclass
 from inspect import cleandoc
 from pathlib import Path
-from typing import Any
 
 from jinja2 import (
     Environment,
     FileSystemLoader,
     StrictUndefined,
     TemplateError,
+)
+from pydantic import (
+    BaseModel,
+    ConfigDict,
 )
 from ruamel.yaml import (
     YAML,
@@ -23,6 +26,21 @@ from exasol.toolbox.util.workflows.exceptions import (
     YamlParsingError,
 )
 from exasol.toolbox.util.workflows.templates import WORKFLOW_TEMPLATE_OPTIONS
+
+
+class GithubTemplateContext(BaseModel):
+    """Immutable template values exposed to Jinja workflow rendering."""
+
+    model_config = ConfigDict(frozen=True)
+
+    custom_workflows: dict[str, object]
+    dependency_manager_version: str
+    has_documentation: bool
+    minimum_python_version: str
+    os_version: str
+    python_versions: tuple[str, ...]
+    sonar_token_name: str
+    workflow_header: str
 
 
 def build_jinja_env(template_path: Path) -> Environment:
@@ -79,7 +97,7 @@ class YamlRenderer:
     YAML files.
     """
 
-    github_template_dict: dict[str, Any]
+    github_template_dict: GithubTemplateContext
     file_path: Path
 
     def _render_with_jinja(self, input_str: str) -> str:
@@ -91,11 +109,10 @@ class YamlRenderer:
             jinja_dict_source="PROJECT_CONFIG.github_template_dict",
         )
         jinja_template = build_jinja_env(self.file_path).from_string(input_str)
-        render_context = (
-            self.github_template_dict.model_dump()
-            if hasattr(self.github_template_dict, "model_dump")
-            else self.github_template_dict
-        )
+        if isinstance(self.github_template_dict, dict):
+            render_context = self.github_template_dict
+        else:
+            render_context = self.github_template_dict.model_dump()
         return jinja_template.render(**render_context)
 
     def get_yaml_dict(self) -> CommentedMap:

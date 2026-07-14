@@ -26,31 +26,13 @@ from exasol.toolbox.nox.plugin import (
     PLUGIN_ATTR_NAME,
 )
 from exasol.toolbox.util.version import Version
-from exasol.toolbox.util.workflows.custom_workflow_extractor import (
-    CustomWorkflowExtractor,
-)
+from exasol.toolbox.util.workflows.render_yaml import GithubTemplateContext
 
 WORKFLOW_HEADER_PREFIX = (
     "# Generated and maintained by the exasol-toolbox.\n"
     "# Last generated with exasol-toolbox version "
 )
-
 WORKFLOW_HEADER_PATTERN = rf"\A{re.escape(WORKFLOW_HEADER_PREFIX)}[^\n]+\.\n"
-
-
-class GithubTemplateContext(BaseModel):
-    """Immutable template values exposed to Jinja workflow rendering."""
-
-    model_config = ConfigDict(frozen=True)
-
-    custom_workflows: dict[str, Any]
-    dependency_manager_version: str
-    has_documentation: bool
-    minimum_python_version: str
-    os_version: str
-    python_versions: tuple[str, ...]
-    sonar_token_name: str
-    workflow_header: str
 
 
 def get_methods_with_hook_implementation(
@@ -343,6 +325,10 @@ class BaseConfig(BaseModel):
         Dictionary of variables to dynamically render Jinja2 templates into valid YAML
         configurations.
         """
+        from exasol.toolbox.util.workflows.custom_workflow_extractor import (
+            CustomWorkflowExtractor,
+        )
+
         custom_workflow_extractor = CustomWorkflowExtractor(
             github_workflow_directory=self.github_workflow_directory,
             sonar_token_name=self.sonar_token_name,

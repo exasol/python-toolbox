@@ -10,10 +10,11 @@ from pydantic import (
 
 from exasol.toolbox.util.workflows.custom_workflow import (
     CustomWorkflow,
+    Permissions,
     merge_permissions,
 )
 
-MINIMUM_GITHUB_PERMISSIONS: dict[str, str] = {"contents": "read"}
+MINIMUM_GITHUB_PERMISSIONS: Permissions = {"contents": "read"}
 
 
 class CustomWorkflowEntry(BaseModel):
@@ -21,7 +22,7 @@ class CustomWorkflowEntry(BaseModel):
 
     exists: bool
     secrets: tuple[str, ...]
-    permissions: dict[str, str]
+    permissions: Permissions
 
     @field_validator("secrets", mode="before")
     @classmethod
@@ -31,9 +32,7 @@ class CustomWorkflowEntry(BaseModel):
 
     @field_validator("permissions", mode="before")
     @classmethod
-    def _normalize_permissions(
-        cls, permissions: list[dict[str, str]]
-    ) -> dict[str, str]:
+    def _normalize_permissions(cls, permissions: list[Permissions]) -> Permissions:
         """Merge permission maps while preserving first-seen order."""
         return merge_permissions(permissions)
 
@@ -57,7 +56,7 @@ class CustomWorkflowExtractor(BaseModel):
         file_path = self.github_workflow_directory / f"{workflow}.yml"
 
         secrets: tuple[str, ...] = ()
-        permissions: list[dict[str, str]] = []
+        permissions: list[Permissions] = []
         if file_path.is_file():
             custom_workflow = CustomWorkflow.load_from_file(file_path=file_path)
             secrets = custom_workflow.extract_secrets()

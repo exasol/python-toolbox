@@ -1,9 +1,6 @@
 import difflib
 import re
 from pathlib import Path
-from typing import (
-    Any,
-)
 
 from pydantic import (
     BaseModel,
@@ -23,6 +20,7 @@ from exasol.toolbox.util.workflows.patch_workflow import (
     WorkflowCommentedMap,
 )
 from exasol.toolbox.util.workflows.process_template import WorkflowRenderer
+from exasol.toolbox.util.workflows.render_yaml import GithubTemplateContext
 
 
 class Workflow(BaseModel):
@@ -57,7 +55,7 @@ class Workflow(BaseModel):
         cls,
         template_path: Path,
         output_directory: Path,
-        github_template_dict: dict[str, Any],
+        github_template_dict: GithubTemplateContext,
         patch_yaml: WorkflowCommentedMap | None = None,
     ):
         with bound_contextvars(template_file_name=template_path.name):
