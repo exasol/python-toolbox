@@ -1,5 +1,5 @@
 (( workflow_header ))
-(% from "_workflow_macros.j2" import workflow_permissions with context %)
+(% from "_workflow_macros.j2" import workflow_passed_secrets, workflow_permissions with context %)
 name: Periodic-Validation
 
 on:
@@ -46,14 +46,8 @@ jobs:
     uses: ./.github/workflows/slow-checks.yml
     needs:
       - restrict-to-default-branch
-    (% if custom_workflows["slow-checks"].secrets %)
-    secrets:
-      (% for secret_name in custom_workflows["slow-checks"].secrets %)
-      (( secret_name )): ${{ secrets.(( secret_name )) }}
-      (% endfor %)
-    (% endif %)
-    (( workflow_permissions("slow-checks") | trim ))
-
+(( workflow_passed_secrets("slow-checks") -))
+(( workflow_permissions("slow-checks") ))
   report:
     name: Report
     needs:
