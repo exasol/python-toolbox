@@ -108,8 +108,8 @@ class WorkflowOrchestrator(BaseModel):
 
     def _skip_workflow(self, workflow_name: str) -> bool:
         """
-        Return ``True`` if the workflow should be skipped because it is not maintained
-        by the PTB or not applicable to the current project, otherwise return ``False``.
+        Return ``True`` if the workflow should be skipped because it is not applicable
+        to the current project, otherwise return ``False``.
         """
         if (
             workflow_name in DOCUMENTATION_ONLY_WORKFLOW_NAMES
