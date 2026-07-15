@@ -10,8 +10,8 @@ from exasol.toolbox.util.workflows.exceptions import (
     YamlJobValueError,
 )
 from exasol.toolbox.util.workflows.templates import (
+    CUSTOM_SEEDED_WORKFLOW_NAMES,
     DOCUMENTATION_ONLY_WORKFLOW_NAMES,
-    NOT_MAINTAINED_WORKFLOW_NAMES,
     WORKFLOW_TEMPLATE_OPTIONS,
 )
 from exasol.toolbox.util.workflows.workflow import Workflow
@@ -222,7 +222,7 @@ class TestGenerateWorkflows:
         )
 
     @staticmethod
-    def test_writes_not_maintained_workflows_on_fresh_project(
+    def test_writes_custom_seeded_workflows_on_fresh_project(
         project_config_without_patcher,
     ):
         directory = project_config_without_patcher.github_workflow_directory
@@ -235,7 +235,7 @@ class TestGenerateWorkflows:
 
         assert all(
             (directory / f"{name}.yml").exists()
-            for name in NOT_MAINTAINED_WORKFLOW_NAMES
+            for name in CUSTOM_SEEDED_WORKFLOW_NAMES
         )
 
     @staticmethod

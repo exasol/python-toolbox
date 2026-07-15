@@ -26,7 +26,7 @@ from exasol.toolbox.util.workflows.patch_workflow import (
 from exasol.toolbox.util.workflows.templates import (
     DOCUMENTATION_ONLY_WORKFLOW_NAMES,
     WORKFLOW_TEMPLATE_OPTIONS,
-    get_not_maintained_workflow_templates,
+    get_custom_seeded_workflow_names,
 )
 from exasol.toolbox.util.workflows.workflow import Workflow
 
@@ -108,8 +108,8 @@ class WorkflowOrchestrator(BaseModel):
 
     def _skip_workflow(self, workflow_name: str) -> bool:
         """
-        Return ``True`` if the workflow should be skipped because it is not maintained
-        by the PTB or not applicable to the current project, otherwise return ``False``.
+        Return ``True`` if the workflow should be skipped because it is not applicable
+        to the current project, otherwise return ``False``.
         """
         if (
             workflow_name in DOCUMENTATION_ONLY_WORKFLOW_NAMES
@@ -127,12 +127,12 @@ class WorkflowOrchestrator(BaseModel):
         """
         Render the selected workflows and write them to disk.
         """
-        # First, generate not-maintained workflows for a new project.
+        # First, generate custom seeded workflows for a new project.
         # This ensures proper extraction and passing of secrets & permissions
         # before parent workflows such as `merge-gate.yml` and
         # `periodic-validation.yml` are rendered.
         if self._is_new_project() and self.workflow_choice == ALL:
-            not_maintainted_templates = get_not_maintained_workflow_templates()
+            not_maintainted_templates = get_custom_seeded_workflow_names()
             for workflow in self._iter_workflows(not_maintainted_templates):
                 workflow.write_to_file()
 

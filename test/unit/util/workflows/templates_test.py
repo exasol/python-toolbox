@@ -2,7 +2,7 @@ import pytest
 
 from exasol.toolbox.util.workflows.exceptions import InvalidWorkflowNameError
 from exasol.toolbox.util.workflows.templates import (
-    NOT_MAINTAINED_WORKFLOW_NAMES,
+    CUSTOM_SEEDED_WORKFLOW_NAMES,
     WORKFLOW_TEMPLATE_OPTIONS,
     get_workflow_templates,
     validate_workflow_name,
@@ -43,7 +43,7 @@ class TestValidateWorkflowName:
     @staticmethod
     @pytest.mark.parametrize(
         "workflow_name",
-        WORKFLOW_TEMPLATE_OPTIONS.keys() - set(NOT_MAINTAINED_WORKFLOW_NAMES),
+        WORKFLOW_TEMPLATE_OPTIONS.keys() - set(CUSTOM_SEEDED_WORKFLOW_NAMES),
     )
     def test_returns_valid_maintained_names(workflow_name):
         name = validate_workflow_name(workflow_name)
