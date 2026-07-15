@@ -1,4 +1,5 @@
 from unittest.mock import Mock
+from pathlib import Path
 
 import pytest
 
@@ -72,3 +73,20 @@ class TestUpdateVulnerabilities:
 
         assert delegate.call_count == 1
         assert capsys.readouterr().out == "No vulnerable dependencies were found.\n"
+
+def test_report_resolved_vulnerabilities(
+    monkeypatch, nox_session, capsys, sample_vulnerability
+):
+    monkeypatch.setattr(
+        _dependencies,
+        "get_vulnerabilities_from_latest_tag",
+        Mock(return_value=[sample_vulnerability.vulnerability]),
+    )
+    monkeypatch.setattr(_dependencies, "get_vulnerabilities", Mock(return_value=[]))
+    _dependencies.report_resolved_vulnerabilities(nox_session)
+    assert "| jinja2 | CVE-2025-27516 | 3.1.5 | 3.1.6 |" in capsys.readouterr().out
+
+
+def test_generate_sbom(nox_session, tmp_path):
+    _dependencies.generate_sbom(nox_session)
+    assert Path("bom.spdx.json").exists()

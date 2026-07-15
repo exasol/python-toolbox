@@ -34,9 +34,7 @@ jobs:
       - name: Generate SBOM
         id: generate-sbom
         run: |
-          poetry run pip install cyclonedx-bom
           poetry run cyclonedx-py environment -o bom.cdx.json
-          poetry run pip install sbomconvert
           poetry run sbomconvert -i bom.cdx.json --sbom spdx --format json -o bom.spdx.json
           test -s bom.spdx.json
 

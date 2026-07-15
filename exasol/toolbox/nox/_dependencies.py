@@ -105,7 +105,6 @@ def report_resolved_vulnerabilities(session: Session) -> None:
 @nox.session(name="dependency:sbom", python=False)
 def generate_sbom(session: Session) -> None:
     """Generate SPDX SBOM for the project dependencies."""
-    session.run("poetry", "run", "pip", "install", "cyclonedx-bom", external=True)
     session.run(
         "poetry",
         "run",
@@ -115,7 +114,6 @@ def generate_sbom(session: Session) -> None:
         "bom.cdx.json",
         external=True,
     )
-    session.run("poetry", "run", "pip", "install", "sbomconvert", external=True)
     session.run(
         "poetry",
         "run",
