@@ -74,6 +74,7 @@ class TestUpdateVulnerabilities:
         assert delegate.call_count == 1
         assert capsys.readouterr().out == "No vulnerable dependencies were found.\n"
 
+
 def test_report_resolved_vulnerabilities(
     monkeypatch, nox_session, capsys, sample_vulnerability
 ):
