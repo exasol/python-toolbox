@@ -35,15 +35,11 @@ jobs:
       - name: Generate SBOM
         id: generate-sbom
         run: |
-          pip install cyclonedx-bom
-          cyclonedx-py environment -o bom.cdx.json
-          curl -L https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.32.0/cyclonedx-linux-x64 -o cyclonedx
-          chmod +x cyclonedx
-          ./cyclonedx convert \
-            --input-file bom.cdx.json \
-            --input-format json \
-            --output-file bom.spdx.json \
-            --output-format spdxjson
+          poetry run pip install cyclonedx-bom
+          poetry run cyclonedx-py environment -o bom.cdx.json
+          poetry run pip install sbomconvert
+          poetry run sbomconvert -i bom.cdx.json --sbom spdx --format json -o bom.spdx.json
+          test -s bom.spdx.json
 
       - name: Publish Release to PyPi
         id: publish-release-to-pypi

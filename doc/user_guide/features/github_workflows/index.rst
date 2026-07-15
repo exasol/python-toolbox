@@ -65,6 +65,10 @@ Maintained by the PTB
    * - ``build-and-publish.yml``
      - Workflow call
      - Packages the distribution and publishes it to PyPi and GitHub.
+       Also generates an SPDX SBOM (Software Bill of Materials) using
+       ``cyclonedx-py`` and ``sbomconvert`` and attaches it to the GitHub release.
+       Note: SPDX version 2 is used as no stable Python tool exists yet
+       for generating SPDX version 3.
    * - ``cd.yml``
      - Push with new tag
      - Manages continuous delivery by creating and uploading build artifacts and
