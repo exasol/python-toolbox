@@ -26,15 +26,12 @@ from exasol.toolbox.nox.plugin import (
     PLUGIN_ATTR_NAME,
 )
 from exasol.toolbox.util.version import Version
-from exasol.toolbox.util.workflows.custom_workflow_extractor import (
-    CustomWorkflowExtractor,
-)
+from exasol.toolbox.util.workflows.render_yaml import GithubTemplateContext
 
 WORKFLOW_HEADER_PREFIX = (
     "# Generated and maintained by the exasol-toolbox.\n"
     "# Last generated with exasol-toolbox version "
 )
-
 WORKFLOW_HEADER_PATTERN = rf"\A{re.escape(WORKFLOW_HEADER_PREFIX)}[^\n]+\.\n"
 
 
@@ -323,26 +320,30 @@ class BaseConfig(BaseModel):
 
     @computed_field  # type: ignore[misc]
     @property
-    def github_template_dict(self) -> dict[str, Any]:
+    def github_template_dict(self) -> GithubTemplateContext:
         """
         Dictionary of variables to dynamically render Jinja2 templates into valid YAML
         configurations.
         """
+        from exasol.toolbox.util.workflows.custom_workflow_extractor import (
+            CustomWorkflowExtractor,
+        )
+
         custom_workflow_extractor = CustomWorkflowExtractor(
             github_workflow_directory=self.github_workflow_directory,
             sonar_token_name=self.sonar_token_name,
         )
 
-        return {
-            "custom_workflows": custom_workflow_extractor.build_custom_workflow_dict(),
-            "dependency_manager_version": self.dependency_manager.version,
-            "has_documentation": self.has_documentation,
-            "minimum_python_version": self.minimum_python_version,
-            "os_version": self.os_version,
-            "python_versions": self.python_versions,
-            "sonar_token_name": self.sonar_token_name,
-            "workflow_header": f"{WORKFLOW_HEADER_PREFIX}{__version__}.",
-        }
+        return GithubTemplateContext(
+            custom_workflows=custom_workflow_extractor.build_custom_workflow_dict(),
+            dependency_manager_version=self.dependency_manager.version,
+            has_documentation=self.has_documentation,
+            minimum_python_version=self.minimum_python_version,
+            os_version=self.os_version,
+            python_versions=self.python_versions,
+            sonar_token_name=self.sonar_token_name,
+            workflow_header=f"{WORKFLOW_HEADER_PREFIX}{__version__}.",
+        )
 
     @computed_field  # type: ignore[misc]
     @property

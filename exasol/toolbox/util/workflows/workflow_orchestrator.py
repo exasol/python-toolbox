@@ -17,7 +17,6 @@ from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.util.workflows import logger
 from exasol.toolbox.util.workflows.exceptions import (
     InvalidWorkflowPatcherEntryError,
-    NotMaintainedWorkflowError,
     YamlKeyError,
 )
 from exasol.toolbox.util.workflows.patch_workflow import (
@@ -27,7 +26,7 @@ from exasol.toolbox.util.workflows.patch_workflow import (
 from exasol.toolbox.util.workflows.templates import (
     DOCUMENTATION_ONLY_WORKFLOW_NAMES,
     WORKFLOW_TEMPLATE_OPTIONS,
-    validate_workflow_name,
+    get_not_maintained_workflow_templates,
 )
 from exasol.toolbox.util.workflows.workflow import Workflow
 
@@ -79,13 +78,12 @@ class WorkflowOrchestrator(BaseModel):
         """
         return not any(self.config.github_workflow_directory.glob("*.yml"))
 
-    def _iter_workflows(self) -> Iterator[Workflow]:
-        logger.info(f"Selected workflow(s) to update: {list(self.templates.keys())}")
-        is_new_project = self._is_new_project()
-        for workflow_name, template_path in self.templates.items():
+    def _iter_workflows(self, templates: Mapping[str, Path]) -> Iterator[Workflow]:
+        logger.info(f"Selected workflow(s) to update: {list(templates.keys())}")
+        for workflow_name, template_path in templates.items():
             patch_yaml = self._extract_workflow_patch(workflow_name=workflow_name)
 
-            if self._skip_workflow(workflow_name, is_new_project):
+            if self._skip_workflow(workflow_name):
                 continue
 
             yield self._load_workflow(
@@ -108,21 +106,11 @@ class WorkflowOrchestrator(BaseModel):
                 entry=ex.entry,
             ) from ex
 
-    def _skip_workflow(self, workflow_name: str, is_new_project: bool) -> bool:
+    def _skip_workflow(self, workflow_name: str) -> bool:
         """
         Return ``True`` if the workflow should be skipped because it is not maintained
         by the PTB or not applicable to the current project, otherwise return ``False``.
         """
-        try:
-            validate_workflow_name(workflow_name)
-        except NotMaintainedWorkflowError:
-            if not is_new_project:
-                logger.debug(
-                    "Skipping not-maintained workflow in older project: %s",
-                    workflow_name,
-                )
-                return True
-
         if (
             workflow_name in DOCUMENTATION_ONLY_WORKFLOW_NAMES
             and not self.config.has_documentation
@@ -139,7 +127,16 @@ class WorkflowOrchestrator(BaseModel):
         """
         Render the selected workflows and write them to disk.
         """
-        for workflow in self._iter_workflows():
+        # First, generate not-maintained workflows for a new project.
+        # This ensures proper extraction and passing of secrets & permissions
+        # before parent workflows such as `merge-gate.yml` and
+        # `periodic-validation.yml` are rendered.
+        if self._is_new_project() and self.workflow_choice == ALL:
+            not_maintainted_templates = get_not_maintained_workflow_templates()
+            for workflow in self._iter_workflows(not_maintainted_templates):
+                workflow.write_to_file()
+
+        for workflow in self._iter_workflows(self.templates):
             workflow.write_to_file()
 
     def find_differing_workflows(self) -> list[str]:
@@ -149,7 +146,7 @@ class WorkflowOrchestrator(BaseModel):
         Returns the names of the workflows that differ from the file on disk.
         """
         outdated_workflows: list[str] = []
-        for workflow in self._iter_workflows():
+        for workflow in self._iter_workflows(self.templates):
             comparison = workflow.compare_to_file()
             if comparison != "":
                 workflow_name = workflow.output_path.stem

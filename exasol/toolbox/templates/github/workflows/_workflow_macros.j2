@@ -1,0 +1,25 @@
+(% macro workflow_permissions(workflow_name) -%)
+(% set permissions = custom_workflows[workflow_name].permissions -%)
+(% if permissions -%)
+(% set rendered_permissions -%)
+permissions:
+(% for permission_name, permission_level in permissions.items() %)
+  (( permission_name )): (( permission_level ))
+(% endfor -%)
+(% endset -%)
+(( rendered_permissions | trim | indent(width=4, first=true) ))
+(% endif -%)
+(% endmacro %)
+
+(% macro workflow_passed_secrets(workflow_name) -%)
+(% set secrets = custom_workflows[workflow_name].secrets -%)
+(% if secrets -%)
+(% set rendered_secrets -%)
+secrets:
+(% for secret_name in secrets %)
+  (( secret_name )): ${{ secrets.(( secret_name )) }}
+(% endfor -%)
+(% endset -%)
+(( rendered_secrets | trim | indent(width=4, first=true) ))
+(% endif %)
+(% endmacro %)

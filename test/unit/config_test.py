@@ -51,11 +51,31 @@ class TestBaseConfig:
             "github_workflow_patcher_yaml": None,
             "github_template_dict": {
                 "custom_workflows": {
-                    "cd-extension": {"exists": False, "secrets": ()},
-                    "fast-tests-extension": {"exists": False, "secrets": ()},
-                    "merge-gate-extension": {"exists": False, "secrets": ()},
-                    "slow-checks": {"exists": False, "secrets": ()},
-                    "merge-gate": {"exists": True, "secrets": ("SONAR_TOKEN",)},
+                    "cd-extension": {
+                        "exists": False,
+                        "secrets": (),
+                        "permissions": {},
+                    },
+                    "fast-tests-extension": {
+                        "exists": False,
+                        "secrets": (),
+                        "permissions": {},
+                    },
+                    "merge-gate-extension": {
+                        "exists": False,
+                        "secrets": (),
+                        "permissions": {},
+                    },
+                    "slow-checks": {
+                        "exists": False,
+                        "secrets": (),
+                        "permissions": {},
+                    },
+                    "merge-gate": {
+                        "exists": True,
+                        "secrets": ("SONAR_TOKEN",),
+                        "permissions": {"contents": "read"},
+                    },
                 },
                 "dependency_manager_version": "2.3.0",
                 "has_documentation": True,
@@ -185,7 +205,7 @@ def test_sonar_token_name_can_be_overridden(tmp_path):
     config = AlternateSonarConfig(project_name="test", root_path=tmp_path)
 
     assert config.sonar_token_name == "SONAR_ANOTHER_TOKEN"
-    assert config.github_template_dict["sonar_token_name"] == "SONAR_ANOTHER_TOKEN"
+    assert config.github_template_dict.sonar_token_name == "SONAR_ANOTHER_TOKEN"
 
 
 @pytest.mark.parametrize("minimum_python_version", ["3.10", "3.10.5"])
