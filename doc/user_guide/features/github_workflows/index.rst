@@ -64,8 +64,9 @@ Maintained by the PTB
      - Description
    * - ``build-and-publish.yml``
      - Workflow call
-     - - Packages the distribution and publishes it to PyPI, and creates a GitHub release
+     - Packages the distribution and publishes it to PyPI, and creates a GitHub release
        that includes an SPDX SBOM v2.
+
    * - ``cd.yml``
      - Push with new tag
      - Manages continuous delivery by creating and uploading build artifacts and
