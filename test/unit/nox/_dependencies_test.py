@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from unittest.mock import Mock
 
@@ -88,6 +89,13 @@ def test_report_resolved_vulnerabilities(
     assert "| jinja2 | CVE-2025-27516 | 3.1.5 | 3.1.6 |" in capsys.readouterr().out
 
 
-def test_generate_sbom(nox_session, tmp_path):
+def test_generate_sbom(monkeypatch, nox_session, tmp_path, test_project_config_factory):
+    project_config = test_project_config_factory(root_path=tmp_path)
+    monkeypatch.setattr(_dependencies, "PROJECT_CONFIG", project_config)
+
     _dependencies.generate_sbom(nox_session)
-    assert Path("bom.spdx.json").exists()
+
+    expected_file = tmp_path / "bom.spdx.json"
+    bom_spdx_json = json.loads(expected_file.read_text())
+    assert bom_spdx_json["SPDXID"] == "SPDXRef-DOCUMENT"
+    assert bom_spdx_json["spdxVersion"] == "SPDX-2.3"

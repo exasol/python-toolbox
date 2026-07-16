@@ -23,8 +23,8 @@ script to alternatives, consider maintaining a local copy as part of your infras
 
 For full documentation, visit https://python-poetry.org/docs/#installation.
 """
-
 import sys
+
 
 # Eager version check so we fail nicely before possible syntax errors
 if sys.version_info < (3, 6):  # noqa: UP036
@@ -49,6 +49,7 @@ from pathlib import Path
 from typing import Optional
 from urllib.request import Request
 from urllib.request import urlopen
+
 
 SHELL = os.getenv("SHELL", "")
 WINDOWS = sys.platform.startswith("win") or (sys.platform == "cli" and os.name == "nt")
@@ -736,10 +737,9 @@ class Installer:
     def get_windows_path_var(self) -> Optional[str]:
         import winreg
 
-        with (
-            winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as root,
-            winreg.OpenKey(root, "Environment", 0, winreg.KEY_ALL_ACCESS) as key,
-        ):
+        with winreg.ConnectRegistry(
+            None, winreg.HKEY_CURRENT_USER
+        ) as root, winreg.OpenKey(root, "Environment", 0, winreg.KEY_ALL_ACCESS) as key:
             path, _ = winreg.QueryValueEx(key, "PATH")
 
             return path

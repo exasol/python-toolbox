@@ -1,5 +1,5 @@
 # Generated and maintained by the exasol-toolbox.
-# Last generated with exasol-toolbox version 9.0.0.
+# Last generated with exasol-toolbox version 10.3.0.
 name: Build & Publish
 
 on:
@@ -34,10 +34,7 @@ jobs:
 
       - name: Generate SBOM
         id: generate-sbom
-        run: |
-          poetry run cyclonedx-py environment -o bom.cdx.json
-          poetry run sbomconvert -i bom.cdx.json --sbom spdx --format json -o bom.spdx.json
-          test -s bom.spdx.json
+        run: poetry run -- nox -s dependency:sbom
 
       - name: Publish Release to PyPi
         id: publish-release-to-pypi

@@ -60,8 +60,8 @@ dependencies = [
     "typer[all]>=0.7.0",
     "twine>=6.1.0,<7",
     "zizmor (>=1.25.2,<2.0.0)",
-    "cyclonedx-py (>=1.0.1,<2.0.0)",
     "sbomconvert (>=0.1.0,<0.2.0)",
+    "cyclonedx-bom (>=7.3.0,<8.0.0)",
 ]
 
 [project.scripts]
