@@ -100,3 +100,27 @@ def report_resolved_vulnerabilities(session: Session) -> None:
         current_vulnerabilities=get_vulnerabilities(path),
     )
     print(audit.report_resolved_vulnerabilities())
+
+
+@nox.session(name="dependency:sbom", python=False)
+def generate_sbom(session: Session) -> None:
+    """Generate SPDX SBOM for the project dependencies.
+
+    Note: SPDX version 2 is used as no stable Python tool exists yet
+    for generating SPDX version 3.
+    """
+    bom_cdx_json = PROJECT_CONFIG.root_path / "bom.cdx.json"
+    bom_spdx_json = PROJECT_CONFIG.root_path / "bom.spdx.json"
+    session.run("cyclonedx-py", "environment", "-o", bom_cdx_json)
+    session.run(
+        "sbomconvert",
+        "-i",
+        bom_cdx_json,
+        "--sbom",
+        "spdx",
+        "--format",
+        "json",
+        "-o",
+        bom_spdx_json,
+    )
+    session.run("test", "-s", bom_spdx_json)
