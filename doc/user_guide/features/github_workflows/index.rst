@@ -41,8 +41,8 @@ The PTB allows for two categories of workflows:
   #. custom workflows, which are project-owned.
 
 Custom workflows can optionally be
-* seeded by the PTB, i.e. PTB generates an initial version but ignores future changes.
-* extend PTB-provided workflows, i.e. ending in `-extension.yml`
+  * seeded by the PTB, i.e. PTB generates an initial version but ignores future changes.
+  * extend PTB-provided workflows, i.e. ending in `-extension.yml`
 
 Besides that, you can also create individual workflow files which are ignored by the PTB.
 
