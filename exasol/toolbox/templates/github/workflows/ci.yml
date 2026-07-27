@@ -1,4 +1,5 @@
 (( workflow_header ))
+(% from "_workflow_macros.j2" import workflow_passed_secrets, workflow_permissions with context %)
 name: CI
 
 on:
@@ -9,15 +10,8 @@ jobs:
   merge-gate:
     name: Merge Gate
     uses: ./.github/workflows/merge-gate.yml
-    (% if custom_workflows["merge-gate"].secrets %)
-    secrets:
-      (% for secret_name in custom_workflows["merge-gate"].secrets %)
-      (( secret_name )): ${{ secrets.(( secret_name )) }}
-      (% endfor %)
-    (% endif %)
-    permissions:
-      contents: read
-
+(( workflow_passed_secrets("merge-gate") -))
+(( workflow_permissions("merge-gate") ))
   report:
     name: Report
     needs:

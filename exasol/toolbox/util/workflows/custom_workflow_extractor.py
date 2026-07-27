@@ -1,19 +1,40 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TypedDict
 
 from pydantic import (
     BaseModel,
     ConfigDict,
+    field_validator,
 )
 
-from exasol.toolbox.util.workflows.custom_workflow import CustomWorkflow
+from exasol.toolbox.util.workflows.custom_workflow import (
+    CustomWorkflow,
+    Permissions,
+    merge_permissions,
+)
+
+MINIMUM_GITHUB_PERMISSIONS: Permissions = {"contents": "read"}
 
 
-class CustomWorkflowEntry(TypedDict):
+class CustomWorkflowEntry(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
     exists: bool
     secrets: tuple[str, ...]
+    permissions: Permissions
+
+    @field_validator("secrets", mode="before")
+    @classmethod
+    def _normalize_secrets(cls, secrets: tuple[str, ...]) -> list[str]:
+        """Return unique secret names in alphabetical order."""
+        return sorted(set(secrets))
+
+    @field_validator("permissions", mode="before")
+    @classmethod
+    def _normalize_permissions(cls, permissions: list[Permissions]) -> Permissions:
+        """Merge permission maps while preserving first-seen order."""
+        return merge_permissions(permissions)
 
 
 class CustomWorkflowExtractor(BaseModel):
@@ -35,25 +56,35 @@ class CustomWorkflowExtractor(BaseModel):
         file_path = self.github_workflow_directory / f"{workflow}.yml"
 
         secrets: tuple[str, ...] = ()
+        permissions: list[Permissions] = []
         if file_path.is_file():
             custom_workflow = CustomWorkflow.load_from_file(file_path=file_path)
             secrets = custom_workflow.extract_secrets()
-
-        return {
-            "exists": file_path.exists(),
-            "secrets": secrets,
-        }
+            permissions = [
+                MINIMUM_GITHUB_PERMISSIONS,
+                custom_workflow.extract_permissions(),
+            ]
+        return CustomWorkflowEntry(
+            exists=file_path.exists(),
+            secrets=secrets,
+            permissions=permissions,
+        )
 
     def _build_merge_gate_entry(
         self, custom_workflows_dict: dict[str, CustomWorkflowEntry]
     ) -> CustomWorkflowEntry:
-        return {
-            "exists": True,
-            "secrets": custom_workflows_dict["merge-gate-extension"]["secrets"]
-            + custom_workflows_dict["slow-checks"]["secrets"]
+        return CustomWorkflowEntry(
+            exists=True,
+            secrets=custom_workflows_dict["merge-gate-extension"].secrets
+            + custom_workflows_dict["slow-checks"].secrets
             # from the `report.yml`
             + (self.sonar_token_name,),
-        }
+            permissions=[
+                MINIMUM_GITHUB_PERMISSIONS,
+                custom_workflows_dict["merge-gate-extension"].permissions,
+                custom_workflows_dict["slow-checks"].permissions,
+            ],
+        )
 
     def build_custom_workflow_dict(
         self,

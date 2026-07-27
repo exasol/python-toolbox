@@ -59,6 +59,16 @@ class SampleVulnerability:
         )
 
     @property
+    def report_json(self) -> str:
+        report_json = {
+            "name": self.package_name,
+            "version": self.version,
+            "vulnerability": self.cve_id,
+            "fix_versions": [self.fix_version],
+        }
+        return json.dumps([report_json], indent=2)
+
+    @property
     def vulnerability(self) -> Vulnerability:
         return Vulnerability.from_audit_entry(
             package_name=self.package_name,

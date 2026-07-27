@@ -1,4 +1,5 @@
 (( workflow_header ))
+(% from "_workflow_macros.j2" import workflow_passed_secrets, workflow_permissions with context %)
 name: Merge-Gate
 
 on:
@@ -53,29 +54,15 @@ jobs:
     needs:
       - approve-run-slow-tests
     uses: ./.github/workflows/slow-checks.yml
-    (% if custom_workflows["slow-checks"].secrets %)
-    secrets:
-      (% for secret_name in custom_workflows["slow-checks"].secrets %)
-      (( secret_name )): ${{ secrets.(( secret_name )) }}
-      (% endfor %)
-    (% endif %)
-    permissions:
-      contents: read
-
+(( workflow_passed_secrets("slow-checks") -))
+(( workflow_permissions("slow-checks") ))
   (% if custom_workflows["merge-gate-extension"].exists %)
   merge-gate-extension:
     name: Extension
     uses: ./.github/workflows/merge-gate-extension.yml
-    (% if custom_workflows["merge-gate-extension"].secrets %)
-    secrets:
-      (% for secret_name in custom_workflows["merge-gate-extension"].secrets %)
-      (( secret_name )): ${{ secrets.(( secret_name )) }}
-      (% endfor %)
-    (% endif %)
-    permissions:
-      contents: read
+(( workflow_passed_secrets("merge-gate-extension") -))
+(( workflow_permissions("merge-gate-extension") ))
   (% endif %)
-
   # This job ensures inputs have been executed successfully.
   allow-merge:
     name: Allow Merge

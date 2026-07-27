@@ -1,4 +1,5 @@
 (( workflow_header ))
+(% from "_workflow_macros.j2" import workflow_passed_secrets, workflow_permissions with context %)
 name: CD
 
 on:
@@ -6,6 +7,7 @@ on:
     tags:
       - '**'
       - '!v*'
+      - '!latest'
 
 jobs:
   check-release-tag:
@@ -29,15 +31,10 @@ jobs:
     name: Extension
     uses: ./.github/workflows/cd-extension.yml
     needs:
+      - check-release-tag
       - build-and-publish
-    (% if custom_workflows["cd-extension"].secrets %)
-    secrets:
-      (% for secret_name in custom_workflows["cd-extension"].secrets %)
-      (( secret_name )): ${{ secrets.(( secret_name )) }}
-      (% endfor %)
-    (% endif %)
-    permissions:
-      contents: write
+(( workflow_passed_secrets("cd-extension") -))
+(( workflow_permissions("cd-extension") ))
   (% endif %)
 
   (% if has_documentation %)

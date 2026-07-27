@@ -39,6 +39,22 @@ def get_filtered_python_files(project_root: Path) -> list[str]:
     return [f"{path}" for path in files if not exclude(path)]
 
 
+def validate_path_within_root(path: Path) -> Path:
+    """
+    Resolve a path and ensure its parent directory stays inside the project root.
+    """
+    resolved_path = path.resolve(strict=False)
+    resolved_root = PROJECT_CONFIG.root_path.resolve(strict=False)
+
+    if not resolved_path.parent.is_relative_to(resolved_root):
+        raise ValueError(
+            f"path must be located inside the project root: {resolved_root}. "
+            f"Got: {resolved_path}"
+        )
+
+    return resolved_path
+
+
 def _context_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter

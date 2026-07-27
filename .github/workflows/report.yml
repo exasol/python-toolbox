@@ -48,9 +48,3 @@ jobs:
         env:
           SONAR_TOKEN: "${{ secrets.SONAR_TOKEN }}"
         run: poetry run -- nox -s sonar:check
-
-      - name: Generate GitHub Summary
-        id: generate-github-summary
-        run: |-
-          echo -e "# Summary\n" >> $GITHUB_STEP_SUMMARY
-          poetry run -- nox -s dependency:licenses >> $GITHUB_STEP_SUMMARY

@@ -133,8 +133,8 @@ class Changelog:
 
         self.changelog.write_text(updated_content_str)
 
-    def get_changed_files(self) -> list[Path]:
-        return [self.unreleased, self.versioned_changes, self.changelog]
+    def get_changed_files(self) -> tuple[Path, ...]:
+        return self.unreleased, self.versioned_changes, self.changelog
 
     def _resolved_vulnerabilities(self) -> Markdown | None:
         try:
@@ -167,7 +167,7 @@ class Changelog:
                 section.intro = resolved_vulnerabilities.intro
             else:
                 versioned.add_child(resolved_vulnerabilities)
-        self.versioned_changes.write_text(versioned.rendered)
+        self.versioned_changes.write_text(f"{versioned.rendered}\n")
 
     def prepare_release(self) -> Changelog:
         """

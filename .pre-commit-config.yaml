@@ -35,6 +35,7 @@ repos:
     rev: v5.0.0
     hooks:
       - id: check-yaml
+        exclude: ^exasol/toolbox/templates/github/workflows/
         stages: [ pre-commit ]
       - id: end-of-file-fixer
         stages: [ pre-commit ]

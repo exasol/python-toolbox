@@ -42,20 +42,19 @@ This release fixes vulnerabilities by updating dependencies:
 | cryptography | GHSA-537c-gmf6-5ccf | 48.0.0   | 48.0.1   |
 | msgpack      | GHSA-6v7p-g79w-8964 | 1.1.2    | 1.2.1    |
 
-## Feature
+* #867: Fixed zizmor linting results
+
+## Features
 
 * #874: Added the `security` label to dependency update PR creation
 * #699: Added `all-extras` support to the Python environment GitHub action
 * #875: Added `name` attribute to generated workflow jobs using `-extension.yml` workflows
-
-## Bug
-
-* #744: Updated nox DB-version handling to use `BaseConfig.minimum_exasol_version` instead hardcoded `7.1.9`
-
-## Feature
-
 * #878: Added Nox session `workflow:audit` which uses `zizmor` and added it in `checks.yml`
 * #872: Added `custom_workflows` to `github_template_dict` for automatic custom workflow secret extraction
+
+## Bugfixes
+
+* #744: Updated nox DB-version handling to use `BaseConfig.minimum_exasol_version` instead hardcoded `7.1.9`
 
 ## Refactoring
 
@@ -66,10 +65,6 @@ This release fixes vulnerabilities by updating dependencies:
 
 * #828: Removed the legacy migration page and merged the useful guidance into getting started
 * #789: Consolidated the metrics and Sonar documentation to reflect the current PTB reporting flow
-
-## Security
-
-* #867: Fixed zizmor linting results
 
 ## Dependency Updates
 

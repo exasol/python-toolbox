@@ -17,4 +17,4 @@ def update_cookiecutter_default(version: Version) -> None:
     contents_as_dict["exasol_toolbox_version_range"] = f">={version},<{version.major+1}"
 
     updated_contents = dumps(contents_as_dict, indent=2)
-    COOKIECUTTER_JSON.write_text(updated_contents)
+    COOKIECUTTER_JSON.write_text(f"{updated_contents}\n")

@@ -3,6 +3,7 @@ from inspect import cleandoc
 import pytest
 
 from exasol.toolbox.util.workflows.custom_workflow_extractor import (
+    CustomWorkflowEntry,
     CustomWorkflowExtractor,
 )
 
@@ -22,6 +23,22 @@ def custom_workflow_extractor(workflow_directory):
     )
 
 
+class TestCustomWorkflowEntry:
+    @staticmethod
+    def test_secrets_are_normalized_on_creation():
+        custom_workflow_entry = CustomWorkflowEntry(
+            exists=True,
+            secrets=("ZETA_SECRET", "ALPHA_SECRET", "ALPHA_SECRET"),
+            permissions=[{"contents": "read"}],
+        )
+
+        assert custom_workflow_entry == CustomWorkflowEntry(
+            exists=True,
+            secrets=("ALPHA_SECRET", "ZETA_SECRET"),
+            permissions=[{"contents": "read"}],
+        )
+
+
 class TestBuildCustomWorkflowEntry:
     @staticmethod
     def test_file_does_not_exist(custom_workflow_extractor):
@@ -29,7 +46,11 @@ class TestBuildCustomWorkflowEntry:
             workflow="slow-checks"
         )
 
-        assert custom_workflow_entry == {"exists": False, "secrets": ()}
+        assert custom_workflow_entry == CustomWorkflowEntry(
+            exists=False,
+            secrets=(),
+            permissions=[],
+        )
 
     @staticmethod
     def test_file_does_not_contain_secrets(
@@ -48,7 +69,11 @@ class TestBuildCustomWorkflowEntry:
             workflow=workflow
         )
 
-        assert custom_workflow_entry == {"exists": True, "secrets": ()}
+        assert custom_workflow_entry == CustomWorkflowEntry(
+            exists=True,
+            secrets=(),
+            permissions=[{"contents": "read"}],
+        )
 
     @staticmethod
     def test_file_contains_secret(custom_workflow_extractor, workflow_directory):
@@ -68,37 +93,108 @@ class TestBuildCustomWorkflowEntry:
             workflow=workflow
         )
 
-        assert custom_workflow_entry == {
-            "exists": True,
-            "secrets": ("SLOW_CHECK_SECRET",),
-        }
+        assert custom_workflow_entry == CustomWorkflowEntry(
+            exists=True,
+            secrets=("SLOW_CHECK_SECRET",),
+            permissions=[{"contents": "read"}],
+        )
+
+    @staticmethod
+    def test_file_contains_permissions(custom_workflow_extractor, workflow_directory):
+        workflow = "slow-checks"
+        workflow_path = workflow_directory / f"{workflow}.yml"
+        workflow_path.write_text(cleandoc("""
+                name: Slow-Checks
+
+                on:
+                  workflow_call:
+
+                jobs:
+                  run-integration-tests:
+                    permissions:
+                      contents: read
+                      packages: write
+                  publish-results:
+                    permissions:
+                      contents: write
+                      id-token: write
+                """))
+
+        custom_workflow_entry = custom_workflow_extractor._build_custom_workflow_entry(
+            workflow=workflow
+        )
+
+        assert custom_workflow_entry == CustomWorkflowEntry(
+            exists=True,
+            secrets=(),
+            permissions=[
+                {
+                    "contents": "write",
+                    "packages": "write",
+                    "id-token": "write",
+                }
+            ],
+        )
 
 
 class TestBuildMergeGateEntry:
     @staticmethod
     def test_build_merge_gate_entry(custom_workflow_extractor):
         custom_workflows_dict = {
-            "merge-gate-extension": {"exists": True, "secrets": ("EXT_SECRET",)},
-            "slow-checks": {"exists": True, "secrets": ("SLOW_SECRET",)},
+            "merge-gate-extension": CustomWorkflowEntry(
+                exists=True,
+                secrets=("EXT_SECRET",),
+                permissions=[
+                    {
+                        "contents": "read",
+                        "packages": "read",
+                    }
+                ],
+            ),
+            "slow-checks": CustomWorkflowEntry(
+                exists=True,
+                secrets=("SLOW_SECRET",),
+                permissions=[
+                    {
+                        "packages": "write",
+                        "id-token": "write",
+                    }
+                ],
+            ),
         }
 
         merge_gate_entry = custom_workflow_extractor._build_merge_gate_entry(
             custom_workflows_dict
         )
 
-        assert merge_gate_entry == {
-            "exists": True,
-            "secrets": ("EXT_SECRET", "SLOW_SECRET", "SONAR_TOKEN"),
-        }
+        assert merge_gate_entry == CustomWorkflowEntry(
+            exists=True,
+            secrets=("EXT_SECRET", "SLOW_SECRET", "SONAR_TOKEN"),
+            permissions=[
+                {
+                    "contents": "read",
+                    "packages": "write",
+                    "id-token": "write",
+                }
+            ],
+        )
 
 
 class TestBuildCustomWorkflowDict:
     default_custom_workflow_dict = {
-        "cd-extension": {"exists": False, "secrets": ()},
-        "fast-tests-extension": {"exists": False, "secrets": ()},
-        "merge-gate-extension": {"exists": False, "secrets": ()},
-        "slow-checks": {"exists": False, "secrets": ()},
-        "merge-gate": {"exists": True, "secrets": ("SONAR_TOKEN",)},
+        "cd-extension": CustomWorkflowEntry(exists=False, secrets=(), permissions=[]),
+        "fast-tests-extension": CustomWorkflowEntry(
+            exists=False, secrets=(), permissions=[]
+        ),
+        "merge-gate-extension": CustomWorkflowEntry(
+            exists=False, secrets=(), permissions=[]
+        ),
+        "slow-checks": CustomWorkflowEntry(exists=False, secrets=(), permissions=[]),
+        "merge-gate": CustomWorkflowEntry(
+            exists=True,
+            secrets=("SONAR_TOKEN",),
+            permissions=[{"contents": "read"}],
+        ),
     }
 
     def test_no_custom_workflows_exist(self, custom_workflow_extractor):
@@ -136,14 +232,54 @@ class TestBuildCustomWorkflowDict:
         custom_workflow_dict = custom_workflow_extractor.build_custom_workflow_dict()
 
         expected_custom_workflow_dict = self.default_custom_workflow_dict.copy()
-        expected_custom_workflow_dict[workflow] = custom_workflow_dict[workflow] = {
-            "exists": True,
-            "secrets": (secret,),
-        }
+        expected_custom_workflow_dict[workflow] = CustomWorkflowEntry(
+            exists=True,
+            secrets=(secret,),
+            permissions=[{"contents": "read"}],
+        )
         if workflow in ("merge-gate-extension", "slow-checks"):
-            expected_custom_workflow_dict["merge-gate"]["secrets"] = (
-                secret,
-                "SONAR_TOKEN",
+            expected_custom_workflow_dict["merge-gate"] = CustomWorkflowEntry(
+                exists=True,
+                secrets=(
+                    secret,
+                    "SONAR_TOKEN",
+                ),
+                permissions=[{"contents": "read"}],
             )
 
         assert custom_workflow_dict == expected_custom_workflow_dict
+
+    @staticmethod
+    def test_merge_gate_permissions_are_aggregated_in_order(custom_workflow_extractor):
+        custom_workflows_dict = {
+            "merge-gate-extension": CustomWorkflowEntry(
+                exists=True,
+                secrets=(),
+                permissions=[
+                    {
+                        "contents": "read",
+                        "packages": "read",
+                    }
+                ],
+            ),
+            "slow-checks": CustomWorkflowEntry(
+                exists=True,
+                secrets=(),
+                permissions=[
+                    {
+                        "packages": "write",
+                        "id-token": "write",
+                    }
+                ],
+            ),
+        }
+
+        merge_gate_entry = custom_workflow_extractor._build_merge_gate_entry(
+            custom_workflows_dict
+        )
+
+        assert list(merge_gate_entry.permissions.items()) == [
+            ("contents", "read"),
+            ("packages", "write"),
+            ("id-token", "write"),
+        ]

@@ -1,5 +1,5 @@
 # Generated and maintained by the exasol-toolbox.
-# Last generated with exasol-toolbox version 9.0.0.
+# Last generated with exasol-toolbox version 10.3.0.
 name: Build & Publish
 
 on:
@@ -32,6 +32,10 @@ jobs:
         id: build-artifacts
         run: poetry build
 
+      - name: Generate SBOM
+        id: generate-sbom
+        run: poetry run -- nox -s dependency:sbom
+
       - name: Publish Release to PyPi
         id: publish-release-to-pypi
         env:
@@ -48,3 +52,4 @@ jobs:
           --title ${GITHUB_REF_NAME}
           --notes-file ./doc/changes/changes_${GITHUB_REF_NAME}.md
           dist/*
+          bom.spdx.json

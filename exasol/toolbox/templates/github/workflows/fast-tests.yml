@@ -1,4 +1,5 @@
 (( workflow_header ))
+(% from "_workflow_macros.j2" import workflow_passed_secrets, workflow_permissions with context %)
 name: Fast-Tests
 
 on:
@@ -46,12 +47,6 @@ jobs:
   fast-tests-extension:
     name: Extension
     uses: ./.github/workflows/fast-tests-extension.yml
-    (% if custom_workflows["fast-tests-extension"].secrets %)
-    secrets:
-      (% for secret_name in custom_workflows["fast-tests-extension"].secrets %)
-      (( secret_name )): ${{ secrets.(( secret_name )) }}
-      (% endfor %)
-    (% endif %)
-    permissions:
-      contents: read
+(( workflow_passed_secrets("fast-tests-extension") -))
+(( workflow_permissions("fast-tests-extension") ))
   (% endif %)

@@ -324,6 +324,14 @@ class TestVulnerabilities:
         result = vulnerabilities.security_issue_dict
         assert result == [sample_vulnerability.security_issue_entry]
 
+    @staticmethod
+    def test_report_json(sample_vulnerability):
+        vulnerabilities = Vulnerabilities(
+            vulnerabilities=[sample_vulnerability.vulnerability]
+        )
+        result = vulnerabilities.report_json
+        assert result == sample_vulnerability.report_json
+
 
 @pytest.mark.parametrize(
     "prefix,expected",

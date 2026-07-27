@@ -4,13 +4,10 @@ from typing import Final
 
 import importlib_resources as resources
 
-from exasol.toolbox.util.workflows.exceptions import (
-    InvalidWorkflowNameError,
-    NotMaintainedWorkflowError,
-)
+from exasol.toolbox.util.workflows.exceptions import InvalidWorkflowNameError
 
 WORKFLOW_TEMPLATES_DIRECTORY = "exasol.toolbox.templates.github.workflows"
-NOT_MAINTAINED_WORKFLOW_NAMES: Final[list[str]] = ["slow-checks"]
+CUSTOM_SEEDED_WORKFLOW_NAMES: Final[list[str]] = ["slow-checks"]
 DOCUMENTATION_ONLY_WORKFLOW_NAMES: Final[list[str]] = ["gh-pages", "pr-merge"]
 
 
@@ -21,9 +18,23 @@ def get_workflow_templates() -> Mapping[str, Path]:
     """
     package_resources = resources.files(WORKFLOW_TEMPLATES_DIRECTORY)
     return {
-        workflow_path.name.removesuffix(".yml"): Path(str(workflow_path))
+        workflow_name: Path(str(workflow_path))
         for workflow_path in package_resources.iterdir()
-        if workflow_path.is_file() and workflow_path.name.endswith(".yml")
+        if workflow_path.is_file()
+        and workflow_path.name.endswith(".yml")
+        and (workflow_name := workflow_path.name.removesuffix(".yml"))
+        not in CUSTOM_SEEDED_WORKFLOW_NAMES
+    }
+
+
+def get_custom_seeded_workflow_names() -> Mapping[str, Path]:
+    """
+    A mapping of custom seeded workflow template names to paths.
+    """
+    package_resources = resources.files(WORKFLOW_TEMPLATES_DIRECTORY)
+    return {
+        workflow_name: Path(str(package_resources / f"{workflow_name}.yml"))
+        for workflow_name in CUSTOM_SEEDED_WORKFLOW_NAMES
     }
 
 
@@ -33,8 +44,6 @@ def validate_workflow_name(workflow_name: str) -> str:
     """
     if workflow_name not in WORKFLOW_TEMPLATE_OPTIONS:
         raise InvalidWorkflowNameError(workflow_name, WORKFLOW_TEMPLATE_OPTIONS.keys())
-    if workflow_name in NOT_MAINTAINED_WORKFLOW_NAMES:
-        raise NotMaintainedWorkflowError(workflow_name)
     return workflow_name
 
 

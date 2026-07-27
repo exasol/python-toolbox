@@ -19,12 +19,22 @@ standardized baseline that can be overridden in individual projects.
   :start-at: github_template_dict
   :end-before: @computed_field
 
+.. _custom_workflow_metadata:
+
+Custom Workflow Metadata
+------------------------
+
+The PTB extracts metadata from reusable custom workflow files and exposes it
+through :py:attr:`exasol.toolbox.config.BaseConfig.github_template_dict` under the
+``custom_workflows`` entry. PTB-controlled workflow templates use that metadata
+when they call reusable workflows.
+
 .. _custom_workflow_secrets:
 
-Custom Workflow Secrets
-^^^^^^^^^^^^^^^^^^^^^^^
+Secrets
+^^^^^^^
 
-The PTB extracts secret names from reusable custom workflow files and exposes them
+The PTB extracts the names of secrets from custom workflow files and exposes them
 through :py:attr:`exasol.toolbox.config.BaseConfig.github_template_dict` under the
 ``custom_workflows`` entry. PTB-controlled workflow templates use those extracted
 names when they call reusable workflows and forward secrets via ``secrets:``.
@@ -50,6 +60,33 @@ For example, ``slow-checks.yml`` can define its reusable workflow header like th
 Those extracted secret names are then made available to the PTB templates that
 reference the custom workflow.
 
+.. _custom_workflow_permissions:
+
+Permissions
+^^^^^^^^^^^
+
+The PTB extracts the permissions required by custom workflow files. It reads every job's
+``permissions`` block and combines the results into a single ordered mapping, where
+the most permissive level wins.
+
+Please only configure the minimum required permissions by granting the least required
+access. In practice, ``contents: read`` is the most common baseline for workflows, and
+other permissions should only be added when it is truly required.
+
+For example, a custom workflow can declare permissions like this:
+
+.. code-block:: yaml
+
+   name: Slow-Checks
+
+   on:
+     workflow_call:
+
+   jobs:
+     run-integration-tests:
+       permissions:
+         contents: read
+
 .. _workflow_matrix:
 
 Matrix Combinations
@@ -64,7 +101,7 @@ Extending the Matrix
 ^^^^^^^^^^^^^^^^^^^^
 
 If you need to expose additional values via the ``matrix.yml``, you can extend
-:class:`exasol.toolbox.config.BaseConfig`. 
+:class:`exasol.toolbox.config.BaseConfig`.
 
 The example adds two additional matrix dimensions: A declared one
 `extra_matrix_value` and a computed one `computed_matrix_value`. Each of them
