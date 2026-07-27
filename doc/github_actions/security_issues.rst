@@ -26,7 +26,7 @@ Example Usage
 
         steps:
           - name: SCM Checkout
-            uses: actions/checkout@v6
+            uses: actions/checkout@v7
 
           - name: Report Security Issues
             uses: exasol/python-toolbox/.github/actions/security-issues@v1
