@@ -8,7 +8,7 @@ workflows:
           # The PTB has unit tests which require the fetch-depth to be 0.
           - name: Check out Repository
             id: check-out-repository
-            uses: actions/checkout@v6
+            uses: actions/checkout@v7
             with:
               persist-credentials: false
               fetch-depth: 0

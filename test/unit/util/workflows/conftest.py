@@ -27,7 +27,7 @@ class ExamplePatcherYaml:
               content:
                 - name: Check out Repository
                   id: check-out-repository
-                  uses: actions/checkout@v6
+                  uses: actions/checkout@v7
                   with:
                     fetch-depth: 0
         """

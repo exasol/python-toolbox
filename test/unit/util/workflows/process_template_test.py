@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
   run-unit-tests:
     name: Run Unit Tests (Python-${{ matrix.python-versions }})
@@ -39,7 +39,7 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
   fast-report:
     name: Fast Report

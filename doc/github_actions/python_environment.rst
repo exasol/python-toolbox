@@ -53,7 +53,7 @@ Example Usage
 
         steps:
           - name: SCM Checkout
-            uses: actions/checkout@v6
+            uses: actions/checkout@v7
 
           - name: Setup Python & Poetry Environment
             uses: exasol/python-toolbox/.github/actions/python-environment@v4
