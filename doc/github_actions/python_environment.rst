@@ -56,7 +56,7 @@ Example Usage
             uses: actions/checkout@v6
 
           - name: Setup Python & Poetry Environment
-            uses: exasol/python-toolbox/.github/actions/python-environment@v4
+            uses: exasol/python-toolbox/.github/actions/python-environment@v10
             with:
               python-version: 3.12
               poetry-version: 2.3.0
