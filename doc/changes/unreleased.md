@@ -7,7 +7,7 @@ guide and removes the unused Modules section from the developer guide.
 
 ## Documentation
 
-* #456: Documented how to discover PTB nox sessions in the user guide and removed the unused developer-guide Modules section
+* #456: Documented how to discover PTB nox sessions in the user guide
 
 ## Refactoring
 
