@@ -91,7 +91,7 @@ class TestYamlRenderer:
         steps:
           # Comment in nested area
           - name: SCM Checkout # Comment inline
-            uses: actions/checkout@v6
+            uses: actions/checkout@v7
             # Comment in step
         """
 
@@ -99,7 +99,7 @@ class TestYamlRenderer:
         steps:
         # Comment in nested area
         - name: SCM Checkout # Comment inline
-          uses: actions/checkout@v6
+          uses: actions/checkout@v7
           # Comment in step
         """
 
@@ -183,7 +183,7 @@ class TestYamlRenderer:
         steps:
           # Comment in nested area
           - name: SCM Checkout # Comment inline
-            uses: actions/checkout@v6
+            uses: actions/checkout@v7
             # Comment in step
         """
         content = cleandoc(input_yaml)
@@ -312,7 +312,7 @@ class TestYamlRendererJinja:
             steps:
               - name: Check out Repository
                 id: check-out-repository
-                uses: actions/checkout@v6
+                uses: actions/checkout@v7
 
         (% if custom_workflows["fast-tests-extension"].exists %)
           fast-tests-extension:
@@ -344,7 +344,7 @@ class TestYamlRendererJinja:
           steps:
             - name: Check out Repository
               id: check-out-repository
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
 
         """
 
@@ -371,7 +371,7 @@ class TestYamlRendererJinja:
             steps:
               - name: Check out Repository
                 id: check-out-repository
-                uses: actions/checkout@v6
+                uses: actions/checkout@v7
 
         (% if custom_workflows["fast-tests-extension"].exists %)
           fast-tests-extension:
@@ -394,7 +394,7 @@ class TestYamlRendererJinja:
           steps:
             - name: Check out Repository
               id: check-out-repository
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
 
         fast-tests-extension:
           name: Extension

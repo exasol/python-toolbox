@@ -1,5 +1,5 @@
 # Generated and maintained by the exasol-toolbox.
-# Last generated with exasol-toolbox version 9.0.0.
+# Last generated with exasol-toolbox version 10.4.0.
 name: Fast-Tests
 
 on:
@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Check out Repository
         id: check-out-repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -42,9 +42,3 @@ jobs:
           path: .coverage
           include-hidden-files: true
           overwrite: false
-
-  fast-tests-extension:
-    name: Extension
-    uses: ./.github/workflows/fast-tests-extension.yml
-    permissions:
-      contents: read

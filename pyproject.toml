@@ -1,6 +1,6 @@
 [project]
 name = "exasol-toolbox"
-version = "10.3.0"
+version = "10.4.0"
 description = "Your one-stop solution for managing all standard tasks and core workflows of your Python project."
 authors = [
     { name = "Nicola Coretti", email = "nicola.coretti@exasol.com" },
@@ -32,7 +32,6 @@ dependencies = [
     "coverage>=6.4.4,<8.0.0",
     "furo>=2022.9.15",
     "importlib-resources>=5.12.0",
-    "import-linter>=2.0,<3",
     "isort>=7.0.0,<8",
     "jinja2>=3.1.6,<4",
     "mypy>=0.971",

@@ -13,4 +13,6 @@ guide and removes the unused Modules section from the developer guide.
 
 ## Features
 
-* #905: Added SPDX SBOM generation to the `build-and-publish.yml` with the new Nox session `dependency:sbom`
+## Refactoring
+
+* #934: Removed unused, experimental Nox session `lint:import`
