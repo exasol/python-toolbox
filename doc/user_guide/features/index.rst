@@ -35,5 +35,16 @@ Central files in regards to nox and the toolbox are:
 Important Nox Commands
 ^^^^^^^^^^^^^^^^^^^^^^
 
-* :code:`nox -l` shows a list of all available nox sessions
-* :code:`nox -s <session>` run the specified session(s)
+
+Use :code:`nox -l` to show the current list of sessions for your project
+
+Common examples are as follows:
+
+* :code:`nox -s format:fix` applies formatting changes.
+* :code:`nox -s project:check` runs the main local quality gate.
+* :code:`nox -s test:unit` runs unit tests.
+* :code:`nox -s workflow:generate -- all` updates PTB workflow files.
+
+For more details, see the feature pages in this guide. They include formatting,
+GitHub workflows, dependency management, release preparation, and code-quality
+reporting.
