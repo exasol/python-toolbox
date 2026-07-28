@@ -9,10 +9,6 @@ guide and removes the unused Modules section from the developer guide.
 
 * #456: Documented how to discover PTB nox sessions in the user guide and removed the unused developer-guide Modules section
 
-## Bug
-
-## Features
-
 ## Refactoring
 
 * #934: Removed unused, experimental Nox session `lint:import`
