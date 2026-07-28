@@ -36,9 +36,9 @@ Important Nox Commands
 ^^^^^^^^^^^^^^^^^^^^^^
 
 
-Use :code:`nox -l` to show the current list of sessions for your project.
+Use :code:`nox -l` to show the current list of sessions for your project
 
-Common examples are:
+Common examples are as follows:
 
 * :code:`nox -s format:fix` applies formatting changes.
 * :code:`nox -s project:check` runs the main local quality gate.
