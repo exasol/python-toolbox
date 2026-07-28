@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import argparse
 import sys
 from collections.abc import Iterable
 from pathlib import Path
@@ -65,10 +64,6 @@ def _security_lint(session: Session, files: Iterable[str]) -> None:
         "--exit-zero",
         *files,
     )
-
-
-def _import_lint(session: Session, path: Path) -> None:
-    session.run("lint-imports", "--config", path)
 
 
 class Dependencies:
@@ -157,34 +152,3 @@ def dependency_check(session: Session) -> None:
         f"Warning: `nox -s lint:dependencies` is deprecated and will be removed on "
         f"{LINT_DEPENDENCIES_DEPRECATION_DATE}."
     )
-
-
-@nox.session(name="lint:import", python=False)
-def import_lint(session: Session) -> None:
-    """(experimental) Runs import linter on the project"""
-    parser = argparse.ArgumentParser(
-        usage="nox -s import-lint -- [options]",
-        description="Runs the import linter on the project",
-    )
-    parser.add_argument(
-        "-c",
-        "--config",
-        type=str,
-        help="path to the configuration file for the importlinter",
-        metavar="TEXT",
-    )
-
-    args: argparse.Namespace = parser.parse_args(args=session.posargs)
-    file: str = args.config
-    path: Path | None = None
-    if file is None:
-        path = getattr(
-            PROJECT_CONFIG, "import_linter_config", Path(".import_linter_config")
-        )
-    else:
-        path = Path(file)
-    if not path.exists():
-        session.error(
-            "Please make sure you have a configuration file for the importlinter"
-        )
-    _import_lint(session=session, path=path)
