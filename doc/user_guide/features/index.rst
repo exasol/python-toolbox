@@ -35,7 +35,6 @@ Central files in regards to nox and the toolbox are:
 Important Nox Commands
 ^^^^^^^^^^^^^^^^^^^^^^
 
-* :code:`nox -s <session>` run the specified session(s)
 
 Use :code:`nox -l` to show the current list of sessions for your project.
 
