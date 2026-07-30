@@ -1,4 +1,0 @@
-interface:
-  display_name: "Exasol Python Toolbox"
-  short_description: "Use PTB nox sessions"
-  default_prompt: "Use $exasol-python-toolbox to select the correct PTB nox session."

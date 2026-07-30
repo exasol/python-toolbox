@@ -81,7 +81,6 @@ def _load_eval_cases() -> dict:
 def test_ptb_skill_resources_are_available():
     expected_files = [
         "SKILL.md",
-        "agents/openai.yaml",
         "references/coding-guidelines.md",
         "references/common-workflows.md",
         "references/nox-sessions.md",
