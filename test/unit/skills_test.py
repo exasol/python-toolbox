@@ -1,6 +1,10 @@
-import tomllib
 from ast import literal_eval
 from pathlib import Path
+
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib
 
 PROJECT_ROOT = Path(__file__).parents[2]
 SKILL = PROJECT_ROOT / "exasol" / "toolbox" / "skills" / "exasol-python-toolbox"
