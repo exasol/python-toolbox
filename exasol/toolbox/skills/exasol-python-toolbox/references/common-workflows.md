@@ -55,6 +55,16 @@ replace it with configuration, a plugin hook, or a PTB extension point later.
 When you remove or rename a documentation file, update each Sphinx `toctree`
 that points to it. Then run `docs:build`.
 
+## Use git hooks
+
+If `.pre-commit-config.yaml` exists, the project can run hooks on commit and
+push.
+
+- On commit, pre-commit hooks can apply format fixes. Add the changed files and
+  commit again.
+- On push, pre-push hooks can run checks such as type checks and lint checks.
+  Fix failures and push again.
+
 ## Fix lint or format findings
 
 Run the PTB formatter first. Then run the checks that match the failure.
@@ -100,11 +110,14 @@ creates a version tag. It pushes the tag. It updates a `v<major>` tag if
 When you update `exasol-toolbox` in a project:
 
 1. Read the PTB changelog for migration notes.
-2. Update the dependency with Poetry. Example:
+2. Check the `exasol-toolbox` version range in `pyproject.toml`.
+3. Update the dependency with Poetry. Example:
    `poetry update exasol-toolbox`
-3. Generate or check PTB-managed workflows.
-4. Run necessary validation sessions.
-5. Update `doc/changes/unreleased.md` when the project requires a changelog
+4. If Poetry does not update PTB, adjust the version range intentionally. This
+   is usually necessary for a new PTB major version.
+5. Generate or check PTB-managed workflows.
+6. Run necessary validation sessions.
+7. Update `doc/changes/unreleased.md` when the project requires a changelog
    entry.
 
 For dependency updates that fix vulnerabilities, use the PTB vulnerability
@@ -119,7 +132,10 @@ PTB has two workflow groups:
   `PROJECT_CONFIG`, a PTB template, or a hook for shared behavior. Then run
   `workflow:generate` and `workflow:check`.
 - Custom workflows: The project owns these files. Edit the custom file directly.
-  Put GitHub `permissions` in the jobs that need them. Declare reusable-workflow
-  secrets under `on.workflow_call.secrets`.
+  Prefer workflow extension files that PTB can call from a PTB-provided
+  workflow. Use a separate workflow trigger only when the project owns the merge
+  protection decision for that workflow. Put GitHub `permissions` in the jobs
+  that need them. Declare reusable-workflow secrets under
+  `on.workflow_call.secrets`.
 
 After workflow changes, run `workflow:audit`.

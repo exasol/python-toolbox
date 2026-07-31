@@ -14,6 +14,8 @@ one instruction in one sentence when possible. Use consistent terms.
 - `doc/user_guide/features/formatting_code/index.rst`: format tools and format
   sessions.
 - `doc/user_guide/features/creating_a_release.rst`: release procedure.
+- `doc/user_guide/features/git_hooks/index.rst`: pre-commit and pre-push
+  hooks.
 - `doc/user_guide/features/github_workflows/index.rst`: workflow types,
   maintained workflows, and custom workflows.
 - `doc/user_guide/features/github_workflows/create_and_update.rst`: workflow

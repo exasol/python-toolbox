@@ -80,7 +80,7 @@ poetry run -- nox -s workflow:generate -- checks
 poetry run -- nox -s workflow:audit -- --fix=safe
 ```
 
-## Dependency, artifact, package, and matrix sessions
+## Dependency, package, and matrix sessions
 
 | Session | Use | Notes |
 | --- | --- | --- |
@@ -89,11 +89,6 @@ poetry run -- nox -s workflow:audit -- --fix=safe
 | `vulnerabilities:update` | Update vulnerable dependencies. | It can write a JSON report file inside the repository. |
 | `vulnerabilities:resolved` | Report vulnerabilities that are resolved since the latest tag. | Use it during release preparation. |
 | `dependency:sbom` | Generate SBOM files. | It writes `bom.cdx.json` and `bom.spdx.json`. |
-| `artifacts:validate` | Validate CI artifacts. | It checks `.coverage`, `.lint.json`, and `.security.json`. |
-| `artifacts:copy` | Copy and combine CI artifacts. | It requires an artifact directory argument. |
 | `sonar:check` | Upload artifacts to Sonar. | It uses `SONAR_TOKEN` and prepares `ci-coverage.xml`. |
 | `package:check` | Validate the package long description. | It runs `poetry build` and `twine check`. |
 | `matrix:generate` | Print selected config values as JSON arrays. | Use this session for matrix output. |
-| `matrix:python` | Print legacy Python matrix output. | This session is deprecated. It is scheduled for removal on 2026-09-15. |
-| `matrix:exasol` | Print legacy Exasol matrix output. | This session is deprecated. It is scheduled for removal on 2026-09-15. |
-| `matrix:all` | Print legacy Python and Exasol matrix output. | This session is deprecated. It is scheduled for removal on 2026-09-15. |

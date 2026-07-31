@@ -49,5 +49,16 @@ change or explain exact PTB operation.
 ## Release safety
 
 `release:trigger` creates git tags. It pushes the tags. Run it only when the
-user asks you to trigger a release. Check the repository state first.
+user asks you to trigger a release.
+
+Before you run `release:trigger`:
+
+1. Confirm that `release:prepare` ran and its PR is merged.
+2. Confirm that the current branch is the default branch.
+3. Confirm that the current branch is at the latest remote commit.
+4. Confirm that the current project version has no git tag and no GitHub
+   release.
+5. Confirm that the current project version is newer than the latest release,
+   unless the user confirms a different release plan.
+
 Use `references/common-workflows.md` for the release workflow.

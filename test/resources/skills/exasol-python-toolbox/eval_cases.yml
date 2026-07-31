@@ -26,17 +26,19 @@ cases:
         - "run Black directly"
         - "run isort directly"
 
-  - id: "run-targeted-unit-test"
-    category: "test"
-    prompt: "I changed one unit test file. Tell me how to run a targeted unit test."
+  - id: "run-local-quality-check"
+    category: "quality"
+    prompt: "I changed code in a PTB project. Tell me the local checks before commit and push."
     expected:
       must_include:
-        - "test:unit"
-        - "--"
+        - ".pre-commit-config.yaml"
+        - "pre-commit"
+        - "pre-push"
+        - "project:check"
         - "nox-sessions.md"
       must_not_include:
         - "run Pytest directly"
-        - "project:check first"
+        - "test/unit/path_test.py"
 
   - id: "prepare-release"
     category: "release"
@@ -57,7 +59,11 @@ cases:
     expected:
       must_include:
         - "release:trigger"
-        - "Check the repository state"
+        - "default branch"
+        - "latest remote commit"
+        - "no git tag"
+        - "no GitHub release"
+        - "latest release"
         - "user asks"
       must_not_include:
         - "run without approval"
@@ -68,11 +74,13 @@ cases:
     prompt: "A generated or patched GitHub workflow changed in a PTB project. Tell me what to do."
     expected:
       must_include:
+        - "PTB-provided workflows"
+        - "Custom workflows"
         - "workflow:check"
         - "workflow:generate"
         - ".workflow-patcher.yml"
-        - "needs"
         - "permissions"
+        - "on.workflow_call.secrets"
       must_not_include:
         - "edit generated workflow files first"
         - "manual workflow edit first"
@@ -82,6 +90,7 @@ cases:
     prompt: "Update exasol-toolbox in a PTB project. Tell me the validation steps."
     expected:
       must_include:
+        - "pyproject.toml"
         - "poetry update exasol-toolbox"
         - "workflow:generate"
         - "workflow:check"

@@ -1,10 +1,17 @@
-from ast import literal_eval
 from pathlib import Path
 from subprocess import run
 from zipfile import ZipFile
 
+from ruamel.yaml import YAML
+
+from exasol.toolbox.util.skills import (
+    PTB_SKILL_NAME,
+    get_skill_files,
+    get_skill_path,
+)
+
 PROJECT_ROOT = Path(__file__).parents[2]
-SKILL = PROJECT_ROOT / "exasol" / "toolbox" / "skills" / "exasol-python-toolbox"
+SKILL = get_skill_path(PTB_SKILL_NAME)
 SKILL_FILES = [
     "SKILL.md",
     "references/coding-guidelines.md",
@@ -22,73 +29,16 @@ EVAL_CASES = (
 )
 
 
-def _parse_quoted_value(value: str) -> str:
-    return literal_eval(value.strip())
-
-
-def _load_eval_cases_without_yaml_parser() -> dict:
-    result: dict = {"cases": []}
-    current_case: dict | None = None
-    current_list: list[str] | None = None
-
-    for raw_line in EVAL_CASES.read_text(encoding="utf-8").splitlines():
-        line = raw_line.rstrip()
-        stripped = line.strip()
-        if not stripped:
-            continue
-        if stripped.startswith("version:"):
-            result["version"] = int(stripped.split(":", maxsplit=1)[1].strip())
-            continue
-        if stripped.startswith("skill:"):
-            result["skill"] = _parse_quoted_value(stripped.split(":", maxsplit=1)[1])
-            continue
-        if stripped == "cases:":
-            continue
-        if stripped.startswith("- id:"):
-            current_case = {"expected": {"must_include": [], "must_not_include": []}}
-            result["cases"].append(current_case)
-            current_case["id"] = _parse_quoted_value(stripped.split(":", maxsplit=1)[1])
-            current_list = None
-            continue
-        if current_case is None:
-            continue
-        if stripped.startswith("category:"):
-            current_case["category"] = _parse_quoted_value(
-                stripped.split(":", maxsplit=1)[1]
-            )
-            continue
-        if stripped.startswith("prompt:"):
-            current_case["prompt"] = _parse_quoted_value(
-                stripped.split(":", maxsplit=1)[1]
-            )
-            continue
-        if stripped == "expected:":
-            continue
-        if stripped == "must_include:":
-            current_list = current_case["expected"]["must_include"]
-            continue
-        if stripped == "must_not_include:":
-            current_list = current_case["expected"]["must_not_include"]
-            continue
-        if stripped.startswith("- "):
-            assert current_list is not None
-            current_list.append(_parse_quoted_value(stripped[2:]))
-
-    return result
-
-
 def _load_eval_cases() -> dict:
-    try:
-        from ruamel.yaml import YAML
-    except ModuleNotFoundError:
-        return _load_eval_cases_without_yaml_parser()
-
     return YAML(typ="safe").load(EVAL_CASES)
 
 
 def test_ptb_skill_resources_are_available():
+    skill_files = get_skill_files(PTB_SKILL_NAME)
+
     for expected in SKILL_FILES:
-        assert (SKILL / expected).is_file()
+        assert expected in skill_files
+        assert skill_files[expected].is_file()
 
 
 def test_ptb_skill_resources_are_packaged(tmp_path):
@@ -118,7 +68,7 @@ def test_ptb_skill_resources_are_packaged(tmp_path):
         wheel_files = set(wheel.namelist())
 
     expected_files = {
-        f"exasol/toolbox/skills/exasol-python-toolbox/{path}" for path in SKILL_FILES
+        f"exasol/toolbox/skills/{PTB_SKILL_NAME}/{path}" for path in SKILL_FILES
     }
     assert expected_files <= wheel_files
 
@@ -136,6 +86,8 @@ def test_ptb_skill_has_no_main_branch_metadata():
     forbidden = [
         "main-branch",
         "main branch",
+        "master-branch",
+        "master branch",
         "inventory",
         "source-map",
     ]
@@ -183,6 +135,8 @@ def test_ptb_skill_eval_cases_are_valid():
 
     assert eval_cases["version"] == 1
     assert eval_cases["skill"] == "exasol-python-toolbox"
+    # Keep enough cases to cover the ticket scope, but not so many that the
+    # deterministic eval file becomes hard to review.
     assert 6 <= len(eval_cases["cases"]) <= 8
 
     ids = [case["id"] for case in eval_cases["cases"]]

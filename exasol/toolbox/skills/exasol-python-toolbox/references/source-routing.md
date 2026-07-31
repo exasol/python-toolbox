@@ -21,34 +21,43 @@ Read the source file before you explain a detailed rule.
 
 ## PTB nox sessions
 
-- `exasol/toolbox/nox/tasks.py`: exported standard sessions and `project:check`.
+- `exasol/toolbox/nox/_artifacts.py`: artifact validation, artifact copy, and
+  Sonar upload sessions.
+- `exasol/toolbox/nox/_dependencies.py`: dependency audit, license,
+  vulnerability, and SBOM sessions.
+- `exasol/toolbox/nox/_documentation.py`: documentation, link check, and
+  changelog sessions.
 - `exasol/toolbox/nox/_format.py`: `format:fix` and `format:check`.
 - `exasol/toolbox/nox/_lint.py`: `lint:code`, `lint:typing`, and
   `lint:security`.
-- `exasol/toolbox/nox/_test.py`: `test:unit`, `test:integration`, and
-  `test:coverage`.
-- `exasol/toolbox/nox/_documentation.py`: documentation, link check, and
-  changelog sessions.
+- `exasol/toolbox/nox/_matrix.py`: matrix output sessions for CI usage.
+- `exasol/toolbox/nox/_package.py`: package validation.
 - `exasol/toolbox/nox/_release.py`: release preparation, release update, and
   release trigger sessions.
+- `exasol/toolbox/nox/_test.py`: `test:unit`, `test:integration`, and
+  `test:coverage`.
 - `exasol/toolbox/nox/_workflow.py`: workflow check, generation, and audit
   sessions.
-- `exasol/toolbox/nox/_dependencies.py`: dependency audit, license,
-  vulnerability, and SBOM sessions.
-- `exasol/toolbox/nox/_artifacts.py`: artifact validation, artifact copy, and
-  Sonar upload sessions.
-- `exasol/toolbox/nox/_matrix.py`: matrix output sessions.
-- `exasol/toolbox/nox/_package.py`: package validation.
-- `exasol/toolbox/nox/_shared.py`: shared nox helpers.
+
+## PTB nox support files
+
+- `exasol/toolbox/nox/_shared.py`: old shared nox helpers. Prefer
+  `exasol/toolbox/util/` for new code that more than one session uses.
+- `exasol/toolbox/nox/tasks.py`: exported nox session list. Import new nox
+  session modules here so projects that use PTB can import them with
+  `from exasol.toolbox.nox.tasks import *`. Do not add new session code here.
 
 ## PTB tools
 
+Do not add new functions under `exasol/toolbox/tools/`. Put reusable code in
+`exasol/toolbox/util/`. Prefer a nox session for new user-facing operations.
+
+- `exasol/toolbox/tools/issue.py`: issue template CLI.
+- `exasol/toolbox/tools/replace_version.py`: version replacement helpers.
+- `exasol/toolbox/tools/security.py`: security issue conversion and creation.
 - `exasol/toolbox/tools/tbx.py`: CLI root.
 - `exasol/toolbox/tools/template.py`: template list, show, diff, install, and
   update helpers.
-- `exasol/toolbox/tools/issue.py`: issue template CLI.
-- `exasol/toolbox/tools/security.py`: security issue conversion and creation.
-- `exasol/toolbox/tools/replace_version.py`: version replacement helpers.
 
 ## Workflow templates and helpers
 
@@ -64,12 +73,12 @@ Read the source file before you explain a detailed rule.
 
 ## Release and dependency helpers
 
-- `exasol/toolbox/util/release/`: changelog, release notes, and Cookiecutter
-  version helpers.
 - `exasol/toolbox/util/dependencies/`: dependency audit, license report,
   dependency change, vulnerability tracking, and dependency update helpers.
-- `exasol/toolbox/util/version.py`: version parsing and version upgrade logic.
 - `exasol/toolbox/util/git.py`: git helper functions.
+- `exasol/toolbox/util/release/`: changelog, release notes, and Cookiecutter
+  version helpers.
+- `exasol/toolbox/util/version.py`: version parsing and version upgrade logic.
 
 ## Documentation and project template
 
