@@ -18,13 +18,12 @@ The sessions below match the PTB version that includes this skill.
 | `lint:code` | Run static code analysis. | It runs Pylint on `PROJECT_CONFIG.source_code_path` and writes `.lint.json`. |
 | `lint:typing` | Run type checks. | It runs Mypy on filtered project Python files. |
 | `lint:security` | Run security lint. | It runs Bandit and writes `.security.json`. |
-| `lint:dependencies` | Check legacy dependency sources. | This session is deprecated. It is scheduled for removal on 2026-10-08. Do not add new use. |
 
 ## Test sessions
 
 | Session | Use | Notes |
 | --- | --- | --- |
-| `test:unit` | Run unit tests. | It runs `pytest -v test/unit`. Put Pytest arguments after `--`. |
+| `test:unit` | Run unit tests. | It runs `pytest -v test/unit`. Put Pytest options after `--`; use `-k` to select tests by name. |
 | `test:integration` | Run integration tests. | It runs `pytest -v test/integration`. It supports PTB integration test hooks. |
 | `test:coverage` | Run all tests with coverage. | It runs unit and integration tests with coverage. It prints `coverage report -m`. |
 
@@ -33,7 +32,7 @@ Test command examples:
 ```bash
 poetry run -- nox -s test:unit
 poetry run -- nox -s test:unit -- --coverage
-poetry run -- nox -s test:unit -- test/unit/path_test.py -k scenario
+poetry run -- nox -s test:unit -- -k scenario
 poetry run -- nox -s test:integration -- --db-version 8.34.0
 ```
 
@@ -71,7 +70,7 @@ poetry run -- nox -s release:update
 | --- | --- | --- |
 | `workflow:check` | Check generated workflows. | It requires one workflow name or `all`. It fails when files differ from PTB templates. |
 | `workflow:generate` | Generate or update workflows. | It requires one workflow name or `all`. |
-| `workflow:audit` | Audit workflows and actions. | It runs zizmor with PTB configuration. It sends more zizmor arguments to zizmor. |
+| `workflow:audit` | Audit workflows and actions. | It runs zizmor with PTB configuration. It can pass `--fix` to zizmor to apply automatic fixes. |
 
 Workflow command examples:
 
