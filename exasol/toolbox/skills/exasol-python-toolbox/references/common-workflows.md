@@ -39,6 +39,8 @@ For an existing project:
 If a project cannot use a PTB session without changes, use a local override
 only as a short-term migration step. For a permanent solution, use
 configuration, plugin hooks, or PTB extension points.
+When you add a temporary local override, create an issue in the project to
+replace it with configuration, a plugin hook, or a PTB extension point later.
 
 ## Make a daily code change
 
@@ -53,16 +55,14 @@ configuration, plugin hooks, or PTB extension points.
 When you remove or rename a documentation file, update each Sphinx `toctree`
 that points to it. Then run `docs:build`.
 
-Put more Pytest arguments after `--`.
-Use `nox-sessions.md` for examples.
-
 ## Fix lint or format findings
 
 Run the PTB formatter first. Then run the checks that match the failure.
 Use `nox-sessions.md` for the exact session commands.
 
 Do not adjust code manually to imitate Black, isort, or Ruff. Let PTB run these
-tools. Use PTB configuration to exclude a file or directory.
+tools. To exclude a Python file or directory, use
+`PROJECT_CONFIG.add_to_excluded_python_paths` in `noxconfig.py`.
 
 ## Prepare a release
 
@@ -71,16 +71,19 @@ Prepare a release with `release:prepare`.
 This session does these actions:
 
 1. It updates the version.
-2. It moves content from `doc/changes/unreleased.md` to a versioned changes file.
-3. It updates `doc/changes/changelog.md`.
-4. It runs configured release hooks.
-5. It commits the changes if you do not use `--no-add`.
-6. It opens a PR if you do not use `--no-pr`.
+2. It creates a release branch and sets it as the current Git branch unless you
+   use `--no-branch` or `--no-add`.
+3. It moves content from `doc/changes/unreleased.md` to a versioned changes file.
+4. It updates `doc/changes/changelog.md`.
+5. It runs configured release hooks.
+6. It commits the changes if you do not use `--no-add`.
+7. It opens a PR if you do not use `--no-pr`.
 
 Useful flags:
 
-- `--no-branch`: Do not create or switch to a release branch.
-- `--no-add`: Do not add or commit changes.
+- `--no-branch`: Do not create a release branch and do not set it as current.
+- `--no-add`: Do not add or commit changes. This also prevents release branch
+  creation.
 - `--no-pr`: Do not create a pull request.
 
 If dependencies change after release preparation, update the versioned changes
@@ -89,8 +92,8 @@ file with `release:update`.
 After the release PR is merged, apply the release safety rule from `SKILL.md`.
 
 `release:trigger` checks out the default branch. It pulls the default branch. It
-creates a version tag. It pushes the tag. It can update a `v<major>` tag if
-`PROJECT_CONFIG` enables this function.
+creates a version tag. It pushes the tag. It updates a `v<major>` tag if
+`PROJECT_CONFIG.create_major_version_tags` is `True`.
 
 ## Update PTB or dependencies
 
@@ -109,26 +112,14 @@ sessions.
 
 ## Maintain GitHub workflows
 
-PTB ships workflow templates. Generate workflows instead of editing generated
-files manually.
+PTB has two workflow groups:
 
-Use the PTB workflow sessions.
+- PTB-provided workflows: Do not edit generated files by hand. Use
+  `.workflow-patcher.yml` for supported project-specific changes. Use
+  `PROJECT_CONFIG`, a PTB template, or a hook for shared behavior. Then run
+  `workflow:generate` and `workflow:check`.
+- Custom workflows: The project owns these files. Edit the custom file directly.
+  Put GitHub `permissions` in the jobs that need them. Declare reusable-workflow
+  secrets under `on.workflow_call.secrets`.
 
-Use `.workflow-patcher.yml` for supported project-specific workflow changes. If
-multiple Exasol Python projects need the same change, consider a PTB template,
-configuration field, or hook.
-
-When you change workflow templates, custom workflows, or `.workflow-patcher.yml`,
-check these items after generation:
-
-- No `needs` entry points to a removed job.
-- Required root-level and job-level `permissions` stay in the generated
-  workflow.
-- Scalar permission forms, for example `read-all` and `write-all`, are handled
-  or rejected with a clear error.
-- Release guards, for example tag checks, still run before release or extension
-  jobs.
-- Self-release workflows use an action reference that exists before the first
-  release tag is pushed.
-- Project tools run in the Poetry environment when the project dependencies are
-  installed there.
+After workflow changes, run `workflow:audit`.

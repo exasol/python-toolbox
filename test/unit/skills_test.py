@@ -1,13 +1,17 @@
 from ast import literal_eval
 from pathlib import Path
-
-try:
-    import tomllib
-except ModuleNotFoundError:
-    import tomli as tomllib
+from subprocess import run
+from zipfile import ZipFile
 
 PROJECT_ROOT = Path(__file__).parents[2]
 SKILL = PROJECT_ROOT / "exasol" / "toolbox" / "skills" / "exasol-python-toolbox"
+SKILL_FILES = [
+    "SKILL.md",
+    "references/coding-guidelines.md",
+    "references/common-workflows.md",
+    "references/nox-sessions.md",
+    "references/source-routing.md",
+]
 EVAL_CASES = (
     PROJECT_ROOT
     / "test"
@@ -83,23 +87,40 @@ def _load_eval_cases() -> dict:
 
 
 def test_ptb_skill_resources_are_available():
-    expected_files = [
-        "SKILL.md",
-        "references/coding-guidelines.md",
-        "references/common-workflows.md",
-        "references/nox-sessions.md",
-        "references/source-routing.md",
-    ]
-
-    for expected in expected_files:
+    for expected in SKILL_FILES:
         assert (SKILL / expected).is_file()
 
 
-def test_ptb_skill_resources_are_packaged():
-    pyproject = tomllib.loads((PROJECT_ROOT / "pyproject.toml").read_text())
-    includes = pyproject["tool"]["poetry"]["include"]
+def test_ptb_skill_resources_are_packaged(tmp_path):
+    build_output = tmp_path / "dist"
+    result = run(
+        [
+            "poetry",
+            "build",
+            "--project",
+            str(PROJECT_ROOT),
+            "--format",
+            "wheel",
+            "--output",
+            str(build_output),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
 
-    assert "exasol/toolbox/skills/**/*" in includes
+    assert result.returncode == 0, result.stdout + result.stderr
+
+    wheels = list(build_output.glob("*.whl"))
+    assert len(wheels) == 1
+
+    with ZipFile(wheels[0]) as wheel:
+        wheel_files = set(wheel.namelist())
+
+    expected_files = {
+        f"exasol/toolbox/skills/exasol-python-toolbox/{path}" for path in SKILL_FILES
+    }
+    assert expected_files <= wheel_files
 
 
 def test_ptb_skill_frontmatter_is_complete():

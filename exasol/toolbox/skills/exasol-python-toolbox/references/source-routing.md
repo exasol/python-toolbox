@@ -23,8 +23,8 @@ Read the source file before you explain a detailed rule.
 
 - `exasol/toolbox/nox/tasks.py`: exported standard sessions and `project:check`.
 - `exasol/toolbox/nox/_format.py`: `format:fix` and `format:check`.
-- `exasol/toolbox/nox/_lint.py`: `lint:code`, `lint:typing`,
-  `lint:security`, and deprecated `lint:dependencies`.
+- `exasol/toolbox/nox/_lint.py`: `lint:code`, `lint:typing`, and
+  `lint:security`.
 - `exasol/toolbox/nox/_test.py`: `test:unit`, `test:integration`, and
   `test:coverage`.
 - `exasol/toolbox/nox/_documentation.py`: documentation, link check, and
