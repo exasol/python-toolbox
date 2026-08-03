@@ -1,0 +1,112 @@
+version: 1
+skill: "exasol-python-toolbox"
+cases:
+  - id: "setup-existing-project"
+    category: "setup"
+    prompt: "An existing Python project must start to use PTB. Tell me the correct setup steps."
+    expected:
+      must_include:
+        - "poetry add --group dev exasol-toolbox"
+        - "noxconfig.py"
+        - "PROJECT_CONFIG"
+        - "noxfile.py"
+        - "from exasol.toolbox.nox.tasks import *"
+      must_not_include:
+        - "copy PTB source code"
+        - "replace PTB automation"
+
+  - id: "fix-format-failure"
+    category: "quality"
+    prompt: "A PTB project has format check failures. Tell me the correct first action."
+    expected:
+      must_include:
+        - "format:fix"
+        - "nox-sessions.md"
+      must_not_include:
+        - "run Black directly"
+        - "run isort directly"
+
+  - id: "run-local-quality-check"
+    category: "quality"
+    prompt: "I changed code in a PTB project. Tell me the local checks before commit and push."
+    expected:
+      must_include:
+        - ".pre-commit-config.yaml"
+        - "pre-commit"
+        - "pre-push"
+        - "project:check"
+        - "nox-sessions.md"
+      must_not_include:
+        - "run Pytest directly"
+        - "test/unit/path_test.py"
+
+  - id: "prepare-release"
+    category: "release"
+    prompt: "Prepare a patch release for a PTB project. Tell me the safe workflow."
+    expected:
+      must_include:
+        - "release:prepare"
+        - "--type patch"
+        - "review"
+        - "changelog"
+      must_not_include:
+        - "release:trigger"
+        - "push tags"
+
+  - id: "trigger-release-safety"
+    category: "release"
+    prompt: "The release PR is merged. Tell me the safety checks before I trigger the release."
+    expected:
+      must_include:
+        - "release:trigger"
+        - "default branch"
+        - "latest remote commit"
+        - "no git tag"
+        - "no GitHub release"
+        - "latest release"
+        - "user asks"
+      must_not_include:
+        - "run without approval"
+        - "skip repository checks"
+
+  - id: "workflow-template-update"
+    category: "workflow"
+    prompt: "A generated or patched GitHub workflow changed in a PTB project. Tell me what to do."
+    expected:
+      must_include:
+        - "PTB-provided workflows"
+        - "Custom workflows"
+        - "workflow:check"
+        - "workflow:generate"
+        - ".workflow-patcher.yml"
+        - "permissions"
+        - "on.workflow_call.secrets"
+      must_not_include:
+        - "edit generated workflow files first"
+        - "manual workflow edit first"
+
+  - id: "update-ptb-dependency"
+    category: "update"
+    prompt: "Update exasol-toolbox in a PTB project. Tell me the validation steps."
+    expected:
+      must_include:
+        - "pyproject.toml"
+        - "poetry update exasol-toolbox"
+        - "workflow:generate"
+        - "workflow:check"
+        - "doc/changes/unreleased.md"
+      must_not_include:
+        - "ignore migration notes"
+        - "skip validation"
+
+  - id: "exact-source-behavior"
+    category: "source-routing"
+    prompt: "I need exact behavior for release preparation. Tell me which source file to read."
+    expected:
+      must_include:
+        - "source-routing.md"
+        - "exasol/toolbox/nox/_release.py"
+        - "read the source file"
+      must_not_include:
+        - "guess"
+        - "copy PTB source code"

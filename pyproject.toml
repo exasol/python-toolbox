@@ -82,8 +82,7 @@ packages = [
 include = [
     "README.rst",
     "doc/changes/changelog.md",
-    "LICENSE",
-    "exasol/toolbox/templates/**/*"
+    "LICENSE"
 ]
 
 [project.urls]
