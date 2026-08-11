@@ -7,6 +7,7 @@ from functools import (
     total_ordering,
     wraps,
 )
+from pathlib import Path
 from shutil import which
 
 from exasol.toolbox.error import ToolboxError
@@ -104,3 +105,19 @@ class Version:
             text=True,
         )
         return Version.from_string(output.stdout.strip())
+
+
+@poetry_command
+def project_name_and_version_from_poetry(
+    working_directory: Path | None = None,
+) -> tuple[str, Version]:
+    """Return the project name and version reported by Poetry."""
+    output = subprocess.run(  # nosec: B603, B607 - allow fixed poetry command
+        ["poetry", "version", "--no-ansi"],
+        cwd=working_directory,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    project_name, version = output.stdout.strip().rsplit(maxsplit=1)
+    return project_name.replace("-", "_"), Version.from_string(version)

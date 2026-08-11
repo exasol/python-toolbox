@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
 from pathlib import Path
 
 import nox
@@ -23,8 +22,7 @@ from exasol.toolbox.util.dependencies.poetry_dependencies import get_dependencie
 from exasol.toolbox.util.dependencies.track_vulnerabilities import DependenciesAudit
 from exasol.toolbox.util.dependencies.update_dependencies import DependencyUpdater
 from exasol.toolbox.util.version import (
-    Version,
-    poetry_command,
+    project_name_and_version_from_poetry,
 )
 from noxconfig import PROJECT_CONFIG
 
@@ -107,22 +105,6 @@ def report_resolved_vulnerabilities(session: Session) -> None:
     print(audit.report_resolved_vulnerabilities())
 
 
-@poetry_command
-def project_name_and_version_from_poetry(
-    working_directory: Path | None = None,
-) -> tuple[str, Version]:
-    """Return the project name and version reported by Poetry."""
-    output = subprocess.run(  # nosec: B603, B607
-        ["poetry", "version", "--no-ansi"],
-        cwd=working_directory,
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    project_name, version = output.stdout.strip().rsplit(maxsplit=1)
-    return project_name.replace("-", "_"), Version.from_string(version)
-
-
 @nox.session(name="dependency:sbom", python=False)
 def generate_sbom(session: Session) -> None:
     """Generate SPDX SBOM for the project dependencies.
@@ -149,3 +131,4 @@ def generate_sbom(session: Session) -> None:
         bom_spdx_json,
     )
     session.run("test", "-s", bom_spdx_json)
+    print(sbom_filename)
