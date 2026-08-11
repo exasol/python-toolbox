@@ -38,7 +38,7 @@ jobs:
         id: rename-sbom
         run: |
           SBOM_NAME=$(poetry version --no-ansi | awk '{gsub(/-/, "_", $1); print $1"-"$2".spdx.json"}')
-          echo "SBOM_NAME=$SBOM_NAME" >> $GITHUB_ENV
+          echo "sbom-name=$SBOM_NAME" >> "$GITHUB_OUTPUT"
       - name: Publish Release to PyPi
         id: publish-release-to-pypi
         env:
