@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 from pathlib import Path
 
 import nox
@@ -21,6 +22,10 @@ from exasol.toolbox.util.dependencies.licenses import (
 from exasol.toolbox.util.dependencies.poetry_dependencies import get_dependencies
 from exasol.toolbox.util.dependencies.track_vulnerabilities import DependenciesAudit
 from exasol.toolbox.util.dependencies.update_dependencies import DependencyUpdater
+from exasol.toolbox.util.version import (
+    Version,
+    poetry_command,
+)
 from noxconfig import PROJECT_CONFIG
 
 
@@ -102,6 +107,22 @@ def report_resolved_vulnerabilities(session: Session) -> None:
     print(audit.report_resolved_vulnerabilities())
 
 
+@poetry_command
+def project_name_and_version_from_poetry(
+    working_directory: Path | None = None,
+) -> tuple[str, Version]:
+    """Return the project name and version reported by Poetry."""
+    output = subprocess.run(  # nosec: B603, B607
+        ["poetry", "version", "--no-ansi"],
+        cwd=working_directory,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    project_name, version = output.stdout.strip().rsplit(maxsplit=1)
+    return project_name.replace("-", "_"), Version.from_string(version)
+
+
 @nox.session(name="dependency:sbom", python=False)
 def generate_sbom(session: Session) -> None:
     """Generate SPDX SBOM for the project dependencies.
@@ -109,8 +130,12 @@ def generate_sbom(session: Session) -> None:
     Note: SPDX version 2 is used as no stable Python tool exists yet
     for generating SPDX version 3.
     """
+    project_name, version = project_name_and_version_from_poetry(
+        working_directory=PROJECT_CONFIG.root_path
+    )
+    sbom_filename = f"{project_name}-{version}.spdx.json"
     bom_cdx_json = PROJECT_CONFIG.root_path / "bom.cdx.json"
-    bom_spdx_json = PROJECT_CONFIG.root_path / "bom.spdx.json"
+    bom_spdx_json = PROJECT_CONFIG.root_path / sbom_filename
     session.run("cyclonedx-py", "environment", "-o", bom_cdx_json)
     session.run(
         "sbomconvert",
