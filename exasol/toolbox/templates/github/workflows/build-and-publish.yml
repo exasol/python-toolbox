@@ -56,4 +56,4 @@ jobs:
           --title ${GITHUB_REF_NAME}
           --notes-file ./doc/changes/changes_${GITHUB_REF_NAME}.md
           dist/*
-          ${{ env.SBOM_NAME }}
+          "${{ env.SBOM_NAME }}"
