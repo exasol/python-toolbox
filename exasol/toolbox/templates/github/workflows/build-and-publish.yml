@@ -49,7 +49,7 @@ jobs:
       - name: Publish Release to GitHub
         id: publish-release-to-github
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SBOM_NAME: ${{ steps.rename-sbom.outputs.sbom-name }}
         run: >
           gh release create ${GITHUB_REF_NAME}
           --title ${GITHUB_REF_NAME}
