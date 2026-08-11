@@ -35,7 +35,12 @@ jobs:
       - name: Generate SBOM
         id: generate-sbom
         run: poetry run -- nox -s dependency:sbom
-
+      - name: Rename SBOM
+        id: rename-sbom
+        run: |
+          SBOM_NAME=$(poetry version --no-ansi | awk '{gsub(/-/, "_", $1); print $1"-"$2".spdx.json"}')
+          mv bom.spdx.json $SBOM_NAME
+          echo "SBOM_NAME=$SBOM_NAME" >> $GITHUB_ENV
       - name: Publish Release to PyPi
         id: publish-release-to-pypi
         env:
@@ -52,4 +57,4 @@ jobs:
           --title ${GITHUB_REF_NAME}
           --notes-file ./doc/changes/changes_${GITHUB_REF_NAME}.md
           dist/*
-          bom.spdx.json
+          ${{ env.SBOM_NAME }}
