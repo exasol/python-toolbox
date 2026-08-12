@@ -99,3 +99,18 @@ def test_poetry_decorator_subprocess(mock):
 
     with pytest.raises(ToolboxError):
         test()
+
+
+def test_project_name_and_version_from_poetry():
+    from unittest.mock import MagicMock
+
+    from exasol.toolbox.util.version import project_name_and_version_from_poetry
+
+    mock_result = MagicMock()
+    mock_result.stdout = "exasol-toolbox 10.4.0\n"
+
+    with patch("subprocess.run", return_value=mock_result):
+        name, version = project_name_and_version_from_poetry()
+
+    assert name == "exasol_toolbox"
+    assert version == Version(10, 4, 0)
