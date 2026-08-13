@@ -11,6 +11,10 @@ from the developer guide.
 * #456: Documented how to discover PTB nox sessions in the user guide
 * #933: Added an agent skill for PTB work
 
+## Bug Fixes
+
+* #946: Added project name and version context to SBOM file name
+
 ## Refactoring
 
 * #934: Removed unused, experimental Nox session `lint:import`
