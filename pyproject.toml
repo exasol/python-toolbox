@@ -71,7 +71,7 @@ sphinx-multiversion = "exasol.toolbox.sphinx.multiversion:main"
 dev = [
     "autoimport>=1.4.0,<2",
     "cookiecutter>=2.6.0,<3",
-    "types-pyyaml (>=6.0.12.20250915,<7.0.0.0)",
+    "types-pyyaml (>=6.0.12.20260815,<7.0.0.0)",
 ]
 
 [tool.poetry]
