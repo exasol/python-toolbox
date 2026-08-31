@@ -9,7 +9,7 @@ on:
 jobs:
   merge-gate:
     name: Merge Gate
-    uses: ./.github/workflows/merge-gate.yml
+    uses: $/.github/workflows/merge-gate.yml
 (( workflow_passed_secrets("merge-gate") -))
 (( workflow_permissions("merge-gate") ))
   report:
@@ -21,7 +21,7 @@ jobs:
       always() &&
       needs.merge-gate.result != 'skipped' &&
       needs.merge-gate.result != 'cancelled'
-    uses: ./.github/workflows/report.yml
+    uses: $/.github/workflows/report.yml
     secrets:
       (( sonar_token_name )): ${{ secrets.(( sonar_token_name )) }}
     permissions:
