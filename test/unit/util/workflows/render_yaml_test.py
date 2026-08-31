@@ -317,7 +317,7 @@ class TestYamlRendererJinja:
         (% if custom_workflows["fast-tests-extension"].exists %)
           fast-tests-extension:
             name: Extension
-            uses: ./.github/workflows/fast-tests-extension.yml
+            uses: $/.github/workflows/fast-tests-extension.yml
             (% if custom_workflows["fast-tests-extension"].secrets %)
             secrets:
               (% for secret_name in custom_workflows["fast-tests-extension"].secrets %)
@@ -376,7 +376,7 @@ class TestYamlRendererJinja:
         (% if custom_workflows["fast-tests-extension"].exists %)
           fast-tests-extension:
             name: Extension
-            uses: ./.github/workflows/fast-tests-extension.yml
+            uses: $/.github/workflows/fast-tests-extension.yml
         (% endif %)
         """
         expected_yaml = """
@@ -398,7 +398,7 @@ class TestYamlRendererJinja:
 
         fast-tests-extension:
           name: Extension
-          uses: ./.github/workflows/fast-tests-extension.yml
+          uses: $/.github/workflows/fast-tests-extension.yml
         """
         workflow_directory = project_config.github_workflow_directory
         workflow_directory.mkdir(parents=True)

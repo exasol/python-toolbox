@@ -11,7 +11,7 @@ on:
 jobs:
   publish-docs:
     name: Publish Documentation
-    uses: ./.github/workflows/gh-pages.yml
+    uses: $/.github/workflows/gh-pages.yml
     permissions:
       contents: read
       pages: write
