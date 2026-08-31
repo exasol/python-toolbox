@@ -4,16 +4,18 @@
 
 This release documents how to discover and use PTB's Nox sessions in the user
 guide, adds an agent skill for PTB work, and removes the unused Modules section
-from the developer guide.
+from the developer guide. It adds project name and version context to SBOM file
+names, updates GitHub Actions workflows to use GitHub's self-repository syntax,
+and updates project dependencies.
 
 ## Security Issues
 
 This release fixes vulnerabilities by updating dependencies:
 
-| Dependency | Vulnerability | Affected | Fixed in |
-|------------|---------------|----------|----------|
-| cryptography | PYSEC-2026-3552 | 49.0.0 | 50.0.0 |
-| pip | PYSEC-2026-3721 | 26.1.2 | 26.2 |
+| Dependency   | Vulnerability   | Affected | Fixed in |
+|--------------|-----------------|----------|----------|
+| cryptography | PYSEC-2026-3552 | 49.0.0   | 50.0.0   |
+| pip          | PYSEC-2026-3721 | 26.1.2   | 26.2     |
 
 ## Documentation
 
