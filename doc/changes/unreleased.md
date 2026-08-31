@@ -18,4 +18,4 @@ from the developer guide.
 ## Refactoring
 
 * #934: Removed unused, experimental Nox session `lint:import`
-* #952: Updated zizmore and GitHub Actions workflows to use GitHub's self-repository syntax
+* #952: Updated zizmor and GitHub Actions workflows to use GitHub's self-repository syntax
