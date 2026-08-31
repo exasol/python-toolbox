@@ -134,6 +134,6 @@ You can consume the additional value in a workflow by passing the relevant
 
     jobs:
       build-matrix:
-        uses: ./.github/workflows/matrix.yml
+        uses: $/.github/workflows/matrix.yml
         with:
           matrix_keys_json: '["extra_matrix_value","computed_matrix_value"]'
