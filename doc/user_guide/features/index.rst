@@ -12,6 +12,7 @@ Features
    creating_a_release
    managing_dependencies/index
    git_hooks/index
+   agent_skills/index
    metrics/collecting_metrics
 
 Uniform Project Layout

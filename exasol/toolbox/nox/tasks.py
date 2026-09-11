@@ -9,6 +9,7 @@ __all__ = [
     "fix_format",
     "integration_tests",
     "lint",
+    "check_skills",
     "open_docs",
     "prepare_release",
     "type_check",
@@ -59,6 +60,7 @@ from exasol.toolbox.nox._documentation import (
     updated,
 )
 from exasol.toolbox.nox._release import prepare_release
+from exasol.toolbox.nox._skills import check_skills
 from exasol.toolbox.nox._shared import (
     Mode,
     _integration_test_context,
