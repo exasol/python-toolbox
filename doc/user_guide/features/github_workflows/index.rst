@@ -49,12 +49,6 @@ Besides that, you can also create individual workflow files which are ignored by
 Maintained by the PTB
 ^^^^^^^^^^^^^^^^^^^^^
 
-.. note::
-  The ``matrix.yml`` workflow replaces the older ``matrix-all.yml``, ``matrix-exasol.yml``,
-  and ``matrix-python.yml`` workflows. The associated nox sessions (``matrix:all``,
-  ``matrix:exasol``, and ``matrix:python``) are deprecated and will be removed
-  2026-09-15.
-
 .. list-table::
    :widths: 25 25 50
    :header-rows: 1
