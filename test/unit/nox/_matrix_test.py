@@ -9,10 +9,7 @@ from pydantic import computed_field
 from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._matrix import (
     _generate_matrix,
-    exasol_matrix,
-    full_matrix,
     generate_matrix,
-    python_matrix,
 )
 
 
@@ -94,41 +91,3 @@ class TestGenerateMatrixHelper:
     )
     def test_returns_requested_keys(config, requested_keys, expected):
         assert _generate_matrix(config, requested_keys) == expected
-
-
-class TestDeprecatedMatrixSessions:
-    @staticmethod
-    def test_exasol_session_still_emits_field_names(
-        nox_session, config, caplog, capsys
-    ):
-        with patch("exasol.toolbox.nox._matrix.PROJECT_CONFIG", new=config):
-            exasol_matrix(nox_session)
-
-        captured = capsys.readouterr()
-        assert json.loads(captured.out) == {"exasol-version": ["8.29.13", "2025.1.8"]}
-        assert len(caplog.messages) == 1
-
-    @staticmethod
-    def test_python_session_still_emits_field_names(
-        nox_session, config, caplog, capsys
-    ):
-        with patch("exasol.toolbox.nox._matrix.PROJECT_CONFIG", new=config):
-            python_matrix(nox_session)
-
-        captured = capsys.readouterr()
-        assert json.loads(captured.out) == {
-            "python-version": ["3.10", "3.11", "3.12", "3.13", "3.14"]
-        }
-        assert len(caplog.messages) == 1
-
-    @staticmethod
-    def test_full_session_still_emits_field_names(nox_session, config, caplog, capsys):
-        with patch("exasol.toolbox.nox._matrix.PROJECT_CONFIG", new=config):
-            full_matrix(nox_session)
-
-        captured = capsys.readouterr()
-        assert json.loads(captured.out) == {
-            "python-version": ["3.10", "3.11", "3.12", "3.13", "3.14"],
-            "exasol-version": ["8.29.13", "2025.1.8"],
-        }
-        assert len(caplog.messages) == 1
