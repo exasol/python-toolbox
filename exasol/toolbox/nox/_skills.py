@@ -5,7 +5,10 @@ from __future__ import annotations
 import nox
 from nox import Session
 
-from exasol.toolbox.util.skills import get_packaged_skill_names, validate_skill
+from exasol.toolbox.util.skills import (
+    get_packaged_skill_names,
+    validate_skill,
+)
 
 
 @nox.session(name="skills:check", python=False)
