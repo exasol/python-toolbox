@@ -1,10 +1,10 @@
 """Utilities for validating packaged agent skills."""
 
 from collections.abc import Mapping
-from pathlib import Path
 from typing import Final
 
 import importlib_resources as resources
+from importlib_resources.abc import Traversable
 
 SKILLS_DIRECTORY: Final = "exasol.toolbox.skills"
 PTB_SKILL_NAME: Final = "exasol-python-toolbox"
@@ -20,31 +20,45 @@ SKILL_FORBIDDEN_TERMS: Final = (
 SKILL_FILES: Final = ("SKILL.md",)
 
 
-def get_skill_path(skill_name: str = PTB_SKILL_NAME) -> Path:
+def get_skill_path(skill_name: str = PTB_SKILL_NAME) -> Traversable:
     """
     Return the path to a packaged skill.
     """
-    return Path(str(resources.files(SKILLS_DIRECTORY) / skill_name))
+    return resources.files(SKILLS_DIRECTORY) / skill_name
 
 
-def get_skill_files(skill_name: str = PTB_SKILL_NAME) -> Mapping[str, Path]:
+def _find_files(
+    root: Traversable, relative_directory: str = ""
+) -> dict[str, Traversable]:
+    """Return all files below a package resource directory."""
+    files: dict[str, Traversable] = {}
+    for child in root.iterdir():
+        relative_path = f"{relative_directory}{child.name}"
+        if child.is_file():
+            files[relative_path] = child
+        elif child.is_dir():
+            files.update(_find_files(child, f"{relative_path}/"))
+    return files
+
+
+def get_skill_files(skill_name: str = PTB_SKILL_NAME) -> Mapping[str, Traversable]:
     """
     Return packaged skill files.
 
     The keys are paths relative to the skill root.
     """
-    skill_path = get_skill_path(skill_name)
-    return {
-        str(path.relative_to(skill_path)): path
-        for path in skill_path.rglob("*")
-        if path.is_file()
-    }
+    return _find_files(get_skill_path(skill_name))
 
 
 def get_packaged_skill_names() -> tuple[str, ...]:
     """Return the names of all skills packaged with the toolbox."""
-    skills_path = Path(str(resources.files(SKILLS_DIRECTORY)))
-    return tuple(sorted(path.name for path in skills_path.iterdir() if path.is_dir()))
+    return tuple(
+        sorted(
+            path.name
+            for path in resources.files(SKILLS_DIRECTORY).iterdir()
+            if path.is_dir()
+        )
+    )
 
 
 def validate_skill(skill_name: str) -> tuple[str, ...]:
