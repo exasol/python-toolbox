@@ -80,8 +80,7 @@ def validate_skill(skill_name: str) -> tuple[str, ...]:
         errors.append("contains a TODO marker")
 
     all_content = "\n".join(
-        path.read_text(encoding="utf-8")
-        for path in skill_files.values()
+        path.read_text(encoding="utf-8") for path in skill_files.values()
     ).lower()
     for term in SKILL_FORBIDDEN_TERMS:
         if term in all_content:
