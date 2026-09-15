@@ -21,3 +21,16 @@ duplicated Markdown lines. Nox command examples are kept in the skill's
 These shared checks are intentionally separate from skill-specific tests. When
 adding a skill, add its expected files and behavior assertions to that skill's
 own test module, while ``skills:check`` covers the rules common to all skills.
+
+Installing the PTB skill
+------------------------
+
+Projects can install the PTB skill packaged by their current PTB dependency with:
+
+.. code-block:: shell
+
+    poetry run -- nox -s skills:install
+
+The session copies the packaged skill into
+``.agents/skills/exasol-python-toolbox``. Existing files in that skill directory
+are replaced so the installed copy stays aligned with the PTB version.

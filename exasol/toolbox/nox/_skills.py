@@ -7,6 +7,7 @@ from nox import Session
 
 from exasol.toolbox.util.skills import (
     get_packaged_skill_names,
+    install_skill,
     validate_skill,
 )
 
@@ -25,3 +26,12 @@ def check_skills(session: Session) -> None:
             for skill_name, errors in failures.items()
         )
         session.error(f"Packaged skill validation failed:\n{details}")
+
+
+@nox.session(name="skills:install", python=False)
+def install_ptb_skill(session: Session) -> None:
+    """Install the PTB skill into the project's local agent skill directory."""
+    from noxconfig import PROJECT_CONFIG
+
+    target = install_skill(target_directory=PROJECT_CONFIG.agent_skills_path)
+    session.log(f"Installed {target.name} skill to {target}")

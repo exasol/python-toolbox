@@ -312,6 +312,12 @@ class BaseConfig(BaseModel):
 
     @computed_field  # type: ignore[misc]
     @property
+    def agent_skills_path(self) -> Path:
+        """Path where project-local agent skills are installed."""
+        return self.root_path / ".agents" / "skills"
+
+    @computed_field  # type: ignore[misc]
+    @property
     def github_workflow_directory(self) -> Path:
         """
         Path to the GitHub workflow directory.
