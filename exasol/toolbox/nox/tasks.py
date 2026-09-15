@@ -67,12 +67,7 @@ from exasol.toolbox.nox._shared import (
     get_filtered_python_files,
 )
 
-from exasol.toolbox.nox._matrix import (
-    generate_matrix,
-    python_matrix,
-    exasol_matrix,
-    full_matrix,
-)
+from exasol.toolbox.nox._matrix import generate_matrix
 
 from exasol.toolbox.nox._release import prepare_release
 
