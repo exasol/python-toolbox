@@ -45,6 +45,7 @@ class TestBaseConfig:
             "dependency_manager": {"name": "poetry", "version": "2.3.0"},
             "documentation_path": root_path / "doc",
             "has_documentation": True,
+            "agent_skills_path": root_path / ".agents" / "skills",
             "exasol_versions": ("8.29.13", "2025.1.8"),
             "excluded_python_paths": expand_paths(config, DEFAULT_EXCLUDED_PATHS),
             "github_workflow_directory": tmp_path / ".github" / "workflows",

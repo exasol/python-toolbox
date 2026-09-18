@@ -19,6 +19,13 @@ The sessions below match the PTB version that includes this skill.
 | `lint:typing` | Run type checks. | It runs Mypy on filtered project Python files. |
 | `lint:security` | Run security lint. | It runs Bandit and writes `.security.json`. |
 
+## Agent skill sessions
+
+| Session | Use | Notes |
+| --- | --- | --- |
+| `skills:check` | Validate packaged PTB skills. | It checks common structure and content rules. |
+| `skills:install` | Install the PTB agent skill. | It updates `.agents/skills/exasol-python-toolbox` from the installed PTB package. |
+
 ## Test sessions
 
 | Session | Use | Notes |
@@ -34,6 +41,13 @@ poetry run -- nox -s test:unit
 poetry run -- nox -s test:unit -- --coverage
 poetry run -- nox -s test:unit -- -k scenario
 poetry run -- nox -s test:integration -- --db-version 8.34.0
+```
+
+Agent skill command examples:
+
+```bash
+poetry run -- nox -s skills:check
+poetry run -- nox -s skills:install
 ```
 
 ## Documentation and changelog sessions
