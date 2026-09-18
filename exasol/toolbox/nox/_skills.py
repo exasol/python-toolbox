@@ -12,6 +12,12 @@ from exasol.toolbox.util.skills import (
 )
 
 
+def _format_skill_errors(skill_name: str, errors: tuple[str, ...]) -> str:
+    """Format validation errors for one skill."""
+    error_list = "\n".join(f"  - {error}" for error in errors)
+    return f"{skill_name}:\n{error_list}"
+
+
 @nox.session(name="skills:check", python=False)
 def check_skills(session: Session) -> None:
     """Validate the common structure and content rules for packaged skills."""
@@ -22,7 +28,7 @@ def check_skills(session: Session) -> None:
     failures = {skill_name: errors for skill_name, errors in failures.items() if errors}
     if failures:
         details = "\n".join(
-            f"{skill_name}:\n" + "\n".join(f"  - {error}" for error in errors)
+            _format_skill_errors(skill_name, errors)
             for skill_name, errors in failures.items()
         )
         session.error(f"Packaged skill validation failed:\n{details}")
