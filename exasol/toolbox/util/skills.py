@@ -1,8 +1,8 @@
 """Utilities for validating packaged agent skills."""
 
+import shutil
 from collections.abc import Mapping
 from pathlib import Path
-import shutil
 from typing import Final
 
 import importlib_resources as resources
