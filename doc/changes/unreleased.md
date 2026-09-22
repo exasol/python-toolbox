@@ -1,5 +1,9 @@
 # Unreleased
 
+## Features
+
+- #940: Added shared validation for packaged agent skills and the `skills:check` Nox session.
+
 ## Summary
 
 This release documents how to discover and use PTB's Nox sessions in the user
