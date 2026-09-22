@@ -80,7 +80,9 @@ def test_validate_skill_requires_frontmatter(tmp_path, monkeypatch):
     )
 
 
-def test_install_skill_copies_all_files_and_replaces_previous_copy(tmp_path, monkeypatch):
+def test_install_skill_copies_all_files_and_replaces_previous_copy(
+    tmp_path, monkeypatch
+):
     source = tmp_path / "source"
     source.mkdir()
     skill_file = source / "SKILL.md"
@@ -102,7 +104,9 @@ def test_install_skill_copies_all_files_and_replaces_previous_copy(tmp_path, mon
 
     assert installed == previous
     assert (installed / "SKILL.md").read_text(encoding="utf-8") == "new"
-    assert (installed / "references" / "guide.md").read_text(encoding="utf-8") == "guide"
+    assert (installed / "references" / "guide.md").read_text(
+        encoding="utf-8"
+    ) == "guide"
     assert not (installed / "stale.md").exists()
 
 

@@ -86,7 +86,9 @@ def install_skill(
     target_directory = target_directory or Path.cwd() / ".agents" / "skills"
     target_skill = target_directory / skill_name
     if _has_symlink_in_parents(target_directory):
-        raise ValueError(f"refusing to use symlinked target directory: {target_directory}")
+        raise ValueError(
+            f"refusing to use symlinked target directory: {target_directory}"
+        )
     if target_skill.is_symlink():
         raise ValueError(f"refusing to replace symlink: {target_skill}")
     if target_skill.exists() and not target_skill.is_dir():

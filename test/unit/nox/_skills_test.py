@@ -38,6 +38,7 @@ def test_check_skills_reports_all_failures(monkeypatch, nox_session):
     assert "one:\n  - bad frontmatter" in message
     assert "two:\n  - missing SKILL.md" in message
 
+
 def test_install_ptb_skill_uses_project_skill_directory(
     monkeypatch, nox_session, tmp_path
 ):
