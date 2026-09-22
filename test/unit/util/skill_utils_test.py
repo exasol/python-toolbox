@@ -18,6 +18,16 @@ def test_get_packaged_skill_names_is_sorted():
     )
 
 
+def test_get_packaged_skill_names_reports_missing_resources(monkeypatch):
+    def raise_file_not_found(_):
+        raise FileNotFoundError("skills")
+
+    monkeypatch.setattr(skills.resources, "files", raise_file_not_found)
+
+    with pytest.raises(RuntimeError, match="Packaged PTB skills are unavailable"):
+        skills.get_packaged_skill_names()
+
+
 def test_get_skill_files_recurses_into_resource_directories(tmp_path, monkeypatch):
     reference = tmp_path / "references" / "guide.md"
     reference.parent.mkdir()

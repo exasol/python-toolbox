@@ -52,13 +52,16 @@ def get_skill_files(skill_name: str = PTB_SKILL_NAME) -> Mapping[str, Traversabl
 
 def get_packaged_skill_names() -> tuple[str, ...]:
     """Return the names of all skills packaged with the toolbox."""
-    return tuple(
-        sorted(
-            path.name
-            for path in resources.files(SKILLS_DIRECTORY).iterdir()
-            if path.is_dir()
+    try:
+        skills_path = resources.files(SKILLS_DIRECTORY)
+        return tuple(
+            sorted(path.name for path in skills_path.iterdir() if path.is_dir())
         )
-    )
+    except (FileNotFoundError, ModuleNotFoundError) as error:
+        raise RuntimeError(
+            "Packaged PTB skills are unavailable. Reinstall exasol-toolbox "
+            "with its package resources."
+        ) from error
 
 
 def _validate_frontmatter(content: str, skill_name: str) -> list[str]:

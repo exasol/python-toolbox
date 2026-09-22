@@ -30,5 +30,9 @@ def test_check_skills_reports_all_failures(monkeypatch, nox_session):
         Mock(side_effect=(("bad frontmatter",), ("missing SKILL.md",))),
     )
 
-    with pytest.raises(_SessionQuit, match="Packaged skill validation failed"):
+    with pytest.raises(_SessionQuit) as error:
         _skills.check_skills(nox_session)
+
+    message = str(error.value)
+    assert "one:\n  - bad frontmatter" in message
+    assert "two:\n  - missing SKILL.md" in message
