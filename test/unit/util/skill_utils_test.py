@@ -1,3 +1,5 @@
+import pytest
+
 from exasol.toolbox.util import skills
 
 
