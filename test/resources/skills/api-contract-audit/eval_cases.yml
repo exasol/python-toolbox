@@ -1,0 +1,25 @@
+version: 1
+skill: "api-contract-audit"
+cases:
+  - id: "find-type-annotation-mismatch"
+    category: "audit"
+    prompt: "Audit the PyExasol public API for mismatches between type annotations and runtime behavior."
+    expected:
+      must_include:
+        - "isinstance"
+        - "annotation"
+        - "severity"
+      must_not_include:
+        - "rewrite the API"
+        - "fix the code"
+
+  - id: "find-docstring-mismatch"
+    category: "audit"
+    prompt: "Check if PyExasol docstrings match the actual function signatures and runtime behavior."
+    expected:
+      must_include:
+        - "docstring"
+        - "signature"
+        - "mismatch"
+      must_not_include:
+        - "rewrite the API"

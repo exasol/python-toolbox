@@ -14,3 +14,7 @@ from the developer guide.
 ## Refactoring
 
 * #934: Removed unused, experimental Nox session `lint:import`
+
+## Feature
+
+* #942: Added api-contract-audit skill for identifying mismatches between type annotations, docstrings, and runtime behavior
