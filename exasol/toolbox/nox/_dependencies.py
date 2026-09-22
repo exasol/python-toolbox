@@ -21,6 +21,9 @@ from exasol.toolbox.util.dependencies.licenses import (
 from exasol.toolbox.util.dependencies.poetry_dependencies import get_dependencies
 from exasol.toolbox.util.dependencies.track_vulnerabilities import DependenciesAudit
 from exasol.toolbox.util.dependencies.update_dependencies import DependencyUpdater
+from exasol.toolbox.util.version import (
+    project_name_and_version_from_poetry,
+)
 from noxconfig import PROJECT_CONFIG
 
 
@@ -109,8 +112,12 @@ def generate_sbom(session: Session) -> None:
     Note: SPDX version 2 is used as no stable Python tool exists yet
     for generating SPDX version 3.
     """
+    project_name, version = project_name_and_version_from_poetry(
+        working_directory=PROJECT_CONFIG.root_path
+    )
+    sbom_filename = f"{project_name}-{version}.spdx.json"
     bom_cdx_json = PROJECT_CONFIG.root_path / "bom.cdx.json"
-    bom_spdx_json = PROJECT_CONFIG.root_path / "bom.spdx.json"
+    bom_spdx_json = PROJECT_CONFIG.root_path / sbom_filename
     session.run("cyclonedx-py", "environment", "-o", bom_cdx_json)
     session.run(
         "sbomconvert",
@@ -124,3 +131,4 @@ def generate_sbom(session: Session) -> None:
         bom_spdx_json,
     )
     session.run("test", "-s", bom_spdx_json)
+    print(sbom_filename)

@@ -6,6 +6,7 @@ import pytest
 from exasol.toolbox.nox import _dependencies
 from exasol.toolbox.nox import _shared as nox_shared
 from exasol.toolbox.util.dependencies.audit import Vulnerabilities
+from exasol.toolbox.util.version import Version
 
 
 @pytest.mark.parametrize(
@@ -91,10 +92,18 @@ def test_report_resolved_vulnerabilities(
 def test_generate_sbom(monkeypatch, nox_session, tmp_path, test_project_config_factory):
     project_config = test_project_config_factory(root_path=tmp_path)
     monkeypatch.setattr(_dependencies, "PROJECT_CONFIG", project_config)
+    monkeypatch.setattr(
+        _dependencies,
+        "project_name_and_version_from_poetry",
+        lambda working_directory=None: (
+            "exasol_toolbox",
+            Version.from_string("10.3.0"),
+        ),
+    )
 
     _dependencies.generate_sbom(nox_session)
 
-    expected_file = tmp_path / "bom.spdx.json"
+    expected_file = tmp_path / "exasol_toolbox-10.3.0.spdx.json"
     bom_spdx_json = json.loads(expected_file.read_text())
     assert bom_spdx_json["SPDXID"] == "SPDXRef-DOCUMENT"
     assert bom_spdx_json["spdxVersion"] == "SPDX-2.3"

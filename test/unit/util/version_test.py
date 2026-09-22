@@ -9,6 +9,7 @@ from exasol.toolbox.util.version import (
     Version,
     poetry_command,
 )
+from noxconfig import PROJECT_CONFIG
 
 
 @pytest.mark.parametrize(
@@ -99,3 +100,14 @@ def test_poetry_decorator_subprocess(mock):
 
     with pytest.raises(ToolboxError):
         test()
+
+
+def test_project_name_and_version_from_poetry():
+    from exasol.toolbox import __version__
+    from exasol.toolbox.util.version import project_name_and_version_from_poetry
+
+    name, version = project_name_and_version_from_poetry(
+        working_directory=PROJECT_CONFIG.root_path
+    )
+    assert name == "exasol_toolbox"
+    assert version == Version.from_string(__version__)
