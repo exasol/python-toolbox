@@ -14,7 +14,7 @@ def macro_template(tmp_path: Path, macro_input: str) -> Path:
             (% from "_workflow_macros.j2" import workflow_passed_secrets, workflow_permissions with context %)
             jobs:
               macro-job:
-                uses: ./.github/workflows/dummy.yml
+                uses: $/.github/workflows/dummy.yml
             {macro_input}
             """).format(macro_input=macro_input))
     return template_path

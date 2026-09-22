@@ -27,7 +27,7 @@ def workflow_template_path(tmp_path):
     jobs:
     check-release-tag:
       name: Check Release Tag
-      uses: ./.github/workflows/check-release-tag.yml
+      uses: $/.github/workflows/check-release-tag.yml
       permissions:
         contents: read
     """
@@ -111,7 +111,7 @@ class TestWorkflow:
             "+jobs:\n"
             "+check-release-tag:\n"
             "+  name: Check Release Tag\n"
-            "+  uses: ./.github/workflows/check-release-tag.yml\n"
+            "+  uses: $/.github/workflows/check-release-tag.yml\n"
             "+  permissions:\n"
             "+    contents: read"
         )
@@ -137,7 +137,7 @@ class TestWorkflow:
             "+jobs:\n"
             "+check-release-tag:\n"
             "+  name: Check Release Tag\n"
-            "+  uses: ./.github/workflows/check-release-tag.yml\n"
+            "+  uses: $/.github/workflows/check-release-tag.yml\n"
             "+  permissions:\n"
             "+    contents: read"
         )

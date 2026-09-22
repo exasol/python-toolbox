@@ -46,7 +46,7 @@ jobs:
     needs:
       - build-documentation-and-check-links
       - run-unit-tests
-    uses: ./.github/workflows/report.yml
+    uses: $/.github/workflows/report.yml
     secrets: inherit
     permissions:
       contents: read
