@@ -21,11 +21,11 @@ def _format_skill_errors(skill_name: str, errors: tuple[str, ...]) -> str:
 @nox.session(name="skills:check", python=False)
 def check_skills(session: Session) -> None:
     """Validate the common structure and content rules for packaged skills."""
-    failures = {
-        skill_name: validate_skill(skill_name)
-        for skill_name in get_packaged_skill_names()
-    }
-    failures = {skill_name: errors for skill_name, errors in failures.items() if errors}
+    failures = {}
+    for skill_name in get_packaged_skill_names():
+        errors = validate_skill(skill_name)
+        if errors:
+            failures[skill_name] = errors
     if failures:
         details = "\n".join(
             _format_skill_errors(skill_name, errors)
