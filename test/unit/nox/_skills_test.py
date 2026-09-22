@@ -3,6 +3,7 @@ from unittest.mock import Mock
 import pytest
 from nox.sessions import _SessionQuit
 
+import noxconfig
 from exasol.toolbox.nox import _skills
 
 
@@ -36,3 +37,21 @@ def test_check_skills_reports_all_failures(monkeypatch, nox_session):
     message = str(error.value)
     assert "one:\n  - bad frontmatter" in message
     assert "two:\n  - missing SKILL.md" in message
+
+
+def test_install_ptb_skill_uses_project_skill_directory(
+    monkeypatch, nox_session, tmp_path
+):
+    target_directory = tmp_path / ".agents" / "skills"
+    target = target_directory / "exasol-python-toolbox"
+    monkeypatch.setattr(
+        noxconfig,
+        "PROJECT_CONFIG",
+        Mock(agent_skills_path=target_directory),
+    )
+    install = Mock(return_value=target)
+    monkeypatch.setattr(_skills, "install_skill", install)
+
+    _skills.install_ptb_skill(nox_session)
+
+    install.assert_called_once_with(target_directory=target_directory)

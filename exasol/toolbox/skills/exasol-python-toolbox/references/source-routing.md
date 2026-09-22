@@ -30,6 +30,8 @@ Read the source file before you explain a detailed rule.
 - `exasol/toolbox/nox/_format.py`: `format:fix` and `format:check`.
 - `exasol/toolbox/nox/_lint.py`: `lint:code`, `lint:typing`, and
   `lint:security`.
+- `exasol/toolbox/nox/_skills.py`: packaged skill validation and installation
+  implementations.
 - `exasol/toolbox/nox/_matrix.py`: matrix output sessions for CI usage.
 - `exasol/toolbox/nox/_package.py`: package validation.
 - `exasol/toolbox/nox/_release.py`: release preparation, release update, and

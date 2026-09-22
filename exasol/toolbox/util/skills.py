@@ -1,6 +1,8 @@
 """Utilities for validating packaged agent skills."""
 
+import shutil
 from collections.abc import Mapping
+from pathlib import Path
 from typing import Final
 
 import importlib_resources as resources
@@ -62,6 +64,44 @@ def get_packaged_skill_names() -> tuple[str, ...]:
             "Packaged PTB skills are unavailable. Reinstall exasol-toolbox "
             "with its package resources."
         ) from error
+
+
+def _has_symlink_in_parents(path: Path) -> bool:
+    """Return whether a path or one of its existing parents is a symlink."""
+    return any(candidate.is_symlink() for candidate in (path, *path.parents))
+
+
+def install_skill(
+    skill_name: str = PTB_SKILL_NAME,
+    target_directory: Path | None = None,
+) -> Path:
+    """Install a packaged skill into a project-local agent skill directory."""
+    if Path(skill_name).name != skill_name:
+        raise ValueError(f"invalid skill name: {skill_name}")
+
+    source_files = get_skill_files(skill_name)
+    if not source_files:
+        raise ValueError(f"packaged skill does not exist: {skill_name}")
+
+    target_directory = target_directory or Path.cwd() / ".agents" / "skills"
+    target_skill = target_directory / skill_name
+    if _has_symlink_in_parents(target_directory):
+        raise ValueError(
+            f"refusing to use symlinked target directory: {target_directory}"
+        )
+    if target_skill.is_symlink():
+        raise ValueError(f"refusing to replace symlink: {target_skill}")
+    if target_skill.exists() and not target_skill.is_dir():
+        raise ValueError(f"skill target is not a directory: {target_skill}")
+
+    if target_skill.exists():
+        shutil.rmtree(target_skill)
+    target_skill.mkdir(parents=True, exist_ok=True)
+    for relative_path, source in source_files.items():
+        destination = target_skill / relative_path
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(source.read_bytes())
+    return target_skill
 
 
 def _validate_frontmatter(content: str, skill_name: str) -> list[str]:
