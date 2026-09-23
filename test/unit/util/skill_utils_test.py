@@ -78,3 +78,54 @@ def test_validate_skill_requires_frontmatter(tmp_path, monkeypatch):
     assert "SKILL.md must start with YAML frontmatter" in skills.validate_skill(
         "example"
     )
+
+
+def test_install_skill_copies_all_files_and_replaces_previous_copy(
+    tmp_path, monkeypatch
+):
+    source = tmp_path / "source"
+    source.mkdir()
+    skill_file = source / "SKILL.md"
+    reference = source / "references" / "guide.md"
+    reference.parent.mkdir()
+    skill_file.write_text("new", encoding="utf-8")
+    reference.write_text("guide", encoding="utf-8")
+    monkeypatch.setattr(
+        skills,
+        "get_skill_files",
+        lambda _: {"SKILL.md": skill_file, "references/guide.md": reference},
+    )
+    target_directory = tmp_path / ".agents" / "skills"
+    previous = target_directory / "example"
+    previous.mkdir(parents=True)
+    (previous / "stale.md").write_text("stale", encoding="utf-8")
+
+    installed = skills.install_skill("example", target_directory)
+
+    assert installed == previous
+    assert (installed / "SKILL.md").read_text(encoding="utf-8") == "new"
+    assert (installed / "references" / "guide.md").read_text(
+        encoding="utf-8"
+    ) == "guide"
+    assert not (installed / "stale.md").exists()
+
+
+def test_install_skill_rejects_path_traversal(tmp_path):
+    with pytest.raises(ValueError, match="invalid skill name"):
+        skills.install_skill("../outside", tmp_path)
+
+
+def test_install_skill_rejects_symlink_target(tmp_path, monkeypatch):
+    source = tmp_path / "source"
+    source.mkdir()
+    skill_file = source / "SKILL.md"
+    skill_file.write_text("skill", encoding="utf-8")
+    monkeypatch.setattr(skills, "get_skill_files", lambda _: {"SKILL.md": skill_file})
+    target_directory = tmp_path / ".agents" / "skills"
+    target_directory.mkdir(parents=True)
+    target = tmp_path / "elsewhere"
+    target.mkdir()
+    (target_directory / "example").symlink_to(target, target_is_directory=True)
+
+    with pytest.raises(ValueError, match="refusing to replace symlink"):
+        skills.install_skill("example", target_directory)

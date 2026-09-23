@@ -1,25 +1,101 @@
 version: 1
 skill: "api-contract-audit"
 cases:
-  - id: "find-type-annotation-mismatch"
+  - id: "audit-public-api-contract"
     category: "audit"
-    prompt: "Audit the PyExasol public API for mismatches between type annotations and runtime behavior."
+    prompt: >
+      Audit the PyExasol public API for concrete inconsistencies between its
+      type annotations, docstrings, user-facing documentation or examples,
+      and actual runtime behavior. Report findings first, ordered by severity.
+      For each finding, identify the affected API, the claimed contract, the
+      observed behavior, and relevant source file references. Do not modify
+      the code or rewrite the API contract.
     expected:
       must_include:
-        - "isinstance"
-        - "annotation"
         - "severity"
+        - "API"
+        - "annotation"
+        - "runtime"
+        - "file"
       must_not_include:
         - "rewrite the API"
         - "fix the code"
 
-  - id: "find-docstring-mismatch"
-    category: "audit"
-    prompt: "Check if PyExasol docstrings match the actual function signatures and runtime behavior."
+  - id: "interpret-explicit-type-check"
+    category: "runtime-validation"
+    prompt: >
+      A public API implementation contains an isinstance() check. Audit
+      whether that check is consistent with the public annotation and
+      documentation. Explain what the check actually accepts or rejects and
+      whether the available evidence establishes a contract mismatch. Do not
+      treat the presence of isinstance() alone as proof of a defect.
     expected:
       must_include:
-        - "docstring"
-        - "signature"
-        - "mismatch"
+        - "isinstance"
+        - "annotation"
+        - "documentation"
+        - "runtime"
+        - "evidence"
+      must_not_include:
+        - "isinstance() is automatically a mismatch"
+        - "fix the code"
+
+  - id: "interpret-coercion-and-errors"
+    category: "runtime-validation"
+    prompt: >
+      Audit a public API whose implementation coerces or rejects values at
+      runtime, for example through int(), str(), ValueError, or TypeError.
+      Compare the accepted and rejected inputs with the public annotations and
+      documentation. Report any concrete contract mismatch, its severity, and
+      the relevant source file reference.
+    expected:
+      must_include:
+        - "coercion"
+        - "runtime"
+        - "annotation"
+        - "documentation"
+        - "severity"
+        - "file"
       must_not_include:
         - "rewrite the API"
+        - "fix the code"
+
+  - id: "compare-docstrings-and-signatures"
+    category: "documentation"
+    prompt: >
+      Check whether PyExasol public method signatures, type annotations, and
+      docstrings describe the same contract. Report concrete inconsistencies
+      with the affected API, severity, and source file references. If no
+      finding can be established, state the coverage limitation instead of
+      guessing.
+    expected:
+      must_include:
+        - "signature"
+        - "docstring"
+        - "annotation"
+        - "severity"
+        - "file"
+      must_not_include:
+        - "rewrite the API"
+        - "guess"
+
+  - id: "compare-user-facing-examples"
+    category: "documentation"
+    prompt: >
+      Check whether PyExasol user-facing examples in documentation, including
+      RST files, README content, and example scripts, agree with the public
+      API signature, annotations, and runtime behavior. Report concrete
+      inconsistencies with the affected API, severity, and source file
+      references. Do not assume an example is authoritative without checking
+      the implementation.
+    expected:
+      must_include:
+        - "example"
+        - "documentation"
+        - "API"
+        - "runtime"
+        - "severity"
+        - "file"
+      must_not_include:
+        - "rewrite the API"
+        - "assume the example is correct"

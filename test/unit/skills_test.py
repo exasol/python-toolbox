@@ -8,6 +8,7 @@ from exasol.toolbox.util.skills import (
     PTB_SKILL_NAME,
     get_skill_files,
     get_skill_path,
+    install_skill,
     validate_skill,
 )
 
@@ -40,6 +41,14 @@ def test_ptb_skill_resources_are_available():
     for expected in SKILL_FILES:
         assert expected in skill_files
         assert skill_files[expected].is_file()
+
+
+def test_ptb_skill_can_be_installed(tmp_path):
+    installed = install_skill(PTB_SKILL_NAME, tmp_path)
+
+    assert installed == tmp_path / PTB_SKILL_NAME
+    for expected in SKILL_FILES:
+        assert (installed / expected).is_file()
 
 
 def test_ptb_skill_resources_are_packaged(tmp_path):
