@@ -82,7 +82,7 @@ cases:
   - id: "compare-user-facing-examples"
     category: "documentation"
     prompt: >
-      Check whether PyExasol user-facing examples in documentation, including
+      Check whether the target Python library's user-facing examples in documentation, including
       RST files, README content, and example scripts, agree with the public
       API signature, annotations, and runtime behavior. Report concrete
       inconsistencies with the affected API, severity, and source file
