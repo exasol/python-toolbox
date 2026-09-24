@@ -7,7 +7,7 @@ cases:
   - id: "audit-public-api-contract"
     category: "audit"
     prompt: >
-      Audit the PyExasol public API for concrete inconsistencies between its
+      Audit the target Python library's public API for concrete inconsistencies between its
       type annotations, docstrings, user-facing documentation or examples,
       and actual runtime behavior. Report findings first, ordered by severity.
       For each finding, identify the affected API, the claimed contract, the
@@ -67,13 +67,14 @@ cases:
 
   - id: "compare-docstrings-and-signatures"
     category: "documentation"
-    # Naming real PyExasol APIs makes this case reproducible. Requiring the
-    # introspection helpers and the mismatch keeps the evaluation specific to
-    # contract auditing instead of accepting a generic documentation review.
+    # Naming concrete functions from the target library makes this case
+    # reproducible. Requiring the introspection helpers and the mismatch keeps
+    # it specific to contract auditing instead of accepting a generic review.
     prompt: >
-      Inspect the existing PyExasol public APIs pyexasol.connect and
-      pyexasol.connection.ExaConnection.execute. Check whether their runtime
-      signatures, type annotations, and docstrings describe the same contract.
+      Inspect two concrete public functions from the target Python library,
+      including a module-level function and a public method. Name the functions
+      in the report. Check whether their runtime signatures, type annotations,
+      and docstrings describe the same contract.
       Use inspect.signature(), inspect.get_annotations(),
       typing.get_type_hints(), and inspect.getdoc() where applicable to make
       the comparison evidence-based instead of treating any single source as
@@ -85,8 +86,7 @@ cases:
         - "signature"
         - "docstring"
         - "annotation"
-        - "pyexasol.connect"
-        - "ExaConnection.execute"
+        - "function"
         - "inspect.signature"
         - "inspect.get_annotations"
         - "typing.get_type_hints"
@@ -103,7 +103,7 @@ cases:
   - id: "compare-user-facing-examples"
     category: "documentation"
     prompt: >
-      Check whether PyExasol user-facing examples in documentation, including
+      Check whether the target Python library's user-facing examples in documentation, including
       RST files, README content, and example scripts, agree with the public
       API signature, annotations, and runtime behavior. Report concrete
       inconsistencies with the affected API, severity, and source file
