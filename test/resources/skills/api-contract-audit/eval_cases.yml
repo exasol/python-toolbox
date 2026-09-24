@@ -1,6 +1,9 @@
 version: 1
 skill: "api-contract-audit"
 cases:
+  # must_include checks for observable evidence that the requested audit was
+  # performed; must_not_include prevents the skill from taking actions outside
+  # its reporting-only scope.
   - id: "audit-public-api-contract"
     category: "audit"
     prompt: >
@@ -64,6 +67,9 @@ cases:
 
   - id: "compare-docstrings-and-signatures"
     category: "documentation"
+    # Naming real PyExasol APIs makes this case reproducible. Requiring the
+    # introspection helpers and the mismatch keeps the evaluation specific to
+    # contract auditing instead of accepting a generic documentation review.
     prompt: >
       Inspect the existing PyExasol public APIs pyexasol.connect and
       pyexasol.connection.ExaConnection.execute. Check whether their runtime
@@ -89,6 +95,8 @@ cases:
         - "severity"
         - "source file"
       must_not_include:
+        # The skill reports discrepancies; it must not infer a contract or
+        # prescribe implementation changes.
         - "treat annotations as authoritative"
         - "invent a finding"
 
