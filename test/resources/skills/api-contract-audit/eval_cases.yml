@@ -4,7 +4,7 @@ cases:
   - id: "audit-public-api-contract"
     category: "audit"
     prompt: >
-      Audit the PyExasol public API for concrete inconsistencies between its
+      Audit the target Python library's public API for concrete inconsistencies between its
       type annotations, docstrings, user-facing documentation or examples,
       and actual runtime behavior. Report findings first, ordered by severity.
       For each finding, identify the affected API, the claimed contract, the
