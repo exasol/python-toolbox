@@ -63,7 +63,7 @@ cases:
   - id: "compare-docstrings-and-signatures"
     category: "documentation"
     prompt: >
-      Check whether PyExasol public method signatures, type annotations, and
+      Check whether the target Python library's public method signatures, type annotations, and
       docstrings describe the same contract. Report concrete inconsistencies
       with the affected API, severity, and source file references. If no
       finding can be established, state the coverage limitation instead of
