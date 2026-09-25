@@ -1,7 +1,6 @@
 version: 1
 skill: "api-contract-audit"
 cases:
-  # its reporting-only scope.
   - id: "audit-public-api-contract"
     category: "audit"
     prompt: >
