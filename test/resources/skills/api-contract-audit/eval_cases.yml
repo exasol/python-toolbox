@@ -64,7 +64,6 @@ cases:
 
   - id: "compare-docstrings-and-signatures"
     category: "documentation"
-    # Naming concrete functions from the target library makes this case
     # reproducible. Requiring the introspection helpers and the mismatch keeps
     # it specific to contract auditing instead of accepting a generic review.
     prompt: >
