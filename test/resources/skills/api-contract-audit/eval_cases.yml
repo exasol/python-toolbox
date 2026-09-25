@@ -1,7 +1,6 @@
 version: 1
 skill: "api-contract-audit"
 cases:
-  # must_include checks for observable evidence that the requested audit was
   # performed; must_not_include prevents the skill from taking actions outside
   # its reporting-only scope.
   - id: "audit-public-api-contract"
