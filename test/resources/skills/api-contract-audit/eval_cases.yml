@@ -1,0 +1,117 @@
+version: 1
+skill: "api-contract-audit"
+cases:
+  - id: "audit-public-api-contract"
+    category: "audit"
+    prompt: >
+      Audit the target Python library's public API for concrete inconsistencies between its
+      type annotations, docstrings, user-facing documentation or examples,
+      and actual runtime behavior. Report findings first, ordered by severity.
+      For each finding, identify the affected API, the claimed contract, the
+      observed behavior, and relevant source file references. Do not modify
+      the code or rewrite the API contract.
+    expected:
+      must_include:
+        - "severity"
+        - "affected API"
+        - "claimed contract"
+        - "observed behavior"
+        - "source file"
+      must_not_include:
+        - "change the implementation"
+        - "propose a code fix"
+
+  - id: "interpret-explicit-type-check"
+    category: "runtime-validation"
+    prompt: >
+      A public API implementation contains an isinstance() check. Audit
+      whether that check is consistent with the public annotation and
+      documentation. Explain what the check actually accepts or rejects and
+      whether the available evidence establishes a contract mismatch. Do not
+      treat the presence of isinstance() alone as proof of a defect.
+    expected:
+      must_include:
+        - "isinstance"
+        - "accepted"
+        - "rejected"
+        - "annotation"
+        - "documentation"
+        - "evidence"
+      must_not_include:
+        - "isinstance() alone proves a mismatch"
+        - "propose a code fix"
+
+  - id: "interpret-coercion-and-errors"
+    category: "runtime-validation"
+    prompt: >
+      Audit a public API whose implementation coerces or rejects values at
+      runtime, for example through int(), str(), ValueError, or TypeError.
+      Compare the accepted and rejected inputs with the public annotations and
+      documentation. Report any concrete contract mismatch, its severity, and
+      the relevant source file reference.
+    expected:
+      must_include:
+        - "coercion"
+        - "accepted inputs"
+        - "rejected inputs"
+        - "annotation"
+        - "documentation"
+        - "severity"
+        - "source file"
+      must_not_include:
+        - "change the implementation"
+        - "propose a code fix"
+
+  - id: "compare-docstrings-and-signatures"
+    category: "documentation"
+    prompt: >
+      Inspect two concrete public functions from the target Python library,
+      including a module-level function and a public method. Name the functions
+      in the report. Check whether their runtime signatures, type annotations,
+      and docstrings describe the same contract.
+      Use inspect.signature(), inspect.get_annotations(),
+      typing.get_type_hints(), and inspect.getdoc() where applicable to make
+      the comparison evidence-based instead of treating any single source as
+      authoritative. Report concrete mismatches with the affected function,
+      severity, and source file references. If no finding can be established,
+      state the coverage limitation instead of guessing.
+    expected:
+      must_include:
+        - "signature"
+        - "docstring"
+        - "annotation"
+        - "function"
+        - "inspect.signature"
+        - "inspect.get_annotations"
+        - "typing.get_type_hints"
+        - "inspect.getdoc"
+        - "mismatch"
+        - "severity"
+        - "source file"
+      must_not_include:
+        # The skill reports discrepancies; it must not infer a contract or
+        # prescribe implementation changes.
+        - "treat annotations as authoritative"
+        - "invent a finding"
+
+  - id: "compare-user-facing-examples"
+    category: "documentation"
+    prompt: >
+      Check whether the target Python library's user-facing examples in documentation, including
+      RST files, README content, and example scripts, agree with the public
+      API signature, annotations, and runtime behavior. Report concrete
+      inconsistencies with the affected API, severity, and source file
+      references. Do not assume an example is authoritative without checking
+      the implementation.
+    expected:
+      must_include:
+        - "example"
+        - "documentation"
+        - "signature"
+        - "implementation"
+        - "runtime"
+        - "severity"
+        - "source file"
+      must_not_include:
+        - "treat the example as authoritative"
+        - "propose a code fix"
