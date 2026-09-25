@@ -1,6 +1,9 @@
 version: 1
 skill: "api-contract-audit"
 cases:
+  # must_include checks for observable evidence that the requested audit was
+  # performed; must_not_include prevents the skill from taking actions outside
+  # its reporting-only scope.
   - id: "audit-public-api-contract"
     category: "audit"
     prompt: >
@@ -13,13 +16,13 @@ cases:
     expected:
       must_include:
         - "severity"
-        - "API"
-        - "annotation"
-        - "runtime"
-        - "file"
+        - "affected API"
+        - "claimed contract"
+        - "observed behavior"
+        - "source file"
       must_not_include:
-        - "rewrite the API"
-        - "fix the code"
+        - "change the implementation"
+        - "propose a code fix"
 
   - id: "interpret-explicit-type-check"
     category: "runtime-validation"
@@ -32,13 +35,14 @@ cases:
     expected:
       must_include:
         - "isinstance"
+        - "accepted"
+        - "rejected"
         - "annotation"
         - "documentation"
-        - "runtime"
         - "evidence"
       must_not_include:
-        - "isinstance() is automatically a mismatch"
-        - "fix the code"
+        - "isinstance() alone proves a mismatch"
+        - "propose a code fix"
 
   - id: "interpret-coercion-and-errors"
     category: "runtime-validation"
@@ -51,33 +55,50 @@ cases:
     expected:
       must_include:
         - "coercion"
-        - "runtime"
+        - "accepted inputs"
+        - "rejected inputs"
         - "annotation"
         - "documentation"
         - "severity"
-        - "file"
+        - "source file"
       must_not_include:
-        - "rewrite the API"
-        - "fix the code"
+        - "change the implementation"
+        - "propose a code fix"
 
   - id: "compare-docstrings-and-signatures"
     category: "documentation"
+    # Naming concrete functions from the target library makes this case
+    # reproducible. Requiring the introspection helpers and the mismatch keeps
+    # it specific to contract auditing instead of accepting a generic review.
     prompt: >
-      Check whether the target Python library's public method signatures, type annotations, and
-      docstrings describe the same contract. Report concrete inconsistencies
-      with the affected API, severity, and source file references. If no
-      finding can be established, state the coverage limitation instead of
-      guessing.
+      Inspect two concrete public functions from the target Python library,
+      including a module-level function and a public method. Name the functions
+      in the report. Check whether their runtime signatures, type annotations,
+      and docstrings describe the same contract.
+      Use inspect.signature(), inspect.get_annotations(),
+      typing.get_type_hints(), and inspect.getdoc() where applicable to make
+      the comparison evidence-based instead of treating any single source as
+      authoritative. Report concrete mismatches with the affected function,
+      severity, and source file references. If no finding can be established,
+      state the coverage limitation instead of guessing.
     expected:
       must_include:
         - "signature"
         - "docstring"
         - "annotation"
+        - "function"
+        - "inspect.signature"
+        - "inspect.get_annotations"
+        - "typing.get_type_hints"
+        - "inspect.getdoc"
+        - "mismatch"
         - "severity"
-        - "file"
+        - "source file"
       must_not_include:
-        - "rewrite the API"
-        - "guess"
+        # The skill reports discrepancies; it must not infer a contract or
+        # prescribe implementation changes.
+        - "treat annotations as authoritative"
+        - "invent a finding"
 
   - id: "compare-user-facing-examples"
     category: "documentation"
@@ -92,10 +113,11 @@ cases:
       must_include:
         - "example"
         - "documentation"
-        - "API"
+        - "signature"
+        - "implementation"
         - "runtime"
         - "severity"
-        - "file"
+        - "source file"
       must_not_include:
-        - "rewrite the API"
-        - "assume the example is correct"
+        - "treat the example as authoritative"
+        - "propose a code fix"
