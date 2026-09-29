@@ -1,7 +1,6 @@
 from unittest.mock import Mock
 
 import noxconfig
-
 from exasol.toolbox.nox import _skills
 from exasol.toolbox.util.skills import get_packaged_skill_names
 
