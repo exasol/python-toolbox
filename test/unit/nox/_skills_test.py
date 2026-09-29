@@ -61,3 +61,12 @@ def test_install_skills_uses_project_skill_directory(
         (("one",), {"target_directory": target_directory}),
         (("two",), {"target_directory": target_directory}),
     ]
+
+
+def test_tasks_exports_skill_tasks():
+    # Import the public task module so its exported skill sessions are covered
+    # in the same way users discover them through nox.
+    from exasol.toolbox.nox import tasks
+
+    assert tasks.check_skills is _skills.check_skills
+    assert tasks.install_skills is _skills.install_skills
