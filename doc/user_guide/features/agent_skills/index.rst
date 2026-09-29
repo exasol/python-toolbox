@@ -18,19 +18,20 @@ unfinished TODO markers or forbidden repository-specific metadata, and has no
 duplicated Markdown lines. Nox command examples are kept in the skill's
 ``references/nox-sessions.md`` file.
 
-These shared checks are intentionally separate from skill-specific tests. When
-adding a skill, add its expected files and behavior assertions to that skill's
-own test module, while ``skills:check`` covers the rules common to all skills.
+These shared checks are intentionally separate from skill-specific tests. The
+test suite validates the structure of every packaged skill and validates the
+structure of every available ``eval_cases.yml``. When adding a skill, add its
+expected files and behavior assertions to the shared skill test patterns.
 
-Installing the PTB skill
-------------------------
+Installing packaged skills
+---------------------------
 
-Projects can install the PTB skill packaged by their current PTB dependency with:
+Projects can install all skills packaged by their current PTB dependency with:
 
 .. code-block:: shell
 
     poetry run -- nox -s skills:install
 
-The session copies the packaged skill into
-``.agents/skills/exasol-python-toolbox``. Existing files in that skill directory
-are replaced so the installed copy stays aligned with the PTB version.
+The session copies each packaged skill into its own directory below
+``.agents/skills``. Existing files in those skill directories are replaced so
+the installed copies stay aligned with the PTB version.
