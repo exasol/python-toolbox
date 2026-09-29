@@ -61,7 +61,7 @@ def get_packaged_skill_names() -> tuple[str, ...]:
         )
     except (FileNotFoundError, ModuleNotFoundError) as error:
         raise RuntimeError(
-            "Packaged PTB skills are unavailable. Reinstall exasol-toolbox "
+            "Packaged skills are unavailable. Reinstall exasol-toolbox "
             "with its package resources."
         ) from error
 

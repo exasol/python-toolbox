@@ -26,7 +26,7 @@ def test_get_packaged_skill_names_reports_missing_resources(monkeypatch):
 
     monkeypatch.setattr(skills.resources, "files", raise_file_not_found)
 
-    with pytest.raises(RuntimeError, match="Packaged PTB skills are unavailable"):
+    with pytest.raises(RuntimeError, match="Packaged skills are unavailable"):
         skills.get_packaged_skill_names()
 
 
