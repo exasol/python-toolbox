@@ -22,6 +22,7 @@ def _format_skill_errors(skill_name: str, errors: tuple[str, ...]) -> str:
 def check_skills(session: Session) -> None:
     """Validate the common structure and content rules for packaged skills."""
     failures = {}
+    # Discover skills at runtime so newly packaged skills are installed too.
     for skill_name in get_packaged_skill_names():
         errors = validate_skill(skill_name)
         if errors:
@@ -35,9 +36,12 @@ def check_skills(session: Session) -> None:
 
 
 @nox.session(name="skills:install", python=False)
-def install_ptb_skill(session: Session) -> None:
-    """Install the PTB skill into the project's local agent skill directory."""
+def install_skills(session: Session) -> None:
+    """Install all packaged skills into the project's local agent directory."""
     from noxconfig import PROJECT_CONFIG
 
-    target = install_skill(target_directory=PROJECT_CONFIG.agent_skills_path)
-    session.log(f"Installed {target.name} skill to {target}")
+    for skill_name in get_packaged_skill_names():
+        target = install_skill(
+            skill_name, target_directory=PROJECT_CONFIG.agent_skills_path
+        )
+        session.log(f"Installed {target.name} skill to {target}")
