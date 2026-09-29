@@ -1,16 +1,16 @@
+from collections.abc import Mapping
 from pathlib import Path
 from subprocess import run
 from zipfile import ZipFile
-from collections.abc import Mapping
 
 import pytest
 from ruamel.yaml import YAML
 
 from exasol.toolbox.util.skills import (
     PTB_SKILL_NAME,
+    get_packaged_skill_names,
     get_skill_files,
     get_skill_path,
-    get_packaged_skill_names,
     install_skill,
 )
 
