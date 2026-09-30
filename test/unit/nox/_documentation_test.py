@@ -1,5 +1,9 @@
 import shutil
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import (
+    MagicMock,
+    Mock,
+    patch,
+)
 
 import pytest
 from nox.sessions import _SessionQuit
@@ -7,8 +11,8 @@ from nox.sessions import _SessionQuit
 from exasol.toolbox.nox._documentation import (
     _build_docs,
     _build_multiversion_docs,
-    _docs_list_links,
     _docs_links_check,
+    _docs_list_links,
     build_docs,
     build_multiversion,
     clean_docs,
@@ -86,9 +90,7 @@ def test_build_docs_runs_sphinx(nox_session, config):
 
 
 def test_build_multiversion_docs_runs_sphinx(nox_session, config):
-    with patch(
-        "exasol.toolbox.nox._documentation._build_multiversion_docs"
-    ) as build:
+    with patch("exasol.toolbox.nox._documentation._build_multiversion_docs") as build:
         with patch("exasol.toolbox.nox._documentation.PROJECT_CONFIG", new=config):
             build_multiversion(nox_session)
 
@@ -133,7 +135,9 @@ def test_open_docs_opens_index(nox_session, config):
     docs_folder.mkdir()
     (docs_folder / "index.html").touch()
     with patch("exasol.toolbox.nox._documentation.PROJECT_CONFIG", new=config):
-        with patch("exasol.toolbox.nox._documentation.webbrowser.open_new_tab") as open_tab:
+        with patch(
+            "exasol.toolbox.nox._documentation.webbrowser.open_new_tab"
+        ) as open_tab:
             open_docs(nox_session)
 
     open_tab.assert_called_once_with((docs_folder / "index.html").as_uri())
