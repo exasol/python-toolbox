@@ -9,3 +9,4 @@
 
     ../design
     plugins
+    agent_skills
