@@ -1,4 +1,5 @@
 ---
+# Generated and maintained by the exasol-toolbox.
 name: exasol-python-toolbox
 description: Use this skill in Exasol Python projects that use exasol-toolbox/PTB. Use it for PTB setup, nox sessions, code checks, GitHub workflows, updates, releases, and PTB configuration. Use it when an agent must not replace PTB automation.
 ---

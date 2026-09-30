@@ -6,6 +6,26 @@ Agent Skills
 The PTB can package agent skills for use by projects and provides shared
 validation for their common structure and content rules.
 
+Packaged skills maintained by the PTB
+-------------------------------------
+
+The following skill directories are provided by the PTB. Installing packaged
+skills can replace a project-local skill with the same name, so choose local
+skill names with this list in mind.
+
+.. list-table::
+   :widths: 30 70
+   :header-rows: 1
+
+   * - Skill directory
+     - Intended use
+   * - ``api-contract-audit``
+     - Audits a Python library for mismatches between type annotations,
+       docstrings, user-facing documentation, and runtime behavior.
+   * - ``exasol-python-toolbox``
+     - Guides agents in using PTB setup, Nox sessions, checks, workflows,
+       updates, releases, and configuration.
+
 Run the validation with:
 
 .. code-block:: shell
