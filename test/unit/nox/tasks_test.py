@@ -1,4 +1,7 @@
-from unittest.mock import Mock, patch
+from unittest.mock import (
+    Mock,
+    patch,
+)
 
 from exasol.toolbox.nox import tasks
 
