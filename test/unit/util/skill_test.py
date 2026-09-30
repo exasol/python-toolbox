@@ -1,6 +1,11 @@
 import pytest
 
 from exasol.toolbox.util import skills
+from exasol.toolbox.util.skills import (
+    _copy_skill_files,
+    _prepare_installation_directory,
+    _validate_skill_name,
+)
 
 
 def test_validate_skill_accepts_packaged_ptb_skill():
@@ -113,6 +118,34 @@ def test_install_skill_copies_all_files_and_replaces_previous_copy(
 def test_install_skill_rejects_path_traversal(tmp_path):
     with pytest.raises(ValueError, match="invalid skill name"):
         skills.install_skill("../outside", tmp_path)
+
+
+def test_validate_skill_name_rejects_path_traversal():
+    with pytest.raises(ValueError, match="invalid skill name"):
+        _validate_skill_name("nested/example")
+
+
+def test_prepare_installation_directory_replaces_existing_directory(tmp_path):
+    target_directory = tmp_path / ".agents" / "skills"
+    target_skill = target_directory / "example"
+    target_skill.mkdir(parents=True)
+    (target_skill / "stale.md").write_text("stale", encoding="utf-8")
+
+    prepared = _prepare_installation_directory(target_directory, "example")
+
+    assert prepared == target_skill
+    assert not (target_skill / "stale.md").exists()
+
+
+def test_copy_skill_files_copies_nested_files(tmp_path):
+    source = tmp_path / "source.md"
+    source.write_text("content", encoding="utf-8")
+    target = tmp_path / "target"
+    target.mkdir()
+
+    _copy_skill_files({"references/source.md": source}, target)
+
+    assert (target / "references/source.md").read_text(encoding="utf-8") == "content"
 
 
 def test_install_skill_rejects_missing_skill(tmp_path, monkeypatch):

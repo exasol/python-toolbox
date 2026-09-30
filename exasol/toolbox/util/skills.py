@@ -71,19 +71,16 @@ def _has_symlink_in_parents(path: Path) -> bool:
     return any(candidate.is_symlink() for candidate in (path, *path.parents))
 
 
-def install_skill(
-    skill_name: str = PTB_SKILL_NAME,
-    target_directory: Path | None = None,
-) -> Path:
-    """Install a packaged skill into a project-local agent skill directory."""
+def _validate_skill_name(skill_name: str) -> None:
+    """Reject skill names that could escape the skill installation directory."""
     if Path(skill_name).name != skill_name:
         raise ValueError(f"invalid skill name: {skill_name}")
 
-    source_files = get_skill_files(skill_name)
-    if not source_files:
-        raise ValueError(f"packaged skill does not exist: {skill_name}")
 
-    target_directory = target_directory or Path.cwd() / ".agents" / "skills"
+def _prepare_installation_directory(
+    target_directory: Path, skill_name: str
+) -> Path:
+    """Validate and recreate the destination directory for one skill."""
     target_skill = target_directory / skill_name
     if _has_symlink_in_parents(target_directory):
         raise ValueError(
@@ -97,10 +94,30 @@ def install_skill(
     if target_skill.exists():
         shutil.rmtree(target_skill)
     target_skill.mkdir(parents=True, exist_ok=True)
+    return target_skill
+
+
+def _copy_skill_files(source_files: Mapping[str, Traversable], target: Path) -> None:
+    """Copy packaged skill files below an already validated target directory."""
     for relative_path, source in source_files.items():
-        destination = target_skill / relative_path
+        destination = target / relative_path
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_bytes(source.read_bytes())
+
+
+def install_skill(
+    skill_name: str = PTB_SKILL_NAME,
+    target_directory: Path | None = None,
+) -> Path:
+    """Install a packaged skill into a project-local agent skill directory."""
+    _validate_skill_name(skill_name)
+    source_files = get_skill_files(skill_name)
+    if not source_files:
+        raise ValueError(f"packaged skill does not exist: {skill_name}")
+
+    target_directory = target_directory or Path.cwd() / ".agents" / "skills"
+    target_skill = _prepare_installation_directory(target_directory, skill_name)
+    _copy_skill_files(source_files, target_skill)
     return target_skill
 
 
