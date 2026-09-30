@@ -23,8 +23,8 @@ The sessions below match the PTB version that includes this skill.
 
 | Session | Use | Notes |
 | --- | --- | --- |
-| `skills:check` | Validate packaged PTB skills. | It checks common structure and content rules. |
-| `skills:install` | Install the PTB agent skill. | It updates `.agents/skills/exasol-python-toolbox` from the installed PTB package. |
+| `skills:check` | Validate packaged skills. | It checks common structure and content rules for every packaged skill. |
+| `skills:install` | Install packaged agent skills. | It updates each packaged skill below `.agents/skills` from the installed PTB package. |
 
 ## Test sessions
 

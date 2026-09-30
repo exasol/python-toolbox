@@ -1,9 +1,13 @@
 import shutil
-from unittest.mock import patch
+from unittest.mock import (
+    Mock,
+    patch,
+)
 
 import pytest
 
 from exasol.toolbox.nox._test import (
+    _coverage,
     _test_command,
     coverage,
     integration_tests,
@@ -136,3 +140,22 @@ def test_coverage_uses_integration_test_context(nox_session):
         PROJECT_CONFIG,
         {"coverage": True, "db_version": "8.29.13", "fwd-args": []},
     )
+
+
+def test_coverage_runs_tests_and_reports(tmp_path, test_project_config_factory):
+    config = test_project_config_factory(root_path=tmp_path)
+    coverage_file = tmp_path / ".coverage"
+    coverage_file.touch()
+    context = {"coverage": True, "db_version": "8.29.13", "fwd-args": []}
+    session = Mock()
+
+    with (
+        patch("exasol.toolbox.nox._test._unit_tests") as unit,
+        patch("exasol.toolbox.nox._test._integration_tests") as integration,
+    ):
+        _coverage(session, config, context)
+
+    assert not coverage_file.exists()
+    unit.assert_called_once_with(session, config, context)
+    integration.assert_called_once_with(session, config, context)
+    session.run.assert_called_once_with("coverage", "report", "-m")
