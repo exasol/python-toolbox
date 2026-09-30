@@ -156,10 +156,11 @@ def test_ptb_skill_frontmatter_is_complete():
 
 
 @pytest.mark.parametrize("skill_name", _skills_with_eval_cases())
-def test_packaged_skill_eval_cases_are_valid(skill_name):
-    eval_cases = _load_eval_cases(skill_name)
+class TestPackagedSkillEvalCases:
+    def test_schema_is_valid(self, skill_name):
+        eval_cases = _load_eval_cases(skill_name)
 
-    assert _validate_eval_cases(eval_cases, skill_name) == []
+        assert _validate_eval_cases(eval_cases, skill_name) == []
 
 
 def _minimal_eval_cases() -> dict:
@@ -180,50 +181,65 @@ def _minimal_eval_cases() -> dict:
     }
 
 
-@pytest.mark.parametrize(
-    ("change", "expected_error"),
-    [
-        (lambda data: data.update(version=2), "version must be 1"),
-        (
-            lambda data: data.update(skill="other"),
-            "skill must be example",
-        ),
-        (
-            lambda data: data["cases"].clear(),
-            "cases must be a non-empty list",
-        ),
-        (
+class TestEvalCaseValidation:
+    @staticmethod
+    def _assert_rejected(change, expected_error):
+        eval_cases = _minimal_eval_cases()
+        # Each mutation represents a malformed future eval_cases.yml file.
+        change(eval_cases)
+
+        assert expected_error in _validate_eval_cases(eval_cases, "example")
+
+    def test_rejects_invalid_version(self):
+        self._assert_rejected(
+            lambda data: data.update(version=2), "version must be 1"
+        )
+
+    def test_rejects_invalid_skill_name(self):
+        self._assert_rejected(
+            lambda data: data.update(skill="other"), "skill must be example"
+        )
+
+    def test_rejects_empty_cases(self):
+        self._assert_rejected(
+            lambda data: data["cases"].clear(), "cases must be a non-empty list"
+        )
+
+    def test_rejects_duplicate_case_ids(self):
+        self._assert_rejected(
             lambda data: data["cases"].append(data["cases"][0].copy()),
             "case ids must be unique",
-        ),
-        (
+        )
+
+    def test_rejects_empty_category(self):
+        self._assert_rejected(
             lambda data: data["cases"][0].update(category=""),
             "case 0 must have a non-empty category",
-        ),
-        (
+        )
+
+    def test_rejects_empty_prompt(self):
+        self._assert_rejected(
             lambda data: data["cases"][0].update(prompt=""),
             "case 0 must have a non-empty prompt",
-        ),
-        (
+        )
+
+    def test_rejects_missing_expected_mapping(self):
+        self._assert_rejected(
             lambda data: data["cases"][0].update(expected=None),
             "case 0 expected must be a mapping",
-        ),
-        (
+        )
+
+    def test_rejects_empty_must_include(self):
+        self._assert_rejected(
             lambda data: data["cases"][0]["expected"].update(must_include=[]),
             "case 0 must_include must be a non-empty list",
-        ),
-        (
+        )
+
+    def test_rejects_blank_must_not_include(self):
+        self._assert_rejected(
             lambda data: data["cases"][0]["expected"].update(must_not_include=[""]),
             "case 0 must_not_include must contain non-empty strings",
-        ),
-    ],
-)
-def test_eval_case_validation_rejects_invalid_cases(change, expected_error):
-    eval_cases = _minimal_eval_cases()
-    # Each mutation represents a malformed future eval_cases.yml file.
-    change(eval_cases)
-
-    assert expected_error in _validate_eval_cases(eval_cases, "example")
+        )
 
 
 def test_ptb_skill_eval_cases_cover_ticket_scope():

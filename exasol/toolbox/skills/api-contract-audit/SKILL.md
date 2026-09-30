@@ -1,4 +1,5 @@
 ---
+# Generated and maintained by the exasol-toolbox.
 name: api-contract-audit
 description: Audit a Python library's public API for inconsistencies between type annotations, docstrings, user-facing documentation/examples, and actual runtime behavior. Use when reviewing API changes, checking whether public methods accept undocumented parameter shapes, or validating that docs and type hints match enforcement in code.
 ---
