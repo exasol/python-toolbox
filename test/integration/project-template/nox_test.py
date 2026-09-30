@@ -90,9 +90,7 @@ class TestSpecificNoxTasks:
         file_list = run_command(["ls", ".github/workflows"]).stdout.splitlines()
         assert len(file_list) == 14
 
-    def test_skills_install_and_check(
-        self, poetry_path, run_command, new_project
-    ):
+    def test_skills_install_and_check(self, poetry_path, run_command, new_project):
         skills_install = self._command(poetry_path, "skills:install")
         run_command(skills_install)
 
@@ -102,7 +100,10 @@ class TestSpecificNoxTasks:
         }
         assert set(EXPECTED_PACKAGED_SKILL_FILE_COUNTS) <= installed_skill_names
 
-        for skill_name, expected_file_count in EXPECTED_PACKAGED_SKILL_FILE_COUNTS.items():
+        for (
+            skill_name,
+            expected_file_count,
+        ) in EXPECTED_PACKAGED_SKILL_FILE_COUNTS.items():
             installed_file_count = sum(
                 path.is_file() for path in (installed_skills / skill_name).rglob("*")
             )
