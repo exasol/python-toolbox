@@ -77,9 +77,7 @@ def _validate_skill_name(skill_name: str) -> None:
         raise ValueError(f"invalid skill name: {skill_name}")
 
 
-def _prepare_installation_directory(
-    target_directory: Path, skill_name: str
-) -> Path:
+def _prepare_installation_directory(target_directory: Path, skill_name: str) -> Path:
     """Validate and recreate the destination directory for one skill."""
     target_skill = target_directory / skill_name
     if _has_symlink_in_parents(target_directory):
