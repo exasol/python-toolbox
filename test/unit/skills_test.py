@@ -191,9 +191,7 @@ class TestEvalCaseValidation:
         assert expected_error in _validate_eval_cases(eval_cases, "example")
 
     def test_rejects_invalid_version(self):
-        self._assert_rejected(
-            lambda data: data.update(version=2), "version must be 1"
-        )
+        self._assert_rejected(lambda data: data.update(version=2), "version must be 1")
 
     def test_rejects_invalid_skill_name(self):
         self._assert_rejected(
