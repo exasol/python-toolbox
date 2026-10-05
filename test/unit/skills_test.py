@@ -1,4 +1,3 @@
-from collections.abc import Mapping
 from pathlib import Path
 from subprocess import run
 from zipfile import ZipFile
@@ -42,52 +41,6 @@ def _skills_with_eval_cases() -> list[str]:
         for skill_name in get_packaged_skill_names()
         if _eval_cases_path(skill_name).is_file()
     ]
-
-
-def _validate_eval_cases(eval_cases: object, skill_name: str) -> list[str]:
-    # Eval cases are test resources, so validate their reusable schema here
-    # instead of coupling production skill discovery to test-only files.
-    errors: list[str] = []
-    if not isinstance(eval_cases, Mapping):
-        return ["evaluation cases must be a mapping"]
-    if eval_cases.get("version") != 1:
-        errors.append("version must be 1")
-    if eval_cases.get("skill") != skill_name:
-        errors.append(f"skill must be {skill_name}")
-
-    cases = eval_cases.get("cases")
-    if not isinstance(cases, list) or not cases:
-        return errors + ["cases must be a non-empty list"]
-
-    ids: list[str] = []
-    for index, case in enumerate(cases):
-        if not isinstance(case, Mapping):
-            errors.append(f"case {index} must be a mapping")
-            continue
-        case_id = case.get("id")
-        if not isinstance(case_id, str) or not case_id.strip():
-            errors.append(f"case {index} must have a non-empty id")
-        else:
-            ids.append(case_id)
-        for field in ("category", "prompt"):
-            value = case.get(field)
-            if not isinstance(value, str) or not value.strip():
-                errors.append(f"case {index} must have a non-empty {field}")
-
-        expected = case.get("expected")
-        if not isinstance(expected, Mapping):
-            errors.append(f"case {index} expected must be a mapping")
-            continue
-        for field in ("must_include", "must_not_include"):
-            values = expected.get(field)
-            if not isinstance(values, list) or not values:
-                errors.append(f"case {index} {field} must be a non-empty list")
-            elif not all(isinstance(value, str) and value.strip() for value in values):
-                errors.append(f"case {index} {field} must contain non-empty strings")
-
-    if len(ids) != len(set(ids)):
-        errors.append("case ids must be unique")
-    return errors
 
 
 def test_ptb_skill_resources_are_available():
@@ -157,87 +110,36 @@ def test_ptb_skill_frontmatter_is_complete():
 
 @pytest.mark.parametrize("skill_name", _skills_with_eval_cases())
 class TestPackagedSkillEvalCases:
-    def test_schema_is_valid(self, skill_name):
-        eval_cases = _load_eval_cases(skill_name)
+    @pytest.fixture
+    def eval_cases(self, skill_name):
+        # Load the packaged artifact once so all checks inspect the same data.
+        return _load_eval_cases(skill_name)
 
-        assert _validate_eval_cases(eval_cases, skill_name) == []
+    def test_has_expected_metadata(self, eval_cases, skill_name):
 
+        assert eval_cases["version"] == 1
+        assert eval_cases["skill"] == skill_name
+        assert isinstance(eval_cases["cases"], list)
+        assert eval_cases["cases"]
 
-def _minimal_eval_cases() -> dict:
-    return {
-        "version": 1,
-        "skill": "example",
-        "cases": [
-            {
-                "id": "case",
-                "category": "quality",
-                "prompt": "Check the API.",
-                "expected": {
-                    "must_include": ["finding"],
-                    "must_not_include": ["fix"],
-                },
-            }
-        ],
-    }
+    def test_cases_have_required_fields(self, eval_cases):
+        for case in eval_cases["cases"]:
+            assert case["id"].strip()
+            assert case["category"].strip()
+            assert case["prompt"].strip()
 
+    def test_cases_have_response_constraints(self, eval_cases):
+        for case in eval_cases["cases"]:
+            expected = case["expected"]
+            assert expected["must_include"]
+            assert expected["must_not_include"]
+            assert all(value.strip() for value in expected["must_include"])
+            assert all(value.strip() for value in expected["must_not_include"])
 
-class TestEvalCaseValidation:
-    @staticmethod
-    def _assert_rejected(change, expected_error):
-        eval_cases = _minimal_eval_cases()
-        # Each mutation represents a malformed future eval_cases.yml file.
-        change(eval_cases)
+    def test_case_ids_are_unique(self, eval_cases):
+        ids = [case["id"] for case in eval_cases["cases"]]
 
-        assert expected_error in _validate_eval_cases(eval_cases, "example")
-
-    def test_rejects_invalid_version(self):
-        self._assert_rejected(lambda data: data.update(version=2), "version must be 1")
-
-    def test_rejects_invalid_skill_name(self):
-        self._assert_rejected(
-            lambda data: data.update(skill="other"), "skill must be example"
-        )
-
-    def test_rejects_empty_cases(self):
-        self._assert_rejected(
-            lambda data: data["cases"].clear(), "cases must be a non-empty list"
-        )
-
-    def test_rejects_duplicate_case_ids(self):
-        self._assert_rejected(
-            lambda data: data["cases"].append(data["cases"][0].copy()),
-            "case ids must be unique",
-        )
-
-    def test_rejects_empty_category(self):
-        self._assert_rejected(
-            lambda data: data["cases"][0].update(category=""),
-            "case 0 must have a non-empty category",
-        )
-
-    def test_rejects_empty_prompt(self):
-        self._assert_rejected(
-            lambda data: data["cases"][0].update(prompt=""),
-            "case 0 must have a non-empty prompt",
-        )
-
-    def test_rejects_missing_expected_mapping(self):
-        self._assert_rejected(
-            lambda data: data["cases"][0].update(expected=None),
-            "case 0 expected must be a mapping",
-        )
-
-    def test_rejects_empty_must_include(self):
-        self._assert_rejected(
-            lambda data: data["cases"][0]["expected"].update(must_include=[]),
-            "case 0 must_include must be a non-empty list",
-        )
-
-    def test_rejects_blank_must_not_include(self):
-        self._assert_rejected(
-            lambda data: data["cases"][0]["expected"].update(must_not_include=[""]),
-            "case 0 must_not_include must contain non-empty strings",
-        )
+        assert len(ids) == len(set(ids))
 
 
 def test_ptb_skill_eval_cases_cover_ticket_scope():
