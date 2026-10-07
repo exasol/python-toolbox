@@ -2,14 +2,16 @@ from pathlib import Path
 from subprocess import run
 from zipfile import ZipFile
 
+import pytest
 from ruamel.yaml import YAML
 
+from exasol.toolbox.util.skill_eval import PackagedSkillEvalCases
 from exasol.toolbox.util.skills import (
     PTB_SKILL_NAME,
+    get_packaged_skill_names,
     get_skill_files,
     get_skill_path,
     install_skill,
-    validate_skill,
 )
 
 PROJECT_ROOT = Path(__file__).parents[2]
@@ -21,18 +23,25 @@ SKILL_FILES = [
     "references/nox-sessions.md",
     "references/source-routing.md",
 ]
-EVAL_CASES = (
-    PROJECT_ROOT
-    / "test"
-    / "resources"
-    / "skills"
-    / "exasol-python-toolbox"
-    / "eval_cases.yml"
-)
 
 
-def _load_eval_cases() -> dict:
-    return YAML(typ="safe").load(EVAL_CASES)
+def _eval_cases_path(skill_name: str) -> Path:
+    return (
+        PROJECT_ROOT / "test" / "resources" / "skills" / skill_name / "eval_cases.yml"
+    )
+
+
+def _load_eval_cases(skill_name: str) -> dict:
+    return YAML(typ="safe").load(_eval_cases_path(skill_name))
+
+
+def _skills_with_eval_cases() -> list[str]:
+    # Keep this data-driven so adding a packaged skill requires no test edit.
+    return [
+        skill_name
+        for skill_name in get_packaged_skill_names()
+        if _eval_cases_path(skill_name).is_file()
+    ]
 
 
 def test_ptb_skill_resources_are_available():
@@ -49,6 +58,14 @@ def test_ptb_skill_can_be_installed(tmp_path):
     assert installed == tmp_path / PTB_SKILL_NAME
     for expected in SKILL_FILES:
         assert (installed / expected).is_file()
+
+
+@pytest.mark.parametrize("skill_name", get_packaged_skill_names())
+def test_packaged_skills_can_be_installed(skill_name, tmp_path):
+    installed = install_skill(skill_name, tmp_path)
+
+    assert installed == tmp_path / skill_name
+    assert (installed / "SKILL.md").is_file()
 
 
 def test_ptb_skill_resources_are_packaged(tmp_path):
@@ -92,32 +109,48 @@ def test_ptb_skill_frontmatter_is_complete():
     assert "[TODO" not in content
 
 
-def test_ptb_skill_passes_shared_validation():
-    assert validate_skill(PTB_SKILL_NAME) == ()
+@pytest.mark.parametrize("skill_name", _skills_with_eval_cases())
+class TestPackagedSkillEvalCases:
+    @pytest.fixture(scope="module")
+    def eval_cases_by_skill(self):
+        # Parse each packaged artifact once so all checks use the same model.
+        return {
+            skill_name: PackagedSkillEvalCases.model_validate(
+                _load_eval_cases(skill_name)
+            )
+            for skill_name in _skills_with_eval_cases()
+        }
 
+    @pytest.fixture
+    def eval_cases(self, eval_cases_by_skill, skill_name):
+        return eval_cases_by_skill[skill_name]
 
-def test_ptb_skill_eval_cases_are_valid():
-    eval_cases = _load_eval_cases()
+    def test_has_expected_metadata(self, eval_cases, skill_name):
+        assert eval_cases.version == 1
+        assert eval_cases.skill == skill_name
+        assert eval_cases.cases
 
-    assert eval_cases["version"] == 1
-    assert eval_cases["skill"] == "exasol-python-toolbox"
-    # Keep enough cases to cover the ticket scope, but not so many that the
-    # deterministic eval file becomes hard to review.
-    assert 6 <= len(eval_cases["cases"]) <= 8
+    def test_cases_have_required_fields(self, eval_cases):
+        for case in eval_cases.cases:
+            assert case.id
+            assert case.category
+            assert case.prompt
 
-    ids = [case["id"] for case in eval_cases["cases"]]
-    assert len(ids) == len(set(ids))
+    def test_cases_have_response_constraints(self, eval_cases):
+        for case in eval_cases.cases:
+            assert case.expected.must_include
+            assert case.expected.must_not_include
+            assert all(value.strip() for value in case.expected.must_include)
+            assert all(value.strip() for value in case.expected.must_not_include)
 
-    for case in eval_cases["cases"]:
-        assert case["id"]
-        assert case["category"]
-        assert case["prompt"]
-        assert case["expected"]["must_include"]
-        assert case["expected"]["must_not_include"]
+    def test_case_ids_are_unique(self, eval_cases):
+        ids = [case.id for case in eval_cases.cases]
+
+        assert len(ids) == len(set(ids))
 
 
 def test_ptb_skill_eval_cases_cover_ticket_scope():
-    eval_cases = _load_eval_cases()
+    eval_cases = _load_eval_cases(PTB_SKILL_NAME)
     categories = {case["category"] for case in eval_cases["cases"]}
 
     assert {
@@ -131,7 +164,7 @@ def test_ptb_skill_eval_cases_cover_ticket_scope():
 
 
 def test_ptb_skill_eval_cases_do_not_define_llm_ci_execution():
-    content = EVAL_CASES.read_text(encoding="utf-8").lower()
+    content = _eval_cases_path(PTB_SKILL_NAME).read_text(encoding="utf-8").lower()
 
     forbidden = [
         "model:",

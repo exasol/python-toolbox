@@ -26,7 +26,7 @@ def test_get_packaged_skill_names_reports_missing_resources(monkeypatch):
 
     monkeypatch.setattr(skills.resources, "files", raise_file_not_found)
 
-    with pytest.raises(RuntimeError, match="Packaged PTB skills are unavailable"):
+    with pytest.raises(RuntimeError, match="Packaged skills are unavailable"):
         skills.get_packaged_skill_names()
 
 
@@ -113,6 +113,42 @@ def test_install_skill_copies_all_files_and_replaces_previous_copy(
 def test_install_skill_rejects_path_traversal(tmp_path):
     with pytest.raises(ValueError, match="invalid skill name"):
         skills.install_skill("../outside", tmp_path)
+
+
+def test_install_skill_rejects_missing_skill(tmp_path, monkeypatch):
+    monkeypatch.setattr(skills, "get_skill_files", lambda _: {})
+
+    with pytest.raises(ValueError, match="packaged skill does not exist"):
+        skills.install_skill("example", tmp_path)
+
+
+def test_install_skill_rejects_symlinked_target_directory(tmp_path, monkeypatch):
+    source = tmp_path / "source"
+    source.mkdir()
+    skill_file = source / "SKILL.md"
+    skill_file.write_text("skill", encoding="utf-8")
+    monkeypatch.setattr(skills, "get_skill_files", lambda _: {"SKILL.md": skill_file})
+    real_target = tmp_path / "real-target"
+    real_target.mkdir()
+    target_directory = tmp_path / "linked-target"
+    target_directory.symlink_to(real_target, target_is_directory=True)
+
+    with pytest.raises(ValueError, match="symlinked target directory"):
+        skills.install_skill("example", target_directory)
+
+
+def test_install_skill_rejects_file_as_target(tmp_path, monkeypatch):
+    source = tmp_path / "source"
+    source.mkdir()
+    skill_file = source / "SKILL.md"
+    skill_file.write_text("skill", encoding="utf-8")
+    monkeypatch.setattr(skills, "get_skill_files", lambda _: {"SKILL.md": skill_file})
+    target_directory = tmp_path / ".agents" / "skills"
+    target_directory.mkdir(parents=True)
+    (target_directory / "example").write_text("not a directory", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="not a directory"):
+        skills.install_skill("example", target_directory)
 
 
 def test_install_skill_rejects_symlink_target(tmp_path, monkeypatch):

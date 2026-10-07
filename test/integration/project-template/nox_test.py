@@ -1,5 +1,47 @@
 from exasol.toolbox.util.version import Version
 
+EXPECTED_PACKAGED_SKILL_FILE_COUNTS = {
+    "api-contract-audit": 1,
+    "exasol-python-toolbox": 5,
+}
+EXPECTED_NOX_SESSIONS = {
+    "format:fix",
+    "format:check",
+    "project:check",
+    "test:unit",
+    "test:integration",
+    "test:coverage",
+    "lint:code",
+    "lint:typing",
+    "lint:security",
+    "lint:dependencies",
+    "docs:multiversion",
+    "docs:build",
+    "docs:open",
+    "docs:clean",
+    "links:list",
+    "links:check",
+    "changelog:updated",
+    "release:prepare",
+    "release:update",
+    "release:trigger",
+    "skills:check",
+    "skills:install",
+    "matrix:generate",
+    "artifacts:validate",
+    "artifacts:copy",
+    "sonar:check",
+    "dependency:licenses",
+    "dependency:audit",
+    "vulnerabilities:update",
+    "vulnerabilities:resolved",
+    "dependency:sbom",
+    "package:check",
+    "workflow:check",
+    "workflow:generate",
+    "workflow:audit",
+}
+
 
 class TestSpecificNoxTasks:
     """
@@ -84,3 +126,37 @@ class TestSpecificNoxTasks:
 
         file_list = run_command(["ls", ".github/workflows"]).stdout.splitlines()
         assert len(file_list) == 14
+
+    def test_skills_install_and_check(self, poetry_path, run_command, new_project):
+        skills_install = self._command(poetry_path, "skills:install")
+        run_command(skills_install)
+
+        installed_skills = new_project / ".agents" / "skills"
+        installed_skill_names = {
+            path.name for path in installed_skills.iterdir() if path.is_dir()
+        }
+        assert set(EXPECTED_PACKAGED_SKILL_FILE_COUNTS) <= installed_skill_names
+
+        for (
+            skill_name,
+            expected_file_count,
+        ) in EXPECTED_PACKAGED_SKILL_FILE_COUNTS.items():
+            installed_file_count = sum(
+                path.is_file() for path in (installed_skills / skill_name).rglob("*")
+            )
+            assert installed_file_count == expected_file_count
+
+        skills_check = self._command(poetry_path, "skills:check")
+        output = run_command(skills_check)
+
+        assert output.returncode == 0
+
+    def test_exposed_nox_sessions(self, poetry_path, run_command):
+        output = run_command([poetry_path, "run", "--", "nox", "-l"])
+        sessions = {
+            line[2:].split(" ->", maxsplit=1)[0]
+            for line in output.stdout.splitlines()
+            if line.startswith(("* ", "- "))
+        }
+
+        assert sessions == EXPECTED_NOX_SESSIONS
