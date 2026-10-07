@@ -5,6 +5,7 @@ from zipfile import ZipFile
 import pytest
 from ruamel.yaml import YAML
 
+from exasol.toolbox.util.skill_eval import PackagedSkillEvalCases
 from exasol.toolbox.util.skills import (
     PTB_SKILL_NAME,
     get_packaged_skill_names,
@@ -110,34 +111,40 @@ def test_ptb_skill_frontmatter_is_complete():
 
 @pytest.mark.parametrize("skill_name", _skills_with_eval_cases())
 class TestPackagedSkillEvalCases:
+    @pytest.fixture(scope="module")
+    def eval_cases_by_skill(self):
+        # Parse each packaged artifact once so all checks use the same model.
+        return {
+            skill_name: PackagedSkillEvalCases.model_validate(
+                _load_eval_cases(skill_name)
+            )
+            for skill_name in _skills_with_eval_cases()
+        }
+
     @pytest.fixture
-    def eval_cases(self, skill_name):
-        # Load the packaged artifact once so all checks inspect the same data.
-        return _load_eval_cases(skill_name)
+    def eval_cases(self, eval_cases_by_skill, skill_name):
+        return eval_cases_by_skill[skill_name]
 
     def test_has_expected_metadata(self, eval_cases, skill_name):
-
-        assert eval_cases["version"] == 1
-        assert eval_cases["skill"] == skill_name
-        assert isinstance(eval_cases["cases"], list)
-        assert eval_cases["cases"]
+        assert eval_cases.version == 1
+        assert eval_cases.skill == skill_name
+        assert eval_cases.cases
 
     def test_cases_have_required_fields(self, eval_cases):
-        for case in eval_cases["cases"]:
-            assert case["id"].strip()
-            assert case["category"].strip()
-            assert case["prompt"].strip()
+        for case in eval_cases.cases:
+            assert case.id
+            assert case.category
+            assert case.prompt
 
     def test_cases_have_response_constraints(self, eval_cases):
-        for case in eval_cases["cases"]:
-            expected = case["expected"]
-            assert expected["must_include"]
-            assert expected["must_not_include"]
-            assert all(value.strip() for value in expected["must_include"])
-            assert all(value.strip() for value in expected["must_not_include"])
+        for case in eval_cases.cases:
+            assert case.expected.must_include
+            assert case.expected.must_not_include
+            assert all(value.strip() for value in case.expected.must_include)
+            assert all(value.strip() for value in case.expected.must_not_include)
 
     def test_case_ids_are_unique(self, eval_cases):
-        ids = [case["id"] for case in eval_cases["cases"]]
+        ids = [case.id for case in eval_cases.cases]
 
         assert len(ids) == len(set(ids))
 
