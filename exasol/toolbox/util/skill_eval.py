@@ -1,9 +1,15 @@
 """Models for validating packaged agent-skill evaluation cases."""
 
-from typing import Annotated, Literal
+from typing import (
+    Annotated,
+    Literal,
+)
 
-from pydantic import BaseModel, ConfigDict, Field
-
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+)
 
 NonBlankString = Annotated[str, Field(pattern=r"\S")]
 
