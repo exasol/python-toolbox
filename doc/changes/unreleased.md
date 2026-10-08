@@ -6,3 +6,7 @@
 * #938: Added the `skills:install` Nox session for installing the packaged PTB agent skill.
 * #942: Added api-contract-audit skill for identifying mismatches between type annotations, docstrings, and runtime
   behavior
+
+## Refactoring
+
+* #924: Removed the deprecated `lint:dependencies` Nox session and its unused implementation and tests.
