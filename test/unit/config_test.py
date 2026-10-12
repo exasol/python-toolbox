@@ -1,4 +1,3 @@
-import re
 from collections.abc import Iterable
 from pathlib import Path
 from unittest.mock import Mock
@@ -35,10 +34,7 @@ class TestBaseConfig:
         root_path = config.root_path
         config_dump = config.model_dump()
         workflow_header = config_dump["github_template_dict"].pop("workflow_header")
-        assert re.sub(r"version [^\n]+\.", "version X.Y.Z.", workflow_header) == (
-            "# Generated and maintained by the exasol-toolbox.\n"
-            "# Last generated with exasol-toolbox version X.Y.Z."
-        )
+        assert workflow_header == "# Generated and maintained by the exasol-toolbox."
         assert config_dump == {
             "add_to_excluded_python_paths": (),
             "create_major_version_tags": False,
