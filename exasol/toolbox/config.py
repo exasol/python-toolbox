@@ -20,7 +20,6 @@ from pydantic import (
 )
 from pydantic_core.core_schema import ValidationInfo
 
-from exasol.toolbox import __version__
 from exasol.toolbox.nox.plugin import (
     METHODS_SPECIFIED_FOR_HOOKS,
     PLUGIN_ATTR_NAME,
@@ -28,11 +27,8 @@ from exasol.toolbox.nox.plugin import (
 from exasol.toolbox.util.version import Version
 from exasol.toolbox.util.workflows.render_yaml import GithubTemplateContext
 
-WORKFLOW_HEADER_PREFIX = (
-    "# Generated and maintained by the exasol-toolbox.\n"
-    "# Last generated with exasol-toolbox version "
-)
-WORKFLOW_HEADER_PATTERN = rf"\A{re.escape(WORKFLOW_HEADER_PREFIX)}[^\n]+\.\n"
+WORKFLOW_HEADER_PREFIX = "# Generated and maintained by the exasol-toolbox."
+WORKFLOW_HEADER_PATTERN = rf"\A{re.escape(WORKFLOW_HEADER_PREFIX)}\n"
 
 
 def get_methods_with_hook_implementation(
@@ -348,7 +344,7 @@ class BaseConfig(BaseModel):
             os_version=self.os_version,
             python_versions=self.python_versions,
             sonar_token_name=self.sonar_token_name,
-            workflow_header=f"{WORKFLOW_HEADER_PREFIX}{__version__}.",
+            workflow_header=WORKFLOW_HEADER_PREFIX,
         )
 
     @computed_field  # type: ignore[misc]

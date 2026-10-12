@@ -213,7 +213,7 @@ class TestNormalizeContent:
     @staticmethod
     def test_strips_workflow_header_when_requested():
         content = (
-            f"{WORKFLOW_HEADER_PREFIX}8.0.0.\n\n"
+            f"{WORKFLOW_HEADER_PREFIX}\n\n"
             "jobs:\n"
             "  build:\n"
             "    runs-on: ubuntu-24.04\n"
@@ -226,14 +226,14 @@ class TestNormalizeContent:
     @staticmethod
     def test_keeps_workflow_header_when_not_requested():
         content = (
-            f"{WORKFLOW_HEADER_PREFIX}8.0.0.\n\n"
+            f"{WORKFLOW_HEADER_PREFIX}\n\n"
             "jobs:\n"
             "  build:\n"
             "    runs-on: ubuntu-24.04\n"
         )
 
         assert Workflow._normalize_content(content, strip_header=False) == (
-            f"{WORKFLOW_HEADER_PREFIX}8.0.0.\n\n"
+            f"{WORKFLOW_HEADER_PREFIX}\n\n"
             "jobs:\n"
             "  build:\n"
             "    runs-on: ubuntu-24.04"

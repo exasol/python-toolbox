@@ -180,7 +180,9 @@ class TestExportDependenciesToFile:
         )
 
         content = requirements_txt.read_text()
-        assert self.extract_package_names(content) == EXPORT_PACKAGES
+        # Poetry may emit a package more than once when it is shared by multiple
+        # dependency groups or extras.
+        assert set(self.extract_package_names(content)) == set(EXPORT_PACKAGES)
         assert "--hash=" in content
 
 
