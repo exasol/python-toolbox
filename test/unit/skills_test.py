@@ -110,43 +110,18 @@ def test_ptb_skill_frontmatter_is_complete():
 
 
 @pytest.mark.parametrize("skill_name", _skills_with_eval_cases())
-class TestPackagedSkillEvalCases:
-    @pytest.fixture(scope="module")
-    def eval_cases_by_skill(self):
-        # Parse each packaged artifact once so all checks use the same model.
-        return {
-            skill_name: PackagedSkillEvalCases.model_validate(
-                _load_eval_cases(skill_name)
-            )
-            for skill_name in _skills_with_eval_cases()
-        }
+def test_packaged_skill_eval_cases_are_valid(skill_name):
+    eval_cases = PackagedSkillEvalCases.model_validate(_load_eval_cases(skill_name))
 
-    @pytest.fixture
-    def eval_cases(self, eval_cases_by_skill, skill_name):
-        return eval_cases_by_skill[skill_name]
+    assert eval_cases.skill == skill_name
 
-    def test_has_expected_metadata(self, eval_cases, skill_name):
-        assert eval_cases.version == 1
-        assert eval_cases.skill == skill_name
-        assert eval_cases.cases
 
-    def test_cases_have_required_fields(self, eval_cases):
-        for case in eval_cases.cases:
-            assert case.id
-            assert case.category
-            assert case.prompt
+@pytest.mark.parametrize("skill_name", _skills_with_eval_cases())
+def test_packaged_skill_eval_case_ids_are_unique(skill_name):
+    eval_cases = PackagedSkillEvalCases.model_validate(_load_eval_cases(skill_name))
+    ids = [case.id for case in eval_cases.cases]
 
-    def test_cases_have_response_constraints(self, eval_cases):
-        for case in eval_cases.cases:
-            assert case.expected.must_include
-            assert case.expected.must_not_include
-            assert all(value.strip() for value in case.expected.must_include)
-            assert all(value.strip() for value in case.expected.must_not_include)
-
-    def test_case_ids_are_unique(self, eval_cases):
-        ids = [case.id for case in eval_cases.cases]
-
-        assert len(ids) == len(set(ids))
+    assert len(ids) == len(set(ids))
 
 
 def test_ptb_skill_eval_cases_cover_ticket_scope():

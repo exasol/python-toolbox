@@ -1,5 +1,7 @@
 import pytest
+from pydantic import ValidationError
 
+from exasol.toolbox.util.skill_eval import PackagedSkillEvalCases
 from exasol.toolbox.util import skills
 
 
@@ -40,6 +42,24 @@ def test_get_skill_files_recurses_into_resource_directories(tmp_path, monkeypatc
 
     assert set(files) == {"references/guide.md"}
     assert files["references/guide.md"].read_text(encoding="utf-8") == "guide"
+
+
+@pytest.mark.parametrize(
+    "invalid_case",
+    [
+        {"version": 2, "skill": "skill", "cases": []},
+        {"version": 1, "skill": "", "cases": []},
+        {"version": 1, "skill": "skill", "cases": []},
+        {
+            "version": 1,
+            "skill": "skill",
+            "cases": [{"id": "x", "category": "x", "prompt": "x"}],
+        },
+    ],
+)
+def test_packaged_skill_eval_cases_reject_invalid_schema(invalid_case):
+    with pytest.raises(ValidationError):
+        PackagedSkillEvalCases.model_validate(invalid_case)
 
 
 def test_validate_skill_reports_shared_rule_violations(tmp_path, monkeypatch):
