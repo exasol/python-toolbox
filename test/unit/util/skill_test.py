@@ -1,8 +1,8 @@
 import pytest
 from pydantic import ValidationError
 
-from exasol.toolbox.util.skill_eval import PackagedSkillEvalCases
 from exasol.toolbox.util import skills
+from exasol.toolbox.util.skill_eval import PackagedSkillEvalCases
 
 
 def test_validate_skill_accepts_packaged_ptb_skill():
