@@ -1,6 +1,23 @@
 import pytest
+from pydantic import ValidationError
 
 from exasol.toolbox.util import skills
+from exasol.toolbox.util.skill_eval import PackagedSkillEvalCases
+
+
+@pytest.fixture
+def mock_packaged_skill_files(tmp_path, monkeypatch):
+    source = tmp_path / "source"
+    source.mkdir()
+
+    skill_file = source / "SKILL.md"
+    skill_file.write_text("skill", encoding="utf-8")
+
+    monkeypatch.setattr(
+        skills,
+        "get_skill_files",
+        lambda _: {"SKILL.md": skill_file},
+    )
 
 
 def test_validate_skill_accepts_packaged_ptb_skill():
@@ -26,7 +43,7 @@ def test_get_packaged_skill_names_reports_missing_resources(monkeypatch):
 
     monkeypatch.setattr(skills.resources, "files", raise_file_not_found)
 
-    with pytest.raises(RuntimeError, match="Packaged PTB skills are unavailable"):
+    with pytest.raises(RuntimeError, match="Packaged skills are unavailable"):
         skills.get_packaged_skill_names()
 
 
@@ -40,6 +57,40 @@ def test_get_skill_files_recurses_into_resource_directories(tmp_path, monkeypatc
 
     assert set(files) == {"references/guide.md"}
     assert files["references/guide.md"].read_text(encoding="utf-8") == "guide"
+
+
+@pytest.mark.parametrize(
+    "invalid_case, expected_error",
+    [
+        pytest.param(
+            {"version": 2, "skill": "skill", "cases": []},
+            "Input should be 1",
+            id="version-must-be-1",
+        ),
+        pytest.param(
+            {"version": 1, "skill": "", "cases": []},
+            "String should match pattern",
+            id="skill-name-cannot-be-blank",
+        ),
+        pytest.param(
+            {"version": 1, "skill": "skill", "cases": []},
+            "List should have at least 1 item",
+            id="cases-cannot-be-empty",
+        ),
+        pytest.param(
+            {
+                "version": 1,
+                "skill": "skill",
+                "cases": [{"id": "x", "category": "x", "prompt": "x"}],
+            },
+            r"cases\.0\.expected\n  Field required",
+            id="expected-response-is-required",
+        ),
+    ],
+)
+def test_packaged_skill_eval_cases_reject_invalid_schema(invalid_case, expected_error):
+    with pytest.raises(ValidationError, match=expected_error):
+        PackagedSkillEvalCases.model_validate(invalid_case)
 
 
 def test_validate_skill_reports_shared_rule_violations(tmp_path, monkeypatch):
@@ -113,6 +164,34 @@ def test_install_skill_copies_all_files_and_replaces_previous_copy(
 def test_install_skill_rejects_path_traversal(tmp_path):
     with pytest.raises(ValueError, match="invalid skill name"):
         skills.install_skill("../outside", tmp_path)
+
+
+def test_install_skill_rejects_missing_skill(tmp_path, monkeypatch):
+    monkeypatch.setattr(skills, "get_skill_files", lambda _: {})
+
+    with pytest.raises(ValueError, match="packaged skill does not exist"):
+        skills.install_skill("example", tmp_path)
+
+
+def test_install_skill_rejects_symlinked_target_directory(
+    tmp_path, mock_packaged_skill_files
+):
+    real_target = tmp_path / "real-target"
+    real_target.mkdir()
+    target_directory = tmp_path / "linked-target"
+    target_directory.symlink_to(real_target, target_is_directory=True)
+
+    with pytest.raises(ValueError, match="symlinked target directory"):
+        skills.install_skill("example", target_directory)
+
+
+def test_install_skill_rejects_file_as_target(tmp_path, mock_packaged_skill_files):
+    target_directory = tmp_path / ".agents" / "skills"
+    target_directory.mkdir(parents=True)
+    (target_directory / "example").write_text("not a directory", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="not a directory"):
+        skills.install_skill("example", target_directory)
 
 
 def test_install_skill_rejects_symlink_target(tmp_path, monkeypatch):
