@@ -14,7 +14,6 @@ EXPECTED_NOX_SESSIONS = {
     "lint:code",
     "lint:typing",
     "lint:security",
-    "lint:dependencies",
     "docs:multiversion",
     "docs:build",
     "docs:open",
