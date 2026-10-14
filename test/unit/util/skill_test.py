@@ -215,9 +215,7 @@ def test_prepare_installation_directory_rejects_symlink_target(tmp_path):
     target_directory.mkdir(parents=True)
     symlink_target = tmp_path / "elsewhere"
     symlink_target.mkdir()
-    (target_directory / "example").symlink_to(
-        symlink_target, target_is_directory=True
-    )
+    (target_directory / "example").symlink_to(symlink_target, target_is_directory=True)
 
     with pytest.raises(ValueError, match="refusing to replace symlink"):
         _prepare_installation_directory(target_directory, "example")
