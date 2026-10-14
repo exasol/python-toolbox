@@ -73,6 +73,7 @@ def _has_symlink_in_parents(path: Path) -> bool:
 
 def _validate_skill_name(skill_name: str) -> None:
     """Reject skill names that could escape the skill installation directory."""
+    # Validate before joining the name with the destination path.
     if Path(skill_name).name != skill_name:
         raise ValueError(f"invalid skill name: {skill_name}")
 
@@ -80,6 +81,7 @@ def _validate_skill_name(skill_name: str) -> None:
 def _prepare_installation_directory(target_directory: Path, skill_name: str) -> Path:
     """Validate and recreate the destination directory for one skill."""
     target_skill = target_directory / skill_name
+    # Do not follow symlinks when creating or replacing an installation.
     if _has_symlink_in_parents(target_directory):
         raise ValueError(
             f"refusing to use symlinked target directory: {target_directory}"
@@ -89,6 +91,7 @@ def _prepare_installation_directory(target_directory: Path, skill_name: str) -> 
     if target_skill.exists() and not target_skill.is_dir():
         raise ValueError(f"skill target is not a directory: {target_skill}")
 
+    # Replace an old installation only after validating its type and symlink state.
     if target_skill.exists():
         shutil.rmtree(target_skill)
     target_skill.mkdir(parents=True, exist_ok=True)
