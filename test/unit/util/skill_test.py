@@ -3,21 +3,11 @@ from pydantic import ValidationError
 
 from exasol.toolbox.util import skills
 from exasol.toolbox.util.skill_eval import PackagedSkillEvalCases
-
-
-@pytest.fixture
-def mock_packaged_skill_files(tmp_path, monkeypatch):
-    source = tmp_path / "source"
-    source.mkdir()
-
-    skill_file = source / "SKILL.md"
-    skill_file.write_text("skill", encoding="utf-8")
-
-    monkeypatch.setattr(
-        skills,
-        "get_skill_files",
-        lambda _: {"SKILL.md": skill_file},
-    )
+from exasol.toolbox.util.skills import (
+    _copy_skill_files,
+    _prepare_installation_directory,
+    _validate_skill_name,
+)
 
 
 def test_validate_skill_accepts_packaged_ptb_skill():
@@ -166,6 +156,34 @@ def test_install_skill_rejects_path_traversal(tmp_path):
         skills.install_skill("../outside", tmp_path)
 
 
+def test_validate_skill_name_rejects_path_traversal():
+    with pytest.raises(ValueError, match="invalid skill name"):
+        _validate_skill_name("nested/example")
+
+
+def test_prepare_installation_directory_replaces_existing_directory(tmp_path):
+    target_directory = tmp_path / ".agents" / "skills"
+    target_skill = target_directory / "example"
+    target_skill.mkdir(parents=True)
+    (target_skill / "stale.md").write_text("stale", encoding="utf-8")
+
+    prepared = _prepare_installation_directory(target_directory, "example")
+
+    assert prepared == target_skill
+    assert not (target_skill / "stale.md").exists()
+
+
+def test_copy_skill_files_copies_nested_files(tmp_path):
+    source = tmp_path / "source.md"
+    source.write_text("content", encoding="utf-8")
+    target = tmp_path / "target"
+    target.mkdir()
+
+    _copy_skill_files({"references/source.md": source}, target)
+
+    assert (target / "references/source.md").read_text(encoding="utf-8") == "content"
+
+
 def test_install_skill_rejects_missing_skill(tmp_path, monkeypatch):
     monkeypatch.setattr(skills, "get_skill_files", lambda _: {})
 
@@ -173,38 +191,31 @@ def test_install_skill_rejects_missing_skill(tmp_path, monkeypatch):
         skills.install_skill("example", tmp_path)
 
 
-def test_install_skill_rejects_symlinked_target_directory(
-    tmp_path, mock_packaged_skill_files
-):
+def test_prepare_installation_directory_rejects_symlinked_target_directory(tmp_path):
     real_target = tmp_path / "real-target"
     real_target.mkdir()
     target_directory = tmp_path / "linked-target"
     target_directory.symlink_to(real_target, target_is_directory=True)
 
     with pytest.raises(ValueError, match="symlinked target directory"):
-        skills.install_skill("example", target_directory)
+        _prepare_installation_directory(target_directory, "example")
 
 
-def test_install_skill_rejects_file_as_target(tmp_path, mock_packaged_skill_files):
+def test_prepare_installation_directory_rejects_file_as_target(tmp_path):
     target_directory = tmp_path / ".agents" / "skills"
     target_directory.mkdir(parents=True)
     (target_directory / "example").write_text("not a directory", encoding="utf-8")
 
     with pytest.raises(ValueError, match="not a directory"):
-        skills.install_skill("example", target_directory)
+        _prepare_installation_directory(target_directory, "example")
 
 
-def test_install_skill_rejects_symlink_target(tmp_path, monkeypatch):
-    source = tmp_path / "source"
-    source.mkdir()
-    skill_file = source / "SKILL.md"
-    skill_file.write_text("skill", encoding="utf-8")
-    monkeypatch.setattr(skills, "get_skill_files", lambda _: {"SKILL.md": skill_file})
+def test_prepare_installation_directory_rejects_symlink_target(tmp_path):
     target_directory = tmp_path / ".agents" / "skills"
     target_directory.mkdir(parents=True)
-    target = tmp_path / "elsewhere"
-    target.mkdir()
-    (target_directory / "example").symlink_to(target, target_is_directory=True)
+    symlink_target = tmp_path / "elsewhere"
+    symlink_target.mkdir()
+    (target_directory / "example").symlink_to(symlink_target, target_is_directory=True)
 
     with pytest.raises(ValueError, match="refusing to replace symlink"):
-        skills.install_skill("example", target_directory)
+        _prepare_installation_directory(target_directory, "example")

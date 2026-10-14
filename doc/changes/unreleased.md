@@ -12,3 +12,4 @@
 
 * #924: Removed the deprecated `lint:dependencies` Nox session and its unused implementation and tests.
 * #972: Switched from ravsamhq/notify-slack-action to maintained slackapi/slack-github-action & removed workflow versioned header
+* #967: Refactored skill installation into reusable filesystem helpers.
