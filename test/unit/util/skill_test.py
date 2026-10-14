@@ -10,21 +10,6 @@ from exasol.toolbox.util.skills import (
 )
 
 
-@pytest.fixture
-def mock_packaged_skill_files(tmp_path, monkeypatch):
-    source = tmp_path / "source"
-    source.mkdir()
-
-    skill_file = source / "SKILL.md"
-    skill_file.write_text("skill", encoding="utf-8")
-
-    monkeypatch.setattr(
-        skills,
-        "get_skill_files",
-        lambda _: {"SKILL.md": skill_file},
-    )
-
-
 def test_validate_skill_accepts_packaged_ptb_skill():
     assert skills.validate_skill(skills.PTB_SKILL_NAME) == ()
 
@@ -206,38 +191,33 @@ def test_install_skill_rejects_missing_skill(tmp_path, monkeypatch):
         skills.install_skill("example", tmp_path)
 
 
-def test_install_skill_rejects_symlinked_target_directory(
-    tmp_path, mock_packaged_skill_files
-):
+def test_prepare_installation_directory_rejects_symlinked_target_directory(tmp_path):
     real_target = tmp_path / "real-target"
     real_target.mkdir()
     target_directory = tmp_path / "linked-target"
     target_directory.symlink_to(real_target, target_is_directory=True)
 
     with pytest.raises(ValueError, match="symlinked target directory"):
-        skills.install_skill("example", target_directory)
+        _prepare_installation_directory(target_directory, "example")
 
 
-def test_install_skill_rejects_file_as_target(tmp_path, mock_packaged_skill_files):
+def test_prepare_installation_directory_rejects_file_as_target(tmp_path):
     target_directory = tmp_path / ".agents" / "skills"
     target_directory.mkdir(parents=True)
     (target_directory / "example").write_text("not a directory", encoding="utf-8")
 
     with pytest.raises(ValueError, match="not a directory"):
-        skills.install_skill("example", target_directory)
+        _prepare_installation_directory(target_directory, "example")
 
 
-def test_install_skill_rejects_symlink_target(tmp_path, monkeypatch):
-    source = tmp_path / "source"
-    source.mkdir()
-    skill_file = source / "SKILL.md"
-    skill_file.write_text("skill", encoding="utf-8")
-    monkeypatch.setattr(skills, "get_skill_files", lambda _: {"SKILL.md": skill_file})
+def test_prepare_installation_directory_rejects_symlink_target(tmp_path):
     target_directory = tmp_path / ".agents" / "skills"
     target_directory.mkdir(parents=True)
-    target = tmp_path / "elsewhere"
-    target.mkdir()
-    (target_directory / "example").symlink_to(target, target_is_directory=True)
+    symlink_target = tmp_path / "elsewhere"
+    symlink_target.mkdir()
+    (target_directory / "example").symlink_to(
+        symlink_target, target_is_directory=True
+    )
 
     with pytest.raises(ValueError, match="refusing to replace symlink"):
-        skills.install_skill("example", target_directory)
+        _prepare_installation_directory(target_directory, "example")

@@ -95,10 +95,12 @@ def _prepare_installation_directory(target_directory: Path, skill_name: str) -> 
     return target_skill
 
 
-def _copy_skill_files(source_files: Mapping[str, Traversable], target: Path) -> None:
+def _copy_skill_files(
+    source_files: Mapping[str, Traversable], target_directory: Path
+) -> None:
     """Copy packaged skill files below an already validated target directory."""
     for relative_path, source in source_files.items():
-        destination = target / relative_path
+        destination = target_directory / relative_path
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_bytes(source.read_bytes())
 
