@@ -36,6 +36,7 @@ jobs:
         run: |
           SBOM_NAME="$(poetry run -- nox -s dependency:sbom)"
           echo "SBOM_NAME=$SBOM_NAME" >> "$GITHUB_OUTPUT"
+
       - name: Publish Release to PyPi
         id: publish-release-to-pypi
         env:
