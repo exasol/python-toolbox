@@ -89,6 +89,7 @@ def test_report_resolved_vulnerabilities(
     assert "| jinja2 | CVE-2025-27516 | 3.1.5 | 3.1.6 |" in capsys.readouterr().out
 
 
+@pytest.mark.slow
 def test_generate_sbom(monkeypatch, nox_session, tmp_path, test_project_config_factory):
     project_config = test_project_config_factory(root_path=tmp_path)
     monkeypatch.setattr(_dependencies, "PROJECT_CONFIG", project_config)
