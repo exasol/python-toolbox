@@ -246,6 +246,13 @@ class BaseConfig(BaseModel):
 
     @computed_field  # type: ignore[misc]
     @property
+    def minimum_python_version_compact(self) -> str:
+        """Minimum Python major/minor version without a dot, such as 3.10 as 310."""
+        major, minor, *_ = self.minimum_python_version.split(".")
+        return f"{major}{minor}"
+
+    @computed_field  # type: ignore[misc]
+    @property
     def minimum_exasol_version(self) -> str | None:
         """
         Minimum Exasol version declared from the ``exasol_versions`` list.
@@ -286,9 +293,7 @@ class BaseConfig(BaseModel):
         It uses the minimum Python version to ensure compatibility with all supported
         versions of a project.
         """
-        version_parts = self.minimum_python_version.split(".")[:2]
-        version_number = "".join(version_parts)
-        return (f"--py{version_number}-plus",)
+        return (f"--py{self.minimum_python_version_compact}-plus",)
 
     @computed_field  # type: ignore[misc]
     @property

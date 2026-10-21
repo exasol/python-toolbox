@@ -16,11 +16,13 @@ from noxconfig import (
 
 
 def _code_format(session: Session, mode: Mode, files: Iterable[str]) -> None:
+    python_version = PROJECT_CONFIG.minimum_python_version_compact
+
     def command(*args: str) -> Iterable[str]:
         return args if mode == Mode.Fix else list(args) + ["--check"]
 
-    session.run(*command("isort"), *files)
-    session.run(*command("black"), *files)
+    session.run(*command("isort", "--py", python_version), *files)
+    session.run(*command("black", "--target-version", f"py{python_version}"), *files)
 
 
 def _pyupgrade(session: Session, config: BaseConfig, files: Iterable[str]) -> None:
@@ -33,10 +35,15 @@ def _pyupgrade(session: Session, config: BaseConfig, files: Iterable[str]) -> No
 
 
 def _ruff(session: Session, mode: Mode, files: Iterable[str]):
+    python_version = PROJECT_CONFIG.minimum_python_version_compact
+
     def command(*args: str) -> Iterable[str]:
         return args if mode == Mode.Check else list(args) + ["--fix"]
 
-    session.run(*command("ruff", "check"), *files)
+    session.run(
+        *command("ruff", "check", "--target-version", f"py{python_version}"),
+        *files,
+    )
 
 
 @nox.session(name="format:fix", python=False)
