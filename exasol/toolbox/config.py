@@ -151,7 +151,7 @@ class BaseConfig(BaseModel):
     project_name: str = Field(description="Name of the project")
     root_path: Path = Field(description="Root directory of the project")
     python_versions: tuple[ValidVersionStr, ...] = Field(
-        default=("3.10", "3.11", "3.12", "3.13", "3.14"),
+        default=("3.11", "3.12", "3.13", "3.14"),
         min_length=1,
         description="Python versions to use in running CI workflows",
     )
