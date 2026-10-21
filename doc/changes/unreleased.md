@@ -13,3 +13,8 @@
 * #924: Removed the deprecated `lint:dependencies` Nox session and its unused implementation and tests.
 * #972: Switched from ravsamhq/notify-slack-action to maintained slackapi/slack-github-action & removed workflow versioned header
 * #967: Refactored skill installation into reusable filesystem helpers.
+* #965: Removed support for Python 3.10 (reach end-of-life October 2026), updated to Ubuntu-26.04 for GitHub actions, and updated default databases
+
+## Bugfixes
+
+* #965: Added additional parameters to ``format:fix`` tools to run with the minimum Python version
