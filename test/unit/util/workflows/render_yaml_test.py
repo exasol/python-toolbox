@@ -162,7 +162,7 @@ class TestYamlRenderer:
 
         Type-Check:
           name: Type Checking (Python-${{ matrix.python-versions }})
-          runs-on: "ubuntu-24.04"
+          runs-on: "ubuntu-26.04"
           permissions:
             contents: read
           strategy:
@@ -333,7 +333,7 @@ class TestYamlRendererJinja:
         jobs:
         run-unit-tests:
           name: Unit Tests (Python-${{ matrix.python-versions }})
-          runs-on: "ubuntu-24.04"
+          runs-on: "ubuntu-26.04"
           permissions:
             contents: read
           strategy:
@@ -383,7 +383,7 @@ class TestYamlRendererJinja:
         jobs:
         run-unit-tests:
           name: Unit Tests (Python-${{ matrix.python-versions }})
-          runs-on: "ubuntu-24.04"
+          runs-on: "ubuntu-26.04"
           permissions:
             contents: read
           strategy:

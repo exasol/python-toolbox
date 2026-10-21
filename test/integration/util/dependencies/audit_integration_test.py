@@ -32,6 +32,7 @@ EXPORT_PACKAGES = [
     "tomlkit",
     "typing-extensions",
 ]
+OPTIONAL_EXPORT_PACKAGES = {"tomli", "typing-extensions"}
 
 
 def aux_subprocess(*cmd, **kwargs) -> subprocess.CompletedProcess:
@@ -181,8 +182,10 @@ class TestExportDependenciesToFile:
 
         content = requirements_txt.read_text()
         # Poetry may emit a package more than once when it is shared by multiple
-        # dependency groups or extras.
-        assert set(self.extract_package_names(content)) == set(EXPORT_PACKAGES)
+        # dependency groups or extras. Marker-dependent dependencies may be omitted
+        # when they are not required by the project's Python version.
+        exported_packages = set(self.extract_package_names(content))
+        assert exported_packages | OPTIONAL_EXPORT_PACKAGES == set(EXPORT_PACKAGES)
         assert "--hash=" in content
 
 
