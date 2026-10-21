@@ -195,7 +195,7 @@ class BaseConfig(BaseModel):
         """,
     )
     os_version: str = Field(
-        default="ubuntu-24.04",
+        default="ubuntu-26.04",
         pattern=r"^ubuntu-.*",
         description="""
         This is used to set the OS-runner in the GitHub workflows that are
