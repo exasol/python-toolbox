@@ -156,7 +156,7 @@ class BaseConfig(BaseModel):
         description="Python versions to use in running CI workflows",
     )
     exasol_versions: tuple[ValidVersionStr, ...] = Field(
-        default=("8.29.13", "2025.1.8"),
+        default=("8.29.13", "2025.1.11", "2026.1.0"),
         description="Exasol versions to use in running CI workflows for integration tests using the DB",
     )
     create_major_version_tags: bool = Field(
