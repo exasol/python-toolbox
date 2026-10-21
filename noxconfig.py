@@ -85,4 +85,5 @@ PROJECT_CONFIG = Config(
     # The PTB does not have integration tests running with an Exasol DB.
     exasol_versions=(),
     plugins_for_nox_sessions=(UpdateTemplates,),
+    python_versions=("3.10", "3.11", "3.12"),
 )
