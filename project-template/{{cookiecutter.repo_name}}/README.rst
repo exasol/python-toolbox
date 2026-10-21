@@ -25,7 +25,7 @@
 🔌️ Prerequisites
 -----------------
 
-- `Python <https://www.python.org/>`__ >= 3.10
+- `Python <https://www.python.org/>`__ >= {{cookiecutter.python_version_min}}
 
 💾 Installation
 ---------------
