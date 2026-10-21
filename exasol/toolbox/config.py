@@ -247,7 +247,7 @@ class BaseConfig(BaseModel):
     @computed_field  # type: ignore[misc]
     @property
     def minimum_python_version_compact(self) -> str:
-        """Minimum Python major/minor version without a dot, such as 3.10 as 310."""
+        """Minimum Python major/minor version without a dot, such as 3.11 as 311."""
         major, minor, *_ = self.minimum_python_version.split(".")
         return f"{major}{minor}"
 
