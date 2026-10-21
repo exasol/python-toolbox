@@ -59,7 +59,7 @@ class TestWorkflow:
         - name: Setup Python & Poetry Environment
           uses: exasol/python-toolbox/.github/actions/python-environment@v5
           with:
-            python-version: "3.10"
+            python-version: "3.11"
             poetry-version: "2.3.0"
         """
         input_file_path = tmp_path / "test.yml"
