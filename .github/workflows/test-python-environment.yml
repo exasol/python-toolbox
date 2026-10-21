@@ -8,7 +8,7 @@ on:
 
 jobs:
   check-changes:
-    runs-on: "ubuntu-24.04"
+    runs-on: "ubuntu-26.04"
     outputs:
       should_run: ${{ steps.diff.outputs.should_run }}
     steps:
@@ -56,8 +56,8 @@ jobs:
       fail-fast: false
       matrix:
         runner:
+          - ubuntu-26.04
           - ubuntu-24.04
-          - ubuntu-22.04
           - ubuntu-24.04-arm
           - int-linux-x64-4core-gpu-t4-ubuntu24.04-1
           - int-linux-x64-4core-ubuntu24.04-1
