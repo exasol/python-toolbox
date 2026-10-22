@@ -58,7 +58,7 @@ Generate a poetry environment for the project:
 
 .. code-block:: shell
 
-    # An example python_version value is python3.10
+    # An example python_version value is python3.12
     poetry env use <python_version>
 
 Install all necessary project and development dependencies for the project:

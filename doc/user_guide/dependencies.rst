@@ -4,7 +4,7 @@ Dependencies
 Core Dependencies
 -----------------
 
-- Python >= 3.10
+- Python >= 3.11
 - `Poetry <https://python-poetry.org/docs/#installing-with-the-official-installer>`__ >= 2.3.0
   - `poetry export <https://github.com/python-poetry/poetry-plugin-export>`__
 

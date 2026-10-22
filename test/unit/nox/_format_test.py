@@ -12,6 +12,7 @@ from exasol.toolbox.nox._format import (
     fix_format,
 )
 from exasol.toolbox.nox._shared import Mode
+from noxconfig import PROJECT_CONFIG
 
 
 @pytest.fixture
@@ -66,7 +67,7 @@ class TestCodeFormat:
             )
         assert (
             caplog.messages[1]
-            == f"Command isort --check {file_with_not_ordered_import} failed with exit code 1"
+            == f"Command isort --py {PROJECT_CONFIG.minimum_python_version_compact} --check {file_with_not_ordered_import} failed with exit code 1"
         )
         assert file_with_not_ordered_import.read_text() == "import isort\nimport black"
 
@@ -91,7 +92,7 @@ class TestCodeFormat:
             )
         assert (
             caplog.messages[2]
-            == f"Command black --check {file_without_blank_line} failed with exit code 1"
+            == f"Command black --target-version py{PROJECT_CONFIG.minimum_python_version_compact} --check {file_without_blank_line} failed with exit code 1"
         )
         assert file_without_blank_line.read_text() == "import black\nimport isort"
 
@@ -122,7 +123,7 @@ class TestRuff:
             )
         assert (
             caplog.messages[1]
-            == f"Command ruff check {file_with_unneeded_import} failed with exit code 1"
+            == f"Command ruff check --target-version py{PROJECT_CONFIG.minimum_python_version_compact} {file_with_unneeded_import} failed with exit code 1"
         )
         assert file_with_unneeded_import.read_text() == "import black"
 
@@ -182,7 +183,7 @@ def test_check_format(nox_session, config, file_with_multiple_problems, caplog, 
     # The failed message should always relate to the checking function called first.
     assert (
         caplog.messages[1]
-        == f"Command ruff check {file_with_multiple_problems} failed with exit code 1"
+        == f"Command ruff check --target-version py{PROJECT_CONFIG.minimum_python_version_compact} {file_with_multiple_problems} failed with exit code 1"
     )
     # The file should not be changed.
     assert file_with_multiple_problems.read_text() == expected_text
