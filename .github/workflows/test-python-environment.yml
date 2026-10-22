@@ -59,9 +59,16 @@ jobs:
           - ubuntu-26.04
           - ubuntu-24.04
           - ubuntu-24.04-arm
+          - ubuntu-22.04
           - int-linux-x64-4core-gpu-t4-ubuntu24.04-1
           - int-linux-x64-4core-ubuntu24.04-1
           - int-linux-x64-2core-ubuntu24.04-1
+          - int-linux-x64-4core-ubuntu26.04-1
+          - int-linux-x64-2core-ubuntu26.04-1
+          - int-linux-x64-4core-gpu-t4-ubuntu26.04-1
+          - int-linux-arm-4core-ubuntu26.04-1
+          - int-linux-arm-2core-ubuntu26.04-1
+          - int-linux-x64-8core-ubuntu26.04-1
         python-versions: ${{ fromJson(needs.build-matrix.outputs.matrix).python_versions }}
     name: Verify Poetry Setup for ${{ matrix.runner }} (Python-${{ matrix.python-versions }})
     runs-on:
