@@ -60,5 +60,5 @@ def test_retrieve_templates(subpackage, expected):
 def test_install_templates(templates, pkg, expected, tmp_path):
     template.install_template(templates, tmp_path, pkg)
     actual = {file.name for file in tmp_path.iterdir()}
-    expected = {name for name in expected}
+    expected = {*expected}
     assert actual == expected
