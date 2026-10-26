@@ -30,6 +30,13 @@ jobs:
           maximum_python_version="$(jq -r '.python_versions | max_by(split(".") | map(tonumber))' <<< "$PYTHON_VERSIONS_MATRIX")"
           echo "python-version=$maximum_python_version" >> "$GITHUB_OUTPUT"
 
+  # Smoke test the format:check command with the maximum Python version declared
+  # in noxconfig.py. Formatter target versions are fixed to the minimum declared
+  # Python version, keeping version-specific behavior such as isort's
+  # standard-library classification independent of the interpreter running the
+  # formatter. A failure may indicate a regression in this formatter
+  # configuration. This smoke test covers this project's formatter configuration,
+  # not the configurations of every project that uses PTB.
   check-format-maximum-python:
     name: Check Format (Python-${{ needs.get-maximum-python-version.outputs.maximum-python-version }})
     needs:
