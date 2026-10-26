@@ -151,12 +151,12 @@ class BaseConfig(BaseModel):
     project_name: str = Field(description="Name of the project")
     root_path: Path = Field(description="Root directory of the project")
     python_versions: tuple[ValidVersionStr, ...] = Field(
-        default=("3.10", "3.11", "3.12", "3.13", "3.14"),
+        default=("3.11", "3.12", "3.13", "3.14"),
         min_length=1,
         description="Python versions to use in running CI workflows",
     )
     exasol_versions: tuple[ValidVersionStr, ...] = Field(
-        default=("8.29.13", "2025.1.8"),
+        default=("8.29.13", "2025.1.11", "2026.1.0"),
         description="Exasol versions to use in running CI workflows for integration tests using the DB",
     )
     create_major_version_tags: bool = Field(
@@ -195,7 +195,7 @@ class BaseConfig(BaseModel):
         """,
     )
     os_version: str = Field(
-        default="ubuntu-24.04",
+        default="ubuntu-26.04",
         pattern=r"^ubuntu-.*",
         description="""
         This is used to set the OS-runner in the GitHub workflows that are
@@ -246,6 +246,13 @@ class BaseConfig(BaseModel):
 
     @computed_field  # type: ignore[misc]
     @property
+    def minimum_python_version_compact(self) -> str:
+        """Minimum Python major/minor version without a dot, such as 3.11 as 311."""
+        major, minor, *_ = self.minimum_python_version.split(".")
+        return f"{major}{minor}"
+
+    @computed_field  # type: ignore[misc]
+    @property
     def minimum_exasol_version(self) -> str | None:
         """
         Minimum Exasol version declared from the ``exasol_versions`` list.
@@ -286,9 +293,7 @@ class BaseConfig(BaseModel):
         It uses the minimum Python version to ensure compatibility with all supported
         versions of a project.
         """
-        version_parts = self.minimum_python_version.split(".")[:2]
-        version_number = "".join(version_parts)
-        return (f"--py{version_number}-plus",)
+        return (f"--py{self.minimum_python_version_compact}-plus",)
 
     @computed_field  # type: ignore[misc]
     @property

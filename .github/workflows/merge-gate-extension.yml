@@ -4,9 +4,64 @@ on:
   workflow_call:
 
 jobs:
+  build-python-matrix:
+    name: Build Python Matrix
+    uses: $/.github/workflows/matrix.yml
+    with:
+      matrix_keys_json: '["python_versions"]'
+    permissions:
+      contents: read
+
+  get-maximum-python-version:
+    name: Get Maximum Python Version
+    needs:
+      - build-python-matrix
+    runs-on: "ubuntu-26.04"
+    permissions:
+      contents: read
+    outputs:
+      maximum-python-version: ${{ steps.get-maximum-python-version.outputs.python-version }}
+    steps:
+      - name: Get Maximum Python Version
+        id: get-maximum-python-version
+        env:
+          PYTHON_VERSIONS_MATRIX: ${{ needs.build-python-matrix.outputs.matrix }}
+        run: |
+          maximum_python_version="$(jq -r '.python_versions | max_by(split(".") | map(tonumber))' <<< "$PYTHON_VERSIONS_MATRIX")"
+          echo "python-version=$maximum_python_version" >> "$GITHUB_OUTPUT"
+
+  # Smoke test the format:check command with the maximum Python version declared
+  # in noxconfig.py. Formatter target versions are fixed to the minimum declared
+  # Python version, keeping version-specific behavior such as isort's
+  # standard-library classification independent of the interpreter running the
+  # formatter. A failure may indicate a regression in this formatter
+  # configuration. This smoke test covers this project's formatter configuration,
+  # not the configurations of every project that uses PTB.
+  check-format-maximum-python:
+    name: Check Format (Python-${{ needs.get-maximum-python-version.outputs.maximum-python-version }})
+    needs:
+      - get-maximum-python-version
+    runs-on: "ubuntu-26.04"
+    permissions:
+      contents: read
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python & Poetry Environment
+        uses: exasol/python-toolbox/.github/actions/python-environment@v11
+        with:
+          python-version: ${{ needs.get-maximum-python-version.outputs.maximum-python-version }}
+          poetry-version: "2.3.0"
+
+      - name: Check Format
+        run: poetry run -- nox -s format:check
+
   approve-run-slow-tests:
     name: Approve Running Slow Tests?
-    runs-on: "ubuntu-24.04"
+    runs-on: "ubuntu-26.04"
     permissions:
       contents: read
     environment: manual-approval

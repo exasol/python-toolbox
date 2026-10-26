@@ -43,9 +43,9 @@ The PTB has a default for these versions, but you can override it in the
 
     PROJECT_CONFIG = Config(
         # This tuple should never be empty.
-        python_versions=("3.10", "3.12),
+        python_versions=("3.11", "3.12),
         # This tuple may be empty, as not all projects will need an on-prem Exasol database.
-        exasol_versions=("7.1.30", "8.29.13", "2025.1.8"),
+        exasol_versions=("8.29.13", "2025.1.8"),
     )
 
 Some workflows are expected to not depend on a specific Python version and

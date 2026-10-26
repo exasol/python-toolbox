@@ -162,7 +162,7 @@ class TestYamlRenderer:
 
         Type-Check:
           name: Type Checking (Python-${{ matrix.python-versions }})
-          runs-on: "ubuntu-24.04"
+          runs-on: "ubuntu-26.04"
           permissions:
             contents: read
           strategy:
@@ -283,7 +283,7 @@ class TestYamlRendererJinja:
         - name: Setup Python & Poetry Environment
         uses: exasol/python-toolbox/.github/actions/python-environment@v5
         with:
-          python-version: "3.10"
+          python-version: "3.11"
           poetry-version: "2.3.0"
         """
 
@@ -333,13 +333,13 @@ class TestYamlRendererJinja:
         jobs:
         run-unit-tests:
           name: Unit Tests (Python-${{ matrix.python-versions }})
-          runs-on: "ubuntu-24.04"
+          runs-on: "ubuntu-26.04"
           permissions:
             contents: read
           strategy:
             fail-fast: false
             matrix:
-              python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+              python-versions: ["3.11", "3.12", "3.13", "3.14"]
 
           steps:
             - name: Check out Repository
@@ -383,13 +383,13 @@ class TestYamlRendererJinja:
         jobs:
         run-unit-tests:
           name: Unit Tests (Python-${{ matrix.python-versions }})
-          runs-on: "ubuntu-24.04"
+          runs-on: "ubuntu-26.04"
           permissions:
             contents: read
           strategy:
             fail-fast: false
             matrix:
-              python-versions: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+              python-versions: ["3.11", "3.12", "3.13", "3.14"]
 
           steps:
             - name: Check out Repository

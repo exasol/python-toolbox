@@ -42,7 +42,7 @@ class TestBaseConfig:
             "documentation_path": root_path / "doc",
             "has_documentation": True,
             "agent_skills_path": root_path / ".agents" / "skills",
-            "exasol_versions": ("8.29.13", "2025.1.8"),
+            "exasol_versions": ("8.29.13", "2025.1.11", "2026.1.0"),
             "excluded_python_paths": expand_paths(config, DEFAULT_EXCLUDED_PATHS),
             "github_workflow_directory": tmp_path / ".github" / "workflows",
             "github_workflow_patcher_yaml": None,
@@ -76,10 +76,9 @@ class TestBaseConfig:
                 },
                 "dependency_manager_version": "2.3.0",
                 "has_documentation": True,
-                "minimum_python_version": "3.10",
-                "os_version": "ubuntu-24.04",
+                "minimum_python_version": "3.11",
+                "os_version": "ubuntu-26.04",
                 "python_versions": (
-                    "3.10",
                     "3.11",
                     "3.12",
                     "3.13",
@@ -88,13 +87,14 @@ class TestBaseConfig:
                 "sonar_token_name": "SONAR_TOKEN",
             },
             "minimum_exasol_version": "8.29.13",
-            "minimum_python_version": "3.10",
-            "os_version": "ubuntu-24.04",
+            "minimum_python_version": "3.11",
+            "minimum_python_version_compact": "311",
+            "os_version": "ubuntu-26.04",
             "sonar_token_name": "SONAR_TOKEN",
             "plugins_for_nox_sessions": (),
             "project_name": "test",
-            "python_versions": ("3.10", "3.11", "3.12", "3.13", "3.14"),
-            "pyupgrade_argument": ("--py310-plus",),
+            "python_versions": ("3.11", "3.12", "3.13", "3.14"),
+            "pyupgrade_argument": ("--py311-plus",),
             "root_path": root_path,
             "sonar_code_path": Path("exasol/test"),
             "source_code_path": root_path / "exasol" / "test",
@@ -175,6 +175,17 @@ class TestOsVersion:
 def test_minimum_python_version(test_project_config_factory):
     conf = test_project_config_factory(python_versions=("5.5.5", "1.10", "9.9.9"))
     assert conf.minimum_python_version == "1.10"
+
+
+@pytest.mark.parametrize(
+    "minimum_python_version,expected",
+    [("3.9", "39"), ("3.12", "312"), ("3.15", "315")],
+)
+def test_minimum_python_version_compact(
+    test_project_config_factory, minimum_python_version, expected
+):
+    conf = test_project_config_factory(python_versions=(minimum_python_version,))
+    assert conf.minimum_python_version_compact == expected
 
 
 @pytest.mark.parametrize(
