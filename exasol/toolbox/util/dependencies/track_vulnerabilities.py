@@ -80,5 +80,8 @@ class DependenciesAudit(BaseModel):
             )
             return f'| {" | ".join(columns)} |'
 
-        body = "\n".join(formatted(v) for v in resolved)
+        # pip-audit can return the same vulnerability more than once. Keep
+        # distinct table rows, but only render each row once.
+        rows = sorted({formatted(vuln) for vuln in resolved})
+        body = "\n".join(rows)
         return f"{header}\n{body}"

@@ -118,6 +118,36 @@ class TestDependenciesAudit:
         )
         assert audit.resolved_vulnerabilities == [sample_vulnerability.vulnerability]
 
+    def test_report_deduplicates_repeated_vulnerability_rows(
+        self, sample_vulnerability
+    ):
+        vulnerability = sample_vulnerability.vulnerability
+        earlier_alphabetically = Vulnerability(
+            package={"name": "black", "version": "26.5.1"},
+            id="CVE-2026-114134",
+            aliases=[],
+            fix_versions=["26.10.1"],
+            description="Dummy description",
+        )
+        audit = DependenciesAudit(
+            previous_vulnerabilities=[
+                vulnerability,
+                earlier_alphabetically,
+                vulnerability,
+                earlier_alphabetically,
+            ],
+            current_vulnerabilities=[],
+        )
+
+        assert audit.report_resolved_vulnerabilities() == (
+            "This release fixes vulnerabilities by updating dependencies:\n\n"
+            "| Dependency | Vulnerability | Affected | Fixed in |\n"
+            "|------------|---------------|----------|----------|\n"
+            "| black | CVE-2026-114134 | 26.5.1 | 26.10.1 |\n"
+            f"| {sample_vulnerability.package_name} | {sample_vulnerability.cve_id} | "
+            f"{sample_vulnerability.version} | {sample_vulnerability.fix_version} |"
+        )
+
     def test_vulnerability_without_fix_version_is_not_reported_as_resolved(
         self, sample_vulnerability
     ):
