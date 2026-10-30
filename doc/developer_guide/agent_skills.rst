@@ -3,6 +3,18 @@
 Testing Agent Skills
 ====================
 
+Repository-local maintainer skill
+---------------------------------
+
+The ``.agents/skills/maintain-ptb`` skill contains source routing and
+development rules for maintaining this repository. The ``skills:install``
+session copies skills from ``exasol/toolbox/skills`` and keeps this skill local
+to the repository.
+
+Keep downstream PTB usage guidance in the packaged
+``exasol-python-toolbox`` skill. Place PTB implementation paths and repository
+maintenance rules in the repository-local maintainer skill.
+
 Packaged Skills
 ---------------
 

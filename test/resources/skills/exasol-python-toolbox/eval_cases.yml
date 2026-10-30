@@ -99,14 +99,16 @@ cases:
         - "ignore migration notes"
         - "skip validation"
 
-  - id: "exact-source-behavior"
-    category: "source-routing"
-    prompt: "I need exact behavior for release preparation. Tell me which source file to read."
+  - id: "customize-project-behavior"
+    category: "customization"
+    prompt: "A standard PTB session does not fit one project's needs. Tell me how to customize the project safely."
     expected:
       must_include:
-        - "source-routing.md"
-        - "exasol/toolbox/nox/_release.py"
-        - "read the source file"
+        - "PROJECT_CONFIG"
+        - "plugin hook"
+        - ".workflow-patcher.yml"
+        - "local nox override"
+        - "short-term"
       must_not_include:
-        - "guess"
-        - "copy PTB source code"
+        - "edit generated workflow directly"
+        - "copy PTB implementation"

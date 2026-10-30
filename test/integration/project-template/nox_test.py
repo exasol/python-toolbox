@@ -2,7 +2,7 @@ from exasol.toolbox.util.version import Version
 
 EXPECTED_PACKAGED_SKILL_FILE_COUNTS = {
     "api-contract-audit": 1,
-    "exasol-python-toolbox": 5,
+    "exasol-python-toolbox": 4,
 }
 EXPECTED_NOX_SESSIONS = {
     "format:fix",

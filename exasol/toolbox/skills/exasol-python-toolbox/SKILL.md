@@ -1,65 +1,54 @@
 ---
 # Generated and maintained by the exasol-toolbox.
 name: exasol-python-toolbox
-description: Use this skill in Exasol Python projects that use exasol-toolbox/PTB. Use it for PTB setup, nox sessions, code checks, GitHub workflows, updates, releases, and PTB configuration. Use it when an agent must not replace PTB automation.
+description: "Use Exasol Python Toolbox (PTB) in projects that consume exasol-toolbox. Covers PTB setup, Poetry, PROJECT_CONFIG, Nox sessions, code checks, GitHub workflows, dependency updates, and releases."
 ---
 
 # Exasol Python Toolbox
 
-Use PTB as the task interface for Exasol Python repositories. Use the nox
+Use PTB as the task interface for Exasol Python projects. Use the Nox
 sessions, configuration, templates, and hooks from the installed
-`exasol-toolbox` package. Do not replace them with manual commands. Use direct
-tool commands only to isolate a failure.
+`exasol-toolbox` package as the primary task interface. Reserve direct tool
+commands for fault isolation.
 
-Use controlled technical English. Use short sentences. Put one instruction in
-one sentence when possible. Use the same term for the same item.
+## Project detection
 
-## Operating rules
-
-1. Confirm that the project uses PTB before you act:
-   - `pyproject.toml` contains a dependency on `exasol-toolbox`.
-   - `noxfile.py` imports from `exasol.toolbox.nox.tasks`.
-   - `noxconfig.py` defines `PROJECT_CONFIG`.
-2. Run commands with Poetry. If the project gives a different command, use it.
-3. Use `references/nox-sessions.md` for session names and command syntax.
-4. Before you edit generated workflow files, use PTB workflow sessions,
-   `.workflow-patcher.yml`, `PROJECT_CONFIG`, or PTB hooks.
-5. Do not run Black, isort, Ruff, Pylint, Mypy, Pytest, Coverage, Sphinx,
-   Poetry build, Twine, or zizmor directly when a PTB nox session does the same
-   work. Use direct tool commands only for fault isolation.
+Confirm that `pyproject.toml` depends on `exasol-toolbox`, `noxfile.py` imports
+from `exasol.toolbox.nox.tasks`, and `noxconfig.py` defines `PROJECT_CONFIG`.
 
 ## Task routing
 
-Read only the reference that the task needs:
+Select the reference that matches the task:
 
-- Source files and resource files for exact PTB operation:
-  `references/source-routing.md`
 - Setup, code changes, CI fixes, releases, PTB updates, dependency updates, and
   workflow maintenance: `references/common-workflows.md`
 - Nox session names, arguments, outputs, and limits:
   `references/nox-sessions.md`
-- Coding rules, PTB design rules, and rules for PTB extension:
+- Project coding and extension rules for a project that uses PTB:
   `references/coding-guidelines.md`
 
-## Source rule
+## Operating rules
 
-The skill does not copy PTB source code. Source copies can become old. Use this
-skill to find the correct file. Read the file from the repository before you
-change or explain exact PTB operation.
+- Run commands with Poetry or the command specified by the project.
+- Use the matching PTB Nox session for formatting, linting, testing,
+  documentation, packaging, and workflow tasks. Reserve direct tool invocation
+  for fault isolation.
+- Change generated workflow behavior through PTB workflow sessions,
+  `.workflow-patcher.yml`, `PROJECT_CONFIG`, or PTB hooks.
 
 ## Release safety
 
-`release:trigger` creates git tags. It pushes the tags. Run it only when the
-user asks you to trigger a release.
+`release:trigger` creates and pushes git tags. Require an explicit user request
+before running it.
 
 Before you run `release:trigger`:
 
 1. Confirm that `release:prepare` ran and its PR is merged.
 2. Confirm that the current branch is the default branch.
 3. Confirm that the current branch is at the latest remote commit.
-4. Confirm that the current project version has no git tag and no GitHub
-   release.
-5. Confirm that the current project version is newer than the latest release,
-   unless the user confirms a different release plan.
+4. Confirm that the current project version remains untagged and unpublished
+   as a GitHub release.
+5. Confirm that the current project version is newer than the latest release.
+   Follow a different release plan after the user explicitly confirms it.
 
 Use `references/common-workflows.md` for the release workflow.
