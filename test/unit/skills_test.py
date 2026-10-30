@@ -16,12 +16,13 @@ from exasol.toolbox.util.skills import (
 
 PROJECT_ROOT = Path(__file__).parents[2]
 SKILL = get_skill_path(PTB_SKILL_NAME)
+MAINTAINER_SKILL_NAME = "maintain-ptb"
+MAINTAINER_SKILL = PROJECT_ROOT / ".agents" / "skills" / MAINTAINER_SKILL_NAME
 SKILL_FILES = [
     "SKILL.md",
     "references/coding-guidelines.md",
     "references/common-workflows.md",
     "references/nox-sessions.md",
-    "references/source-routing.md",
 ]
 
 
@@ -47,9 +48,8 @@ def _skills_with_eval_cases() -> list[str]:
 def test_ptb_skill_resources_are_available():
     skill_files = get_skill_files(PTB_SKILL_NAME)
 
-    for expected in SKILL_FILES:
-        assert expected in skill_files
-        assert skill_files[expected].is_file()
+    assert set(skill_files) == set(SKILL_FILES)
+    assert all(path.is_file() for path in skill_files.values())
 
 
 def test_ptb_skill_can_be_installed(tmp_path):
@@ -58,6 +58,30 @@ def test_ptb_skill_can_be_installed(tmp_path):
     assert installed == tmp_path / PTB_SKILL_NAME
     for expected in SKILL_FILES:
         assert (installed / expected).is_file()
+
+
+def test_ptb_maintainer_skill_is_repository_local():
+    expected_files = {
+        "SKILL.md",
+        "references/coding-guidelines.md",
+        "references/source-routing.md",
+    }
+    actual_files = {
+        str(path.relative_to(MAINTAINER_SKILL))
+        for path in MAINTAINER_SKILL.rglob("*")
+        if path.is_file()
+    }
+
+    assert actual_files == expected_files
+    assert MAINTAINER_SKILL_NAME not in get_packaged_skill_names()
+
+
+def test_ptb_maintainer_skill_frontmatter_is_complete():
+    content = (MAINTAINER_SKILL / "SKILL.md").read_text(encoding="utf-8")
+    frontmatter = content.split("---", maxsplit=2)[1]
+
+    assert f"name: {MAINTAINER_SKILL_NAME}" in frontmatter
+    assert "Maintain and extend the Exasol Python Toolbox repository" in frontmatter
 
 
 @pytest.mark.parametrize("skill_name", get_packaged_skill_names())
@@ -105,7 +129,10 @@ def test_ptb_skill_frontmatter_is_complete():
     frontmatter = content.split("---", maxsplit=2)[1]
 
     assert "name: exasol-python-toolbox" in frontmatter
-    assert "description: Use this skill in Exasol Python projects" in frontmatter
+    assert (
+        "Use Exasol Python Toolbox (PTB) in projects that consume exasol-toolbox"
+        in frontmatter
+    )
     assert "[TODO" not in content
 
 
@@ -134,7 +161,7 @@ def test_ptb_skill_eval_cases_cover_ticket_scope():
         "release",
         "update",
         "workflow",
-        "source-routing",
+        "customization",
     }.issubset(categories)
 
 

@@ -60,13 +60,13 @@ poetry run -- nox -s skills:install
 | `docs:clean` | Remove generated documentation. | It deletes `.html-documentation`. |
 | `links:list` | List documentation links. | It uses Sphinx linkcheck. It ignores link failures. |
 | `links:check` | Validate documentation links. | It can write JSON output with `-- -o <directory>`. |
-| `changelog:updated` | Check that the changelog changed. | It fails if `doc/changes` did not change when compared with `origin/main`. |
+| `changelog:updated` | Check that the changelog changed. | It compares `doc/changes` with `origin/main` and requires a difference. |
 
 ## Release sessions
 
 | Session | Use | Notes |
 | --- | --- | --- |
-| `release:prepare` | Prepare a release PR. | It requires `-- --type major`, `minor`, or `patch`. It creates a branch, commit, and PR if flags do not disable these actions. |
+| `release:prepare` | Prepare a release PR. | It requires `-- --type major`, `minor`, or `patch`. It creates a branch, commit, and PR by default; flags support manual handling. |
 | `release:update` | Update a prepared release changelog. | It updates the latest versioned changelog after dependency changes. |
 | `release:trigger` | Trigger a release from the default branch. | It creates and pushes git tags. |
 

@@ -24,7 +24,9 @@ skill names with this list in mind.
        docstrings, user-facing documentation, and runtime behavior.
    * - ``exasol-python-toolbox``
      - Guides agents in using PTB setup, Nox sessions, checks, workflows,
-       updates, releases, and configuration.
+       updates, releases, and configuration in a consuming project. PTB
+       repository maintenance guidance stays in the repository-local
+       ``maintain-ptb`` skill.
 
 Run the validation with:
 
