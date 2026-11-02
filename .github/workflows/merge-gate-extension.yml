@@ -51,7 +51,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Python & Poetry Environment
-        uses: exasol/python-toolbox/.github/actions/python-environment@v11
+        uses: exasol/python-toolbox/.github/actions/python-environment@v12
         with:
           python-version: ${{ needs.get-maximum-python-version.outputs.maximum-python-version }}
           poetry-version: "2.3.0"
