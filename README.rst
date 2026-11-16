@@ -47,7 +47,7 @@ Your one-stop solution for managing all standard tasks and core workflows of you
 🔌️ Prerequisites
 -----------------
 
-- `Python <https://www.python.org/>`__ >= 3.11
+- `Python <https://www.python.org/>`__ >= 3.11.5
 
 💾 Installation
 ---------------
