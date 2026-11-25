@@ -1,6 +1,8 @@
 from argparse import Namespace
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import (
+    Mock,
+)
 
 import pytest
 
@@ -9,9 +11,11 @@ from exasol.toolbox.nox._test import (
     UNIT_TESTS_DIRECTORY,
     ArgparseResults,
     _integration_test_context,
+    _integration_tests,
     _test_command,
     _unit_test_context,
 )
+from exasol.toolbox.nox.plugin import hookimpl
 from noxconfig import PROJECT_CONFIG
 
 PATH_CASES = [
@@ -126,3 +130,34 @@ class TestTestCommand:
             config.root_path / "dummy",
             "-v",
         ]
+
+
+class RecordingPlugin:
+    calls: list[str] = []
+
+    @hookimpl
+    def pre_integration_tests_hook(self, session, config, context):
+        self.calls.append("pre")
+
+    @hookimpl
+    def post_integration_tests_hook(self, session, config, context):
+        self.calls.append("post")
+
+
+class TestIntegrationTests:
+    @staticmethod
+    def test_hooks_wrap_test_command(test_project_config_factory):
+        RecordingPlugin.calls = []
+        config = test_project_config_factory(
+            plugins_for_nox_sessions=(RecordingPlugin,)
+        )
+        argparse_results = ArgparseResults(
+            known=Namespace(paths=[Path("dummy")], coverage=False), other=[]
+        )
+        session = Mock()
+        session.run.side_effect = lambda *a, **kw: RecordingPlugin.calls.append("run")
+
+        _integration_tests(session, config, argparse_results)
+
+        session.run.assert_called_once_with("pytest", Path("dummy"))
+        assert RecordingPlugin.calls == ["pre", "run", "post"]
