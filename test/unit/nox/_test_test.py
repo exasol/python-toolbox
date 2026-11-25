@@ -1,43 +1,120 @@
-import shutil
-from unittest.mock import patch
+from argparse import Namespace
+from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
 
 from exasol.toolbox.nox._test import (
+    INTEGRATION_TESTS_DIRECTORY,
+    UNIT_TESTS_DIRECTORY,
+    ArgparseResults,
+    _integration_test_context,
     _test_command,
-    integration_tests,
-    unit_tests,
+    _unit_test_context,
 )
 from noxconfig import PROJECT_CONFIG
 
+PATH_CASES = [
+    ([], []),
+    (["abc"], []),
+    (["abc", "def"], []),
+    ([], ["-s"]),
+    ([], ["-k", "TestClass"]),
+    (["abc"], ["-k", "TestClass"]),
+    (["abc", "def"], ["-v"]),
+]
 
-@pytest.fixture
-def default_context():
-    """
-    The default context comes from  `toolbox/nox/_shared.py::_context`
-    """
-    return {"db_version": "8.29.13", "coverage": False, "fwd-args": []}
+
+def _posargs(dirs, other):
+    if not dirs:
+        return other
+    return ["--paths", *dirs] + other
+
+
+class TestUnitTestContext:
+    @staticmethod
+    @pytest.mark.parametrize("dirs, other", PATH_CASES)
+    def test_paths_and_other_arguments(dirs, other):
+        result = _unit_test_context(Mock(posargs=_posargs(dirs, other)))
+
+        assert result == ArgparseResults(
+            known=Namespace(
+                paths=[Path(d) for d in dirs] or [UNIT_TESTS_DIRECTORY],
+                coverage=False,
+            ),
+            other=other,
+        )
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "flags, attribute, expected",
+        [
+            (["--coverage"], "coverage", True),
+        ],
+    )
+    def test_overrides_default(flags, attribute, expected):
+        default = getattr(_unit_test_context(Mock(posargs=[])).known, attribute)
+
+        result = _unit_test_context(Mock(posargs=flags))
+
+        assert getattr(result.known, attribute) == expected
+        assert getattr(result.known, attribute) != default
+
+
+class TestIntegrationTestContext:
+    @staticmethod
+    @pytest.mark.parametrize("dirs, other", PATH_CASES)
+    def test_paths_and_other_arguments(dirs, other):
+        result = _integration_test_context(Mock(posargs=_posargs(dirs, other)))
+
+        assert result == ArgparseResults(
+            known=Namespace(
+                paths=[Path(d) for d in dirs] or [INTEGRATION_TESTS_DIRECTORY],
+                coverage=False,
+                db_version=PROJECT_CONFIG.minimum_exasol_version,
+            ),
+            other=other,
+        )
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "flags, attribute, expected",
+        [
+            (["--coverage"], "coverage", True),
+            (["--db-version", "8.0.0"], "db_version", "8.0.0"),
+        ],
+    )
+    def test_overrides_default(flags, attribute, expected):
+        default = getattr(_integration_test_context(Mock(posargs=[])).known, attribute)
+
+        result = _integration_test_context(Mock(posargs=flags))
+
+        assert getattr(result.known, attribute) == expected
+        assert getattr(result.known, attribute) != default
 
 
 class TestTestCommand:
     @staticmethod
-    def test_works_for_default_arguments(test_project_config_factory, default_context):
+    def test_without_coverage(test_project_config_factory):
         config = test_project_config_factory()
-
-        result = _test_command(
-            path=config.root_path / "dummy", config=config, context=default_context
+        argparse_results = ArgparseResults(
+            known=Namespace(paths=[config.root_path / "dummy"], coverage=False),
+            other=["-v"],
         )
 
-        assert result == ["pytest", "-v", f"{config.root_path}/dummy"]
+        result = _test_command(config=config, argparse_results=argparse_results)
+
+        assert result == ["pytest", config.root_path / "dummy", "-v"]
 
     @staticmethod
-    def test_works_for_coverage_true(test_project_config_factory, default_context):
+    def test_with_coverage(test_project_config_factory):
         config = test_project_config_factory()
-        default_context["coverage"] = True
-
-        result = _test_command(
-            path=config.root_path / "dummy", config=config, context=default_context
+        argparse_results = ArgparseResults(
+            known=Namespace(paths=[config.root_path / "dummy"], coverage=True),
+            other=["-v"],
         )
+
+        result = _test_command(config=config, argparse_results=argparse_results)
 
         assert result == [
             "coverage",
@@ -46,74 +123,6 @@ class TestTestCommand:
             f"--rcfile={config.root_path}/pyproject.toml",
             "-m",
             "pytest",
+            config.root_path / "dummy",
             "-v",
-            f"{config.root_path}/dummy",
         ]
-
-    @staticmethod
-    def test_works_for_fwd_args(test_project_config_factory, default_context):
-        config = test_project_config_factory()
-        default_context["fwd-args"] = ["--addition"]
-
-        result = _test_command(
-            path=config.root_path / "dummy", config=config, context=default_context
-        )
-
-        assert result == ["pytest", "-v", f"{config.root_path}/dummy", "--addition"]
-
-
-def test_unit_tests(nox_session, test_project_config_factory):
-    config = test_project_config_factory()
-
-    shutil.copyfile(
-        PROJECT_CONFIG.root_path / "pyproject.toml", config.root_path / "pyproject.toml"
-    )
-
-    test_directory = config.root_path / "test" / "unit"
-    test_directory.mkdir(parents=True, exist_ok=True)
-    test_filepath = test_directory / "dummy_test.py"
-    test_filepath.write_text("def test_dummy():\n    assert True")
-
-    with (
-        patch("exasol.toolbox.nox._test.PROJECT_CONFIG", new=config),
-        patch(
-            "exasol.toolbox.nox._test._unit_test_context",
-            wraps=lambda session: {"coverage": False, "fwd-args": []},
-        ) as unit_context,
-    ):
-        unit_tests(nox_session)
-
-    unit_context.assert_called_once_with(nox_session)
-    assert (test_directory / "__pycache__").exists()
-
-
-class TestIntegrationTests:
-    @staticmethod
-    def test_works_without_hooks(nox_session, test_project_config_factory):
-        config = test_project_config_factory()
-
-        shutil.copyfile(
-            PROJECT_CONFIG.root_path / "pyproject.toml",
-            config.root_path / "pyproject.toml",
-        )
-
-        test_directory = config.root_path / "test" / "integration"
-        test_directory.mkdir(parents=True, exist_ok=True)
-        test_filepath = test_directory / "dummy_test.py"
-        test_filepath.write_text("def test_dummy():\n    assert True")
-
-        with (
-            patch("exasol.toolbox.nox._test.PROJECT_CONFIG", new=config),
-            patch(
-                "exasol.toolbox.nox._test._integration_test_context",
-                wraps=lambda session: {
-                    "coverage": False,
-                    "db_version": "8.29.13",
-                    "fwd-args": [],
-                },
-            ) as integration_context,
-        ):
-            integration_tests(nox_session)
-
-        integration_context.assert_called_once_with(nox_session)
-        assert (test_directory / "__pycache__").exists()
