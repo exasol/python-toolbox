@@ -116,7 +116,7 @@ def unit_tests(session: Session) -> None:
 @nox.session(name="test:integration", python=False)
 def integration_tests(session: Session) -> None:
     """
-    Runs the all integration tests
+    Runs all integration tests
 
     If a project needs to execute code pre-/post the test execution,
     it should provide appropriate hooks on their config object.
