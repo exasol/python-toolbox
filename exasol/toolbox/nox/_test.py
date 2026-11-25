@@ -1,22 +1,52 @@
 from __future__ import annotations
 
+import argparse
 from collections.abc import (
     Iterable,
 )
+from dataclasses import dataclass
 
 import nox
 from nox import Session
 
 from exasol.toolbox.config import BaseConfig
-from exasol.toolbox.nox._shared import (
-    ArgparseResults,
-    _integration_test_context,
-    _unit_test_context,
-)
 from exasol.toolbox.nox.plugin import NoxTasks
-from noxconfig import (
-    PROJECT_CONFIG,
-)
+from noxconfig import PROJECT_CONFIG
+
+
+@dataclass
+class ArgparseResults:
+    known: argparse.Namespace
+    other: list[str]
+
+
+def _unit_test_context(session: Session) -> ArgparseResults:
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    default_path = PROJECT_CONFIG.root_path / "test" / "unit"
+    parser.add_argument("directories", nargs="*", type=Path, default=[default_path])
+    parser.add_argument(
+        "--coverage", action="store_true", help="Enable the collection of coverage data"
+    )
+    return ArgparseResults(*parser.parse_known_args(session.posargs))
+
+
+def _integration_test_context(session: Session) -> ArgparseResults:
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    default_path = PROJECT_CONFIG.root_path / "test" / "integration"
+    parser.add_argument("directories", nargs="*", type=Path, default=[default_path])
+    parser.add_argument(
+        "--coverage", action="store_true", help="Enable the collection of coverage data"
+    )
+    parser.add_argument(
+        "--db-version",
+        default=PROJECT_CONFIG.minimum_exasol_version,
+        help="Specify the Exasol DB version to be used",
+    )
+    return ArgparseResults(*parser.parse_known_args(session.posargs))
 
 
 def _test_command(
@@ -33,7 +63,6 @@ def _test_command(
         if argparse_results.known.coverage
         else []
     )
-    print(argparse_results.known.directories)
     return (
         coverage_command
         + ["pytest", *argparse_results.known.directories]

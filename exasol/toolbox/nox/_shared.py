@@ -1,14 +1,10 @@
 from __future__ import annotations
 
-import argparse
-from dataclasses import dataclass
 from enum import (
     Enum,
     auto,
 )
 from pathlib import Path
-
-from nox import Session
 
 from noxconfig import (
     PROJECT_CONFIG,
@@ -49,38 +45,3 @@ def validate_path_within_root(path: Path) -> Path:
         )
 
     return resolved_path
-
-
-@dataclass
-class ArgparseResults:
-    known: argparse.Namespace
-    other: list[str]
-
-
-def _unit_test_context(session: Session) -> ArgparseResults:
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    default_path = PROJECT_CONFIG.root_path / "test" / "unit"
-    parser.add_argument("directories", nargs="*", type=Path, default=[default_path])
-    parser.add_argument(
-        "--coverage", action="store_true", help="Enable the collection of coverage data"
-    )
-    return ArgparseResults(*parser.parse_known_args(session.posargs))
-
-
-def _integration_test_context(session: Session) -> ArgparseResults:
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    default_path = PROJECT_CONFIG.root_path / "test" / "integration"
-    parser.add_argument("directories", nargs="*", type=Path, default=[default_path])
-    parser.add_argument(
-        "--coverage", action="store_true", help="Enable the collection of coverage data"
-    )
-    parser.add_argument(
-        "--db-version",
-        default=PROJECT_CONFIG.minimum_exasol_version,
-        help="Specify the Exasol DB version to be used",
-    )
-    return ArgparseResults(*parser.parse_known_args(session.posargs))

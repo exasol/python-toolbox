@@ -52,7 +52,6 @@ from exasol.toolbox.nox._release import prepare_release
 from exasol.toolbox.nox._skills import check_skills, install_skills
 from exasol.toolbox.nox._shared import (
     Mode,
-    _integration_test_context,
     get_filtered_python_files,
 )
 
