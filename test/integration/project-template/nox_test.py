@@ -7,7 +7,6 @@ EXPECTED_PACKAGED_SKILL_FILE_COUNTS = {
 EXPECTED_NOX_SESSIONS = {
     "format:fix",
     "format:check",
-    "project:check",
     "test:unit",
     "test:integration",
     "test:coverage",

@@ -12,7 +12,6 @@ The sessions below match the PTB version that includes this skill.
 
 | Session | Use | Notes |
 | --- | --- | --- |
-| `project:check` | Run large local checks or CI checks. | It runs format check, Pylint, Mypy, and coverage for unit and integration tests. |
 | `format:fix` | Apply Python format changes. | It runs pyupgrade, Ruff fixes, isort, and Black. |
 | `format:check` | Check Python format. | It runs Ruff check, isort check, and Black check. |
 | `lint:code` | Run static code analysis. | It runs Pylint on `PROJECT_CONFIG.source_code_path` and writes `.lint.json`. |
