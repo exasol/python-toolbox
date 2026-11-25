@@ -9,7 +9,6 @@ EXPECTED_NOX_SESSIONS = {
     "format:check",
     "test:unit",
     "test:integration",
-    "test:coverage",
     "lint:code",
     "lint:typing",
     "lint:security",

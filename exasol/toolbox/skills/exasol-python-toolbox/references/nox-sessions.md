@@ -31,7 +31,6 @@ The sessions below match the PTB version that includes this skill.
 | --- | --- | --- |
 | `test:unit` | Run unit tests. | It runs `pytest -v test/unit`. Put Pytest options after `--`; use `-k` to select tests by name. |
 | `test:integration` | Run integration tests. | It runs `pytest -v test/integration`. It supports PTB integration test hooks. |
-| `test:coverage` | Run all tests with coverage. | It runs unit and integration tests with coverage. It prints `coverage report -m`. |
 
 Test command examples:
 
