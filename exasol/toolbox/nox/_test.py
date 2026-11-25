@@ -20,6 +20,12 @@ INTEGRATION_TESTS_DIRECTORY = PROJECT_CONFIG.root_path / "test" / "integration"
 
 @dataclass
 class ArgparseResults:
+    """
+    Records the results from the parsed session parameters.
+    Argparse separates these based on which arguments are expected (`known`)
+    and which are unknown (`other`).
+    """
+
     known: argparse.Namespace
     other: list[str]
 
