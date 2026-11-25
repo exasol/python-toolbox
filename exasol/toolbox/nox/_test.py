@@ -66,17 +66,15 @@ def _integration_test_context(session: Session) -> ArgparseResults:
 def _test_command(
     config: BaseConfig, argparse_results: ArgparseResults
 ) -> Iterable[str]:
-    coverage_command = (
-        [
+    coverage_command = []
+    if argparse_results.known.coverage:
+        coverage_command = [
             "coverage",
             "run",
             "-a",
             f"--rcfile={config.root_path / 'pyproject.toml'}",
             "-m",
         ]
-        if argparse_results.known.coverage
-        else []
-    )
     return (
         coverage_command
         + ["pytest", *argparse_results.known.paths]
