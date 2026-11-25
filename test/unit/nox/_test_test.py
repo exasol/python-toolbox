@@ -5,7 +5,6 @@ import pytest
 
 from exasol.toolbox.nox._test import (
     _test_command,
-    coverage,
     integration_tests,
     unit_tests,
 )
@@ -118,21 +117,3 @@ class TestIntegrationTests:
 
         integration_context.assert_called_once_with(nox_session)
         assert (test_directory / "__pycache__").exists()
-
-
-def test_coverage_uses_integration_test_context(nox_session):
-    with (
-        patch(
-            "exasol.toolbox.nox._test._integration_test_context",
-            return_value={"coverage": True, "db_version": "8.29.13", "fwd-args": []},
-        ) as integration_context,
-        patch("exasol.toolbox.nox._test._coverage") as coverage_impl,
-    ):
-        coverage(nox_session)
-
-    integration_context.assert_called_once_with(nox_session, coverage=True)
-    coverage_impl.assert_called_once_with(
-        nox_session,
-        PROJECT_CONFIG,
-        {"coverage": True, "db_version": "8.29.13", "fwd-args": []},
-    )

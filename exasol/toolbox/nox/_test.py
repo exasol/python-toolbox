@@ -71,17 +71,6 @@ def _integration_tests(
     )
 
 
-def _coverage(
-    session: Session, config: BaseConfig, argeparse_result: ArgparseResults
-) -> None:
-    command = ["coverage", "report", "-m"]
-    coverage_file = config.root_path / ".coverage"
-    coverage_file.unlink(missing_ok=True)
-    _unit_tests(session, config, argeparse_result)
-    _integration_tests(session, config, argeparse_result)
-    session.run(*command)
-
-
 @nox.session(name="test:unit", python=False)
 def unit_tests(session: Session) -> None:
     """Runs all unit tests"""
@@ -101,11 +90,3 @@ def integration_tests(session: Session) -> None:
     """
     argeparse_result = _integration_test_context(session)
     _integration_tests(session, PROJECT_CONFIG, argeparse_result)
-
-
-@nox.session(name="test:coverage", python=False)
-def coverage(session: Session) -> None:
-    """Runs all tests (unit + integration) and reports the code coverage"""
-    argeparse_result = _integration_test_context(session)
-    argeparse_result.known.coverage = True
-    _coverage(session, PROJECT_CONFIG, argeparse_result)
