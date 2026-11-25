@@ -5,6 +5,7 @@ from collections.abc import (
     Iterable,
 )
 from dataclasses import dataclass
+from pathlib import Path
 
 import nox
 from nox import Session
@@ -108,8 +109,8 @@ def integration_tests(session: Session) -> None:
 
     If a project needs to execute code pre-/post the test execution,
     it should provide appropriate hooks on their config object.
-        * pre_integration_tests_hook(session: Session, config: Config, context: MutableMapping[str, Any]) -> bool:
-        * post_integration_tests_hook(session: Session, config: Config, context: MutableMapping[str, Any]) -> bool:
+        * pre_integration_tests_hook
+        * post_integration_tests_hook
     """
-    argeparse_result = _integration_test_context(session)
-    _integration_tests(session, PROJECT_CONFIG, argeparse_result)
+    argparse_results = _integration_test_context(session)
+    _integration_tests(session, PROJECT_CONFIG, argparse_results)
