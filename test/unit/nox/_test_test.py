@@ -146,8 +146,7 @@ class RecordingPlugin:
 
 class TestIntegrationTests:
     @staticmethod
-    def test_hooks_wrap_test_command(test_project_config_factory):
-        RecordingPlugin.calls = []
+    def test_hooks_wrap_test_command(test_project_config_factory, monkeypatch):
         config = test_project_config_factory(
             plugins_for_nox_sessions=(RecordingPlugin,)
         )
