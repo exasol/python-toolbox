@@ -48,9 +48,6 @@ replace it with configuration, a plugin hook, or a PTB extension point later.
 2. Read the related tool sections in `pyproject.toml`.
 3. Make the requested code change, document change, or configuration change.
 4. Run the smallest PTB session that checks the change.
-5. Run `project:check` when the change affects shared operation.
-6. Run `project:check` when the change affects release readiness.
-7. Run `project:check` when the change affects CI operation.
 
 When you remove or rename a documentation file, update each Sphinx `toctree`
 that points to it. Then run `docs:build`.

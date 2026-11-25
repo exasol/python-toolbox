@@ -3,9 +3,7 @@ from __future__ import annotations
 __all__ = [
     "Mode",
     "build_docs",
-    "check",
     "clean_docs",
-    "coverage",
     "fix_format",
     "integration_tests",
     "lint",
@@ -32,19 +30,9 @@ from exasol.toolbox.nox._format import (
 from noxconfig import PROJECT_CONFIG
 
 
-@nox.session(name="project:check", python=False)
-def check(session: Session) -> None:
-    """Runs all available checks on the project"""
-    context = _integration_test_context(session, coverage=True)
-    py_files = get_filtered_python_files(PROJECT_CONFIG.root_path)
-    _code_format(session, Mode.Check, py_files)
-    _pylint(session, py_files)
-    _type_check(session, py_files)
-    _coverage(session, PROJECT_CONFIG, context)
+
 
 from exasol.toolbox.nox._test import (
-    _coverage,
-    coverage,
     integration_tests,
     unit_tests,
 )
@@ -64,7 +52,6 @@ from exasol.toolbox.nox._release import prepare_release
 from exasol.toolbox.nox._skills import check_skills, install_skills
 from exasol.toolbox.nox._shared import (
     Mode,
-    _integration_test_context,
     get_filtered_python_files,
 )
 

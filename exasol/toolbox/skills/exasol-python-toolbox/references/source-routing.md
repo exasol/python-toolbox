@@ -36,8 +36,7 @@ Read the source file before you explain a detailed rule.
 - `exasol/toolbox/nox/_package.py`: package validation.
 - `exasol/toolbox/nox/_release.py`: release preparation, release update, and
   release trigger sessions.
-- `exasol/toolbox/nox/_test.py`: `test:unit`, `test:integration`, and
-  `test:coverage`.
+- `exasol/toolbox/nox/_test.py`: `test:unit` and `test:integration`
 - `exasol/toolbox/nox/_workflow.py`: workflow check, generation, and audit
   sessions.
 

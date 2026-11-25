@@ -34,7 +34,6 @@ cases:
         - ".pre-commit-config.yaml"
         - "pre-commit"
         - "pre-push"
-        - "project:check"
         - "nox-sessions.md"
       must_not_include:
         - "run Pytest directly"

@@ -12,7 +12,6 @@ The sessions below match the PTB version that includes this skill.
 
 | Session | Use | Notes |
 | --- | --- | --- |
-| `project:check` | Run large local checks or CI checks. | It runs format check, Pylint, Mypy, and coverage for unit and integration tests. |
 | `format:fix` | Apply Python format changes. | It runs pyupgrade, Ruff fixes, isort, and Black. |
 | `format:check` | Check Python format. | It runs Ruff check, isort check, and Black check. |
 | `lint:code` | Run static code analysis. | It runs Pylint on `PROJECT_CONFIG.source_code_path` and writes `.lint.json`. |
@@ -32,7 +31,6 @@ The sessions below match the PTB version that includes this skill.
 | --- | --- | --- |
 | `test:unit` | Run unit tests. | It runs `pytest -v test/unit`. Put Pytest options after `--`; use `-k` to select tests by name. |
 | `test:integration` | Run integration tests. | It runs `pytest -v test/integration`. It supports PTB integration test hooks. |
-| `test:coverage` | Run all tests with coverage. | It runs unit and integration tests with coverage. It prints `coverage report -m`. |
 
 Test command examples:
 
