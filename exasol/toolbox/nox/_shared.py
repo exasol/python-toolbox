@@ -1,16 +1,12 @@
 from __future__ import annotations
 
 import argparse
-from collections import ChainMap
-from collections.abc import (
-    MutableMapping,
-)
+from dataclasses import dataclass
 from enum import (
     Enum,
     auto,
 )
 from pathlib import Path
-from typing import Any
 
 from nox import Session
 
@@ -55,36 +51,30 @@ def validate_path_within_root(path: Path) -> Path:
     return resolved_path
 
 
-def _context(
-    session: Session,
-    parser: argparse.ArgumentParser,
-    default_context: dict[str, Any],
-    **kwargs: Any,
-) -> MutableMapping[str, Any]:
-    namespace, args = parser.parse_known_args(session.posargs)
-    cli_context: MutableMapping[str, Any] = vars(namespace)
-    cli_context["fwd-args"] = args
-    # Note: ChainMap scans last to first
-    return ChainMap(kwargs, cli_context, default_context)
+@dataclass
+class ArgparseResults:
+    known: argparse.Namespace
+    other: list[str]
 
 
-def _unit_test_context(session: Session, **kwargs: Any) -> MutableMapping[str, Any]:
+def _unit_test_context(session: Session) -> ArgparseResults:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
+    default_path = PROJECT_CONFIG.root_path / "test" / "unit"
+    parser.add_argument("directories", nargs="*", type=Path, default=[default_path])
     parser.add_argument(
         "--coverage", action="store_true", help="Enable the collection of coverage data"
     )
-    return _context(session, parser, {"coverage": False}, **kwargs)
+    return ArgparseResults(*parser.parse_known_args(session.posargs))
 
 
-def _integration_test_context(
-    session: Session,
-    **kwargs: Any,
-) -> MutableMapping[str, Any]:
+def _integration_test_context(session: Session) -> ArgparseResults:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
+    default_path = PROJECT_CONFIG.root_path / "test" / "integration"
+    parser.add_argument("directories", nargs="*", type=Path, default=[default_path])
     parser.add_argument(
         "--coverage", action="store_true", help="Enable the collection of coverage data"
     )
@@ -93,12 +83,4 @@ def _integration_test_context(
         default=PROJECT_CONFIG.minimum_exasol_version,
         help="Specify the Exasol DB version to be used",
     )
-    return _context(
-        session,
-        parser,
-        {
-            "coverage": False,
-            "db_version": PROJECT_CONFIG.minimum_exasol_version,
-        },
-        **kwargs,
-    )
+    return ArgparseResults(*parser.parse_known_args(session.posargs))

@@ -2,16 +2,14 @@ from __future__ import annotations
 
 from collections.abc import (
     Iterable,
-    MutableMapping,
 )
-from pathlib import Path
-from typing import Any
 
 import nox
 from nox import Session
 
 from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox._shared import (
+    ArgparseResults,
     _integration_test_context,
     _unit_test_context,
 )
@@ -22,7 +20,7 @@ from noxconfig import (
 
 
 def _test_command(
-    path: Path, config: BaseConfig, context: MutableMapping[str, Any]
+    config: BaseConfig, argparse_results: ArgparseResults
 ) -> Iterable[str]:
     coverage_command = (
         [
@@ -32,55 +30,63 @@ def _test_command(
             f"--rcfile={config.root_path / 'pyproject.toml'}",
             "-m",
         ]
-        if context["coverage"]
+        if argparse_results.known.coverage
         else []
     )
-    pytest_command = ["pytest", "-v", f"{path}"]
-    return coverage_command + pytest_command + context["fwd-args"]
+    print(argparse_results.known.directories)
+    return (
+        coverage_command
+        + ["pytest", *argparse_results.known.directories]
+        + argparse_results.other
+    )
 
 
 def _unit_tests(
-    session: Session, config: BaseConfig, context: MutableMapping[str, Any]
+    session: Session, config: BaseConfig, argeparse_results: ArgparseResults
 ) -> None:
-    command = _test_command(config.root_path / "test" / "unit", config, context)
+    command = _test_command(config, argeparse_results)
     session.run(*command)
 
 
 def _integration_tests(
-    session: Session, config: BaseConfig, context: MutableMapping[str, Any]
+    session: Session, config: BaseConfig, argparse_results: ArgparseResults
 ) -> None:
     pm = NoxTasks.plugin_manager(config)
 
     # run pre integration test plugins
-    pm.hook.pre_integration_tests_hook(session=session, config=config, context=context)
+    pm.hook.pre_integration_tests_hook(
+        session=session, config=config, context=argparse_results
+    )
 
     # Notes:
     # - Catch exceptions and ensure post-hooks run before exiting
     # - Consider making the executed command(s) configurable via a plugin hook
     #   (The default implementation of the hook could provide the current implementation)
-    command = _test_command(config.root_path / "test" / "integration", config, context)
+    command = _test_command(config, argparse_results)
     session.run(*command)
 
     # run post integration test plugins
-    pm.hook.post_integration_tests_hook(session=session, config=config, context=context)
+    pm.hook.post_integration_tests_hook(
+        session=session, config=config, context=argparse_results
+    )
 
 
 def _coverage(
-    session: Session, config: BaseConfig, context: MutableMapping[str, Any]
+    session: Session, config: BaseConfig, argeparse_result: ArgparseResults
 ) -> None:
     command = ["coverage", "report", "-m"]
     coverage_file = config.root_path / ".coverage"
     coverage_file.unlink(missing_ok=True)
-    _unit_tests(session, config, context)
-    _integration_tests(session, config, context)
+    _unit_tests(session, config, argeparse_result)
+    _integration_tests(session, config, argeparse_result)
     session.run(*command)
 
 
 @nox.session(name="test:unit", python=False)
 def unit_tests(session: Session) -> None:
     """Runs all unit tests"""
-    context = _unit_test_context(session)
-    _unit_tests(session, PROJECT_CONFIG, context)
+    argeparse_result = _unit_test_context(session)
+    _unit_tests(session, PROJECT_CONFIG, argeparse_result)
 
 
 @nox.session(name="test:integration", python=False)
@@ -93,12 +99,13 @@ def integration_tests(session: Session) -> None:
         * pre_integration_tests_hook(session: Session, config: Config, context: MutableMapping[str, Any]) -> bool:
         * post_integration_tests_hook(session: Session, config: Config, context: MutableMapping[str, Any]) -> bool:
     """
-    context = _integration_test_context(session)
-    _integration_tests(session, PROJECT_CONFIG, context)
+    argeparse_result = _integration_test_context(session)
+    _integration_tests(session, PROJECT_CONFIG, argeparse_result)
 
 
 @nox.session(name="test:coverage", python=False)
 def coverage(session: Session) -> None:
     """Runs all tests (unit + integration) and reports the code coverage"""
-    context = _integration_test_context(session, coverage=True)
-    _coverage(session, PROJECT_CONFIG, context)
+    argeparse_result = _integration_test_context(session)
+    argeparse_result.known.coverage = True
+    _coverage(session, PROJECT_CONFIG, argeparse_result)
