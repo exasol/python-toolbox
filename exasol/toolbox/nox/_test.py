@@ -70,13 +70,6 @@ def _test_command(
     )
 
 
-def _unit_tests(
-    session: Session, config: BaseConfig, argeparse_results: ArgparseResults
-) -> None:
-    command = _test_command(config, argeparse_results)
-    session.run(*command)
-
-
 def _integration_tests(
     session: Session, config: BaseConfig, argparse_results: ArgparseResults
 ) -> None:
@@ -103,8 +96,9 @@ def _integration_tests(
 @nox.session(name="test:unit", python=False)
 def unit_tests(session: Session) -> None:
     """Runs all unit tests"""
-    argeparse_result = _unit_test_context(session)
-    _unit_tests(session, PROJECT_CONFIG, argeparse_result)
+    argparse_results = _unit_test_context(session)
+    command = _test_command(PROJECT_CONFIG, argparse_results)
+    session.run(*command)
 
 
 @nox.session(name="test:integration", python=False)
