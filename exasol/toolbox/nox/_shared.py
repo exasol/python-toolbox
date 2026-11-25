@@ -55,13 +55,6 @@ def validate_path_within_root(path: Path) -> Path:
     return resolved_path
 
 
-def _context_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
-    )
-    return parser
-
-
 def _context(
     session: Session,
     parser: argparse.ArgumentParser,
@@ -76,7 +69,9 @@ def _context(
 
 
 def _unit_test_context(session: Session, **kwargs: Any) -> MutableMapping[str, Any]:
-    parser = _context_parser()
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
     parser.add_argument(
         "--coverage", action="store_true", help="Enable the collection of coverage data"
     )
@@ -87,7 +82,9 @@ def _integration_test_context(
     session: Session,
     **kwargs: Any,
 ) -> MutableMapping[str, Any]:
-    parser = _context_parser()
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
     parser.add_argument(
         "--coverage", action="store_true", help="Enable the collection of coverage data"
     )
