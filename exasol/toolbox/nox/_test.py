@@ -14,6 +14,9 @@ from exasol.toolbox.config import BaseConfig
 from exasol.toolbox.nox.plugin import NoxTasks
 from noxconfig import PROJECT_CONFIG
 
+UNIT_TESTS_DIRECTORY = PROJECT_CONFIG.root_path / "test" / "unit"
+INTEGRATION_TESTS_DIRECTORY = PROJECT_CONFIG.root_path / "test" / "integration"
+
 
 @dataclass
 class ArgparseResults:
@@ -25,8 +28,13 @@ def _unit_test_context(session: Session) -> ArgparseResults:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    default_path = PROJECT_CONFIG.root_path / "test" / "unit"
-    parser.add_argument("directories", nargs="*", type=Path, default=[default_path])
+    parser.add_argument(
+        "--paths",
+        nargs="+",
+        type=Path,
+        default=[UNIT_TESTS_DIRECTORY],
+        help="Paths (files or directories) to be tested",
+    )
     parser.add_argument(
         "--coverage", action="store_true", help="Enable the collection of coverage data"
     )
@@ -37,8 +45,13 @@ def _integration_test_context(session: Session) -> ArgparseResults:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    default_path = PROJECT_CONFIG.root_path / "test" / "integration"
-    parser.add_argument("directories", nargs="*", type=Path, default=[default_path])
+    parser.add_argument(
+        "--paths",
+        nargs="+",
+        type=Path,
+        default=[INTEGRATION_TESTS_DIRECTORY],
+        help="Paths (files or directories) to be tested",
+    )
     parser.add_argument(
         "--coverage", action="store_true", help="Enable the collection of coverage data"
     )
@@ -66,7 +79,7 @@ def _test_command(
     )
     return (
         coverage_command
-        + ["pytest", *argparse_results.known.directories]
+        + ["pytest", *argparse_results.known.paths]
         + argparse_results.other
     )
 
